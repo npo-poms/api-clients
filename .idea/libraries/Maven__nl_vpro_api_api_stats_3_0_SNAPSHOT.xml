@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Maven: nl.vpro.api:api-stats:3.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-stats/3.0-SNAPSHOT/api-stats-3.0-20140207.152731-504.jar!/"/>
+    </CLASSES>
+    <JAVADOC>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-stats/3.0-SNAPSHOT/api-stats-3.0-20140207.152731-504-javadoc.jar!/"/>
+    </JAVADOC>
+    <SOURCES>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-stats/3.0-SNAPSHOT/api-stats-3.0-20140207.152731-504-sources.jar!/"/>
+    </SOURCES>
+  </library>
+</component>

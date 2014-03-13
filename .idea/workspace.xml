@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BuildServerSettings">
+    <option name="LOGIN" value=""/>
+    <option name="SERVER_URL" value="http://buildserver"/>
+    <option name="PASSWORD"/>
+    <option name="REMEMBER_ME" value="true"/>
+    <option name="USE_IDEA_PROXY_SETTINGS" value="true"/>
+    <option name="INSPECTIONS_BUILD_TYPE_IDS"/>
+    <option name="DUPLICATES_BUILD_TYPE_IDS"/>
+    <option name="COVERAGE_SETTINGS"/>
+    <option name="TEST_STATUS_ENABLED" value="true"/>
+    <option name="TEST_STATUS_SHOW_SUCCESSFUL" value="false"/>
+    <option name="ARTIFACTS_BUILD_TYPE_IDS"/>
+    <option name="PERFORM_COMMIT_IF_SUCCESSFUL" value="true"/>
+    <option name="PERFORM_COMMIT_IF_NO_NEW_FAILED_TESTS" value="false"/>
+    <option name="REQUEST_CONFIRMATON" value="false"/>
+    <option name="PRE_TESTED_COMMIT" value="true"/>
+    <option name="PROJECT_STATUS_DIALOG_SPLITTER_DIVIDER_LOCATION" value="500"/>
+    <option name="CHANGES_STATUS_DIALOG_SPLITTER_DIVIDER_LOCATION" value="500"/>
+    <option name="FILTER_BY_STATUS" value="false"/>
+    <option name="FILTER_MARKED_AS_FIXED" value="false"/>
+    <option name="SHOW_CLOSE_PROMPT" value="true"/>
+    <option name="TOOL_WINDOW_SELECTED_CONTENT_INDEX" value="0"/>
+    <option name="FILTER_BY_CURRENT_PROJECT" value="true"/>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2a3cfa0c-bd44-4524-934d-d704aa92624f" name="Default" comment=""/>
+    <ignored path="APIClient.iws"/>
+    <ignored path=".idea/workspace.xml"/>
+    <option name="TRACKING_ENABLED" value="true"/>
+    <option name="SHOW_DIALOG" value="false"/>
+    <option name="HIGHLIGHT_CONFLICTS" value="true"/>
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false"/>
+    <option name="LAST_RESOLUTION" value="IGNORE"/>
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false"/>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value=""/>
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints/>
+  </component>
+  <component name="DebuggerManager">
+    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true"/>
+        <option name="NOTIFY_UNCAUGHT" value="true"/>
+        <option name="ENABLED" value="false"/>
+        <option name="LOG_ENABLED" value="false"/>
+        <option name="LOG_EXPRESSION_ENABLED" value="false"/>
+        <option name="REMOVE_AFTER_HIT" value="false"/>
+        <option name="SUSPEND_POLICY" value="SuspendAll"/>
+        <option name="SUSPEND" value="true"/>
+        <option name="COUNT_FILTER_ENABLED" value="false"/>
+        <option name="COUNT_FILTER" value="0"/>
+        <option name="CONDITION_ENABLED" value="true"/>
+        <option name="CLASS_FILTERS_ENABLED" value="false"/>
+        <option name="INSTANCE_FILTERS_ENABLED" value="false"/>
+        <option name="CONDITION" value=""/>
+        <option name="LOG_MESSAGE" value=""/>
+      </breakpoint>
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true"/>
+        <option name="NOTIFY_UNCAUGHT" value="true"/>
+        <option name="ENABLED" value="false"/>
+        <option name="LOG_ENABLED" value="false"/>
+        <option name="LOG_EXPRESSION_ENABLED" value="false"/>
+        <option name="REMOVE_AFTER_HIT" value="false"/>
+        <option name="SUSPEND_POLICY" value="SuspendAll"/>
+        <option name="SUSPEND" value="true"/>
+        <option name="COUNT_FILTER_ENABLED" value="false"/>
+        <option name="COUNT_FILTER" value="0"/>
+        <option name="CONDITION_ENABLED" value="true"/>
+        <option name="CLASS_FILTERS_ENABLED" value="false"/>
+        <option name="INSTANCE_FILTERS_ENABLED" value="false"/>
+        <option name="CONDITION" value=""/>
+        <option name="LOG_MESSAGE" value=""/>
+      </breakpoint>
+    </breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true"/>
+    <breakpoint_rules/>
+    <ui_properties/>
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target"/>
+  <component name="FavoritesManager">
+    <favorites_list name="APIClient"/>
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="NpoApiClients.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/resteasy-client/src/main/java/nl/vpro/api/client/resteasy/NpoApiClients.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="91" column="50" selection-start="3827" selection-end="3827"
+                   vertical-scroll-proportion="0.64642376" vertical-offset="556" max-vertical-offset="1380">
+              <folding>
+                <element signature="e#2748#2749#0" expanded="true"/>
+                <element signature="e#2792#2793#0" expanded="true"/>
+                <element signature="e#2839#2840#0" expanded="true"/>
+                <element signature="e#2882#2883#0" expanded="true"/>
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Lookup.java" pinned="false" current="false" current-in-tab="false">
+        <entry
+            file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpcore/4.3/httpcore-4.3-sources.jar!/org/apache/http/config/Lookup.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="35" column="19" selection-start="1304" selection-end="1304" vertical-scroll-proportion="0.0"
+                   vertical-offset="0" max-vertical-offset="315">
+              <folding/>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Registry.java" pinned="false" current="false" current-in-tab="false">
+        <entry
+            file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpcore/4.3/httpcore-4.3-sources.jar!/org/apache/http/config/Registry.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="51" column="64" selection-start="1738" selection-end="1738" vertical-scroll-proportion="0.0"
+                   vertical-offset="0" max-vertical-offset="600">
+              <folding/>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AuthSchemeProvider.java" pinned="false" current="false" current-in-tab="false">
+        <entry
+            file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/auth/AuthSchemeProvider.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="36" column="29" selection-start="1367" selection-end="1367" vertical-scroll-proportion="0.0"
+                   vertical-offset="0" max-vertical-offset="405">
+              <folding>
+                <element signature="e#0#1525#0" expanded="false"/>
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BasicSchemeFactory.java" pinned="false" current="false" current-in-tab="false">
+        <entry
+            file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/impl/auth/BasicSchemeFactory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="67" column="25" selection-start="2211" selection-end="2211" vertical-scroll-proportion="0.0"
+                   vertical-offset="0" max-vertical-offset="675">
+              <folding>
+                <element signature="e#0#2241#0" expanded="false"/>
+                <element signature="imports" expanded="false"/>
+                <element signature="e#1667#1699#0" expanded="false"/>
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BasicScheme.java" pinned="false" current="false" current-in-tab="false">
+        <entry
+            file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/impl/auth/BasicScheme.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="53" column="42" selection-start="2079" selection-end="2079" vertical-scroll-proportion="0.0"
+                   vertical-offset="0" max-vertical-offset="2715">
+              <folding>
+                <element signature="e#0#7344#0" expanded="false"/>
+                <element signature="imports" expanded="false"/>
+                <element signature="e#3659#3660#0" expanded="false"/>
+                <element signature="e#3695#3696#0" expanded="false"/>
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RFC2617Scheme.java" pinned="false" current="false" current-in-tab="false">
+        <entry
+            file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/impl/auth/RFC2617Scheme.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="54" column="51" selection-start="2176" selection-end="2176" vertical-scroll-proportion="0.0"
+                   vertical-offset="0" max-vertical-offset="1695">
+              <folding>
+                <element signature="e#0#4957#0" expanded="false"/>
+                <element signature="imports" expanded="false"/>
+                <element signature="e#3088#3089#0" expanded="false"/>
+                <element signature="e#3129#3130#0" expanded="false"/>
+                <element signature="e#4313#4314#0" expanded="false"/>
+                <element signature="e#4347#4348#0" expanded="false"/>
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AuthSchemeBase.java" pinned="false" current="false" current-in-tab="false">
+        <entry
+            file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/impl/auth/AuthSchemeBase.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="58" column="44" selection-start="2309" selection-end="2352" vertical-scroll-proportion="0.0"
+                   vertical-offset="0" max-vertical-offset="1995">
+              <folding>
+                <element signature="e#0#5916#0" expanded="false"/>
+                <element signature="imports" expanded="false"/>
+                <element signature="e#4789#4821#0" expanded="false"/>
+                <element signature="e#5632#5633#0" expanded="false"/>
+                <element signature="e#5674#5675#0" expanded="false"/>
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ClientHttpEngine.java" pinned="false" current="false" current-in-tab="false">
+        <entry
+            file="jar://$MAVEN_REPOSITORY$/org/jboss/resteasy/resteasy-client/3.0.6.Final/resteasy-client-3.0.6.Final-sources.jar!/org/jboss/resteasy/client/jaxrs/ClientHttpEngine.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="29" selection-start="375" selection-end="375" vertical-scroll-proportion="0.0"
+                   vertical-offset="0" max-vertical-offset="480">
+              <folding>
+                <element signature="imports" expanded="false"/>
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ApacheHttpClient4Engine.java" pinned="false" current="false" current-in-tab="false">
+        <entry
+            file="jar://$MAVEN_REPOSITORY$/org/jboss/resteasy/resteasy-client/3.0.6.Final/resteasy-client-3.0.6.Final-sources.jar!/org/jboss/resteasy/client/jaxrs/engines/ApacheHttpClient4Engine.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="48" column="66" selection-start="1933" selection-end="1933" vertical-scroll-proportion="0.0"
+                   vertical-offset="0" max-vertical-offset="8220">
+              <folding>
+                <element signature="imports" expanded="false"/>
+                <element signature="e#4573#4574#0" expanded="false"/>
+                <element signature="e#4611#4612#0" expanded="false"/>
+                <element signature="e#4899#4900#0" expanded="false"/>
+                <element signature="e#4956#4957#0" expanded="false"/>
+                <element signature="e#5069#5070#0" expanded="false"/>
+                <element signature="e#5121#5122#0" expanded="false"/>
+                <element signature="e#5216#5217#0" expanded="false"/>
+                <element signature="e#5301#5302#0" expanded="false"/>
+                <element signature="e#5354#5355#0" expanded="false"/>
+                <element signature="e#5394#5395#0" expanded="false"/>
+                <element signature="e#5472#5473#0" expanded="false"/>
+                <element signature="e#5533#5534#0" expanded="false"/>
+                <element signature="e#5581#5582#0" expanded="false"/>
+                <element signature="e#5622#5623#0" expanded="false"/>
+                <element signature="e#5696#5697#0" expanded="false"/>
+                <element signature="e#5759#5760#0" expanded="false"/>
+                <element signature="e#5802#5803#0" expanded="false"/>
+                <element signature="e#5832#5833#0" expanded="false"/>
+                <element signature="e#5877#5878#0" expanded="false"/>
+                <element signature="e#5908#5909#0" expanded="false"/>
+                <element signature="e#5969#5970#0" expanded="false"/>
+                <element signature="e#6012#6013#0" expanded="false"/>
+                <element signature="e#6068#6069#0" expanded="false"/>
+                <element signature="e#6098#6099#0" expanded="false"/>
+                <element signature="e#6156#6157#0" expanded="false"/>
+                <element signature="e#6197#6198#0" expanded="false"/>
+                <element signature="e#6265#6266#0" expanded="false"/>
+                <element signature="e#6301#6302#0" expanded="false"/>
+                <element signature="e#6377#6378#0" expanded="false"/>
+                <element signature="e#6430#6431#0" expanded="false"/>
+                <element signature="e#6894#6902#0" expanded="false"/>
+                <element signature="e#7381#7411#0" expanded="false"/>
+                <element signature="e#8195#8196#0" expanded="false"/>
+                <element signature="e#8231#8232#0" expanded="false"/>
+                <element signature="e#11066#11067#0" expanded="false"/>
+                <element signature="e#11108#11109#0" expanded="false"/>
+                <element signature="e#13113#13114#0" expanded="false"/>
+                <element signature="e#13139#13140#0" expanded="false"/>
+                <element signature="e#16878#16879#0" expanded="false"/>
+                <element signature="e#16907#16908#0" expanded="false"/>
+                <element signature="e#19181#19182#0" expanded="false"/>
+                <element signature="e#19216#19217#0" expanded="false"/>
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="false"/>
+    </FindUsagesManager>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml"/>
+        <option value="$PROJECT_DIR$/resteasy-client/pom.xml"/>
+        <option value="$PROJECT_DIR$/resteasy-client/src/main/java/nl/vpro/api/client/resteasy/ApiClient.java"/>
+        <option value="$PROJECT_DIR$/resteasy-client/src/main/java/nl/vpro/api/client/resteasy/AbstractClient.java"/>
+        <option
+            value="$PROJECT_DIR$/resteasy-client/src/main/java/nl/vpro/api/client/resteasy/NpoApiClientFactory.java"/>
+        <option value="$PROJECT_DIR$/resteasy-client/src/main/java/nl/vpro/api/client/resteasy/NpoApiClient.java"/>
+        <option value="$PROJECT_DIR$/resteasy-client/src/main/java/nl/vpro/api/client/resteasy/NpoApiClients.java"/>
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-1440"/>
+    <option name="width" value="1440"/>
+    <option name="height" value="900"/>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add"/>
+    <OptionsSetting value="true" id="Remove"/>
+    <OptionsSetting value="true" id="Checkout"/>
+    <OptionsSetting value="true" id="Update"/>
+    <OptionsSetting value="true" id="Status"/>
+    <OptionsSetting value="true" id="Edit"/>
+    <ConfirmationsSetting value="0" id="Add"/>
+    <ConfirmationsSetting value="0" id="Remove"/>
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0"/>
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+      <flattenPackages/>
+      <showMembers/>
+      <showModules/>
+      <showLibraryContents/>
+      <hideEmptyPackages/>
+      <abbreviatePackageNames/>
+      <autoscrollToSource/>
+      <autoscrollFromSource/>
+      <sortByType/>
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode"/>
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resteasy-client"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resteasy-client"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resteasy-client"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="APIClient"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resteasy-client"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resteasy"/>
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode"/>
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope"/>
+      <pane id="PackagesPane"/>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="GoToFile.includeJavaFiles" value="false"/>
+    <property name="GoToClass.toSaveIncludeLibraries" value="false"/>
+    <property name="options.splitter.main.proportions" value="0.3"/>
+    <property name="MemberChooser.sorted" value="false"/>
+    <property name="options.lastSelected" value="preferences.pluginManager"/>
+    <property name="MemberChooser.showClasses" value="true"/>
+    <property name="GoToClass.includeLibraries" value="false"/>
+    <property name="MemberChooser.copyJavadoc" value="false"/>
+    <property name="options.splitter.details.proportions" value="0.2"/>
+    <property name="options.searchVisible" value="true"/>
+    <property name="LayoutCode.rearrangeEntriesJava" value="false"/>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="nl.vpro.api.client.resteasy"/>
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true"/>
+      <option name="SERVER_MODE" value="false"/>
+      <option name="SHMEM_ADDRESS" value="javadebug"/>
+      <option name="HOST" value="localhost"/>
+      <option name="PORT" value="5005"/>
+      <method/>
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
+      <method/>
+    </configuration>
+    <configuration default="true" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea"/>
+      <option name="myFilePath"/>
+      <option name="GLUE"/>
+      <option name="myNameFilter"/>
+      <option name="myGeneratedName"/>
+      <option name="MAIN_CLASS_NAME"/>
+      <option name="VM_PARAMETERS"/>
+      <option name="PROGRAM_PARAMETERS"/>
+      <option name="WORKING_DIRECTORY"/>
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false"/>
+      <option name="ALTERNATIVE_JRE_PATH"/>
+      <option name="ENABLE_SWING_INSPECTOR" value="false"/>
+      <option name="ENV_VARIABLES"/>
+      <option name="PASS_PARENT_ENVS" value="true"/>
+      <module name=""/>
+      <envs/>
+      <method/>
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name=""/>
+      <option name="MAIN_CLASS_NAME"/>
+      <option name="HTML_FILE_NAME"/>
+      <option name="HTML_USED" value="false"/>
+      <option name="WIDTH" value="400"/>
+      <option name="HEIGHT" value="300"/>
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy"/>
+      <option name="VM_PARAMETERS"/>
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false"/>
+      <option name="ALTERNATIVE_JRE_PATH"/>
+      <method/>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" runner="idea"/>
+      <option name="MAIN_CLASS_NAME"/>
+      <option name="VM_PARAMETERS"/>
+      <option name="PROGRAM_PARAMETERS"/>
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$"/>
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false"/>
+      <option name="ALTERNATIVE_JRE_PATH"/>
+      <option name="ENABLE_SWING_INSPECTOR" value="false"/>
+      <option name="ENV_VARIABLES"/>
+      <option name="PASS_PARENT_ENVS" value="true"/>
+      <module name=""/>
+      <envs/>
+      <method/>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" runner="idea"/>
+      <module name=""/>
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false"/>
+      <option name="ALTERNATIVE_JRE_PATH"/>
+      <option name="PACKAGE_NAME"/>
+      <option name="MAIN_CLASS_NAME"/>
+      <option name="METHOD_NAME"/>
+      <option name="TEST_OBJECT" value="class"/>
+      <option name="VM_PARAMETERS"/>
+      <option name="PARAMETERS"/>
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$"/>
+      <option name="ENV_VARIABLES"/>
+      <option name="PASS_PARENT_ENVS" value="true"/>
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies"/>
+      </option>
+      <envs/>
+      <patterns/>
+      <method/>
+    </configuration>
+    <list size="0"/>
+    <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
+      <Host>localhost</Host>
+      <Port>5050</Port>
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false"/>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2a3cfa0c-bd44-4524-934d-d704aa92624f" name="Default" comment=""/>
+      <created>1392019938454</created>
+      <updated>1392019938454</updated>
+      <workItem from="1392019946070" duration="3518000"/>
+    </task>
+    <servers/>
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="3518000"/>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-1440" y="0" width="1440" height="900" extended-state="6"/>
+    <editor active="true"/>
+    <layout>
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs"/>
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs"/>
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs"/>
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs"/>
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs"/>
+      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED"
+                   type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false"
+                   content_ui="tabs"/>
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs"/>
+      <window_info id="TeamCity" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs"/>
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED"
+                   type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false"
+                   content_ui="tabs"/>
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs"/>
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs"/>
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs"/>
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED"
+                   type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false"
+                   content_ui="tabs"/>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs"/>
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs"/>
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED"
+                   type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false"
+                   content_ui="tabs"/>
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED"
+                   type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false"
+                   content_ui="tabs"/>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="true" weight="0.2274678" sideWeight="0.5" order="0" side_tool="false" content_ui="combo"/>
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs"/>
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs"/>
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs"/>
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs"/>
+      <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs"/>
+      <window_info id="EJB" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs"/>
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs"/>
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs"/>
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED"
+                   visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs"/>
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection/>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000"/>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings/>
+    </option>
+    <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true"/>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager/>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/resteasy-client/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="27" selection-start="883" selection-end="883" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="645">
+          <folding>
+            <marker date="1392020399000" expanded="true" signature="-1:-1" placeholder="..."/>
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="0" selection-start="340" selection-end="340" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="330">
+          <folding/>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-domain/3.0-SNAPSHOT/api-domain-3.0-20140207.152709-627.jar!/nl/vpro/resteasy/JacksonContextResolver.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="58" selection-start="488" selection-end="488" vertical-scroll-proportion="0.19946809"
+               vertical-offset="0" max-vertical-offset="752">
+          <folding/>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-rs/3.0-SNAPSHOT/api-rs-3.0-20140207.152734-468.jar!/nl/vpro/api/rs/v2/media/MediaRestService.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="17" selection-start="291" selection-end="291" vertical-scroll-proportion="0.1420839"
+               vertical-offset="0" max-vertical-offset="915">
+          <folding/>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/jboss/resteasy/resteasy-client/3.0.6.Final/resteasy-client-3.0.6.Final.jar!/org/jboss/resteasy/client/jaxrs/ClientHttpEngine.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="178" selection-end="178" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="285">
+          <folding/>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/jboss/resteasy/resteasy-client/3.0.6.Final/resteasy-client-3.0.6.Final-sources.jar!/org/jboss/resteasy/client/jaxrs/ClientHttpEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="29" selection-start="375" selection-end="375" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="480">
+          <folding>
+            <element signature="imports" expanded="false"/>
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/jboss/resteasy/resteasy-client/3.0.6.Final/resteasy-client-3.0.6.Final-sources.jar!/org/jboss/resteasy/client/jaxrs/engines/ApacheHttpClient4Engine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="48" column="66" selection-start="1933" selection-end="1933" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="8220">
+          <folding>
+            <element signature="imports" expanded="false"/>
+            <element signature="e#4573#4574#0" expanded="false"/>
+            <element signature="e#4611#4612#0" expanded="false"/>
+            <element signature="e#4899#4900#0" expanded="false"/>
+            <element signature="e#4956#4957#0" expanded="false"/>
+            <element signature="e#5069#5070#0" expanded="false"/>
+            <element signature="e#5121#5122#0" expanded="false"/>
+            <element signature="e#5216#5217#0" expanded="false"/>
+            <element signature="e#5301#5302#0" expanded="false"/>
+            <element signature="e#5354#5355#0" expanded="false"/>
+            <element signature="e#5394#5395#0" expanded="false"/>
+            <element signature="e#5472#5473#0" expanded="false"/>
+            <element signature="e#5533#5534#0" expanded="false"/>
+            <element signature="e#5581#5582#0" expanded="false"/>
+            <element signature="e#5622#5623#0" expanded="false"/>
+            <element signature="e#5696#5697#0" expanded="false"/>
+            <element signature="e#5759#5760#0" expanded="false"/>
+            <element signature="e#5802#5803#0" expanded="false"/>
+            <element signature="e#5832#5833#0" expanded="false"/>
+            <element signature="e#5877#5878#0" expanded="false"/>
+            <element signature="e#5908#5909#0" expanded="false"/>
+            <element signature="e#5969#5970#0" expanded="false"/>
+            <element signature="e#6012#6013#0" expanded="false"/>
+            <element signature="e#6068#6069#0" expanded="false"/>
+            <element signature="e#6098#6099#0" expanded="false"/>
+            <element signature="e#6156#6157#0" expanded="false"/>
+            <element signature="e#6197#6198#0" expanded="false"/>
+            <element signature="e#6265#6266#0" expanded="false"/>
+            <element signature="e#6301#6302#0" expanded="false"/>
+            <element signature="e#6377#6378#0" expanded="false"/>
+            <element signature="e#6430#6431#0" expanded="false"/>
+            <element signature="e#6894#6902#0" expanded="false"/>
+            <element signature="e#7381#7411#0" expanded="false"/>
+            <element signature="e#8195#8196#0" expanded="false"/>
+            <element signature="e#8231#8232#0" expanded="false"/>
+            <element signature="e#11066#11067#0" expanded="false"/>
+            <element signature="e#11108#11109#0" expanded="false"/>
+            <element signature="e#13113#13114#0" expanded="false"/>
+            <element signature="e#13139#13140#0" expanded="false"/>
+            <element signature="e#16878#16879#0" expanded="false"/>
+            <element signature="e#16907#16908#0" expanded="false"/>
+            <element signature="e#19181#19182#0" expanded="false"/>
+            <element signature="e#19216#19217#0" expanded="false"/>
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1.jar!/org/apache/http/auth/AuthSchemeProvider.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="167" selection-end="167" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="195">
+          <folding/>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/auth/AuthSchemeProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="29" selection-start="1367" selection-end="1367" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="405">
+          <folding>
+            <element signature="e#0#1525#0" expanded="false"/>
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/impl/auth/BasicSchemeFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="25" selection-start="2211" selection-end="2211" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="675">
+          <folding>
+            <element signature="e#0#2241#0" expanded="false"/>
+            <element signature="imports" expanded="false"/>
+            <element signature="e#1667#1699#0" expanded="false"/>
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/impl/auth/BasicScheme.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="42" selection-start="2079" selection-end="2079" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="2715">
+          <folding>
+            <element signature="e#0#7344#0" expanded="false"/>
+            <element signature="imports" expanded="false"/>
+            <element signature="e#3659#3660#0" expanded="false"/>
+            <element signature="e#3695#3696#0" expanded="false"/>
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/impl/auth/RFC2617Scheme.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="54" column="51" selection-start="2176" selection-end="2176" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="1695">
+          <folding>
+            <element signature="e#0#4957#0" expanded="false"/>
+            <element signature="imports" expanded="false"/>
+            <element signature="e#3088#3089#0" expanded="false"/>
+            <element signature="e#3129#3130#0" expanded="false"/>
+            <element signature="e#4313#4314#0" expanded="false"/>
+            <element signature="e#4347#4348#0" expanded="false"/>
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/auth/AUTH.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="69" selection-start="1581" selection-end="1581" vertical-scroll-proportion="0.4376658"
+               vertical-offset="0" max-vertical-offset="754">
+          <folding/>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/auth/ChallengeState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="21" selection-start="1327" selection-end="1327" vertical-scroll-proportion="0.25862068"
+               vertical-offset="0" max-vertical-offset="754">
+          <folding/>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.3.1/httpclient-4.3.1-sources.jar!/org/apache/http/impl/auth/AuthSchemeBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="58" column="44" selection-start="2309" selection-end="2352" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="1995">
+          <folding>
+            <element signature="e#0#5916#0" expanded="false"/>
+            <element signature="imports" expanded="false"/>
+            <element signature="e#4789#4821#0" expanded="false"/>
+            <element signature="e#5632#5633#0" expanded="false"/>
+            <element signature="e#5674#5675#0" expanded="false"/>
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpcore/4.3/httpcore-4.3.jar!/org/apache/http/config/Lookup.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="169" selection-end="169" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="195">
+          <folding/>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpcore/4.3/httpcore-4.3-sources.jar!/org/apache/http/config/Lookup.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="19" selection-start="1304" selection-end="1304" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="315">
+          <folding/>
+        </state>
+      </provider>
+    </entry>
+    <entry
+        file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpcore/4.3/httpcore-4.3-sources.jar!/org/apache/http/config/Registry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="64" selection-start="1738" selection-end="1738" vertical-scroll-proportion="0.0"
+               vertical-offset="0" max-vertical-offset="600">
+          <folding/>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resteasy-client/src/main/java/nl/vpro/api/client/resteasy/NpoApiClients.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="91" column="50" selection-start="3827" selection-end="3827" vertical-scroll-proportion="0.64642376"
+               vertical-offset="556" max-vertical-offset="1380">
+          <folding>
+            <element signature="e#2748#2749#0" expanded="true"/>
+            <element signature="e#2792#2793#0" expanded="true"/>
+            <element signature="e#2839#2840#0" expanded="true"/>
+            <element signature="e#2882#2883#0" expanded="true"/>
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
+

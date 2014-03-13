@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Maven: nl.vpro.media:media-es-mappings:2.4-SNAPSHOT">
+    <CLASSES>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/media/media-es-mappings/2.4-SNAPSHOT/media-es-mappings-2.4-20140207.134648-91.jar!/"/>
+    </CLASSES>
+    <JAVADOC>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/media/media-es-mappings/2.4-SNAPSHOT/media-es-mappings-2.4-20140207.134648-91-javadoc.jar!/"/>
+    </JAVADOC>
+    <SOURCES>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/media/media-es-mappings/2.4-SNAPSHOT/media-es-mappings-2.4-20140207.134648-91-sources.jar!/"/>
+    </SOURCES>
+  </library>
+</component>

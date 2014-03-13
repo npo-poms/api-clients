@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/APIClient.iml" filepath="$PROJECT_DIR$/APIClient.iml"/>
+      <module fileurl="file://$PROJECT_DIR$/resteasy-client/resteasy-client.iml"
+              filepath="$PROJECT_DIR$/resteasy-client/resteasy-client.iml"/>
+    </modules>
+  </component>
+</project>
+

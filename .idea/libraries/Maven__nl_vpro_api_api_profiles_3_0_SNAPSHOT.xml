@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Maven: nl.vpro.api:api-profiles:3.0-SNAPSHOT">
+    <CLASSES>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-profiles/3.0-SNAPSHOT/api-profiles-3.0-20140207.152711-626.jar!/"/>
+    </CLASSES>
+    <JAVADOC>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-profiles/3.0-SNAPSHOT/api-profiles-3.0-20140207.152711-626-javadoc.jar!/"/>
+    </JAVADOC>
+    <SOURCES>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-profiles/3.0-SNAPSHOT/api-profiles-3.0-20140207.152711-626-sources.jar!/"/>
+    </SOURCES>
+  </library>
+</component>

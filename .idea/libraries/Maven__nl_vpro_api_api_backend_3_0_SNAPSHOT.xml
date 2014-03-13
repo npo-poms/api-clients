@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Maven: nl.vpro.api:api-backend:3.0-SNAPSHOT">
+    <CLASSES>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-backend/3.0-SNAPSHOT/api-backend-3.0-20140207.152725-505.jar!/"/>
+    </CLASSES>
+    <JAVADOC>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-backend/3.0-SNAPSHOT/api-backend-3.0-20140207.152725-505-javadoc.jar!/"/>
+    </JAVADOC>
+    <SOURCES>
+      <root
+          url="jar://$MAVEN_REPOSITORY$/nl/vpro/api/api-backend/3.0-SNAPSHOT/api-backend-3.0-20140207.152725-505-sources.jar!/"/>
+    </SOURCES>
+  </library>
+</component>
