@@ -11,10 +11,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
+import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.domain.api.MediaResult;
 import nl.vpro.domain.api.MediaSearchResult;
+import nl.vpro.domain.api.PageSearchResult;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.MediaFormBuilder;
+import nl.vpro.domain.api.page.PageForm;
+import nl.vpro.domain.api.page.PageFormBuilder;
 import nl.vpro.domain.media.MediaObject;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -97,6 +101,11 @@ public class NpoApiClientsITest {
 
     @Test
     public void testGetPageService() throws Exception {
+        PageRestService pageService = clients.getPageService();
+        PageForm form = PageFormBuilder.form().broadcasters("VPRO").broadcasterFacet().build();
 
+        PageSearchResult result = pageService.find(form, null, "none", null, null);
+
+        assertThat(result).isNotEmpty();
     }
 }
