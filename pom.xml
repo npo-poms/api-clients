@@ -15,13 +15,11 @@
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
 
-  <properties>
-    <api.version>3.0-SNAPSHOT</api.version>
-  </properties>
-
   <modules>
     <module>client-resteasy</module>
   </modules>
 
-
+  <properties>
+    <api.version>3.0-SNAPSHOT</api.version>
+  </properties>
 </project>
