@@ -25,16 +25,17 @@ import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.resteasy.JacksonContextResolver;
 
 public class NpoApiClients {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NpoApiClients.class);
-
     static {
         ResteasyProviderFactory resteasyProviderFactory = ResteasyProviderFactory.getInstance();
         try {
             JacksonContextResolver jacksonContextResolver = new JacksonContextResolver();
             resteasyProviderFactory.registerProviderInstance(jacksonContextResolver);
         } catch(Exception e) {
-            LOGGER.error("Could not add the Jackson context resolver to the Resteasy provider factory: {}", e.getMessage());
+            throw new RuntimeException(e);
         }
+
+        resteasyProviderFactory.addClientErrorInterceptor(new NpoApiClientErrorInterceptor());
+
         RegisterBuiltin.register(resteasyProviderFactory);
     }
 
@@ -57,6 +58,7 @@ public class NpoApiClients {
     }
 
     private NpoApiClients(String apiBaseUrl, NpoApiAuthentication authentication, int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
+
         this.authentication = authentication;
 
         clientHttpEngine = buildHttpEngine(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
