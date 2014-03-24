@@ -21,5 +21,6 @@
 
   <properties>
     <api.version>3.0-SNAPSHOT</api.version>
+    <pages.version>3.0-SNAPSHOT</pages.version>
   </properties>
 </project>

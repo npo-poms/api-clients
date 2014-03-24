@@ -43,7 +43,12 @@
       <version>${api.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.resteasy</groupId>
+      <groupId>nl.vpro.pages</groupId>
+      <artifactId>pages-rs</artifactId>
+      <version>${pages.version}</version>
+    </dependency>
+    <dependency>
+    <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
       <version>3.0.6.Final</version>
     </dependency>

@@ -24,23 +24,7 @@ import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.resteasy.JacksonContextResolver;
 
-public class NpoApiClients {
-    static {
-        ResteasyProviderFactory resteasyProviderFactory = ResteasyProviderFactory.getInstance();
-        try {
-            JacksonContextResolver jacksonContextResolver = new JacksonContextResolver();
-            resteasyProviderFactory.registerProviderInstance(jacksonContextResolver);
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        resteasyProviderFactory.addClientErrorInterceptor(new NpoApiClientErrorInterceptor());
-
-        RegisterBuiltin.register(resteasyProviderFactory);
-    }
-
-    private final ClientHttpEngine clientHttpEngine;
-
+public class NpoApiClients extends AbstractApiClient {
     private final NpoApiAuthentication authentication;
 
     private MediaRestService mediaRestServiceProxy;
@@ -58,10 +42,9 @@ public class NpoApiClients {
     }
 
     private NpoApiClients(String apiBaseUrl, NpoApiAuthentication authentication, int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
+        super(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
 
         this.authentication = authentication;
-
-        clientHttpEngine = buildHttpEngine(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
 
         initMediaRestServiceProxy(apiBaseUrl, clientHttpEngine);
         initPageRestServiceProxy(apiBaseUrl, clientHttpEngine);
@@ -73,26 +56,6 @@ public class NpoApiClients {
 
     public PageRestService getPageService() {
         return pageRestServiceProxy;
-    }
-
-    private ApacheHttpClient4Engine buildHttpEngine(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
-        PoolingHttpClientConnectionManager poolingClientConnectionManager = new PoolingHttpClientConnectionManager(connectionInPoolTTL, TimeUnit.MILLISECONDS);
-        poolingClientConnectionManager.setDefaultMaxPerRoute(maxConnections);
-        poolingClientConnectionManager.setMaxTotal(maxConnections);
-
-        RequestConfig defaultRequestConfig = RequestConfig.custom()
-            .setExpectContinueEnabled(true)
-            .setStaleConnectionCheckEnabled(true)
-            .setMaxRedirects(100)
-            .setConnectionRequestTimeout(connectionTimeoutMillis)
-            .build();
-
-        CloseableHttpClient client = HttpClients.custom()
-            .setConnectionManager(poolingClientConnectionManager)
-            .setDefaultRequestConfig(defaultRequestConfig)
-            .build();
-
-        return new ApacheHttpClient4Engine(client);
     }
 
     private void initMediaRestServiceProxy(String url, ClientHttpEngine engine) {
