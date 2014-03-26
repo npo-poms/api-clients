@@ -61,12 +61,12 @@ public class NpoApiClients extends AbstractApiClient {
     private void initMediaRestServiceProxy(String url, ClientHttpEngine engine) {
         ResteasyClient client = new ResteasyClientBuilder().httpEngine(engine).register(authentication).build();
         ResteasyWebTarget target = client.target(url);
-        mediaRestServiceProxy = target.proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
+        mediaRestServiceProxy = target.proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
     }
 
     private void initPageRestServiceProxy(String url, ClientHttpEngine clientHttpEngine) {
         ResteasyClient client = new ResteasyClientBuilder().httpEngine(clientHttpEngine).register(authentication).build();
         ResteasyWebTarget target = client.target(url);
-        pageRestServiceProxy = target.proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
+        pageRestServiceProxy = target.proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
     }
 }
