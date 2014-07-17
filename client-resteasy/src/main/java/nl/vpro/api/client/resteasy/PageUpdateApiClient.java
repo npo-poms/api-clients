@@ -6,14 +6,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.*;
 
-import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
-import nl.vpro.rs.pages.update.PageUpdateRestService;
 
 public class PageUpdateApiClient extends AbstractApiClient {
     private final BasicAuthentication authentication;
 
-    private PageUpdateRestService pageUpdateRestService;
+    private PageRestService pageUpdateRestService;
 
     @Inject
     public PageUpdateApiClient(
@@ -32,13 +30,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
         initPageUpdateRestServiceProxy(apiBaseUrl, clientHttpEngine);
     }
 
-    public PageUpdateRestService getPageUpdateService() {
+    public PageRestService getPageService() {
         return pageUpdateRestService;
     }
 
     private void initPageUpdateRestServiceProxy(String url, ClientHttpEngine engine) {
         ResteasyClient client = new ResteasyClientBuilder().httpEngine(engine).register(authentication).build();
         ResteasyWebTarget target = client.target(url);
-        pageUpdateRestService = target.proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
+        pageUpdateRestService = target.proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
     }
 }
