@@ -17,6 +17,7 @@
 
   <modules>
     <module>client-resteasy</module>
+    <module>client-utils</module>
   </modules>
 
   <properties>
