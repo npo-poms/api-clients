@@ -84,4 +84,9 @@ public class MediaRestClientUtils {
         }
     }
 
+    public static MediaObject[] load(MediaRestService restService, String... ids) {
+        // TODO MGNL-10958
+        throw new UnsupportedOperationException();
+    }
+
 }
