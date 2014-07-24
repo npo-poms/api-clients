@@ -91,6 +91,12 @@ public class MediaRestClientUtils {
         return result.toArray(new MediaObject[result.size()]);
     }
 
+    /**
+     * Only call this during the migration to NPO API while not everything is converted to MID yet.
+     *
+     * @deprecated Migrate code and data from URN to MID.
+     */
+    @Deprecated
     public static String toMid(MediaRestService restService, String urn) {
         MediaForm mediaForm = MediaFormBuilder.form().mediaIds(urn).build();
         MediaSearchResult result = restService.find(mediaForm, null, "mid", 0L, 1);
