@@ -11,6 +11,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
+import nl.vpro.api.rs.v3.profile.ProfileRestService;
 
 public class NpoApiClients extends AbstractApiClient {
     private final NpoApiAuthentication authentication;
@@ -18,6 +19,9 @@ public class NpoApiClients extends AbstractApiClient {
     private MediaRestService mediaRestServiceProxy;
 
     private PageRestService pageRestServiceProxy;
+
+    private ProfileRestService profileRestServiceProxy;
+
 
     @Inject
     public NpoApiClients(
@@ -34,8 +38,9 @@ public class NpoApiClients extends AbstractApiClient {
 
         this.authentication = authentication;
 
-        initMediaRestServiceProxy(apiBaseUrl, clientHttpEngine);
-        initPageRestServiceProxy(apiBaseUrl, clientHttpEngine);
+        initMediaRestServiceProxy(apiBaseUrl);
+        initPageRestServiceProxy(apiBaseUrl);
+        initProfileRestServiceProxy(apiBaseUrl);
     }
 
     public MediaRestService getMediaService() {
@@ -46,15 +51,24 @@ public class NpoApiClients extends AbstractApiClient {
         return pageRestServiceProxy;
     }
 
-    private void initMediaRestServiceProxy(String url, ClientHttpEngine engine) {
-        ResteasyClient client = new ResteasyClientBuilder().httpEngine(engine).register(authentication).build();
-        ResteasyWebTarget target = client.target(url);
-        mediaRestServiceProxy = target.proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
+    public ProfileRestService getProfileService() {
+        return profileRestServiceProxy;
     }
 
-    private void initPageRestServiceProxy(String url, ClientHttpEngine clientHttpEngine) {
+    private ResteasyWebTarget getTarget(String url) {
         ResteasyClient client = new ResteasyClientBuilder().httpEngine(clientHttpEngine).register(authentication).build();
-        ResteasyWebTarget target = client.target(url);
-        pageRestServiceProxy = target.proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
+        return client.target(url);
+    }
+
+    private void initMediaRestServiceProxy(String url) {
+        mediaRestServiceProxy = getTarget(url).proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
+    }
+
+    private void initPageRestServiceProxy(String url) {
+        pageRestServiceProxy = getTarget(url).proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
+    }
+
+    private void initProfileRestServiceProxy(String url) {
+        pageRestServiceProxy = getTarget(url).proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
     }
 }
