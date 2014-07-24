@@ -1,10 +1,4 @@
 package nl.vpro.api.client.utils;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.Match;
@@ -15,12 +9,13 @@ import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.media.MediaSortField;
 import nl.vpro.domain.api.media.MediaSortOrder;
-import nl.vpro.domain.media.AVType;
-import nl.vpro.domain.media.GroupType;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.media.MediaType;
-import nl.vpro.domain.media.ProgramType;
-import nl.vpro.domain.media.SegmentType;
+import nl.vpro.domain.media.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Michiel Meeuwissen
@@ -34,7 +29,6 @@ public class MediaRestClientUtils {
      * Similar to the v1 call for easier migration
      */
     public static MediaForm getRecentPlayablePrograms(AVType avType) {
-
 
         MediaFormBuilder formBuilder = MediaFormBuilder.form();
 
@@ -52,9 +46,7 @@ public class MediaRestClientUtils {
         MediaForm form = formBuilder.types(Match.NOT, excludedTypes.toArray(new MediaType[excludedTypes.size()])).build();
         form.addSortField(new MediaSortOrder(MediaSortField.sortDate, Order.DESC));
 
-
         return form;
-
     }
 
     public static List<MediaObject> adapt(final MediaSearchResult result) {
@@ -74,10 +66,9 @@ public class MediaRestClientUtils {
         };
     }
 
-
-    public static MediaObject loadOrNull(MediaRestService restService, String urn) {
+    public static MediaObject loadOrNull(MediaRestService restService, String id) {
         try {
-            return restService.load(urn, null);
+            return restService.load(id, null);
         } catch (Exception e) {
             LOG.warn(e.getMessage());
             return null;
@@ -85,8 +76,8 @@ public class MediaRestClientUtils {
     }
 
     public static MediaObject[] load(MediaRestService restService, String... ids) {
-        // TODO MGNL-10958
-        throw new UnsupportedOperationException();
+        MediaForm mediaForm = MediaFormBuilder.form().mediaIds(ids).build();
+        MediaSearchResult result = restService.find(mediaForm, null, null, 0L, Integer.MAX_VALUE);
+        return adapt(result).toArray(new MediaObject[result.getSize()]);
     }
-
 }
