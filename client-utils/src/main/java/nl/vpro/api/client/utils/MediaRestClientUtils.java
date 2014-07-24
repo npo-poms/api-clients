@@ -1,10 +1,8 @@
 package nl.vpro.api.client.utils;
 
+import com.google.common.collect.Lists;
 import nl.vpro.api.rs.v3.media.MediaRestService;
-import nl.vpro.domain.api.Match;
-import nl.vpro.domain.api.MediaSearchResult;
-import nl.vpro.domain.api.Order;
-import nl.vpro.domain.api.SearchResultItem;
+import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.media.MediaSortField;
@@ -15,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -76,8 +75,28 @@ public class MediaRestClientUtils {
     }
 
     public static MediaObject[] load(MediaRestService restService, String... ids) {
-        MediaForm mediaForm = MediaFormBuilder.form().mediaIds(ids).build();
-        MediaSearchResult result = restService.find(mediaForm, null, null, 0L, Integer.MAX_VALUE);
-        return adapt(result).toArray(new MediaObject[result.getSize()]);
+        List<MediaObject> result = new ArrayList<>(ids.length);
+
+        /*
+         * Calling restService.find with max > Constants.MAX_RESULTS gets you a BadRequestException,
+         * so the list of ids is partitioned first and if needed multiple find calls are executed...
+         */
+        for (List<String> idList : Lists.partition(Arrays.asList(ids), Constants.MAX_RESULTS)) {
+            String[] partitionedIds = idList.toArray(new String[idList.size()]);
+            MediaForm mediaForm = MediaFormBuilder.form().mediaIds(partitionedIds).build();
+            MediaSearchResult mediaSearchResult = restService.find(mediaForm, null, null, 0L, idList.size());
+            result.addAll(adapt(mediaSearchResult));
+        }
+
+        return result.toArray(new MediaObject[result.size()]);
+    }
+
+    public static String toMid(MediaRestService restService, String urn) {
+        MediaForm mediaForm = MediaFormBuilder.form().mediaIds(urn).build();
+        MediaSearchResult result = restService.find(mediaForm, null, "mid", 0L, 1);
+        if (result.getSize() == 0) {
+            return null;
+        }
+        return result.getItems().get(0).getResult().getMid();
     }
 }
