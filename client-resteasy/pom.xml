@@ -34,17 +34,17 @@
     </dependency>
     <dependency>
       <groupId>nl.vpro.api</groupId>
-      <artifactId>api-rs-media</artifactId>
+      <artifactId>api-rs</artifactId>
       <version>${api.version}</version>
     </dependency>
     <dependency>
       <groupId>nl.vpro.api</groupId>
-      <artifactId>api-rs-pages</artifactId>
+      <artifactId>api-rs-services</artifactId>
       <version>${api.version}</version>
     </dependency>
     <dependency>
       <groupId>nl.vpro.pages</groupId>
-      <artifactId>pages-rs</artifactId>
+      <artifactId>pages-rs-services</artifactId>
       <version>${pages.version}</version>
     </dependency>
     <dependency>
