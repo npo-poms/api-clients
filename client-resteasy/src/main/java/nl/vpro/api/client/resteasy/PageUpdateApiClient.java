@@ -1,17 +1,18 @@
 package nl.vpro.api.client.resteasy;
 
+import nl.vpro.rs.pages.update.PageUpdateRestService;
+import org.jboss.resteasy.client.jaxrs.*;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
-import org.jboss.resteasy.client.jaxrs.*;
-
-import nl.vpro.rs.pages.update.PageUpdateRestService;
-
 public class PageUpdateApiClient extends AbstractApiClient {
     private final BasicAuthentication authentication;
 
-    private PageUpdateRestService pageUpdateRestService;
+    private final PageUpdateRestService pageUpdateRestService;
+
+    private final String toString;
 
     @Inject
     public PageUpdateApiClient(
@@ -19,24 +20,20 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Named("pageupdate-api.user") String user,
         @Named("pageupdate-api.password") String password
     ) {
-        this(apiBaseUrl, new BasicAuthentication(user, password), 10000, 16, 10000);
-    }
-
-    private PageUpdateApiClient(String apiBaseUrl, BasicAuthentication authentication, int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
-        super(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
-
-        this.authentication = authentication;
-
-        initPageUpdateRestServiceProxy(apiBaseUrl, clientHttpEngine);
+        super(10000, 16, 10000);
+        this.authentication = new BasicAuthentication(user, password);
+        ResteasyClient client = new ResteasyClientBuilder().httpEngine(clientHttpEngine).register(authentication).build();
+        ResteasyWebTarget target = client.target(apiBaseUrl);
+        pageUpdateRestService = target.proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
+        toString = user + "@" + apiBaseUrl;
     }
 
     public PageUpdateRestService getPageUpdateRestService() {
         return pageUpdateRestService;
     }
 
-    private void initPageUpdateRestServiceProxy(String url, ClientHttpEngine engine) {
-        ResteasyClient client = new ResteasyClientBuilder().httpEngine(engine).register(authentication).build();
-        ResteasyWebTarget target = client.target(url);
-        pageUpdateRestService = target.proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
+    @Override
+    public String toString() {
+        return getClass().getName() + " " + toString;
     }
 }
