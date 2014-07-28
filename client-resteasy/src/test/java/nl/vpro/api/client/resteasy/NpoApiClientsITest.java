@@ -14,6 +14,7 @@ import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.domain.api.page.PageFormBuilder;
 import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.Program;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,7 +44,7 @@ public class NpoApiClientsITest {
     @Test(expected = NotAuthorizedException.class)
     public void testAccessForbidden() throws Exception {
         clients = new NpoApiClients(
-            "http://rs-dev.poms.omroep.nl/v1/api/",
+            "http://rs-dev.poms.omroep.nl/v1/",
             "ione7ahfij",
             "WRONG_PASSWORD",
             "http://www.vpro.nl"
@@ -56,6 +57,13 @@ public class NpoApiClientsITest {
     public void testNotFound() throws Exception {
         clients.getMediaService().load("DOES_NOT_EXIST", null);
     }
+
+
+	@Test
+	public void testFound() throws Exception {
+		Program program = (Program) clients.getMediaService().load("POMS_VPRO_158299", null);
+		System.out.println(program.getMainTitle());
+	}
 
     @Test
     public void testMediaServiceLists() throws Exception {
