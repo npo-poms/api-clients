@@ -1,17 +1,15 @@
 package nl.vpro.api.client.resteasy;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-
-import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
+import nl.vpro.api.rs.v3.media.MediaRestService;
+import nl.vpro.api.rs.v3.page.PageRestService;
+import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
-import nl.vpro.api.rs.v3.media.MediaRestService;
-import nl.vpro.api.rs.v3.page.PageRestService;
-import nl.vpro.api.rs.v3.profile.ProfileRestService;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
 
 public class NpoApiClients extends AbstractApiClient {
     private final NpoApiAuthentication authentication;
@@ -38,9 +36,10 @@ public class NpoApiClients extends AbstractApiClient {
 
         this.authentication = authentication;
 
-        initMediaRestServiceProxy(apiBaseUrl);
-        initPageRestServiceProxy(apiBaseUrl);
-        initProfileRestServiceProxy(apiBaseUrl);
+        String baseUrl = apiBaseUrl + "api";
+        initMediaRestServiceProxy(baseUrl);
+        initPageRestServiceProxy(baseUrl);
+        initProfileRestServiceProxy(baseUrl);
     }
 
     public MediaRestService getMediaService() {

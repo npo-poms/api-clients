@@ -4,12 +4,6 @@
  */
 package nl.vpro.api.client.resteasy;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotAuthorizedException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.domain.api.MediaResult;
@@ -20,6 +14,11 @@ import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.domain.api.page.PageFormBuilder;
 import nl.vpro.domain.media.MediaObject;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -34,8 +33,7 @@ public class NpoApiClientsITest {
     @Before
     public void setUp() {
         clients = new NpoApiClients(
-            "http://rs-dev.poms.omroep.nl/v1/api/",
-//            "http://localhost:8080/v1/api/",
+            "http://rs-dev.poms.omroep.nl/v1/",
             "ione7ahfij",
             "***REMOVED***",
             "http://www.vpro.nl"
