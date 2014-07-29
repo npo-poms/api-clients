@@ -1,17 +1,19 @@
 package nl.vpro.api.client.resteasy;
 
-import nl.vpro.api.rs.v3.media.MediaRestService;
-import nl.vpro.api.rs.v3.page.PageRestService;
-import nl.vpro.api.rs.v3.profile.ProfileRestService;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+
+import nl.vpro.api.rs.v3.media.MediaRestService;
+import nl.vpro.api.rs.v3.page.PageRestService;
+import nl.vpro.api.rs.v3.profile.ProfileRestService;
+
 public class NpoApiClients extends AbstractApiClient {
+
     private final NpoApiAuthentication authentication;
 
     private final MediaRestService mediaRestServiceProxy;
@@ -32,9 +34,9 @@ public class NpoApiClients extends AbstractApiClient {
 		super(10000, 16, 10000);
         this.authentication = new NpoApiAuthentication(apiKey, secret, origin);
         baseUrl = apiBaseUrl + "api";
-		mediaRestServiceProxy = getTarget(baseUrl).proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
-		pageRestServiceProxy = getTarget(baseUrl).proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
-		profileRestServiceProxy = getTarget(baseUrl).proxyBuilder(ProfileRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
+        mediaRestServiceProxy = getTarget(baseUrl).proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_JSON_TYPE).build();
+        pageRestServiceProxy = getTarget(baseUrl).proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_JSON_TYPE).build();
+        profileRestServiceProxy = getTarget(baseUrl).proxyBuilder(ProfileRestService.class).defaultConsumes(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     public MediaRestService getMediaService() {
