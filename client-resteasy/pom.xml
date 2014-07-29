@@ -38,27 +38,22 @@
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
-      <version>3.0</version>
     </dependency>
     <dependency>
       <groupId>nl.vpro.api</groupId>
       <artifactId>api-rs-services</artifactId>
-      <version>${api.version}</version>
     </dependency>
     <dependency>
       <groupId>nl.vpro.pages</groupId>
       <artifactId>pages-rs-services</artifactId>
-      <version>${pages.version}</version>
     </dependency>
     <dependency>
     <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
-      <version>3.0.6.Final</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.3.1</version>
     </dependency>
   </dependencies>
 </project>
