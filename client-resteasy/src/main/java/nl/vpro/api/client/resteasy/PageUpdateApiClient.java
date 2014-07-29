@@ -1,18 +1,25 @@
 package nl.vpro.api.client.resteasy;
 
-import nl.vpro.domain.classification.ClassificationService;
-import nl.vpro.domain.classification.ClassificationServiceImpl;
-import nl.vpro.rs.pages.update.PageUpdateRestService;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
+
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.UrlResource;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-import java.net.MalformedURLException;
+import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.classification.ClassificationServiceImpl;
+import nl.vpro.rs.pages.update.PageUpdateRestService;
 
 public class PageUpdateApiClient extends AbstractApiClient {
     private final BasicAuthentication authentication;
@@ -45,12 +52,34 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
     public ClassificationService getClassificationService() {
+        String url = baseUrl + "schema/classification";
+        if (classificationService != null) {
+            try {
+                URL u = new URL(url);
+                HttpURLConnection connection = (HttpURLConnection) u.openConnection();
+                connection.setRequestProperty("If-Modified-Since", Util.rfc822(classificationService.getLastModified()));
 
-        // TODO. Should use actual Rest call?
+                int code = connection.getResponseCode();
+                switch(code) {
+                    case HttpServletResponse.SC_NOT_MODIFIED:
+                        break;
+                    case HttpServletResponse.SC_OK:
+                        InputStream input = connection.getInputStream();
+                        classificationService = new ClassificationServiceImpl(
+                            new InputStreamResource(input));
+                        break;
+                    default:
+
+                }
+
+            } catch (Exception e) {
+
+            }
+        }
         if (classificationService == null) {
             try {
                 classificationService = new ClassificationServiceImpl(
-                        new UrlResource(baseUrl + "schema/classification")
+                    new UrlResource(baseUrl + "schema/classification")
                 );
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);

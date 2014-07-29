@@ -4,6 +4,12 @@
  */
 package nl.vpro.api.client.resteasy;
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.domain.api.MediaResult;
@@ -15,11 +21,6 @@ import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.domain.api.page.PageFormBuilder;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotAuthorizedException;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -114,4 +115,6 @@ public class NpoApiClientsITest {
 
         assertThat(result).isNotEmpty();
     }
+
+
 }
