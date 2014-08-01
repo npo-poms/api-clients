@@ -4,9 +4,13 @@
  */
 package nl.vpro.api.client.resteasy;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotAuthorizedException;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -103,7 +107,13 @@ public class NpoApiClientsITest {
 
         assertThat(mediaService.findDescendants(form, mid, null, null, null, null)).isNotNull();
 
-// TODO enable        assertThat(mediaService.findRelated(form, mid, null, null, null)).isNotNull();
+        // TODO enable        assertThat(mediaService.findRelated(form, mid, null, null, null)).isNotNull();
+    }
+
+    @Test
+    public void testChanges() throws IOException {
+        InputStream response = clients.getMediaService().changes("vpro", null, 0l, null, 10, null, null);
+        IOUtils.copy(response, System.out);
     }
 
     @Test

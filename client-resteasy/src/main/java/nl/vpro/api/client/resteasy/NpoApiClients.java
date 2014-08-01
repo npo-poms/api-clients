@@ -35,7 +35,7 @@ public class NpoApiClients extends AbstractApiClient {
         this.authentication = new NpoApiAuthentication(apiKey, secret, origin);
         baseUrl = apiBaseUrl + "api";
         mediaRestServiceProxy = getTarget(baseUrl).proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_JSON_TYPE).build();
-        pageRestServiceProxy = getTarget(baseUrl).proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_JSON_TYPE).build();
+        pageRestServiceProxy  = getTarget(baseUrl).proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_JSON_TYPE).build();
         profileRestServiceProxy = getTarget(baseUrl).proxyBuilder(ProfileRestService.class).defaultConsumes(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
@@ -52,7 +52,11 @@ public class NpoApiClients extends AbstractApiClient {
     }
 
     private ResteasyWebTarget getTarget(String url) {
-        ResteasyClient client = new ResteasyClientBuilder().httpEngine(clientHttpEngine).register(authentication).build();
+        ResteasyClient client =
+            new ResteasyClientBuilder()
+                .httpEngine(clientHttpEngine)
+                .register(authentication)
+                .build();
         return client.target(url);
     }
 
