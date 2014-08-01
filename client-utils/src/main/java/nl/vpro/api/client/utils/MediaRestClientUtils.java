@@ -1,10 +1,8 @@
 package nl.vpro.api.client.utils;
 
 import java.io.IOException;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.InputStream;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,8 +92,10 @@ public class MediaRestClientUtils {
         return result.toArray(new MediaObject[result.size()]);
     }
 
-    public static List<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
-        return restService.changes(profile, null, since, order.name().toLowerCase(), max, null, null).getChanges();
+    public static Iterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
+        InputStream response = restService.changes(profile, null, since, order.name().toLowerCase(), max, null, null);
+        return new ChangeIterator(response);
+
     }
 
     /**

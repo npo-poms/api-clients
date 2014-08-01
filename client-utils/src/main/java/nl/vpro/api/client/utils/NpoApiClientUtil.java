@@ -1,7 +1,7 @@
 package nl.vpro.api.client.utils;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Iterator;
 
 import javax.inject.Inject;
 
@@ -31,7 +31,7 @@ public class NpoApiClientUtil {
         return MediaRestClientUtils.load(clients.getMediaService(), ids);
     }
 
-    public List<Change> changes(String profile, long since, Order order, Integer max) throws IOException {
+    public Iterator<Change> changes(String profile, long since, Order order, Integer max) throws IOException {
         return MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
     }
 
