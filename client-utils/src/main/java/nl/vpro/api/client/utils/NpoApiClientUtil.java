@@ -13,13 +13,13 @@ import nl.vpro.domain.media.MediaObject;
 /**
  * @author Michiel Meeuwissen
  */
-public class MediaRestClientUtil {
+public class NpoApiClientUtil {
 
 
     final NpoApiClients clients;
 
     @Inject
-    public MediaRestClientUtil(NpoApiClients clients) {
+    public NpoApiClientUtil(NpoApiClients clients) {
         this.clients = clients;
     }
 
