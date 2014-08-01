@@ -1,6 +1,16 @@
 package nl.vpro.api.client.utils;
 
+import java.io.IOException;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Lists;
+
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.MediaForm;
@@ -8,13 +18,6 @@ import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.media.MediaSortField;
 import nl.vpro.domain.api.media.MediaSortOrder;
 import nl.vpro.domain.media.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Michiel Meeuwissen
@@ -89,6 +92,10 @@ public class MediaRestClientUtils {
         }
 
         return result.toArray(new MediaObject[result.size()]);
+    }
+
+    public static List<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
+        return restService.changes(profile, null, since, order.name().toLowerCase(), max, null, null).getChanges();
     }
 
     /**
