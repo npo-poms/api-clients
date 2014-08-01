@@ -35,6 +35,10 @@ public class NpoApiClientUtil {
         return MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
     }
 
+    public String toMid(String urn) {
+        return MediaRestClientUtils.toMid(clients.getMediaService(), urn);
+    }
+
     @Override
     public String toString() {
         return String.valueOf(clients);
