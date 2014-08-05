@@ -17,11 +17,13 @@ public class PageUpdateApiClientUtilTest  {
 
     private PageUpdateApiClientUtil util;
 
+    //private String target = "http://publish-dev.poms.omroep.nl/";
+    private String target = "http://localhost:8060/";
 
     @Before
     public void setUp() throws MalformedURLException {
         PageUpdateApiClient clients = new PageUpdateApiClient(
-            "http://publish-dev.poms.omroep.nl/",
+            target,
             "vpro-cms",
             "***REMOVED***");
         util = new PageUpdateApiClientUtil(clients);
@@ -38,9 +40,11 @@ public class PageUpdateApiClientUtilTest  {
 
     @Test
     public void testDelete() throws Exception {
-        String id  = "bla";
+        String id  = "http://BESTAATNIET";
         Result result = util.delete(id);
-        assertThat(result.isSuccess()).isFalse();
-        System.out.println(result.getErrors());
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.getStatus()).isEqualTo(Result.Status.NOTFOUND);
+
+        System.out.println("errors " + result.getErrors());
     }
 }

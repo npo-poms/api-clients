@@ -6,24 +6,32 @@ package nl.vpro.api.client.utils;
  */
 public class Result {
 
-    private final boolean success;
+    private final Status status;
 
     private final String errors;
 
-    private Result(boolean success, String errors) {
-        this.success = success;
+    private Result(Status success, String errors) {
+        this.status = success;
         this.errors = errors;
     }
 
     public static Result success() {
-        return new Result(true, null);
+        return new Result(Status.SUCCESS, null);
     }
+
     public static Result error(String message) {
-        return new Result(false, message);
+        return new Result(Status.ERROR, message);
+    }
+
+    public static Result notfound(String message) {
+        return new Result(Status.NOTFOUND, message);
     }
 
     public boolean isSuccess() {
-        return success;
+        return status != Status.ERROR;
+    }
+    public Status getStatus() {
+        return status;
     }
 
     public String getErrors() {
@@ -32,6 +40,12 @@ public class Result {
 
     @Override
     public String toString() {
-        return success + ":" + errors;
+        return status + ":" + errors;
+    }
+
+    public enum Status {
+        SUCCESS,
+        ERROR,
+        NOTFOUND
     }
 }
