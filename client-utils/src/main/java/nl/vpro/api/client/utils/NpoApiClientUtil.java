@@ -10,6 +10,7 @@ import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.MediaType;
 
 /**
  * @author Michiel Meeuwissen
@@ -32,18 +33,29 @@ public class NpoApiClientUtil {
         return MediaRestClientUtils.load(clients.getMediaService(), ids);
     }
 
-    public Iterator<Change> changes(String profile, long since, Order order, Integer max) throws IOException {
-        return MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
+    public Iterator<Change> changes(String profile, long since, Order order, Integer max) {
+        try {
+            return MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
-
     @Deprecated
-    public Iterator<MediaObject> iterate(MediaForm form, String profile) throws IOException {
-        return MediaRestClientUtils.iterate(clients.getMediaService(), form, profile);
+    public Iterator<MediaObject> iterate(MediaForm form, String profile)  {
+        try {
+            return MediaRestClientUtils.iterate(clients.getMediaService(), form, profile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Deprecated
     public String toMid(String urn) {
         return MediaRestClientUtils.toMid(clients.getMediaService(), urn);
+    }
+
+    public MediaType getType(String mid) {
+        return load(mid)[0].getMediaType();
     }
 
     @Override
