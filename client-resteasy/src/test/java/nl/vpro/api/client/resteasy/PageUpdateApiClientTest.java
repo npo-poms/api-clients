@@ -2,10 +2,16 @@ package nl.vpro.api.client.resteasy;
 
 import java.net.MalformedURLException;
 
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXB;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.page.PageType;
+import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.rs.pages.update.PageUpdateRestService;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,7 +29,12 @@ public class PageUpdateApiClientTest {
 
     @Test
     public void testGetPageUpdateRestService() throws Exception {
-        clients.getPageUpdateRestService();
+        PageUpdateRestService client = clients.getPageUpdateRestService();
+        PageUpdate instance = new PageUpdate(PageType.NEWS, "http://vpro.nl/test");
+        Response response = client.save(instance);
+        System.out.println(response.getStatus());
+        System.out.println(response.getEntity());
+        JAXB.marshal(instance, System.out);
     }
 
     @Test

@@ -42,7 +42,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         this.authentication = new BasicAuthentication(user, password);
         ResteasyClient client = new ResteasyClientBuilder().httpEngine(clientHttpEngine).register(authentication).build();
         ResteasyWebTarget target = client.target(apiBaseUrl + "api/");
-        pageUpdateRestService = target.proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
+        pageUpdateRestService = target.proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_JSON).build();
         toString = user + "@" + apiBaseUrl;
         this.baseUrl = apiBaseUrl;
     }
