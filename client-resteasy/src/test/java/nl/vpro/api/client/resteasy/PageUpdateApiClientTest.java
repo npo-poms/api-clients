@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXB;
 
+import org.jboss.resteasy.api.validation.ViolationReport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,6 +19,8 @@ import static org.junit.Assert.assertEquals;
 public class PageUpdateApiClientTest {
 
     private PageUpdateApiClient clients;
+
+
 
     @Before
     public void setUp() throws MalformedURLException {
@@ -33,7 +36,8 @@ public class PageUpdateApiClientTest {
         PageUpdate instance = new PageUpdate(PageType.NEWS, "http://vpro.nl/test");
         Response response = client.save(instance);
         System.out.println(response.getStatus());
-        System.out.println(response.getEntity());
+        ViolationReport report = response.readEntity(ViolationReport.class);
+        System.out.println(response.readEntity(ViolationReport.class));
         JAXB.marshal(instance, System.out);
     }
 
