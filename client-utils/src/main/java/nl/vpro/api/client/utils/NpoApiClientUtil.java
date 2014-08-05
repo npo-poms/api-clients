@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
+import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.media.MediaObject;
 
 /**
@@ -35,6 +36,12 @@ public class NpoApiClientUtil {
         return MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
     }
 
+    @Deprecated
+    public Iterator<MediaObject> iterate(MediaForm form, String profile) throws IOException {
+        return MediaRestClientUtils.iterate(clients.getMediaService(), form, profile);
+    }
+
+    @Deprecated
     public String toMid(String urn) {
         return MediaRestClientUtils.toMid(clients.getMediaService(), urn);
     }

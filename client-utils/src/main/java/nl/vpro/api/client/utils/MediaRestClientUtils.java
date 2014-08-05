@@ -94,7 +94,18 @@ public class MediaRestClientUtils {
 
     public static Iterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         InputStream response = restService.changes(profile, null, since, order.name().toLowerCase(), max, null, null);
-        return new ChangeIterator(response);
+        return new JsonArrayIterator<>(response, Change.class);
+
+    }
+
+    /**
+     *
+     * @deprecated We'll make a sitemap feature on page rest service.
+     */
+    @Deprecated
+    public static Iterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) throws IOException {
+        InputStream response = restService.iterate(form, profile, null, 0l, Integer.MAX_VALUE, null, null);
+        return new JsonArrayIterator<>(response, MediaObject.class);
 
     }
 

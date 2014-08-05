@@ -4,14 +4,16 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import nl.vpro.domain.api.Change;
+
 import static org.fest.assertions.Assertions.assertThat;
 
-public class ChangeIteratorTest {
+public class JsonArrayIteratorTest {
 
 
     @Test
     public void test() throws IOException {
-        ChangeIterator it = new ChangeIterator(getClass().getResourceAsStream("/changes.json"));
+        JsonArrayIterator<Change> it = new JsonArrayIterator<>(getClass().getResourceAsStream("/changes.json"), Change.class);
         assertThat(it.next().getMid()).isEqualTo("POMS_NCRV_1138990");
         for (int i = 0; i < 8; i++) {
             assertThat(it.hasNext()).isTrue();

@@ -7,21 +7,23 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.google.common.collect.UnmodifiableIterator;
 
-import nl.vpro.domain.api.Change;
 import nl.vpro.jackson2.Jackson2Mapper;
 
 /**
  * @author Michiel Meeuwissen
  * @since 1.0
  */
-public class ChangeIterator extends UnmodifiableIterator<Change> {
+public class JsonArrayIterator<T> extends UnmodifiableIterator<T> {
 
     final JsonParser jp;
 
-    private Change next = null;
+    private T next = null;
 
-    public ChangeIterator(InputStream inputStream) throws IOException {
+    private final Class<T> clazz;
+
+    public JsonArrayIterator(InputStream inputStream, Class<T> clazz) throws IOException {
         this.jp = Jackson2Mapper.getInstance().getFactory().createParser(inputStream);
+        this.clazz = clazz;
         while(true) {
             JsonToken token = jp.nextToken();
             if (token == JsonToken.START_ARRAY) break;
@@ -35,16 +37,16 @@ public class ChangeIterator extends UnmodifiableIterator<Change> {
     }
 
     @Override
-    public Change next() {
+    public T next() {
         findNext();
-        Change result = next;
+        T result = next;
         next = null;
         return result;
     }
     protected void findNext() {
         if (next == null) {
             try {
-                next = jp.readValueAs(Change.class);
+                next = jp.readValueAs(clazz);
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
