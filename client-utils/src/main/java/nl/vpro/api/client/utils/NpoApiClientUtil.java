@@ -37,15 +37,15 @@ public class NpoApiClientUtil {
         try {
             return MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(clients + ":" + e.getStackTrace(), e);
         }
     }
     @Deprecated
     public Iterator<MediaObject> iterate(MediaForm form, String profile)  {
         try {
             return MediaRestClientUtils.iterate(clients.getMediaService(), form, profile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Throwable e) {
+            throw new RuntimeException(clients + ":" + e.getMessage(), e);
         }
     }
 
