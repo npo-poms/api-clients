@@ -67,18 +67,22 @@ public class PageUpdateApiClientUtil {
     }
 
     public Result save(@NotNull @Valid PageUpdate update) {
+        limiter.acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().save(update), update, JACKSON);
         } catch (Exception e) {
+            downRate();
             return Result.error(pageUpdateApiClient + ":" + e.getMessage());
         }
 
     }
 
     public Result delete(@NotNull String id) {
+        limiter.acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, false), id, STRING);
         } catch (Exception e) {
+            downRate();
             LOG.warn(e.getMessage());
             return Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage());
         }
@@ -87,9 +91,11 @@ public class PageUpdateApiClientUtil {
 
 
     public Result deleteWhereStartsWith(@NotNull String id) {
+        limiter.acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, true), id, STRING);
         } catch (Exception e) {
+            downRate();
             return Result.error(pageUpdateApiClient + ":" + e.getMessage());
         }
 
@@ -116,7 +122,6 @@ public class PageUpdateApiClientUtil {
     }
 
     protected <T> Result handleResponse(Response response, T input, Function<Object, String> toString) {
-        limiter.acquire();
         switch(response.getStatus()) {
             case 200:
                 LOG.debug(pageUpdateApiClient + " " + response.getStatus());
