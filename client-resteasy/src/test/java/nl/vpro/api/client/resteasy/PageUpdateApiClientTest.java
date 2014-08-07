@@ -36,7 +36,7 @@ public class PageUpdateApiClientTest {
     @Test
     public void testGetPageUpdateRestService() throws Exception {
         PageUpdateRestService client = clients.getPageUpdateRestService();
-        PageUpdate instance = new PageUpdate(PageType.NEWS, "http://vpro.nl/test");
+        PageUpdate instance = new PageUpdate(PageType.ARTICLE, "http://vpro.nl/test");
         Response response = client.save(instance);
         System.out.println(response.getStatus());
         ViolationReport report = response.readEntity(ViolationReport.class);
