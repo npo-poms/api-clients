@@ -61,7 +61,7 @@ public class PageUpdateApiClientUtil {
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().save(update), update, JACKSON);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return Result.error(pageUpdateApiClient + ":" + e.getMessage());
         }
 
     }
@@ -70,8 +70,8 @@ public class PageUpdateApiClientUtil {
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, false), id, STRING);
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
-            return Result.error(e.getClass().getName() + " " + e.getMessage());
+            LOG.warn(e.getMessage());
+            return Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage());
         }
 
     }
@@ -81,7 +81,7 @@ public class PageUpdateApiClientUtil {
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, true), id, STRING);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return Result.error(pageUpdateApiClient + ":" + e.getMessage());
         }
 
     }
