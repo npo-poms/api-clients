@@ -31,7 +31,7 @@ public class PageUpdateApiClientUtilTest  {
 
     @Test
     public void testSave() throws Exception {
-        PageUpdate instance = new PageUpdate(PageType.NEWS, "http://vpro.nl/test");
+        PageUpdate instance = new PageUpdate(PageType.ARTICLE, "http://vpro.nl/test");
         Result result = util.save(instance);
         assertThat(result.isSuccess()).isFalse();
         System.out.println(result.getErrors());
