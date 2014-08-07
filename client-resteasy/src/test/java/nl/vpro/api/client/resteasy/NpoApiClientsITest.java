@@ -34,6 +34,7 @@ import static org.fest.assertions.Assertions.assertThat;
  * @author Roelof Jan Koekoek
  * @since 3.0
  */
+@Ignore
 public class NpoApiClientsITest {
 
     private NpoApiClients clients;
@@ -96,7 +97,6 @@ public class NpoApiClientsITest {
         assertThat(mediaService.listDescendants(mid, null, null, null, null)).isNotNull();
     }
 
-    @Ignore("Fails")
     @Test
     public void testMediaServiceFinds() throws Exception {
         try {
