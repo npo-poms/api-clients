@@ -27,6 +27,10 @@ public class Result {
         return new Result(Status.NOTFOUND, message);
     }
 
+    public static Result aborted(String message) {
+        return new Result(Status.ABORTED, message);
+    }
+
     public boolean isSuccess() {
         return status != Status.ERROR;
     }
@@ -46,6 +50,7 @@ public class Result {
     public enum Status {
         SUCCESS,
         ERROR,
-        NOTFOUND
+        NOTFOUND,
+        ABORTED
     }
 }

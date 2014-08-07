@@ -8,9 +8,11 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.impl.execchain.RequestAbortedException;
 import org.jboss.resteasy.api.validation.ViolationReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,9 +72,8 @@ public class PageUpdateApiClientUtil {
         limiter.acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().save(update), update, JACKSON);
-        } catch (Exception e) {
-            downRate();
-            return Result.error(pageUpdateApiClient + ":" + e.getMessage());
+        } catch (ProcessingException e) {
+            return exceptionToResult(e);
         }
 
     }
@@ -81,10 +82,8 @@ public class PageUpdateApiClientUtil {
         limiter.acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, false), id, STRING);
-        } catch (Exception e) {
-            downRate();
-            LOG.warn(e.getMessage());
-            return Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage());
+        } catch (ProcessingException e) {
+            return exceptionToResult(e);
         }
 
     }
@@ -94,11 +93,21 @@ public class PageUpdateApiClientUtil {
         limiter.acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, true), id, STRING);
-        } catch (Exception e) {
-            downRate();
-            return Result.error(pageUpdateApiClient + ":" + e.getMessage());
+        } catch (ProcessingException e) {
+            return exceptionToResult(e);
         }
 
+    }
+
+    protected Result exceptionToResult(Exception e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof RequestAbortedException) {
+            return Result.aborted(pageUpdateApiClient + ":" + e.getClass().getName() + " " + cause.getMessage());
+        } else {
+            downRate();
+            LOG.warn(e.getMessage());
+            return Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage());
+        }
     }
 
     private void upRate() {
@@ -122,24 +131,28 @@ public class PageUpdateApiClientUtil {
     }
 
     protected <T> Result handleResponse(Response response, T input, Function<Object, String> toString) {
-        switch(response.getStatus()) {
-            case 200:
-                LOG.debug(pageUpdateApiClient + " " + response.getStatus());
-                upRate();
-                return Result.success();
-            case 404:
-                return Result.notfound("Not found error");
-            default:
-                downRate();
-                MultivaluedMap<String, Object> headers = response.getHeaders();
-                if ("true".equals(headers.getFirst("validation-exception"))) {
-                    ViolationReport report = response.readEntity(ViolationReport.class);
-                    String string = JACKSON.apply(report);
-                    return Result.error(string);
-                } else {
-                    String string = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + response.getEntity() + " for: '" + toString.apply(input) + "'";
-                    return Result.error(string);
-                }
+        try {
+            switch (response.getStatus()) {
+                case 200:
+                    LOG.debug(pageUpdateApiClient + " " + response.getStatus());
+                    upRate();
+                    return Result.success();
+                case 404:
+                    return Result.notfound("Not found error");
+                default:
+                    downRate();
+                    MultivaluedMap<String, Object> headers = response.getHeaders();
+                    if ("true".equals(headers.getFirst("validation-exception"))) {
+                        ViolationReport report = response.readEntity(ViolationReport.class);
+                        String string = JACKSON.apply(report);
+                        return Result.error(string);
+                    } else {
+                        String string = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + response.getEntity() + " for: '" + toString.apply(input) + "'";
+                        return Result.error(string);
+                    }
+            }
+        } finally {
+            response.close();
         }
     }
 }
