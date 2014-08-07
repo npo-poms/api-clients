@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
 import nl.vpro.domain.page.update.PageUpdate;
@@ -28,6 +29,8 @@ import nl.vpro.jackson2.Jackson2Mapper;
 public class PageUpdateApiClientUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiClientUtil.class);
+
+
 
     private static final Function<Object, String> STRING = new Function<Object, String>() {
         @Override
@@ -51,6 +54,12 @@ public class PageUpdateApiClientUtil {
 
 
     private final PageUpdateApiClient pageUpdateApiClient;
+
+    private double baseRate = 1.0;
+    private double minRate  = 0.01;
+
+    private final RateLimiter limiter = RateLimiter.create(baseRate);
+
 
     @Inject
     public PageUpdateApiClientUtil(PageUpdateApiClient clients) {
@@ -86,15 +95,34 @@ public class PageUpdateApiClientUtil {
 
     }
 
+    private void upRate() {
+        setRate(limiter.getRate() * 2);
+    }
+    private void downRate() {
+        setRate(limiter.getRate() / 2);
+    }
+
+    private void setRate(double r) {
+        if (r > baseRate) {
+            r = baseRate;
+        }
+        if (r < minRate) {
+            r = minRate;
+        }
+        limiter.setRate(r);
+    }
 
     protected <T> Result handleResponse(Response response, T input, Function<Object, String> toString) {
+        limiter.acquire();
         switch(response.getStatus()) {
             case 200:
                 LOG.debug(pageUpdateApiClient + " " + response.getStatus());
+                upRate();
                 return Result.success();
             case 404:
                 return Result.notfound("Not found error");
             default:
+                downRate();
                 MultivaluedMap<String, Object> headers = response.getHeaders();
                 if ("true".equals(headers.getFirst("validation-exception"))) {
                     ViolationReport report = response.readEntity(ViolationReport.class);
