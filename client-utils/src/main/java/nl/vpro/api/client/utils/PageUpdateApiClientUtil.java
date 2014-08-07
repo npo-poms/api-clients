@@ -99,6 +99,22 @@ public class PageUpdateApiClientUtil {
 
     }
 
+    public double getBaseRate() {
+        return baseRate;
+    }
+
+    public void setBaseRate(double baseRate) {
+        this.baseRate = baseRate;
+    }
+
+    public double getMinRate() {
+        return minRate;
+    }
+
+    public void setMinRate(double minRate) {
+        this.minRate = minRate;
+    }
+
     protected Result exceptionToResult(Exception e) {
         Throwable cause = e.getCause();
         if (cause instanceof RequestAbortedException) {
