@@ -109,7 +109,10 @@ public class PageUpdateApiClientUtil {
         if (r < minRate) {
             r = minRate;
         }
-        limiter.setRate(r);
+        if (r != limiter.getRate()) {
+            LOG.info("Rate " + limiter.getRate() + " -> " + r);
+            limiter.setRate(r);
+        }
     }
 
     protected <T> Result handleResponse(Response response, T input, Function<Object, String> toString) {
