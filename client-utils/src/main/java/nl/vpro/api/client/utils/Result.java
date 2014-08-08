@@ -32,7 +32,7 @@ public class Result {
     }
 
     public boolean isSuccess() {
-        return status != Status.ERROR;
+        return status != Status.ERROR && status != Status.ABORTED;
     }
     public Status getStatus() {
         return status;
