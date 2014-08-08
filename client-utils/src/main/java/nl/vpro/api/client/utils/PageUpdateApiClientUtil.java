@@ -111,7 +111,7 @@ public class PageUpdateApiClientUtil {
 
     @Inject(optional = true)
     public void setBaseRate(@Named("pageupdateapiclientutil.baserate") double baseRate) {
-        double prevFactor = limiter.getRate() / baseRate;
+        double prevFactor = limiter.getRate() / this.baseRate;
         this.baseRate = baseRate;
         limiter.setRate(this.baseRate * prevFactor);
     }
