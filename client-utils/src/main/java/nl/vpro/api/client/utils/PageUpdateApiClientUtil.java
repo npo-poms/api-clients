@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
@@ -21,6 +22,7 @@ import com.google.common.base.Function;
 import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
+import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.jackson2.Jackson2Mapper;
 
@@ -99,10 +101,15 @@ public class PageUpdateApiClientUtil {
 
     }
 
+    public ClassificationService getClassicationService() {
+        return pageUpdateApiClient.getClassificationService();
+    }
+
     public double getBaseRate() {
         return baseRate;
     }
 
+    @Inject @Named("pageupdateapiclientutil.baserate")
     public void setBaseRate(double baseRate) {
         this.baseRate = baseRate;
     }
@@ -111,6 +118,7 @@ public class PageUpdateApiClientUtil {
         return minRate;
     }
 
+    @Inject @Named("pageupdateapiclientutil.baserate")
     public void setMinRate(double minRate) {
         this.minRate = minRate;
     }
