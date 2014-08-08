@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.HashMap;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -20,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.RateLimiter;
+import com.google.inject.Inject;
 
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
 import nl.vpro.domain.classification.ClassificationService;
@@ -109,8 +109,8 @@ public class PageUpdateApiClientUtil {
         return baseRate;
     }
 
-    @Inject @Named("pageupdateapiclientutil.baserate")
-    public void setBaseRate(double baseRate) {
+    @Inject(optional = true)
+    public void setBaseRate(@Named("pageupdateapiclientutil.baserate") double baseRate) {
         this.baseRate = baseRate;
     }
 
@@ -118,8 +118,8 @@ public class PageUpdateApiClientUtil {
         return minRate;
     }
 
-    @Inject @Named("pageupdateapiclientutil.baserate")
-    public void setMinRate(double minRate) {
+    @Inject(optional = true)
+    public void setMinRate(@Named("pageupdateapiclientutil.minrate") double minRate) {
         this.minRate = minRate;
     }
 
