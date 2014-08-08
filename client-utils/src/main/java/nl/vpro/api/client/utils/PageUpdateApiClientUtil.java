@@ -111,16 +111,20 @@ public class PageUpdateApiClientUtil {
 
     @Inject(optional = true)
     public void setBaseRate(@Named("pageupdateapiclientutil.baserate") double baseRate) {
+        double prevFactor = limiter.getRate() / baseRate;
         this.baseRate = baseRate;
+        limiter.setRate(this.baseRate * prevFactor);
     }
 
     public double getMinRate() {
         return minRate;
+
     }
 
     @Inject(optional = true)
     public void setMinRate(@Named("pageupdateapiclientutil.minrate") double minRate) {
         this.minRate = minRate;
+        setRate(limiter.getRate());
     }
 
     protected Result exceptionToResult(Exception e) {
