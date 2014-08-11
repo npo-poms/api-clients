@@ -167,6 +167,9 @@ public class PageUpdateApiClientUtil {
                     return Result.success();
                 case 404:
                     return Result.notfound("Not found error");
+                case 403:
+                    String s = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + response.getEntity() + " for: '" + toString.apply(input) + "'";
+                    return Result.denied(s);
                 default:
                     downRate();
                     MultivaluedMap<String, Object> headers = response.getHeaders();
