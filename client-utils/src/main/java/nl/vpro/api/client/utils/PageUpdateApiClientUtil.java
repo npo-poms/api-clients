@@ -83,7 +83,7 @@ public class PageUpdateApiClientUtil {
     public Result delete(@NotNull String id) {
         limiter.acquire();
         try {
-            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, false), id, STRING);
+            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, false, 1), id, STRING);
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
@@ -94,7 +94,7 @@ public class PageUpdateApiClientUtil {
     public Result deleteWhereStartsWith(@NotNull String id) {
         limiter.acquire();
         try {
-            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, true), id, STRING);
+            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, true, 10000), id, STRING);
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
