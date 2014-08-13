@@ -174,9 +174,18 @@ public class PageUpdateApiClientUtil {
                     downRate();
                     MultivaluedMap<String, Object> headers = response.getHeaders();
                     if ("true".equals(headers.getFirst("validation-exception"))) {
-                        ViolationReport report = response.readEntity(ViolationReport.class);
-                        String string = JACKSON.apply(report);
-                        return Result.error(string);
+                        if ("text/plain".equals(headers.getFirst("Content-Type"))) {
+                            String string = response.readEntity(String.class);
+                            return Result.error(pageUpdateApiClient + ":" + string);
+                        } else{
+                            try {
+                                ViolationReport report = response.readEntity(ViolationReport.class);
+                                String string = JACKSON.apply(report);
+                                return Result.error(pageUpdateApiClient + ":" + string);
+                            } catch (Exception e) {
+                                return Result.error(pageUpdateApiClient + ":" + String.valueOf(new HashMap<>(headers)) + "(" + e.getMessage() + ")");
+                            }
+                        }
                     } else {
                         String string = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + response.getEntity() + " for: '" + toString.apply(input) + "'";
                         return Result.error(string);
