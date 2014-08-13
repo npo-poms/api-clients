@@ -35,6 +35,10 @@ public class Result {
         return new Result(Status.DENIED, message);
     }
 
+    public static Result invalid(String message) {
+        return new Result(Status.INVALID, message);
+    }
+
     public boolean isSuccess() {
         return status != Status.ERROR && status != Status.ABORTED;
     }
@@ -56,6 +60,7 @@ public class Result {
         ERROR,
         NOTFOUND,
         ABORTED,
-        DENIED
+        DENIED,
+        INVALID
     }
 }
