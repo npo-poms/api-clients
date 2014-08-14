@@ -21,7 +21,8 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> {
 
     private final Class<T> clazz;
 
-    public JsonArrayIterator(InputStream inputStream, Class<T> clazz) throws IOException {
+    private final Runnable callback;
+    public JsonArrayIterator(InputStream inputStream, Class<T> clazz, Runnable callback) throws IOException {
         this.jp = Jackson2Mapper.getInstance().getFactory().createParser(inputStream);
         this.clazz = clazz;
         while(true) {
@@ -29,6 +30,7 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> {
             if (token == JsonToken.START_ARRAY) break;
         }
         jp.nextToken();
+        this.callback = callback;
     }
     @Override
     public boolean hasNext() {
@@ -47,7 +49,12 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> {
         if (next == null) {
             try {
                 next = jp.readValueAs(clazz);
-
+                if (next == null) {
+                    jp.close();
+                    if (callback != null) {
+                        callback.run();
+                    }
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

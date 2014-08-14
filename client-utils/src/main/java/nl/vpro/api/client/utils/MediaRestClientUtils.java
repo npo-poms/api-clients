@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,8 +94,13 @@ public class MediaRestClientUtils {
     }
 
     public static Iterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
-        InputStream response = restService.changes(profile, null, since, order.name().toLowerCase(), max, null, null);
-        return new JsonArrayIterator<>(response, Change.class);
+        final InputStream inputStream = restService.changes(profile, null, since, order.name().toLowerCase(), max, null, null);
+        return new JsonArrayIterator<>(inputStream, Change.class, new Runnable() {
+            @Override
+            public void run() {
+                IOUtils.closeQuietly(inputStream);
+            }
+        });
 
     }
 
@@ -104,8 +110,13 @@ public class MediaRestClientUtils {
      */
     @Deprecated
     public static Iterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) throws IOException {
-        InputStream response = restService.iterate(form, profile, null, 0l, Integer.MAX_VALUE, null, null);
-        return new JsonArrayIterator<>(response, MediaObject.class);
+        final InputStream inputStream = restService.iterate(form, profile, null, 0l, Integer.MAX_VALUE, null, null);
+        return new JsonArrayIterator<>(inputStream, MediaObject.class, new Runnable() {
+            @Override
+            public void run() {
+                IOUtils.closeQuietly(inputStream);
+            }
+        });
 
     }
 
