@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import javax.ws.rs.ProcessingException;
+
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,13 +96,18 @@ public class MediaRestClientUtils {
     }
 
     public static Iterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
-        final InputStream inputStream = restService.changes(profile, null, since, order.name().toLowerCase(), max, null, null);
-        return new JsonArrayIterator<>(inputStream, Change.class, new Runnable() {
-            @Override
-            public void run() {
-                IOUtils.closeQuietly(inputStream);
-            }
-        });
+        try {
+            final InputStream inputStream = restService.changes(profile, null, since, order.name().toLowerCase(), max, null, null);
+            return new JsonArrayIterator<>(inputStream, Change.class, new Runnable() {
+                @Override
+                public void run() {
+                    //IOUtils.closeQuietly(inputStream);
+                }
+            });
+        } catch (ProcessingException pi) {
+            Throwable t = pi.getCause();
+            throw new RuntimeException(t.getMessage(), t);
+        }
 
     }
 
