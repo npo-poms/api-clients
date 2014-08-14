@@ -56,6 +56,9 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> {
                     }
                 }
             } catch (IOException e) {
+                if (callback != null) {
+                    callback.run();
+                }
                 throw new RuntimeException(e);
             }
         }
