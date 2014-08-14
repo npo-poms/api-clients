@@ -37,7 +37,7 @@ public class NpoApiClientUtil {
         try {
             return MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
         } catch (IOException e) {
-            throw new RuntimeException(clients + ":" + e.getStackTrace(), e);
+            throw new RuntimeException(clients + ":" + e.getMessage(), e);
         }
     }
     @Deprecated
