@@ -50,7 +50,6 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> {
             try {
                 next = jp.readValueAs(clazz);
                 if (next == null) {
-                    jp.close();
                     if (callback != null) {
                         callback.run();
                     }

@@ -13,7 +13,7 @@ public class JsonArrayIteratorTest {
 
     @Test
     public void test() throws IOException {
-        JsonArrayIterator<Change> it = new JsonArrayIterator<>(getClass().getResourceAsStream("/changes.json"), Change.class);
+        JsonArrayIterator<Change> it = new JsonArrayIterator<>(getClass().getResourceAsStream("/changes.json"), Change.class, null);
         assertThat(it.next().getMid()).isEqualTo("POMS_NCRV_1138990");
         for (int i = 0; i < 8; i++) {
             assertThat(it.hasNext()).isTrue();
