@@ -42,7 +42,7 @@ public class NpoApiClientUtil {
         }
     }
 
-    public ProfileDefinition<MediaObject> profile(String profile) {
+    public ProfileDefinition<MediaObject> getMediaProfile(String profile) {
         return clients.getProfileService().load(profile, null).getMediaProfile();
     }
 
