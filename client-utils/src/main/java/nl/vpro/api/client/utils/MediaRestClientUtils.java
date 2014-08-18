@@ -101,7 +101,7 @@ public class MediaRestClientUtils {
             return new JsonArrayIterator<>(inputStream, Change.class, new Runnable() {
                 @Override
                 public void run() {
-                    //IOUtils.closeQuietly(inputStream);
+                    IOUtils.closeQuietly(inputStream);
                 }
             });
         } catch (ProcessingException pi) {
