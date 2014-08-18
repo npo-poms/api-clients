@@ -9,6 +9,7 @@ import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
+import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaType;
 
@@ -40,6 +41,11 @@ public class NpoApiClientUtil {
             throw new RuntimeException(clients + ":" + e.getMessage(), e);
         }
     }
+
+    public ProfileDefinition<MediaObject> profile(String profile) {
+        return clients.getProfileService().load(profile, null).getMediaProfile();
+    }
+
     @Deprecated
     public Iterator<MediaObject> iterate(MediaForm form, String profile)  {
         try {

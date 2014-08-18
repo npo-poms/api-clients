@@ -34,9 +34,9 @@ public class NpoApiClients extends AbstractApiClient {
 		super(10000, 16, 10000);
         this.authentication = new NpoApiAuthentication(apiKey, secret, origin);
         baseUrl = apiBaseUrl + "api";
-        mediaRestServiceProxy = getTarget(baseUrl).proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_JSON_TYPE).build();
-        pageRestServiceProxy  = getTarget(baseUrl).proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_JSON_TYPE).build();
-        profileRestServiceProxy = getTarget(baseUrl).proxyBuilder(ProfileRestService.class).defaultConsumes(MediaType.APPLICATION_JSON_TYPE).build();
+        mediaRestServiceProxy = getTarget(baseUrl).proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_XML_TYPE).build();
+        pageRestServiceProxy  = getTarget(baseUrl).proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_XML_TYPE).build();
+        profileRestServiceProxy = getTarget(baseUrl).proxyBuilder(ProfileRestService.class).defaultConsumes(MediaType.APPLICATION_XML_TYPE).build();
     }
 
     public MediaRestService getMediaService() {
