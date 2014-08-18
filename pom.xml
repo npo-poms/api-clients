@@ -22,7 +22,7 @@
 
   <properties>
     <api.version>3.2-SNAPSHOT</api.version>
-    <pages.version>3.2.1</pages.version>
+    <pages.version>3.2.2-SNAPSHOT</pages.version>
   </properties>
 
   <dependencyManagement>
