@@ -7,6 +7,7 @@ import java.util.*;
 import javax.ws.rs.ProcessingException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +80,20 @@ public class MediaRestClientUtils {
     }
 
     public static MediaObject[] load(MediaRestService restService, String... ids) {
+        return loadWithLoadAll(restService, ids);
+        // return loadWithSearch(restService, ids); // doesn't work
+    }
+
+    private static MediaObject[] loadWithLoadAll(MediaRestService restService, String... ids) {
+        List<MediaObject> result = new ArrayList<>(ids.length);
+        for (List<String> idList : Lists.partition(Arrays.asList(ids), 500)) {
+            MediaResult mediaResult = restService.loadAll(StringUtils.join(idList, ","), null);
+            result.addAll(mediaResult.getItems());
+        }
+        return result.toArray(new MediaObject[result.size()]);
+    }
+    // unused for now
+    private static MediaObject[] loadWithSearch(MediaRestService restService, String... ids) {
         List<MediaObject> result = new ArrayList<>(ids.length);
 
         /*
