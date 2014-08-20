@@ -81,13 +81,13 @@ public class MediaRestClientUtils {
 
     public static MediaObject[] load(MediaRestService restService, String... ids) {
         return loadWithLoadAll(restService, ids);
-        // return loadWithSearch(restService, ids); // doesn't work
+        //loadWithSearch(restService, ids); // doesn't preserve order/duplicates, probable slower too.
     }
 
     private static MediaObject[] loadWithLoadAll(MediaRestService restService, String... ids) {
         List<MediaObject> result = new ArrayList<>(ids.length);
         for (List<String> idList : Lists.partition(Arrays.asList(ids), 500)) {
-            MediaResult mediaResult = restService.loadAll(StringUtils.join(idList, ","), null);
+            MediaResult mediaResult = restService.list(null, null, 0l, ids.length, StringUtils.join(idList, ","));
             result.addAll(mediaResult.getItems());
         }
         return result.toArray(new MediaObject[result.size()]);

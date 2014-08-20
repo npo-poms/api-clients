@@ -32,9 +32,10 @@ public class NpoApiClientUtilTest {
 
     @Test
     public void testLoad() throws Exception {
-        MediaObject[] result = util.load("AVRO_1656037", "POMS_VPRO_487567");//, "AVRO_1656037");
+        MediaObject[] result = util.load("AVRO_1656037", "AVRO_1656037", "POMS_VPRO_487567");
         assertThat(result[0].getMid()).isEqualTo("AVRO_1656037");
-        assertThat(result[1].getMid()).isEqualTo("POMS_VPRO_487567");
-        assertThat(result[2].getMid()).isEqualTo("AVRO_1656037");
+        assertThat(result[1].getMid()).isEqualTo("AVRO_1656037");
+        assertThat(result[2].getMid()).isEqualTo("POMS_VPRO_487567");
+
     }
 }

@@ -65,7 +65,7 @@ public class NpoApiClientsITest {
             "http://www.vpro.nl"
         );
 
-        wrongPassword.getMediaService().list(null, null, null, null);
+        wrongPassword.getMediaService().list(null, null, null, null, null);
     }
 
     @Test(expected = NotFoundException.class)
@@ -86,7 +86,7 @@ public class NpoApiClientsITest {
     public void testMediaServiceLists() throws Exception {
         MediaRestService mediaService = clients.getMediaService();
 
-        MediaResult list = mediaService.list(null, null, null, null);
+        MediaResult list = mediaService.list(null, null, null, null, null);
         assertThat(list).isNotEmpty().hasSize(10);
 
         String mid = list.getItems().get(1).getMid();
