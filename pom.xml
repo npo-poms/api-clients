@@ -21,8 +21,8 @@
   </modules>
 
   <properties>
-    <api.version>3.2-SNAPSHOT</api.version>
-    <pages.version>3.2.2-SNAPSHOT</pages.version>
+    <api.version>3.2.0</api.version>
+    <pages.version>3.2.2</pages.version>
   </properties>
 
   <dependencyManagement>
