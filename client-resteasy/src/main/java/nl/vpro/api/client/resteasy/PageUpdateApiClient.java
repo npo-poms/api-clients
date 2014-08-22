@@ -18,7 +18,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.UrlResource;
 
 import nl.vpro.domain.classification.ClassificationService;
-import nl.vpro.domain.classification.ClassificationServiceImpl;
+import nl.vpro.domain.classification.URLClassificationServiceImpl;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 
 public class PageUpdateApiClient extends AbstractApiClient {
@@ -45,6 +45,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         pageUpdateRestService = target.proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
         toString = user + "@" + apiBaseUrl;
         this.baseUrl = apiBaseUrl;
+        this.classificationService = new URLClassificationServiceImpl(new URL(this.baseUrl + "schema/classification/"));
     }
 
     public PageUpdateRestService getPageUpdateRestService() {
@@ -52,39 +53,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
     public ClassificationService getClassificationService() {
-        String url = baseUrl + "schema/classification";
-        if (classificationService != null) {
-            try {
-                URL u = new URL(url);
-                HttpURLConnection connection = (HttpURLConnection) u.openConnection();
-                connection.setRequestProperty("If-Modified-Since", Util.rfc822(classificationService.getLastModified()));
-
-                int code = connection.getResponseCode();
-                switch(code) {
-                    case HttpServletResponse.SC_NOT_MODIFIED:
-                        break;
-                    case HttpServletResponse.SC_OK:
-                        InputStream input = connection.getInputStream();
-                        classificationService = new ClassificationServiceImpl(
-                            new InputStreamResource(input));
-                        break;
-                    default:
-
-                }
-
-            } catch (Exception e) {
-
-            }
-        }
-        if (classificationService == null) {
-            try {
-                classificationService = new ClassificationServiceImpl(
-                    new UrlResource(baseUrl + "schema/classification")
-                );
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        }
         return classificationService;
     }
 
