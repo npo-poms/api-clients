@@ -25,7 +25,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     private final String baseUrl;
 
-    private ClassificationService classificationService;
+    private final ClassificationService classificationService;
 
     @Inject
     public PageUpdateApiClient(
