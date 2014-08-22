@@ -1,21 +1,16 @@
 package nl.vpro.api.client.resteasy;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.UrlResource;
 
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.classification.URLClassificationServiceImpl;
