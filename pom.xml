@@ -21,12 +21,17 @@
   </modules>
 
   <properties>
-    <api.version>3.3-SNAPSHOT</api.version>
+    <api.version>3.2.1-SNAPSHOT</api.version>
     <pages.version>3.2.3</pages.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>nl.vpro.media</groupId>
+        <artifactId>media-classification</artifactId>
+        <version>3.2-SNAPSHOT</version>
+      </dependency>
       <dependency>
         <groupId>nl.vpro.api</groupId>
         <artifactId>api-rs-services</artifactId>
