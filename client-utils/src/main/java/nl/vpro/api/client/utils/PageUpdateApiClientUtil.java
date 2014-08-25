@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.util.concurrent.RateLimiter;
 import com.google.inject.Inject;
 
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
@@ -30,7 +29,7 @@ import nl.vpro.jackson2.Jackson2Mapper;
  * @author Michiel Meeuwissen
  * @since 1.0
  */
-public class PageUpdateApiClientUtil {
+public class PageUpdateApiClientUtil extends AbstractClientUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiClientUtil.class);
 
@@ -59,10 +58,6 @@ public class PageUpdateApiClientUtil {
 
     private final PageUpdateApiClient pageUpdateApiClient;
 
-    private double baseRate = 1.0;
-    private double minRate  = 0.01;
-
-    private final RateLimiter limiter = RateLimiter.create(baseRate);
 
 
     @Inject
@@ -70,8 +65,20 @@ public class PageUpdateApiClientUtil {
         pageUpdateApiClient = clients;
     }
 
+    @Inject(optional = true)
+    @Override
+    public void setBaseRate(@Named("pageupdate-api.clientutil.baserate") double baseRate) {
+        super.setBaseRate(baseRate);
+    }
+
+    @Inject(optional = true)
+    @Override
+    public void setMinRate(@Named("pageupdate-api.clientutil.minrate") double minRate) {
+        super.setMinRate(minRate);
+    }
+
     public Result save(@NotNull @Valid PageUpdate update) {
-        limiter.acquire();
+        acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().save(update), update, JACKSON);
         } catch (ProcessingException e) {
@@ -81,7 +88,7 @@ public class PageUpdateApiClientUtil {
     }
 
     public Result delete(@NotNull String id) {
-        limiter.acquire();
+        acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, false, 1), id, STRING);
         } catch (ProcessingException e) {
@@ -92,7 +99,7 @@ public class PageUpdateApiClientUtil {
 
 
     public Result deleteWhereStartsWith(@NotNull String id) {
-        limiter.acquire();
+        acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, true, 10000), id, STRING);
         } catch (ProcessingException e) {
@@ -105,27 +112,6 @@ public class PageUpdateApiClientUtil {
         return pageUpdateApiClient.getClassificationService();
     }
 
-    public double getBaseRate() {
-        return baseRate;
-    }
-
-    @Inject(optional = true)
-    public void setBaseRate(@Named("pageupdateapiclientutil.baserate") double baseRate) {
-        double prevFactor = limiter.getRate() / this.baseRate;
-        this.baseRate = baseRate;
-        limiter.setRate(this.baseRate * prevFactor);
-    }
-
-    public double getMinRate() {
-        return minRate;
-
-    }
-
-    @Inject(optional = true)
-    public void setMinRate(@Named("pageupdateapiclientutil.minrate") double minRate) {
-        this.minRate = minRate;
-        setRate(limiter.getRate());
-    }
 
     protected Result exceptionToResult(Exception e) {
         Throwable cause = e.getCause();
@@ -135,26 +121,6 @@ public class PageUpdateApiClientUtil {
             downRate();
             LOG.warn(e.getMessage());
             return Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage());
-        }
-    }
-
-    private void upRate() {
-        setRate(limiter.getRate() * 2);
-    }
-    private void downRate() {
-        setRate(limiter.getRate() / 2);
-    }
-
-    private void setRate(double r) {
-        if (r > baseRate) {
-            r = baseRate;
-        }
-        if (r < minRate) {
-            r = minRate;
-        }
-        if (r != limiter.getRate()) {
-            LOG.info("Rate " + limiter.getRate() + " -> " + r);
-            limiter.setRate(r);
         }
     }
 
