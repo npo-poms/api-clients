@@ -21,6 +21,7 @@
   <properties>
     <api.version>3.2.1</api.version>
     <pages.version>3.2.4</pages.version>
+    <media.version>3.2.0.API2</media.version>
   </properties>
 
   <scm>
@@ -35,7 +36,7 @@
       <dependency>
         <groupId>nl.vpro.media</groupId>
         <artifactId>media-classification</artifactId>
-        <version>3.2.0.API2</version>
+        <version>${media.version</version>
       </dependency>
       <dependency>
         <groupId>nl.vpro.api</groupId>
@@ -60,9 +61,4 @@
     </dependencies>
   </dependencyManagement>
 
-  <scm>
-    <connection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/publiekeomroep/poms-parent/branches/REL-1.0-SNAPSHOT</connection>
-    <developerConnection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/publiekeomroep/poms-parent/branches/REL-1.0-SNAPSHOT</developerConnection>
-    <url>https://subversion.vpro.nl/cgi-bin/viewvc.cgi/branches/REL-1.0-SNAPSHOT</url>
-  </scm>
 </project>
