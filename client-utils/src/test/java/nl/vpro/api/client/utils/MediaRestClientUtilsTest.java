@@ -6,6 +6,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
@@ -16,6 +17,8 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+
+@Ignore
 public class MediaRestClientUtilsTest {
 
     @Test
