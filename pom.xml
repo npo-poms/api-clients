@@ -36,7 +36,7 @@
       <dependency>
         <groupId>nl.vpro.media</groupId>
         <artifactId>media-classification</artifactId>
-        <version>${media.version</version>
+        <version>${media.version}</version>
       </dependency>
       <dependency>
         <groupId>nl.vpro.api</groupId>
