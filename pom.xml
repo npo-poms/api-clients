@@ -21,7 +21,7 @@
   </modules>
 
   <properties>
-    <api.version>3.2.1-SNAPSHOT</api.version>
+    <api.version>3.2.1</api.version>
     <pages.version>3.2.4</pages.version>
   </properties>
 
@@ -30,7 +30,7 @@
       <dependency>
         <groupId>nl.vpro.media</groupId>
         <artifactId>media-classification</artifactId>
-        <version>3.2-SNAPSHOT</version>
+        <version>3.2.0.API2</version>
       </dependency>
       <dependency>
         <groupId>nl.vpro.api</groupId>
