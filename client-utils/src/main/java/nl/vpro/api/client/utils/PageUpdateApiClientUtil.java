@@ -108,7 +108,7 @@ public class PageUpdateApiClientUtil extends AbstractClientUtil {
 
     }
 
-    public ClassificationService getClassicationService() {
+    public ClassificationService getClassificationService() {
         return pageUpdateApiClient.getClassificationService();
     }
 
