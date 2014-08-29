@@ -21,7 +21,7 @@
   <properties>
     <api.version>3.2.1</api.version>
     <pages.version>3.2.4</pages.version>
-    <media.version>3.2.0.API2</media.version>
+    <media.version>3.2-SNAPSHOT</media.version>
   </properties>
 
   <scm>
