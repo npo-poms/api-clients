@@ -128,6 +128,7 @@ public class PageUpdateApiClientUtil extends AbstractClientUtil {
         try {
             switch (response.getStatus()) {
                 case 200:
+                case 202:
                     LOG.debug(pageUpdateApiClient + " " + response.getStatus());
                     upRate();
                     return Result.success();
