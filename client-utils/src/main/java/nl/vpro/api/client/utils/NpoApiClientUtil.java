@@ -64,10 +64,10 @@ public class NpoApiClientUtil extends AbstractClientUtil {
         }
     }
 
-    public Iterator<Change> changes(String profile, long since, Order order, Integer max) {
+    public CloseableIterator<Change> changes(String profile, long since, Order order, Integer max) {
         acquire();
         try {
-            Iterator<Change> result = MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
+            CloseableIterator<Change> result = MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
             upRate();
             return result;
         } catch (IOException e) {

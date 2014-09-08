@@ -110,7 +110,7 @@ public class MediaRestClientUtils {
         return result.toArray(new MediaObject[result.size()]);
     }
 
-    public static Iterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
+    public static CloseableIterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
             final InputStream inputStream = restService.changes(profile, null, since, order.name().toLowerCase(), max, null, null);
             return new JsonArrayIterator<>(inputStream, Change.class, new Runnable() {

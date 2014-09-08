@@ -13,7 +13,7 @@ import nl.vpro.jackson2.Jackson2Mapper;
  * @author Michiel Meeuwissen
  * @since 1.0
  */
-public class JsonArrayIterator<T> extends UnmodifiableIterator<T> {
+public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements CloseableIterator<T> {
 
     final JsonParser jp;
 
@@ -60,6 +60,15 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> {
                 }
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+
+    @Override
+    public void close() throws IOException {
+        this.jp.close();
+        if (callback != null) {
+            callback.run();
         }
     }
 }
