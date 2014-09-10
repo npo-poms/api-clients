@@ -46,7 +46,7 @@ public class AbstractApiClient {
         }
 
         resteasyProviderFactory.addClientErrorInterceptor(new NpoApiClientErrorInterceptor());
-        resteasyProviderFactory.addClientExceptionMapper(new ExceptionMapper());
+        //resteasyProviderFactory.addClientExceptionMapper(new ExceptionMapper());
 
 
         RegisterBuiltin.register(resteasyProviderFactory);
