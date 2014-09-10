@@ -18,6 +18,7 @@ import nl.vpro.domain.media.MediaType;
 /**
  * @author Michiel Meeuwissen
  */
+@Named
 public class NpoApiClientUtil extends AbstractClientUtil implements MediaProvider {
 
 

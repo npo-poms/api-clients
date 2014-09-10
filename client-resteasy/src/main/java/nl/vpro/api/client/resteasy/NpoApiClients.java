@@ -12,6 +12,7 @@ import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
 
+@Named
 public class NpoApiClients extends AbstractApiClient {
 
     private final NpoApiAuthentication authentication;
@@ -26,10 +27,14 @@ public class NpoApiClients extends AbstractApiClient {
 
     @Inject
     public NpoApiClients(
-        @Named("npo-api.baseUrl") String apiBaseUrl,
-        @Named("npo-api.apiKey") String apiKey,
-        @Named("npo-api.secret") String secret,
-        @Named("npo-api.origin") String origin
+        @Named("npo-api.baseUrl")
+        String apiBaseUrl,
+        @Named("npo-api.apiKey")
+        String apiKey,
+        @Named("npo-api.secret")
+        String secret,
+        @Named("npo-api.origin")
+        String origin
     ) {
 		super(10000, 16, 10000);
         this.authentication = new NpoApiAuthentication(apiKey, secret, origin);

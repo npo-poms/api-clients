@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import javax.inject.Named;
 import javax.ws.rs.ProcessingException;
 
 import org.apache.commons.io.IOUtils;
@@ -23,7 +24,7 @@ import nl.vpro.domain.media.*;
 
 /**
  * @author Michiel Meeuwissen
- * @since 2.3
+ * @since 1.1
  */
 public class MediaRestClientUtils {
 
