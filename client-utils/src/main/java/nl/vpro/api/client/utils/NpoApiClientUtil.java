@@ -12,12 +12,13 @@ import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
 
 /**
  * @author Michiel Meeuwissen
  */
-public class NpoApiClientUtil extends AbstractClientUtil {
+public class NpoApiClientUtil extends AbstractClientUtil implements MediaProvider {
 
 
     final NpoApiClients clients;
@@ -109,4 +110,8 @@ public class NpoApiClientUtil extends AbstractClientUtil {
     }
 
 
+    @Override
+    public MediaObject findByMid(String mid) {
+        return load(mid)[0];
+    }
 }
