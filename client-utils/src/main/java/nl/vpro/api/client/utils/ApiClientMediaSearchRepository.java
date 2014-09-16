@@ -17,7 +17,7 @@ import nl.vpro.domain.media.MediaObject;
  * @since 1.1
  */
 @Named
-public class ApiClientMediaSearchRepository extends ApiClientMediaRepository implements MediaSearchRepository {
+public class ApiClientMediaSearchRepository extends AbstractApiClientMediaRepository implements MediaSearchRepository {
 
     @Inject
     public ApiClientMediaSearchRepository(NpoApiClients clients) {
