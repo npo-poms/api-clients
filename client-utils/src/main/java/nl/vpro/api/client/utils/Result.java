@@ -19,6 +19,10 @@ public class Result {
         return new Result(Status.SUCCESS, null);
     }
 
+    public static Result notneeded() {
+        return new Result(Status.NOTNEEDED, null);
+    }
+
     public static Result error(String message) {
         return new Result(Status.ERROR, message);
     }
@@ -57,6 +61,7 @@ public class Result {
 
     public enum Status {
         SUCCESS,
+        NOTNEEDED,
         ERROR,
         NOTFOUND,
         ABORTED,
