@@ -14,7 +14,7 @@ import static org.fest.assertions.Assertions.assertThat;
 @Ignore("This is an integration test")
 public class NpoApiClientUtilTest {
 
-    private NpoApiClientUtil util;
+    private NpoApiMediaUtil util;
 
     //private String target = "http://rs-dev.poms.omroep.nl/v1/";
     private String target = "http://localhost:8070/v1/";
@@ -26,7 +26,7 @@ public class NpoApiClientUtilTest {
             "ione7ahfij",
             "***REMOVED***",
             "http://www.vpro.nl");
-        util = new NpoApiClientUtil(clients);
+        util = new NpoApiMediaUtil(clients);
     }
 
 

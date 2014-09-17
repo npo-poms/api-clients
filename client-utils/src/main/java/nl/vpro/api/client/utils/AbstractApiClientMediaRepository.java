@@ -21,12 +21,13 @@ import nl.vpro.domain.media.MediaObject;
  */
 public class AbstractApiClientMediaRepository {
     final NpoApiClients clients;
-    final NpoApiClientUtil util;
+    final NpoApiMediaUtil util;
 
     @Inject
-    AbstractApiClientMediaRepository(NpoApiClients clients) {
-        this.clients = clients;
-        this.util = new NpoApiClientUtil(clients);
+    AbstractApiClientMediaRepository(NpoApiMediaUtil util) {
+        this.util = util;
+        this.clients = util.getClients();
+
     }
 
     public MediaObject load(String id) {

@@ -24,79 +24,71 @@ import nl.vpro.domain.page.Page;
  * @author Michiel Meeuwissen
  */
 @Named
-public class NpoApiClientUtil extends AbstractClientUtil implements MediaProvider {
+public class NpoApiMediaUtil implements MediaProvider {
 
 
     final NpoApiClients clients;
+    final NpoClientsRateLimiter limiter;
 
 
     @Inject
-    public NpoApiClientUtil(NpoApiClients clients) {
+    public NpoApiMediaUtil(NpoApiClients clients, NpoClientsRateLimiter limiter) {
         this.clients = clients;
+        this.limiter = limiter;
     }
 
-    @com.google.inject.Inject(optional = true)
-    @Override
-    public void setBaseRate(@Named("npo-api.clientutil.baserate") double baseRate) {
-        super.setBaseRate(baseRate);
-    }
 
-    @com.google.inject.Inject(optional = true)
-    @Override
-    public void setMinRate(@Named("npo-api.clientutil.minrate") double minRate) {
-        super.setMinRate(minRate);
-    }
 
     public MediaObject loadOrNull(String id) {
-        acquire();
+        limiter.acquire();
         try {
             MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), id);
-            upRate();
+            limiter.upRate();
             return object;
         } catch (RuntimeException rte) {
-            downRate();
+            limiter.downRate();
             throw rte;
         }
     }
 
     public MediaObject[] load(String... ids) {
-        acquire();
+        limiter.acquire();
         try {
             MediaObject[] result = MediaRestClientUtils.load(clients.getMediaService(), ids);
-            upRate();
+            limiter.upRate();
             return result;
         } catch (RuntimeException rte) {
-            downRate();
+            limiter.downRate();
             throw rte;
         }
     }
 
     public CloseableIterator<Change> changes(String profile, long since, Order order, Integer max) {
-        acquire();
+        limiter.acquire();
         try {
             CloseableIterator<Change> result = MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
-            upRate();
+            limiter.upRate();
             return result;
         } catch (IOException e) {
-            downRate();
+            limiter.downRate();
             throw new RuntimeException(clients + ":" + e.getMessage(), e);
         }
     }
 
     public ProfileDefinition<MediaObject> getMediaProfile(String profile) {
-        acquire();
+        limiter.acquire();
         return clients.getProfileService().load(profile, null).getMediaProfile();
     }
 
     @Deprecated
     public Iterator<MediaObject> iterate(MediaForm form, String profile)  {
-        acquire();
+        limiter.acquire();
         try {
             Iterator<MediaObject> result = MediaRestClientUtils.iterate(clients.getMediaService(), form, profile);
-            upRate();
+            limiter.upRate();
             return result;
         } catch (Throwable e) {
-            downRate();
+            limiter.downRate();
             throw new RuntimeException(clients + ":" + e.getMessage(), e);
         }
     }
@@ -112,16 +104,6 @@ public class NpoApiClientUtil extends AbstractClientUtil implements MediaProvide
         return load(mid)[0];
     }
 
-    public Page[] loadPages(String... id) {
-        PageResult pageResult = clients.getPageService().list(null, 0l, id.length, StringUtils.join(Arrays.asList(id), ","));
-
-        Page[] result = new Page[id.length];
-        for (int i = 0; i < id.length; i++) {
-            result[i] = pageResult.getItems().get(i);
-        }
-        return result;
-    }
-
     public MediaType getType(String mid) {
         return load(mid)[0].getMediaType();
     }
@@ -131,5 +113,9 @@ public class NpoApiClientUtil extends AbstractClientUtil implements MediaProvide
         return String.valueOf(clients);
     }
 
+
+    NpoApiClients getClients() {
+        return clients;
+    }
 
 }

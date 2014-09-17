@@ -20,8 +20,8 @@ import nl.vpro.domain.media.MediaObject;
 public class ApiClientMediaSearchRepository extends AbstractApiClientMediaRepository implements MediaSearchRepository {
 
     @Inject
-    public ApiClientMediaSearchRepository(NpoApiClients clients) {
-        super(clients);
+    public ApiClientMediaSearchRepository(NpoApiMediaUtil util) {
+        super(util);
     }
 
     @Override

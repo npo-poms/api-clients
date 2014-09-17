@@ -29,7 +29,7 @@ import nl.vpro.jackson2.Jackson2Mapper;
  * @author Michiel Meeuwissen
  * @since 1.0
  */
-public class PageUpdateApiClientUtil extends AbstractClientUtil {
+public class PageUpdateApiClientUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiClientUtil.class);
 
@@ -57,28 +57,19 @@ public class PageUpdateApiClientUtil extends AbstractClientUtil {
 
 
     private final PageUpdateApiClient pageUpdateApiClient;
-
+    private final PageUpdateRateLimiter limiter;
 
 
     @Inject
-    public PageUpdateApiClientUtil(PageUpdateApiClient clients) {
+    public PageUpdateApiClientUtil(PageUpdateApiClient clients, PageUpdateRateLimiter limiter) {
         pageUpdateApiClient = clients;
+        this.limiter = limiter;
     }
 
-    @Inject(optional = true)
-    @Override
-    public void setBaseRate(@Named("pageupdate-api.clientutil.baserate") double baseRate) {
-        super.setBaseRate(baseRate);
-    }
 
-    @Inject(optional = true)
-    @Override
-    public void setMinRate(@Named("pageupdate-api.clientutil.minrate") double minRate) {
-        super.setMinRate(minRate);
-    }
 
     public Result save(@NotNull @Valid PageUpdate update) {
-        acquire();
+        limiter.acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().save(update), update, JACKSON);
         } catch (ProcessingException e) {
@@ -88,7 +79,7 @@ public class PageUpdateApiClientUtil extends AbstractClientUtil {
     }
 
     public Result delete(@NotNull String id) {
-        acquire();
+        limiter.acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, false, 1), id, STRING);
         } catch (ProcessingException e) {
@@ -99,7 +90,7 @@ public class PageUpdateApiClientUtil extends AbstractClientUtil {
 
 
     public Result deleteWhereStartsWith(@NotNull String id) {
-        acquire();
+        limiter.acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, true, 10000), id, STRING);
         } catch (ProcessingException e) {
@@ -118,7 +109,7 @@ public class PageUpdateApiClientUtil extends AbstractClientUtil {
         if (cause instanceof RequestAbortedException) {
             return Result.aborted(pageUpdateApiClient + ":" + e.getClass().getName() + " " + cause.getMessage());
         } else {
-            downRate();
+            limiter.downRate();
             LOG.warn(e.getMessage());
             return Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage());
         }
@@ -130,7 +121,7 @@ public class PageUpdateApiClientUtil extends AbstractClientUtil {
                 case 200:
                 case 202:
                     LOG.debug(pageUpdateApiClient + " " + response.getStatus());
-                    upRate();
+                    limiter.upRate();
                     return Result.success();
                 case 404:
                     return Result.notfound("Not found error");
@@ -153,7 +144,7 @@ public class PageUpdateApiClientUtil extends AbstractClientUtil {
                             }
                         }
                     } else {
-                        downRate();
+                        limiter.downRate();
                         String string = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + response.getEntity() + " for: '" + toString.apply(input) + "'";
                         return Result.error(string);
                     }

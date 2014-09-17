@@ -14,7 +14,7 @@ import nl.vpro.domain.api.media.MediaRepository;
 public class ApiClientMediaRepository extends AbstractApiClientMediaRepository implements MediaRepository {
 
     @Inject
-    public ApiClientMediaRepository(NpoApiClients clients) {
-        super(clients);
+    public ApiClientMediaRepository(NpoApiMediaUtil util) {
+        super(util);
     }
 }

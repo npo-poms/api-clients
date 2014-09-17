@@ -10,9 +10,9 @@ import com.google.inject.Inject;
 
 /**
  * @author Michiel Meeuwissen
- * @since ...
+ * @since 1.1
  */
-public class AbstractClientUtil {
+public class ClientRateLimiter {
 
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 

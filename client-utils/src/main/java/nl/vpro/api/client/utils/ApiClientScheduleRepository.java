@@ -19,13 +19,12 @@ import nl.vpro.domain.media.Net;
 @Named
 public class ApiClientScheduleRepository implements ScheduleRepository {
 
-    final NpoApiClients clients;
-    final NpoApiClientUtil util;
+    final NpoApiMediaUtil util;
 
     @Inject
-    public ApiClientScheduleRepository(NpoApiClients clients) {
-        this.clients = clients;
-        this.util = new NpoApiClientUtil(clients);
+    public ApiClientScheduleRepository(NpoApiMediaUtil util) {
+        this.util = util;
+
     }
 
     @Override
