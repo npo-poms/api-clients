@@ -38,9 +38,10 @@ public class PageUpdateApiClient extends AbstractApiClient {
     public PageUpdateApiClient(
         @Named("pageupdate-api.baseUrl") String apiBaseUrl,
         @Named("pageupdate-api.user") String user,
-        @Named("pageupdate-api.password") String password
+        @Named("pageupdate-api.password") String password,
+        @Named("pageupdate-api.connectionTimeout") int connectionTimeout
     ) {
-        super(10000, 16, 10000);
+        super(connectionTimeout, 16, 10000);
         this.authentication = new BasicAuthentication(user, password);
         ResteasyClient client = new ResteasyClientBuilder().httpEngine(clientHttpEngine).register(authentication).build();
         ResteasyWebTarget target = client.target(apiBaseUrl + "api/");

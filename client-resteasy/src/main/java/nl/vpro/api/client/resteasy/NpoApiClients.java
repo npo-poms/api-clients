@@ -34,9 +34,11 @@ public class NpoApiClients extends AbstractApiClient {
         @Named("npo-api.secret")
         String secret,
         @Named("npo-api.origin")
-        String origin
+        String origin,
+        @Named("npo-api.connectionTimeout")
+        int connectionTimeout
     ) {
-		super(10000, 16, 10000);
+		super(connectionTimeout, 16, 10000);
         this.authentication = new NpoApiAuthentication(apiKey, secret, origin);
         baseUrl = apiBaseUrl + "api";
         mediaRestServiceProxy = getTarget(baseUrl).proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_XML_TYPE).build();
