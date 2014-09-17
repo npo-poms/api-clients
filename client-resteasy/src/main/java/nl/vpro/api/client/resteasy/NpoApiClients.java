@@ -46,6 +46,15 @@ public class NpoApiClients extends AbstractApiClient {
         profileRestServiceProxy = getTarget(baseUrl).proxyBuilder(ProfileRestService.class).defaultConsumes(MediaType.APPLICATION_XML_TYPE).build();
     }
 
+    public NpoApiClients(
+        String apiBaseUrl,
+        String apiKey,
+        String secret,
+        String origin
+    ) {
+        this(apiBaseUrl, apiKey, secret, origin, 10000);
+    }
+
     public MediaRestService getMediaService() {
         return mediaRestServiceProxy;
     }
