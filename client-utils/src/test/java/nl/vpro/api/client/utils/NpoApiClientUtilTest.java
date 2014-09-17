@@ -25,8 +25,8 @@ public class NpoApiClientUtilTest {
             target,
             "ione7ahfij",
             "***REMOVED***",
-            "http://www.vpro.nl");
-        util = new NpoApiMediaUtil(clients);
+            "http://www.vpro.nl", 1000);
+        util = new NpoApiMediaUtil(clients, new NpoApiRateLimiter());
     }
 
 
