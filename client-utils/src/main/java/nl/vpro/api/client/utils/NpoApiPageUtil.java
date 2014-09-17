@@ -2,21 +2,12 @@ package nl.vpro.api.client.utils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
-import nl.vpro.domain.api.Change;
-import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.PageResult;
-import nl.vpro.domain.api.media.MediaForm;
-import nl.vpro.domain.api.profile.ProfileDefinition;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.media.MediaProvider;
-import nl.vpro.domain.media.MediaType;
 import nl.vpro.domain.page.Page;
 
 /**
@@ -26,11 +17,11 @@ import nl.vpro.domain.page.Page;
 public class NpoApiPageUtil  {
 
     final NpoApiClients clients;
-    final NpoClientsRateLimiter limiter;
+    final NpoApiRateLimiter limiter;
 
 
     @Inject
-    public NpoApiPageUtil(NpoApiClients clients, NpoClientsRateLimiter limiter) {
+    public NpoApiPageUtil(NpoApiClients clients, NpoApiRateLimiter limiter) {
         this.clients = clients;
         this.limiter = limiter;
     }

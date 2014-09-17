@@ -15,7 +15,7 @@ import static org.fest.assertions.Assertions.assertThat;
 @Ignore("This required running server at publish-dev")
 public class PageUpdateApiClientUtilTest  {
 
-    private PageUpdateApiClientUtil util;
+    private PageUpdateApiUtil util;
 
     //private String target = "http://publish-dev.poms.omroep.nl/";
     private String target = "http://localhost:8060/";
@@ -26,7 +26,7 @@ public class PageUpdateApiClientUtilTest  {
             target,
             "vpro-cms",
             "***REMOVED***");
-        util = new PageUpdateApiClientUtil(clients);
+        util = new PageUpdateApiUtil(clients);
     }
 
     @Test

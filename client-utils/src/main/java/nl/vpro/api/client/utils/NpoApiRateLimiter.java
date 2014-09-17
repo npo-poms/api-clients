@@ -7,7 +7,7 @@ import javax.inject.Named;
  * @since 1.8
  */
 @Named
-public class NpoClientsRateLimiter extends ClientRateLimiter {
+public class NpoApiRateLimiter extends AbstractRateLimiter {
 
     @com.google.inject.Inject(optional = true)
     @Override

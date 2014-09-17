@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.HashMap;
 
 import javax.annotation.Nullable;
-import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
@@ -29,9 +28,9 @@ import nl.vpro.jackson2.Jackson2Mapper;
  * @author Michiel Meeuwissen
  * @since 1.0
  */
-public class PageUpdateApiClientUtil {
+public class PageUpdateApiUtil {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiClientUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiUtil.class);
 
 
 
@@ -61,7 +60,7 @@ public class PageUpdateApiClientUtil {
 
 
     @Inject
-    public PageUpdateApiClientUtil(PageUpdateApiClient clients, PageUpdateRateLimiter limiter) {
+    public PageUpdateApiUtil(PageUpdateApiClient clients, PageUpdateRateLimiter limiter) {
         pageUpdateApiClient = clients;
         this.limiter = limiter;
     }

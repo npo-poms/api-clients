@@ -12,7 +12,7 @@ import com.google.inject.Inject;
  * @author Michiel Meeuwissen
  * @since 1.1
  */
-public class ClientRateLimiter {
+public class AbstractRateLimiter {
 
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
@@ -27,8 +27,7 @@ public class ClientRateLimiter {
         return baseRate;
     }
 
-    @Inject(optional = true)
-    public void setBaseRate(@Named("pageupdateapiclientutil.baserate") double baseRate) {
+    public void setBaseRate(double baseRate) {
         double prevFactor = limiter.getRate() / this.baseRate;
         this.baseRate = baseRate;
         limiter.setRate(this.baseRate * prevFactor);
@@ -39,8 +38,7 @@ public class ClientRateLimiter {
 
     }
 
-    @Inject(optional = true)
-    public void setMinRate(@Named("pageupdateapiclientutil.minrate") double minRate) {
+    public void setMinRate(double minRate) {
         this.minRate = minRate;
         setRate(limiter.getRate());
     }

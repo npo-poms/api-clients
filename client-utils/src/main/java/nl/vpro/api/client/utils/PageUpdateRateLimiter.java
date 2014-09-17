@@ -8,7 +8,7 @@ import com.google.inject.Inject;
  * @author Michiel Meeuwissen
  * @since 1.1
  */
-public class PageUpdateRateLimiter extends ClientRateLimiter {
+public class PageUpdateRateLimiter extends AbstractRateLimiter {
 
     @Inject(optional = true)
     @Override
