@@ -52,7 +52,8 @@ public class NpoApiClientsITest {
             target,
             "ione7ahfij",
             "***REMOVED***",
-            "http://www.vpro.nl"
+            "http://www.vpro.nl",
+            10000
         );
     }
 
@@ -62,7 +63,8 @@ public class NpoApiClientsITest {
             target,
             "ione7ahfij",
             "WRONG_PASSWORD",
-            "http://www.vpro.nl"
+            "http://www.vpro.nl",
+            10000
         );
 
         wrongPassword.getMediaService().list(null, null, null, null, null);

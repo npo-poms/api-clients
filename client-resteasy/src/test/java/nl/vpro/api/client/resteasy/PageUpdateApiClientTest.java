@@ -30,7 +30,7 @@ public class PageUpdateApiClientTest {
         clients = new PageUpdateApiClient(
             "http://publish-dev.poms.omroep.nl/",
             "vpro-cms",
-            "***REMOVED***");
+            "***REMOVED***", 10000);
     }
 
     @Test
