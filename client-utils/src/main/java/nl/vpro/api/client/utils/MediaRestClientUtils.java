@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import javax.inject.Named;
 import javax.ws.rs.ProcessingException;
 
 import org.apache.commons.io.IOUtils;
@@ -75,7 +74,7 @@ public class MediaRestClientUtils {
         try {
             return restService.load(id, null);
         } catch (Exception e) {
-            LOG.warn(e.getMessage());
+            LOG.warn(restService + " " + e.getMessage());
             return null;
         }
     }
