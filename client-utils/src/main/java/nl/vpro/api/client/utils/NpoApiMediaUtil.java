@@ -33,6 +33,10 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
 
+    public NpoApiMediaUtil(NpoApiClients clients) {
+        this(clients, new NpoApiRateLimiter());
+    }
+
 
     public MediaObject loadOrNull(String id) {
         limiter.acquire();

@@ -1,12 +1,9 @@
 package nl.vpro.api.client.utils;
 
-import javax.inject.Named;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.google.inject.Inject;
 
 /**
  * @author Michiel Meeuwissen
@@ -17,7 +14,7 @@ public class AbstractRateLimiter {
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
 
-    private double baseRate = 1.0;
+    private double baseRate = 10000.0;
     private double minRate = 0.01;
 
 
