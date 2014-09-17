@@ -25,8 +25,8 @@ public class PageUpdateApiClientUtilTest  {
         PageUpdateApiClient clients = new PageUpdateApiClient(
             target,
             "vpro-cms",
-            "***REMOVED***");
-        util = new PageUpdateApiUtil(clients);
+            "***REMOVED***", 1000);
+        util = new PageUpdateApiUtil(clients, new PageUpdateRateLimiter());
     }
 
     @Test
