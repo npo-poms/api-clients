@@ -36,7 +36,7 @@ public class NpoApiClients extends AbstractApiClient {
         @Named("npo-api.origin")
         String origin,
         @Named("npo-api.connectionTimeout")
-        int connectionTimeout
+        Integer connectionTimeout
     ) {
 		super(connectionTimeout, 16, 10000);
         this.authentication = new NpoApiAuthentication(apiKey, secret, origin);

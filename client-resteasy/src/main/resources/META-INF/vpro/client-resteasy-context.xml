@@ -17,8 +17,7 @@
   <bean class="java.lang.String" id="npo-api.origin">
     <constructor-arg value="${npo-api.origin}"/>
   </bean>
-
-  <bean class="java.lang.Integer" id="npo-api.connectionTimeout">
+  <bean  class="java.lang.Integer" factory-method="valueOf" id="npo-api.connectionTimeout">
     <constructor-arg value="${npo-api.connectionTimeout}"/>
   </bean>
 
