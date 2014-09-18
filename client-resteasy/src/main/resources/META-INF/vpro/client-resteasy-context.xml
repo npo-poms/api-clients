@@ -18,6 +18,10 @@
     <constructor-arg value="${npo-api.origin}"/>
   </bean>
 
+  <bean class="java.lang.String" id="npo-api.connectionTimeout">
+    <constructor-arg value="${npo-api.connectionTimeout}"/>
+  </bean>
+
   <context:component-scan base-package="nl.vpro.api.client.resteasy"/>
 
 </beans>
