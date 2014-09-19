@@ -20,6 +20,7 @@ import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.media.MediaSortField;
 import nl.vpro.domain.api.media.MediaSortOrder;
 import nl.vpro.domain.media.*;
+import nl.vpro.util.CloseableIterator;
 
 /**
  * @author Michiel Meeuwissen

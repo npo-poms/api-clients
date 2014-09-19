@@ -14,6 +14,7 @@ import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
+import nl.vpro.util.CloseableIterator;
 
 /**
  * @author Michiel Meeuwissen
