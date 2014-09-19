@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.google.common.collect.UnmodifiableIterator;
 
 import nl.vpro.jackson2.Jackson2Mapper;
+import nl.vpro.util.CloseableIterator;
 
 /**
  * @author Michiel Meeuwissen
