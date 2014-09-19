@@ -127,13 +127,18 @@ public class PageUpdateApiUtil {
                 case 403:
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + response.getEntity() + " for: '" + toString.apply(input) + "'";
                     return Result.denied(s);
-                default:
+                case 503: {
+                    limiter.downRate();
+                    String string = pageUpdateApiClient + " " + response.getStatus() + " " + input.toString();
+                    return Result.error(string);
+                }
+                default: {
                     MultivaluedMap<String, Object> headers = response.getHeaders();
                     if ("true".equals(headers.getFirst("validation-exception"))) {
                         if ("text/plain".equals(headers.getFirst("Content-Type"))) {
                             String string = response.readEntity(String.class);
                             return Result.invalid(pageUpdateApiClient + ":" + string);
-                        } else{
+                        } else {
                             try {
                                 ViolationReport report = response.readEntity(ViolationReport.class);
                                 String string = JACKSON.apply(report);
@@ -147,6 +152,7 @@ public class PageUpdateApiUtil {
                         String string = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + response.getEntity() + " for: '" + toString.apply(input) + "'";
                         return Result.error(string);
                     }
+                }
             }
         } finally {
             response.close();
