@@ -26,29 +26,29 @@ public class ApiClientMediaSearchRepository extends AbstractApiClientMediaReposi
 
     @Override
     public MediaSearchResult find(ProfileDefinition<MediaObject> profile, MediaForm form, Long offset, Integer max) {
-        return clients.getMediaService().find(form, profile.getName(), null, offset, max);
+        return clients.getMediaService().find(form, profile != null ? profile.getName() : null, null, offset, max);
 
     }
 
     @Override
     public MediaSearchResult findMembers(MediaObject media, ProfileDefinition<MediaObject> profile, MediaForm form, Long offset, Integer max) {
-        return clients.getMediaService().findMembers(form, media.getMid(), profile.getName(), null, offset, max);
+        return clients.getMediaService().findMembers(form, media.getMid(), profile != null ? profile.getName() : null, null, offset, max);
 
     }
 
     @Override
     public ProgramSearchResult findEpisodes(MediaObject media, ProfileDefinition<MediaObject> profile, MediaForm form, Long offset, Integer max) {
-        return clients.getMediaService().findEpisodes(form, media.getMid(), profile.getName(), null, offset, max);
+        return clients.getMediaService().findEpisodes(form, media.getMid(), profile != null ? profile.getName() : null, null, offset, max);
     }
 
     @Override
     public MediaSearchResult findDescendants(MediaObject media, ProfileDefinition<MediaObject> profile, MediaForm form, Long offset, Integer max) {
-        return clients.getMediaService().findDescendants(form, media.getMid(), profile.getName(), null, offset, max);
+        return clients.getMediaService().findDescendants(form, media.getMid(), profile != null ? profile.getName() : null, null, offset, max);
     }
 
     @Override
     public MediaSearchResult findRelated(MediaObject media, ProfileDefinition<MediaObject> profile, MediaForm form, Integer max) {
-        return clients.getMediaService().findRelated(form, media.getMid(), profile.getName(), null, max);
+        return clients.getMediaService().findRelated(form, media.getMid(), profile != null ? profile.getName() : null, null, max);
     }
 
     @Override
