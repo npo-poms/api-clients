@@ -6,13 +6,14 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.ProcessingException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
@@ -85,15 +86,22 @@ public class MediaRestClientUtils {
     }
 
     public static MediaObject[] load(MediaRestService restService, String... ids) {
-        return loadWithLoadAll(restService, ids);
+        return loadWithMultiple(restService, ids);
         //loadWithSearch(restService, ids); // doesn't preserve order/duplicates, probable slower too.
     }
 
-    private static MediaObject[] loadWithLoadAll(MediaRestService restService, String... ids) {
+    private static MediaObject[] loadWithMultiple(MediaRestService restService, String... ids) {
         List<MediaObject> result = new ArrayList<>(ids.length);
         for (List<String> idList : Lists.partition(Arrays.asList(ids), 500)) {
-            MediaResult mediaResult = restService.list(null, null, 0l, ids.length, StringUtils.join(idList, ","));
-            result.addAll(mediaResult.getItems());
+            MultipleMediaResult mediaResult = restService.multiple(idList.toArray(new String[idList.size()]), null);
+            result.addAll(Lists.transform(mediaResult.getItems(), new Function<MultipleMediaEntry, MediaObject>() {
+                @Nullable
+                @Override
+                public MediaObject apply(MultipleMediaEntry input) {
+                    return input.getResult();
+
+                }
+            }));
         }
         return result.toArray(new MediaObject[result.size()]);
     }

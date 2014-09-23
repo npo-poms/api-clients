@@ -5,7 +5,7 @@
   <parent>
     <groupId>nl.publiekeomroep</groupId>
     <artifactId>poms-parent</artifactId>
-    <version>3.3-SNAPSHOT</version>
+    <version>3.3.0</version>
   </parent>
 
   <groupId>nl.vpro.api-client</groupId>
@@ -20,8 +20,8 @@
 
   <properties>
     <api.version>3.3-SNAPSHOT</api.version>
-    <pages.version>3.3-SNAPSHOT</pages.version>
-    <media.version>3.2-SNAPSHOT</media.version>
+    <pages.version>3.3.0</pages.version>
+    <media.version>3.2.0</media.version>
   </properties>
 
   <scm>
