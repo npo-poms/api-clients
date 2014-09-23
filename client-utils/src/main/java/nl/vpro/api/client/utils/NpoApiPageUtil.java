@@ -2,13 +2,8 @@ package nl.vpro.api.client.utils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.Arrays;
-
-import org.apache.commons.lang.StringUtils;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
-import nl.vpro.domain.api.PageResult;
-import nl.vpro.domain.page.Page;
 
 /**
  * @author Michiel Meeuwissen
@@ -26,7 +21,7 @@ public class NpoApiPageUtil  {
         this.limiter = limiter;
     }
 
-
+/*
     public Page[] load(String... id) {
         PageResult pageResult = clients.getPageService().list(null, 0l, id.length, StringUtils.join(Arrays.asList(id), ","));
 
@@ -35,7 +30,7 @@ public class NpoApiPageUtil  {
             result[i] = pageResult.getItems().get(i);
         }
         return result;
-    }
+    }*/
 
     @Override
     public String toString() {
