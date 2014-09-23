@@ -67,9 +67,10 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements Clo
 
     @Override
     public void close() throws IOException {
-        this.jp.close();
         if (callback != null) {
             callback.run();
         }
+        this.jp.close();
+
     }
 }
