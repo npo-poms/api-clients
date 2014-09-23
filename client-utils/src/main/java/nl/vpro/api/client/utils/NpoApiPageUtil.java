@@ -4,6 +4,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
+import nl.vpro.domain.api.MultiplePageResult;
+import nl.vpro.domain.page.Page;
 
 /**
  * @author Michiel Meeuwissen
@@ -21,16 +23,15 @@ public class NpoApiPageUtil  {
         this.limiter = limiter;
     }
 
-/*
     public Page[] load(String... id) {
-        PageResult pageResult = clients.getPageService().list(null, 0l, id.length, StringUtils.join(Arrays.asList(id), ","));
+        MultiplePageResult pageResult = clients.getPageService().multiple(id, null);
 
         Page[] result = new Page[id.length];
         for (int i = 0; i < id.length; i++) {
-            result[i] = pageResult.getItems().get(i);
+            result[i] = pageResult.getItems().get(i).getResult();
         }
         return result;
-    }*/
+    }
 
     @Override
     public String toString() {
