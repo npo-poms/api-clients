@@ -61,6 +61,6 @@ public class AbstractApiClientMediaRepository {
     }
 
     public MediaResult list(Order order, Long offset, Integer max) {
-        return clients.getMediaService().list(null, order.toString(), offset, max, "");
+        return clients.getMediaService().list(null, order.toString(), offset, max);
     }
 }
