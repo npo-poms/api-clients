@@ -24,7 +24,7 @@ public class NpoApiPageUtil  {
     }
 
     public Page[] load(String... id) {
-        MultiplePageResult pageResult = clients.getPageService().multiple(id, null);
+        MultiplePageResult pageResult = clients.getPageService().loadMultiple(id, null);
 
         Page[] result = new Page[id.length];
         for (int i = 0; i < id.length; i++) {

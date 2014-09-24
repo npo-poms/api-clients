@@ -93,7 +93,7 @@ public class MediaRestClientUtils {
     private static MediaObject[] loadWithMultiple(MediaRestService restService, String... ids) {
         List<MediaObject> result = new ArrayList<>(ids.length);
         for (List<String> idList : Lists.partition(Arrays.asList(ids), 500)) {
-            MultipleMediaResult mediaResult = restService.multiple(idList.toArray(new String[idList.size()]), null);
+            MultipleMediaResult mediaResult = restService.loadMultiple(idList.toArray(new String[idList.size()]), null);
             result.addAll(Lists.transform(mediaResult.getItems(), new Function<MultipleMediaEntry, MediaObject>() {
                 @Nullable
                 @Override
