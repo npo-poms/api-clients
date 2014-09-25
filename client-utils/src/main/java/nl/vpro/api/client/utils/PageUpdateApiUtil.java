@@ -149,6 +149,12 @@ public class PageUpdateApiUtil {
                         }
                     } else {
                         limiter.downRate();
+                        String entity;
+                        if (response.hasEntity()) {
+                            entity = String.valueOf(response.getEntity());
+                        } else {
+                            entity = String.valueOf(response);
+                        }
                         String string = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + response.getEntity() + " for: '" + toString.apply(input) + "'";
                         return Result.error(string);
                     }
