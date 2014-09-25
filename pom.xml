@@ -20,7 +20,7 @@
 
   <properties>
     <api.version>3.3-SNAPSHOT</api.version>
-    <pages.version>3.3.0</pages.version>
+    <pages.version>3.3-SNAPSHOT</pages.version>
     <media.version>3.2.0</media.version>
   </properties>
 
