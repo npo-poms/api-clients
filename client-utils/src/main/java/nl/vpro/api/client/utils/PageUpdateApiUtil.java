@@ -122,11 +122,18 @@ public class PageUpdateApiUtil {
                     LOG.debug(pageUpdateApiClient + " " + response.getStatus());
                     limiter.upRate();
                     return Result.success();
+                case 400: {
+                    String error = response.readEntity(String.class);
+                    String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
+                    limiter.upRate();
+                    return Result.invalid(s);               }
                 case 404:
+                    limiter.upRate();
                     return Result.notfound("Not found error");
                 case 403: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
+                    limiter.upRate();
                     return Result.denied(s);
                 }
                 case 503: {
