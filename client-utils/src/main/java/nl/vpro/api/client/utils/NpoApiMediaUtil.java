@@ -2,15 +2,21 @@ package nl.vpro.api.client.utils;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
-import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
@@ -26,6 +32,28 @@ public class NpoApiMediaUtil implements MediaProvider {
     final NpoApiClients clients;
     final NpoApiRateLimiter limiter;
 
+    // TODO arrange caching via ehcache (ehcache4guice or something)
+
+    final LoadingCache<String, MediaObject> cache = CacheBuilder.newBuilder()
+        .concurrencyLevel(4)
+        .maximumSize(1000)
+        .expireAfterWrite(5, TimeUnit.MINUTES)
+        .build(
+            new CacheLoader<String, MediaObject>() {
+                @Override
+                public MediaObject load(@NotNull String mid) {
+                    limiter.acquire();
+                    try {
+                        MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
+                        limiter.upRate();
+                        return object;
+                    } catch (RuntimeException rte) {
+                        limiter.downRate();
+                        throw rte;
+                    }
+                }
+            });
+
 
     @Inject
     public NpoApiMediaUtil(NpoApiClients clients, NpoApiRateLimiter limiter) {
@@ -40,15 +68,12 @@ public class NpoApiMediaUtil implements MediaProvider {
 
 
     public MediaObject loadOrNull(String id) {
-        limiter.acquire();
         try {
-            MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), id);
-            limiter.upRate();
-            return object;
-        } catch (RuntimeException rte) {
-            limiter.downRate();
-            throw rte;
+            return cache.get(id);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     public MediaObject[] load(String... ids) {
@@ -75,10 +100,6 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
-    public ProfileDefinition<MediaObject> getMediaProfile(String profile) {
-        limiter.acquire();
-        return clients.getProfileService().load(profile, null).getMediaProfile();
-    }
 
     @Deprecated
     public Iterator<MediaObject> iterate(MediaForm form, String profile)  {

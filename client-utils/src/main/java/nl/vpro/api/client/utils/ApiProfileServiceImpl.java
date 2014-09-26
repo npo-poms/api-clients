@@ -1,9 +1,16 @@
 package nl.vpro.api.client.utils;
 
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
@@ -22,6 +29,20 @@ public class ApiProfileServiceImpl implements ProfileService {
 
     final ProfileRestService client;
 
+
+    // TODO arrange caching via ehcache (ehcache4guice or something)
+    final LoadingCache<String, Profile> cache = CacheBuilder.newBuilder()
+        .concurrencyLevel(4)
+        .maximumSize(1000)
+        .expireAfterWrite(5, TimeUnit.MINUTES)
+        .build(
+            new CacheLoader<String, Profile>() {
+                @Override
+                public Profile load(@NotNull String profile )  {
+                    return client.load(profile, null);
+                }
+            });
+
     @Inject
     public ApiProfileServiceImpl(NpoApiClients client) {
         this.client = client.getProfileService();
@@ -29,7 +50,11 @@ public class ApiProfileServiceImpl implements ProfileService {
 
     @Override
     public Profile getProfile(String name) {
-        return client.load(name, null);
+        try {
+            return cache.get(name);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -39,12 +64,12 @@ public class ApiProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileDefinition<Page> getPageProfileDefinition(String name) {
-        return client.load(name, null).getPageProfile();
+        return getProfile(name).getPageProfile();
     }
 
     @Override
     public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name) {
-        return client.load(name, null).getMediaProfile();
+        return getProfile(name).getMediaProfile();
     }
 
     @Override
