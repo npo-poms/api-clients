@@ -124,9 +124,11 @@ public class PageUpdateApiUtil {
                     return Result.success();
                 case 404:
                     return Result.notfound("Not found error");
-                case 403:
-                    String s = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + response.getEntity() + " for: '" + toString.apply(input) + "'";
+                case 403: {
+                    String error = response.readEntity(String.class);
+                    String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
                     return Result.denied(s);
+                }
                 case 503: {
                     limiter.downRate();
                     String string = pageUpdateApiClient + " " + response.getStatus() + " " + input.toString();
@@ -149,13 +151,8 @@ public class PageUpdateApiUtil {
                         }
                     } else {
                         limiter.downRate();
-                        String entity;
-                        if (response.hasEntity()) {
-                            entity = String.valueOf(response.getEntity());
-                        } else {
-                            entity = String.valueOf(response);
-                        }
-                        String string = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + response.getEntity() + " for: '" + toString.apply(input) + "'";
+                        String error = response.readEntity(String.class);
+                        String string = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + error + " for: '" + toString.apply(input) + "'";
                         return Result.error(string);
                     }
                 }
