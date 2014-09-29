@@ -17,6 +17,8 @@ import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
+import com.google.common.base.Optional;
+
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.*;
@@ -155,7 +157,7 @@ public class MediaRestClientUtils {
 
     }
 
-    static Cache<String, String> urnCache = CacheBuilder.newBuilder().maximumSize(1000).build();
+    static Cache<String, Optional<String>> urnCache = CacheBuilder.newBuilder().maximumSize(1000).build();
     /**
      * Only call this during the migration to NPO API while not everything is converted to MID yet.
      *
@@ -164,17 +166,18 @@ public class MediaRestClientUtils {
     @Deprecated
     public static String toMid(final MediaRestService restService, final String urn) {
         try {
-            return urnCache.get(urn, new Callable<String>() {
+            return urnCache.get(urn, new Callable<Optional<String>>() {
                 @Override
-                public String call() throws Exception {
+                public Optional<String> call() throws Exception {
                     MediaForm mediaForm = MediaFormBuilder.form().mediaIds(urn).build();
                     MediaSearchResult result = restService.find(mediaForm, null, "mid", 0L, 1);
                     if (result.getSize() == 0) {
-                        return null;
+                        //return Optional.empty();
+                        return Optional.absent();
                     }
-                    return result.getItems().get(0).getResult().getMid();
+                    return Optional.of(result.getItems().get(0).getResult().getMid());
                 }
-            });
+            }).orNull();
         } catch (ExecutionException e) {
             LOG.error(e.getMessage());
             return null;

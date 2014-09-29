@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 
+import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -34,19 +35,20 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     // TODO arrange caching via ehcache (ehcache4guice or something)
 
-    final LoadingCache<String, MediaObject> cache = CacheBuilder.newBuilder()
+    final LoadingCache<String, Optional<MediaObject>> cache = CacheBuilder.newBuilder()
         .concurrencyLevel(4)
         .maximumSize(1000)
         .expireAfterWrite(5, TimeUnit.MINUTES)
         .build(
-            new CacheLoader<String, MediaObject>() {
+            new CacheLoader<String, Optional<MediaObject>>() {
                 @Override
-                public MediaObject load(@NotNull String mid) {
+                public Optional<MediaObject> load(@NotNull String mid) {
                     limiter.acquire();
                     try {
                         MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
                         limiter.upRate();
-                        return object;
+                        //return Optional.ofNullable(object);
+                        return Optional.fromNullable(object);
                     } catch (RuntimeException rte) {
                         limiter.downRate();
                         throw rte;
@@ -69,7 +71,8 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     public MediaObject loadOrNull(String id) {
         try {
-            return cache.get(id);
+            //return cache.get(id).orElse(null);
+            return cache.get(id).orNull();
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
