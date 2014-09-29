@@ -56,7 +56,7 @@ public class Result {
 
     @Override
     public String toString() {
-        return status + ":" + errors;
+        return status + (errors != null ? (":" + errors) : "");
     }
 
     public enum Status {
