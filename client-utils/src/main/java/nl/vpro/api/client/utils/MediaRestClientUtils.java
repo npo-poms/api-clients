@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import javax.ws.rs.ProcessingException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +96,7 @@ public class MediaRestClientUtils {
     private static MediaObject[] loadWithMultiple(MediaRestService restService, String... ids) {
         List<MediaObject> result = new ArrayList<>(ids.length);
         for (List<String> idList : Lists.partition(Arrays.asList(ids), 500)) {
-            MultipleMediaResult mediaResult = restService.loadMultiple(idList.toArray(new String[idList.size()]), null);
+            MultipleMediaResult mediaResult = restService.loadMultiple(new IdList(idList.toArray(new String[idList.size()])), null);
             result.addAll(Lists.transform(mediaResult.getItems(), new Function<MultipleMediaEntry, MediaObject>() {
                 @Nullable
                 @Override
