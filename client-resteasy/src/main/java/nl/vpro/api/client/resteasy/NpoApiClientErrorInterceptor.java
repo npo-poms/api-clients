@@ -16,6 +16,6 @@ public class NpoApiClientErrorInterceptor implements ClientErrorInterceptor {
     @Override
     public void handle(ClientResponse<?> response) throws RuntimeException {
         // Never got called...
-        System.out.println("sadasa");
+        System.out.println("Hallelujah");
     }
 }
