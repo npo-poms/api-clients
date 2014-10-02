@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
+import nl.vpro.domain.api.IdList;
 import nl.vpro.domain.api.MultiplePageResult;
 import nl.vpro.domain.page.Page;
 
@@ -24,7 +25,7 @@ public class NpoApiPageUtil  {
     }
 
     public Page[] load(String... id) {
-        MultiplePageResult pageResult = clients.getPageService().loadMultiple(id, null);
+        MultiplePageResult pageResult = clients.getPageService().loadMultiple(new IdList(id), null);
 
         Page[] result = new Page[id.length];
         for (int i = 0; i < id.length; i++) {
