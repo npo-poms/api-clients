@@ -18,16 +18,11 @@
     <module>client-utils</module>
   </modules>
 
-  <properties>
-    <api.version>3.2.4</api.version>
-  </properties>
-
   <scm>
     <connection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/vpro/api-clients/trunk</connection>
     <developerConnection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/vpro/api-clients/trunk</developerConnection>
     <url>https://subversion.vpro.nl/cgi-bin/viewvc.cgi/nl/vpro/api-clients/trunk</url>
   </scm>
-
 
   <dependencyManagement>
     <dependencies>
