@@ -32,21 +32,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>nl.vpro.media</groupId>
-        <artifactId>media-classification</artifactId>
-        <version>${media.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>nl.vpro.api</groupId>
-        <artifactId>api-rs-services</artifactId>
-        <version>${api.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>nl.vpro.pages</groupId>
-        <artifactId>pages-rs-services</artifactId>
-        <version>${pages.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.google.inject</groupId>
         <artifactId>guice</artifactId>
         <version>3.0</version>
