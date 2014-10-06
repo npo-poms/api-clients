@@ -20,8 +20,6 @@
 
   <properties>
     <api.version>3.2.4</api.version>
-    <pages.version>3.3.0</pages.version>
-    <media.version>3.2.3</media.version>
   </properties>
 
   <scm>
