@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.google.common.base.Function;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -83,17 +84,26 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements Clo
 
     }
 
-    public void write(OutputStream out) throws IOException {
+    public void write(OutputStream out, final Function<T, Void> logging) throws IOException {
         JsonGenerator jg = Jackson2Mapper.INSTANCE.getFactory().createGenerator(out);
         jg.writeStartObject();
         jg.writeArrayFieldStart("array");
         while (hasNext()) {
-            T change = next();
-            if (change != null) {
-                jg.writeObject(change);
-            } else {
-                jg.writeNull();
+            T change = null;
+            try {
+                change = next();
+                if (change != null) {
+                    jg.writeObject(change);
+                } else {
+                    jg.writeNull();
+                }
+            } catch (Exception e) {
+                jg.writeObject(e.getMessage());
             }
+            if (logging != null) {
+                logging.apply(change);
+            }
+
         }
         jg.writeEndArray();
         jg.writeEndObject();
