@@ -1,5 +1,6 @@
 package nl.vpro.api.client.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.junit.Test;
@@ -22,5 +23,14 @@ public class JsonArrayIteratorTest {
         assertThat(it.hasNext()).isTrue();
         assertThat(it.next().getMid()).isEqualTo("POMS_VPRO_1139788");
         assertThat(it.hasNext()).isFalse();
+    }
+
+
+    @Test
+    public void testEmpty() throws IOException {
+        JsonArrayIterator<Change> it = new JsonArrayIterator<>(new ByteArrayInputStream("{\"array\":[]}".getBytes()), Change.class, null);
+        assertThat(it.hasNext()).isFalse();
+        assertThat(it.hasNext()).isFalse();
+
     }
 }

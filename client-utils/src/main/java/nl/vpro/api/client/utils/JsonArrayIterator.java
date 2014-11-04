@@ -24,6 +24,8 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements Clo
 
     private T next = null;
 
+    private boolean needsFindNext = true;
+
     private final Class<T> clazz;
 
     private final Runnable callback;
@@ -54,10 +56,11 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements Clo
         findNext();
         T result = next;
         next = null;
+        needsFindNext = true;
         return result;
     }
     protected void findNext() {
-        if (next == null) {
+        if (needsFindNext) {
             try {
                 next = jp.readValueAs(clazz);
                 if (next == null) {
@@ -71,6 +74,7 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements Clo
                 }
                 throw new RuntimeException(e);
             }
+            needsFindNext = false;
         }
     }
 
