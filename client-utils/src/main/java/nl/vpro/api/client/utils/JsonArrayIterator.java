@@ -2,9 +2,12 @@ package nl.vpro.api.client.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.UnmodifiableIterator;
 
 import nl.vpro.jackson2.Jackson2Mapper;
@@ -14,7 +17,7 @@ import nl.vpro.util.CloseableIterator;
  * @author Michiel Meeuwissen
  * @since 1.0
  */
-public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements CloseableIterator<T> {
+public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements CloseableIterator<T>, PeekingIterator<T> {
 
     final JsonParser jp;
 
@@ -37,6 +40,12 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements Clo
     public boolean hasNext() {
         findNext();
         return next != null;
+    }
+
+    @Override
+    public T peek() {
+        findNext();
+        return next;
     }
 
     @Override
@@ -72,5 +81,22 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements Clo
         }
         this.jp.close();
 
+    }
+
+    public void write(OutputStream out) throws IOException {
+        JsonGenerator jg = Jackson2Mapper.INSTANCE.getFactory().createGenerator(out);
+        jg.writeStartObject();
+        jg.writeArrayFieldStart("array");
+        while (hasNext()) {
+            T change = next();
+            if (change != null) {
+                jg.writeObject(change);
+            } else {
+                jg.writeNull();
+            }
+        }
+        jg.writeEndArray();
+        jg.writeEndObject();
+        jg.flush();
     }
 }

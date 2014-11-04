@@ -91,10 +91,10 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
-    public CloseableIterator<Change> changes(String profile, long since, Order order, Integer max) {
+    public JsonArrayIterator<Change> changes(String profile, long since, Order order, Integer max) {
         limiter.acquire();
         try {
-            CloseableIterator<Change> result = MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
+            JsonArrayIterator<Change> result = MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
             limiter.upRate();
             return result;
         } catch (IOException e) {
