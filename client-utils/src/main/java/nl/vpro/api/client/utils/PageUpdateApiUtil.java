@@ -126,10 +126,14 @@ public class PageUpdateApiUtil {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
                     limiter.upRate();
-                    return Result.invalid(s);               }
-                case 404:
-                    limiter.upRate();
-                    return Result.notfound("Not found error");
+                    return Result.invalid(s);
+                }
+                case 404: {
+                    String error = response.readEntity(String.class);
+                    String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
+                    limiter.downRate();
+                    return Result.notfound(s);
+                }
                 case 403: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
