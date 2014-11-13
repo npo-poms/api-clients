@@ -53,17 +53,21 @@ public class AbstractRateLimiter {
         setRate(limiter.getRate() / 2);
     }
 
-    private void setRate(double r) {
+    private boolean setRate(double r) {
         if (r > baseRate) {
             r = baseRate;
         }
         if (r < minRate) {
             r = minRate;
         }
-        if (r != limiter.getRate()) {
+        boolean changed = r != limiter.getRate();
+        if (changed) {
             LOG.info("Rate " + limiter.getRate() + " -> " + r);
             limiter.setRate(r);
+        } else if (r == minRate) {
+            LOG.info("Rate " + limiter.getRate());
         }
+        return changed;
     }
 
 
