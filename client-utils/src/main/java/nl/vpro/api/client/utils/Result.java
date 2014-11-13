@@ -44,7 +44,7 @@ public class Result {
     }
 
     public boolean isSuccess() {
-        return status != Status.ERROR && status != Status.ABORTED;
+        return status != Status.ERROR && status != Status.ABORTED && status != Status.NOTFOUND;
     }
     public Status getStatus() {
         return status;
