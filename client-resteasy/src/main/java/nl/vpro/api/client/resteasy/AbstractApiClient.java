@@ -18,6 +18,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpRequestWrapper;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -69,9 +70,19 @@ public class AbstractApiClient {
     }
 
     protected ApacheHttpClient4Engine buildHttpEngine(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
+
+
+        SocketConfig socketConfig = SocketConfig.custom()
+            .setTcpNoDelay(true)
+            .setSoKeepAlive(true)
+            .setSoReuseAddress(true)
+            .build();
+
+
         PoolingHttpClientConnectionManager poolingClientConnectionManager = new PoolingHttpClientConnectionManager(connectionInPoolTTL, TimeUnit.MILLISECONDS);
         poolingClientConnectionManager.setDefaultMaxPerRoute(maxConnections);
         poolingClientConnectionManager.setMaxTotal(maxConnections);
+        poolingClientConnectionManager.setDefaultSocketConfig(socketConfig);
 
         watchIdleConnections(poolingClientConnectionManager, connectionTimeoutMillis);
 
@@ -81,6 +92,7 @@ public class AbstractApiClient {
             .setMaxRedirects(100)
             .setConnectionRequestTimeout(connectionTimeoutMillis)
             .setConnectTimeout(connectionTimeoutMillis)
+            .setSocketTimeout(connectionTimeoutMillis)
             .build();
 
         List<Header> defaultHeaders = new ArrayList<>();
@@ -90,11 +102,18 @@ public class AbstractApiClient {
             .setConnectionManager(poolingClientConnectionManager)
             .setDefaultRequestConfig(defaultRequestConfig)
             .setDefaultHeaders(defaultHeaders)
-                //.setKeepAliveStrategy(new MyConnectionKeepAliveStrategy())
+            .setKeepAliveStrategy(new MyConnectionKeepAliveStrategy())
             .build();
+
 
         return new ApacheHttpClient4Engine(client);
     }
+
+
+    public ClientHttpEngine getClientHttpEngine() {
+        return clientHttpEngine;
+    }
+
 
     @PreDestroy
     public void shutdown() {
