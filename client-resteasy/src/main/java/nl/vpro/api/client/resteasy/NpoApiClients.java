@@ -38,7 +38,7 @@ public class NpoApiClients extends AbstractApiClient {
         @Named("npo-api.connectionTimeout")
         Integer connectionTimeout
     ) {
-		super(connectionTimeout, 16, 10000);
+		super(connectionTimeout, 16, 3);
         this.authentication = new NpoApiAuthentication(apiKey, secret, origin);
         baseUrl = apiBaseUrl + "api";
         mediaRestServiceProxy = getTarget(baseUrl).proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_XML_TYPE).build();
@@ -52,7 +52,7 @@ public class NpoApiClients extends AbstractApiClient {
         String secret,
         String origin
     ) {
-        this(apiBaseUrl, apiKey, secret, origin, 10000);
+        this(apiBaseUrl, apiKey, secret, origin, 10);
     }
 
     public MediaRestService getMediaService() {
@@ -65,6 +65,10 @@ public class NpoApiClients extends AbstractApiClient {
 
     public ProfileRestService getProfileService() {
         return profileRestServiceProxy;
+    }
+
+    public NpoApiAuthentication getAuthentication() {
+        return authentication;
     }
 
     private ResteasyWebTarget getTarget(String url) {
