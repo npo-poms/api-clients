@@ -5,11 +5,13 @@
 package nl.vpro.api.client.resteasy;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.*;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -34,27 +36,29 @@ public class NpoApiAuthentication implements ClientRequestFilter {
 
     @Override
     public void filter(ClientRequestContext requestContext) throws IOException {
-
-        String now = Util.rfc822(new Date());
-
-        String message = message(requestContext, now);
-
-        requestContext.getHeaders().add("Authorization", "NPO " + apiKey + ':' + Util.hmacSHA256(secret, message));
-        requestContext.getHeaders().add("Origin", origin);
-        requestContext.getHeaders().add("X-NPO-Date", now);
+        authenticate(requestContext.getUri(), requestContext.getHeaders());
     }
 
-    private String message(ClientRequestContext requestContext, String now) {
+    public void authenticate(URI uri, MultivaluedMap<String, Object> headers) {
+        String now = Util.rfc822(new Date());
+
+        String message = message(uri, now);
+
+        headers.add("Authorization", "NPO " + apiKey + ':' + Util.hmacSHA256(secret, message));
+        headers.add("Origin", origin);
+        headers.add("X-NPO-Date", now);
+    }
+
+    private String message(URI uri, String now) {
 
         StringBuilder sb = new StringBuilder();
         sb.append("origin:").append(origin).append(',');
 
         sb.append("x-npo-date:").append(now).append(',');
 
-        String uri = requestContext.getUri().getPath();
-        sb.append("uri:").append(uri);
+        sb.append("uri:").append(uri.getPath());
 
-        List<NameValuePair> query = URLEncodedUtils.parse(requestContext.getUri().getQuery(), Charset.forName("utf-8"));
+        List<NameValuePair> query = URLEncodedUtils.parse(uri.getQuery(), Charset.forName("utf-8"));
 
         SortedSet<NameValuePair> sortedQuery = new TreeSet<>(new Comparator<NameValuePair>() {
             @Override
