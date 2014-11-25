@@ -8,6 +8,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.MediaResult;
@@ -22,6 +25,8 @@ import nl.vpro.domain.media.MediaObject;
  * @since 1.1
  */
 public class AbstractApiClientMediaRepository {
+    private final static Logger LOG = LoggerFactory.getLogger(AbstractApiClientMediaRepository.class);
+
     final NpoApiClients clients;
     final NpoApiMediaUtil util;
 
@@ -36,6 +41,7 @@ public class AbstractApiClientMediaRepository {
         try {
             return util.loadOrNull(id);
         } catch (IOException e) {
+            LOG.error(e.getMessage());
             return null;
         }
     }
@@ -44,6 +50,7 @@ public class AbstractApiClientMediaRepository {
         try {
             return Arrays.asList(util.load(ids.toArray(new String[ids.size()])));
         } catch (IOException e) {
+            LOG.error(e.getMessage());
             return Collections.nCopies(ids.size(), null);
         }
     }
