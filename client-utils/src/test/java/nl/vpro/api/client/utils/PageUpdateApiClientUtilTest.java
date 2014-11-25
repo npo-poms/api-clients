@@ -20,15 +20,16 @@ public class PageUpdateApiClientUtilTest  {
 
     private PageUpdateApiUtil util;
 
-    //private String target = "http://publish-dev.poms.omroep.nl/";
-    private String target = "http://localhost:8060/";
+    private String target = "http://publish-dev.pages.omroep.nl/";
+    //private String target = "http://localhost:8060/";
 
     @Before
     public void setUp() throws MalformedURLException {
         PageUpdateApiClient clients = new PageUpdateApiClient(
             target,
             "vpro-cms",
-            "***REMOVED***", 1000);
+            "***REMOVED***",
+            10000);
         util = new PageUpdateApiUtil(clients, new PageUpdateRateLimiter());
     }
 
@@ -46,14 +47,14 @@ public class PageUpdateApiClientUtilTest  {
         String id  = "http://BESTAATNIET";
         Result result = util.delete(id);
         assertThat(result.isSuccess()).isTrue();
-        assertThat(result.getStatus()).isEqualTo(Result.Status.NOTFOUND);
+        assertThat(result.getStatus()).isEqualTo(Result.Status.SUCCESS);
 
         System.out.println("errors " + result.getErrors());
     }
 
     @Test
     public void accesDenied() {
-        String willCauseError = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        String willCauseDeny = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<pageUpdate:page xmlns:pageUpdate=\"urn:vpro:pages:update:2013\" xmlns:pages=\"urn:vpro:pages:2013\" type=\"PLAYER\" url=\"http://cultura-sample.localhost/speel.RBX_NTR_632457.html\" publishStart=\"2014-09-23T19:00:00+02:00\">\n" +
             "    <pageUpdate:crid>crid://vpro/media/cultura/RBX_NTR_632457</pageUpdate:crid>\n" +
             "    <pageUpdate:broadcaster>NTR</pageUpdate:broadcaster>\n" +
@@ -73,8 +74,9 @@ public class PageUpdateApiClientUtilTest  {
             "    </pageUpdate:image>\n" +
             "</pageUpdate:page>\n";
         //System.out.println(willCauseError);
-        PageUpdate update = JAXB.unmarshal(new StringReader(willCauseError), PageUpdate.class);
+        PageUpdate update = JAXB.unmarshal(new StringReader(willCauseDeny), PageUpdate.class);
         Result result = util.save(update);
+        System.out.println(result.getErrors());
         assertThat(result.getStatus()).isEqualTo(Result.Status.DENIED);
 
 
