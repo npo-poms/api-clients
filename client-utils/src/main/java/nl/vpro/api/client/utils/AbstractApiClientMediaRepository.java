@@ -2,6 +2,7 @@ package nl.vpro.api.client.utils;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,7 +41,11 @@ public class AbstractApiClientMediaRepository {
     }
 
     public List<MediaObject> loadAll(List<String> ids) {
-        return Arrays.asList(util.load(ids.toArray(new String[ids.size()])));
+        try {
+            return Arrays.asList(util.load(ids.toArray(new String[ids.size()])));
+        } catch (IOException e) {
+            return Collections.nCopies(ids.size(), null);
+        }
     }
 
     public Iterator<Change> changes(Long since, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive) {
