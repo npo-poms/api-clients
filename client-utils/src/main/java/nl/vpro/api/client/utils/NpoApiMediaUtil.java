@@ -85,7 +85,7 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     }
 
-    public MediaObject[] load(String... ids) {
+    public MediaObject[] load(String... ids) throws IOException {
         limiter.acquire();
         try {
             MediaObject[] result = MediaRestClientUtils.load(clients.getMediaService(), ids);
@@ -131,10 +131,14 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     @Override
     public MediaObject findByMid(String mid) {
-        return load(mid)[0];
+        try {
+            return load(mid)[0];
+        } catch (IOException e) {
+            return null;
+        }
     }
 
-    public MediaType getType(String mid) {
+    public MediaType getType(String mid) throws IOException {
         return load(mid)[0].getMediaType();
     }
 

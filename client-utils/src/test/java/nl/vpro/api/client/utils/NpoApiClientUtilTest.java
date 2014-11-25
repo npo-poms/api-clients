@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +44,9 @@ public class NpoApiClientUtilTest {
     private NpoApiMediaUtil utilShortTimeout;
 
 
-    //private String target = "http://rs.poms.omroep.nl/v1/";
-    ////private String target = "http://rs-test.poms.omroep.nl/v1/";
-    private String target = "http://localhost:8070/v1/";
+    private String target = "http://rs.poms.omroep.nl/v1/";
+    ///private String target = "http://rs-test.poms.omroep.nl/v1/";
+    //private String target = "http://localhost:8070/v1/";
 
     @Before
     public void setUp() throws MalformedURLException {
@@ -63,7 +64,7 @@ public class NpoApiClientUtilTest {
                 target,
                 "ione7ahfij",
                 "***REMOVED***",
-                "http://www.vpro.nl", 10);
+                "http://www.vpro.nl", 1);
             utilShortTimeout = new NpoApiMediaUtil(clients, new NpoApiRateLimiter());
         }
 
@@ -75,7 +76,13 @@ public class NpoApiClientUtilTest {
         assertThat(result[0].getMid()).isEqualTo("AVRO_1656037");
         assertThat(result[1].getMid()).isEqualTo("AVRO_1656037");
         assertThat(result[2].getMid()).isEqualTo("POMS_VPRO_487567");
+    }
 
+
+    @Test(expected = IOException.class)
+    public void testLoadMultipleWithTimeout() throws Exception {
+        MediaObject[] result = utilShortTimeout.load("AVRO_1656037", "AVRO_1656037", "POMS_VPRO_487567");
+        System.out.println(Arrays.asList(result));
     }
 
 
@@ -83,6 +90,15 @@ public class NpoApiClientUtilTest {
     public void testLoad() throws Exception {
         MediaObject result = util.loadOrNull("AVRO_1656037");
         assertThat(result.getMid()).isEqualTo("AVRO_1656037");
+    }
+
+
+    @Test(expected = IOException.class)
+    public void testLoadWithTimeout() throws Exception {
+        MediaObject result = utilShortTimeout.loadOrNull("AVRO_1656037");
+        // it doesn't
+        System.out.println("Didn't time out!");
+        System.out.println(result.getMid());
     }
 
 
@@ -101,17 +117,10 @@ public class NpoApiClientUtilTest {
 
     }
 
-    @Test(expected = IOException.class)
-    public void testLoadWithTimeout() throws Exception {
-        MediaObject result = utilShortTimeout.loadOrNull("AVRO_1656037");
-        // it doesn't
-        System.out.println("Didn't time out!");
-        System.out.println(result.getMid());
-    }
 
 
     @Test(expected = IOException.class)
-    @Ignore
+    @Ignore("This doesn't test the api, but httpclient")
     // this does indeed timeout
     public void timeout() throws IOException, URISyntaxException {
 
@@ -139,7 +148,7 @@ public class NpoApiClientUtilTest {
     }
 
     @Test(expected = IOException.class)
-    @Ignore
+    @Ignore("Doesn't test api, but httpclient")
     public void timeoutWithInvoke() throws URISyntaxException, IOException {
         ApacheHttpClient4Engine engine = (ApacheHttpClient4Engine) utilShortTimeout.getClients().getClientHttpEngine();
         String host = target + "api/media/AVRO_1656037";
