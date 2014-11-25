@@ -24,19 +24,5 @@
     <url>https://subversion.vpro.nl/cgi-bin/viewvc.cgi/nl/vpro/api-clients/trunk</url>
   </scm>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.google.inject</groupId>
-        <artifactId>guice</artifactId>
-        <version>3.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>4.3.1</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
 </project>
