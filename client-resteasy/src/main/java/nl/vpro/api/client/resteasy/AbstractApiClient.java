@@ -4,30 +4,18 @@
  */
 package nl.vpro.api.client.resteasy;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PreDestroy;
 
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HeaderElementIterator;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpRequestWrapper;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.config.SocketConfig;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicHeaderElementIterator;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.SchemeRegistryFactory;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
@@ -72,7 +60,18 @@ public class AbstractApiClient {
     protected ApacheHttpClient4Engine buildHttpEngine(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
 
 
-        SocketConfig socketConfig = SocketConfig.custom()
+
+
+        return new ApacheHttpClient4Engine(getHttpClient(connectionTimeoutMillis, maxConnections, connectionInPoolTTL));
+    }
+
+
+    // See https://issues.jboss.org/browse/RESTEASY-975
+    // You _must_ use httpclient 4.2.1. Otherwise timeout settigns will simply not work
+    // See also https://jira.vpro.nl/browse/MGNL-11312
+    // This code can be used as this will be fixed in resteasy.
+    private HttpClient getHttpClient43(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTT) {
+        /*SocketConfig socketConfig = SocketConfig.custom()
             .setTcpNoDelay(true)
             .setSoKeepAlive(true)
             .setSoReuseAddress(true)
@@ -98,17 +97,33 @@ public class AbstractApiClient {
         List<Header> defaultHeaders = new ArrayList<>();
         defaultHeaders.add(new BasicHeader("Keep-Alive", "timeout=1000, max=500"));
 
-        CloseableHttpClient client = HttpClients.custom()
+        HttpClient client = HttpClients.custom()
             .setConnectionManager(poolingClientConnectionManager)
             .setDefaultRequestConfig(defaultRequestConfig)
             .setDefaultHeaders(defaultHeaders)
             .setKeepAliveStrategy(new MyConnectionKeepAliveStrategy())
-            .build();
-
-
-        return new ApacheHttpClient4Engine(client);
+            .build();*/
+        return null;
     }
 
+
+    private HttpClient getHttpClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
+
+        PoolingClientConnectionManager poolingClientConnectionManager = new PoolingClientConnectionManager(SchemeRegistryFactory.createDefault(),
+            connectionInPoolTTL, TimeUnit.MILLISECONDS);
+        poolingClientConnectionManager.setDefaultMaxPerRoute(maxConnections);
+        poolingClientConnectionManager.setMaxTotal(maxConnections);
+
+        watchIdleConnections(poolingClientConnectionManager, connectionTimeoutMillis);
+
+        HttpParams httpParams = new BasicHttpParams();
+
+        HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeoutMillis);
+        HttpConnectionParams.setSoTimeout(httpParams, connectionTimeoutMillis);
+
+        return new DefaultHttpClient(poolingClientConnectionManager, httpParams);
+
+    }
 
     public ClientHttpEngine getClientHttpEngine() {
         return clientHttpEngine;
@@ -130,7 +145,7 @@ public class AbstractApiClient {
         super.finalize();
     }
 
-    private class MyConnectionKeepAliveStrategy implements ConnectionKeepAliveStrategy {
+   /* private class MyConnectionKeepAliveStrategy implements ConnectionKeepAliveStrategy {
 
         @Override
         public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
@@ -158,9 +173,9 @@ public class AbstractApiClient {
             // 1 minute
             return 60 * 1000;
         }
-    }
+    }*/
 
-    private void watchIdleConnections(final HttpClientConnectionManager connectionManager, final int connectionTimeoutMillis) {
+   private void watchIdleConnections(final PoolingClientConnectionManager connectionManager, final int connectionTimeoutMillis) {
         ThreadFactory threadFactory = ThreadPools.createThreadFactory("API Client purge idle connections", false, Thread.NORM_PRIORITY);
         connectionGuard = threadFactory.newThread(new Runnable() {
             @Override

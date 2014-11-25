@@ -11,7 +11,7 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.http.impl.execchain.RequestAbortedException;
+//import org.apache.http.impl.execchain.RequestAbortedException;
 import org.jboss.resteasy.api.validation.ViolationReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +105,7 @@ public class PageUpdateApiUtil {
 
     protected Result exceptionToResult(Exception e) {
         Throwable cause = e.getCause();
-        if (cause instanceof RequestAbortedException) {
+        if (cause.getClass().getName().indexOf("RequestAbortedException") > 0) {
             return Result.aborted(pageUpdateApiClient + ":" + e.getClass().getName() + " " + cause.getMessage());
         } else {
             limiter.downRate();

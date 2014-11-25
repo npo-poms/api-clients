@@ -76,9 +76,16 @@ public class MediaRestClientUtils {
         };
     }
 
-    public static MediaObject loadOrNull(MediaRestService restService, String id) {
+    public static MediaObject loadOrNull(MediaRestService restService, String id) throws IOException {
         try {
             return restService.load(id, null);
+        } catch (ProcessingException pe) {
+            Throwable t = pe.getCause();
+            if (t instanceof IOException) {
+                throw (IOException) t;
+            }
+            LOG.warn(restService + " " + pe.getMessage());
+            return null;
         } catch (Exception e) {
             LOG.warn(restService + " " + e.getMessage());
             return null;

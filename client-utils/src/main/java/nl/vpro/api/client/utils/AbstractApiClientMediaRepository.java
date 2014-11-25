@@ -1,5 +1,6 @@
 package nl.vpro.api.client.utils;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -30,8 +31,12 @@ public class AbstractApiClientMediaRepository {
 
     }
 
-    public MediaObject load(String id) {
-        return util.loadOrNull(id);
+    public MediaObject load(String id)  {
+        try {
+            return util.loadOrNull(id);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     public List<MediaObject> loadAll(List<String> ids) {

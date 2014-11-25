@@ -21,7 +21,6 @@ import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
-import nl.vpro.util.CloseableIterator;
 
 /**
  * @author Michiel Meeuwissen
@@ -42,16 +41,16 @@ public class NpoApiMediaUtil implements MediaProvider {
         .build(
             new CacheLoader<String, Optional<MediaObject>>() {
                 @Override
-                public Optional<MediaObject> load(@NotNull String mid) {
+                public Optional<MediaObject> load(@NotNull String mid) throws IOException {
                     limiter.acquire();
                     try {
                         MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
                         limiter.upRate();
                         //return Optional.ofNullable(object);
                         return Optional.fromNullable(object);
-                    } catch (RuntimeException rte) {
+                    } catch (IOException | RuntimeException se ){
                         limiter.downRate();
-                        throw rte;
+                        throw se;
                     }
                 }
             });
@@ -68,12 +67,19 @@ public class NpoApiMediaUtil implements MediaProvider {
         this(clients, new NpoApiRateLimiter());
     }
 
+    public void clearCache() {
+        cache.invalidateAll();
+    }
 
-    public MediaObject loadOrNull(String id) {
+
+    public MediaObject loadOrNull(String id) throws IOException {
         try {
             //return cache.get(id).orElse(null);
             return cache.get(id).orNull();
         } catch (ExecutionException e) {
+            if (e.getCause() instanceof IOException) {
+                throw (IOException) e.getCause();
+            }
             throw new RuntimeException(e);
         }
 
