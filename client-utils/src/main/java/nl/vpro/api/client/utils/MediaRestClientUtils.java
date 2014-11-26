@@ -155,7 +155,9 @@ public class MediaRestClientUtils {
 
     }
 
-    static Cache<String, Optional<String>> urnCache = CacheBuilder.newBuilder().maximumSize(1000).build();
+
+    static Properties properties = null;
+
     /**
      * Only call this during the migration to NPO API while not everything is converted to MID yet.
      *
@@ -163,22 +165,23 @@ public class MediaRestClientUtils {
      */
     @Deprecated
     public static String toMid(final MediaRestService restService, final String urn) {
-        try {
-            return urnCache.get(urn, new Callable<Optional<String>>() {
-                @Override
-                public Optional<String> call() throws Exception {
-                    MediaForm mediaForm = MediaFormBuilder.form().mediaIds(urn).build();
-                    MediaSearchResult result = restService.find(mediaForm, null, "mid", 0L, 1);
-                    if (result.getSize() == 0) {
-                        //return Optional.empty();
-                        return Optional.absent();
-                    }
-                    return Optional.of(result.getItems().get(0).getResult().getMid());
-                }
-            }).orNull();
-        } catch (ExecutionException e) {
-            LOG.error(e.getMessage());
-            return null;
+        if (properties == null) {
+            properties = new Properties();
+            try {
+                 properties.load(MediaRestClientUtils.class.getResourceAsStream("/id_to_mid.properties"));
+            } catch (IOException e) {
+                LOG.error(e.getMessage(), e);
+                properties = null;
+                return null;
+            }
         }
+        String id;
+        int index = urn.lastIndexOf(":");
+        if (index > 0) {
+            id = urn.substring(index + 1);
+        } else {
+            id = urn;
+        }
+        return properties.getProperty(id);
     }
 }
