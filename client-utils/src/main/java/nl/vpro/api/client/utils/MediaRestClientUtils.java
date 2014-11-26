@@ -162,4 +162,35 @@ public class MediaRestClientUtils {
     }
 
 
+    static Properties properties = null;
+
+    /**
+     * Only call this during the migration to NPO API while not everything is converted to MID yet.
+     *
+     * @deprecated Migrate code and data from URN to MID.
+     */
+    @Deprecated
+    public static String toMid(final String urn) {
+
+        if (properties == null) {
+            properties = new Properties();
+            try {
+                 properties.load(MediaRestClientUtils.class.getResourceAsStream("/id_to_mid.properties"));
+            } catch (IOException e) {
+                LOG.error(e.getMessage(), e);
+                properties = null;
+                return null;
+            }
+        }
+        String id;
+        int index = urn.lastIndexOf(":");
+        if (index > 0) {
+            id = urn.substring(index + 1);
+        } else {
+            id = urn;
+        }
+        return properties.getProperty(id);
+    }
+
+
 }

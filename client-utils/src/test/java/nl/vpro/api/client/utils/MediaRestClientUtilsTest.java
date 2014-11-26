@@ -13,6 +13,7 @@ import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -38,5 +39,10 @@ public class MediaRestClientUtilsTest {
         }
         System.out.println(count);
 
+    }
+
+    @Test
+    public void testToMid() {
+        assertThat(MediaRestClientUtils.toMid("urn:vpro:media:program:1906")).isEqualTo("POMS_VPRO_158299");
     }
 }
