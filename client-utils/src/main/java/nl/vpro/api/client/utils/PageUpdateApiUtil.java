@@ -11,7 +11,7 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-//import org.apache.http.impl.execchain.RequestAbortedException;
+import org.apache.http.impl.execchain.RequestAbortedException;
 import org.jboss.resteasy.api.validation.ViolationReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +23,8 @@ import nl.vpro.api.client.resteasy.PageUpdateApiClient;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.jackson2.Jackson2Mapper;
+
+//import org.apache.http.impl.execchain.RequestAbortedException;
 
 /**
  * @author Michiel Meeuwissen
@@ -105,7 +107,7 @@ public class PageUpdateApiUtil {
 
     protected Result exceptionToResult(Exception e) {
         Throwable cause = e.getCause();
-        if (cause.getClass().getName().indexOf("RequestAbortedException") > 0) {
+        if (cause instanceof RequestAbortedException) {
             return Result.aborted(pageUpdateApiClient + ":" + e.getClass().getName() + " " + cause.getMessage());
         } else {
             limiter.downRate();
