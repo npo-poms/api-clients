@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.ProcessingException;
 
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
@@ -21,6 +22,8 @@ import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
+
+import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 
 /**
  * @author Michiel Meeuwissen
@@ -91,6 +94,10 @@ public class NpoApiMediaUtil implements MediaProvider {
             MediaObject[] result = MediaRestClientUtils.load(clients.getMediaService(), ids);
             limiter.upRate();
             return result;
+        } catch (ProcessingException pe) {
+            limiter.downRate();
+            unwrapIO(pe);
+            throw pe;
         } catch (RuntimeException rte) {
             limiter.downRate();
             throw rte;

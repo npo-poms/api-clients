@@ -80,15 +80,19 @@ public class MediaRestClientUtils {
         try {
             return restService.load(id, null);
         } catch (ProcessingException pe) {
-            Throwable t = pe.getCause();
-            if (t instanceof IOException) {
-                throw (IOException) t;
-            }
+            unwrapIO(pe);
             LOG.warn(restService + " " + pe.getMessage());
             return null;
         } catch (Exception e) {
             LOG.warn(restService + " " + e.getMessage());
             return null;
+        }
+    }
+
+    public static void unwrapIO(ProcessingException pe) throws IOException {
+        Throwable t = pe.getCause();
+        if (t instanceof IOException) {
+            throw (IOException) t;
         }
     }
 
