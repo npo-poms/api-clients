@@ -3,8 +3,6 @@ package nl.vpro.api.client.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.ProcessingException;
@@ -14,9 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
@@ -166,30 +161,5 @@ public class MediaRestClientUtils {
 
     }
 
-    static Cache<String, Optional<String>> urnCache = CacheBuilder.newBuilder().maximumSize(1000).build();
-    /**
-     * Only call this during the migration to NPO API while not everything is converted to MID yet.
-     *
-     * @deprecated Migrate code and data from URN to MID.
-     */
-    @Deprecated
-    public static String toMid(final MediaRestService restService, final String urn) {
-        try {
-            return urnCache.get(urn, new Callable<Optional<String>>() {
-                @Override
-                public Optional<String> call() throws Exception {
-                    MediaForm mediaForm = MediaFormBuilder.form().mediaIds(urn).build();
-                    MediaSearchResult result = restService.find(mediaForm, null, "mid", 0L, 1);
-                    if (result.getSize() == 0) {
-                        //return Optional.empty();
-                        return Optional.absent();
-                    }
-                    return Optional.of(result.getItems().get(0).getResult().getMid());
-                }
-            }).orNull();
-        } catch (ExecutionException e) {
-            LOG.error(e.getMessage());
-            return null;
-        }
-    }
+
 }
