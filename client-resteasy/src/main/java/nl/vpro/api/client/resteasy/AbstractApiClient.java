@@ -116,10 +116,10 @@ public class AbstractApiClient {
             .setDefaultHeaders(defaultHeaders)
             .setKeepAliveStrategy(new MyConnectionKeepAliveStrategy())
             .build();
-        return null;
+        return client;
     }
 
-
+    // should be used as long as resteasy uses http clinet < 4.3
     private HttpClient getHttpClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
 
         PoolingClientConnectionManager poolingClientConnectionManager = new PoolingClientConnectionManager(SchemeRegistryFactory.createDefault(),
