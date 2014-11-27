@@ -125,7 +125,7 @@ public class PageUpdateApiUtil {
                 case 400: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
-                    limiter.upRate();
+                    limiter.downRate();
                     return Result.invalid(s);
                 }
                 case 404: {
@@ -137,7 +137,7 @@ public class PageUpdateApiUtil {
                 case 403: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
-                    limiter.upRate();
+                    limiter.downRate();
                     return Result.denied(s);
                 }
                 case 503: {
@@ -148,6 +148,7 @@ public class PageUpdateApiUtil {
                 default: {
                     MultivaluedMap<String, Object> headers = response.getHeaders();
                     if ("true".equals(headers.getFirst("validation-exception"))) {
+                        limiter.downRate();
                         if ("text/plain".equals(headers.getFirst("Content-Type"))) {
                             String string = response.readEntity(String.class);
                             return Result.invalid(pageUpdateApiClient + ":" + string);
