@@ -119,7 +119,7 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     @Deprecated
     public String toMid(String urn) {
-        return MediaRestClientUtils.toMid(clients.getMediaService(), urn);
+        return MediaRestClientUtils.toMid(urn);
     }
 
 
