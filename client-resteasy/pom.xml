@@ -34,11 +34,11 @@
       <artifactId>resteasy-jaxb-provider</artifactId>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
+   <!-- <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-hibernatevalidator-provider</artifactId>
       <scope>runtime</scope>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jackson2-provider</artifactId>

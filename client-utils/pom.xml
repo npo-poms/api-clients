@@ -42,10 +42,10 @@
       <artifactId>client-resteasy</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
+  <!--  <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-hibernatevalidator-provider</artifactId>
-    </dependency>
+    </dependency>-->
     <dependency>
     <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
