@@ -12,7 +12,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.impl.execchain.RequestAbortedException;
-import org.jboss.resteasy.api.validation.ViolationReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,9 +155,9 @@ public class PageUpdateApiUtil {
                             return Result.invalid(pageUpdateApiClient + ":" + string);
                         } else {
                             try {
-                                ViolationReport report = response.readEntity(ViolationReport.class);
-                                String string = JACKSON.apply(report);
-                                return Result.invalid(pageUpdateApiClient + ":" + string);
+                                //ViolationReport report = response.readEntity(ViolationReport.class);
+                                //String string = JACKSON.apply(report);
+                                return Result.invalid(pageUpdateApiClient + ":");
                             } catch (Exception e) {
                                 return Result.invalid(pageUpdateApiClient + ":" + String.valueOf(new HashMap<>(headers)) + "(" + e.getMessage() + ")");
                             }
