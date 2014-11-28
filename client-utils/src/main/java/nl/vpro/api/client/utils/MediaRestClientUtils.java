@@ -198,6 +198,7 @@ public class MediaRestClientUtils {
             try {
                 if (propertiesFile.exists()) {
                     properties.load(new FileInputStream(propertiesFile));
+                    timeStamp = propertiesFile.lastModified();
                 } else {
                     properties.load(MediaRestClientUtils.class.getResourceAsStream("/id_to_mid.properties"));
                 }
