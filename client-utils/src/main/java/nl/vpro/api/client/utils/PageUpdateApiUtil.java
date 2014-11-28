@@ -155,9 +155,8 @@ public class PageUpdateApiUtil {
                             return Result.invalid(pageUpdateApiClient + ":" + string);
                         } else {
                             try {
-                                //ViolationReport report = response.readEntity(ViolationReport.class);
-                                //String string = JACKSON.apply(report);
-                                return Result.invalid(pageUpdateApiClient + ":");
+                                String string = response.readEntity(String.class);
+                                return Result.invalid(pageUpdateApiClient + ":" + string);
                             } catch (Exception e) {
                                 return Result.invalid(pageUpdateApiClient + ":" + String.valueOf(new HashMap<>(headers)) + "(" + e.getMessage() + ")");
                             }

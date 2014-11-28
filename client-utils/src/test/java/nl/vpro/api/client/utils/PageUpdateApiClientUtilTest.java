@@ -6,7 +6,6 @@ import java.net.MalformedURLException;
 import javax.xml.bind.JAXB;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
@@ -15,12 +14,12 @@ import nl.vpro.domain.page.update.PageUpdate;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-@Ignore("This required running server at publish-dev")
+//@Ignore("This required running server at publish-dev")
 public class PageUpdateApiClientUtilTest  {
 
     private PageUpdateApiUtil util;
 
-    private String target = "http://publish-dev.pages.omroep.nl/";
+    private String target = "http://publish-test.pages.omroep.nl/";
     //private String target = "http://localhost:8060/";
 
     @Before
@@ -37,7 +36,7 @@ public class PageUpdateApiClientUtilTest  {
     public void testSave() throws Exception {
         PageUpdate instance = new PageUpdate(PageType.ARTICLE, "http://vpro.nl/test");
         Result result = util.save(instance);
-        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.getStatus()).isEqualTo(Result.Status.INVALID);
         System.out.println(result.getErrors());
     }
 
@@ -46,7 +45,6 @@ public class PageUpdateApiClientUtilTest  {
     public void testDelete() throws Exception {
         String id  = "http://BESTAATNIET";
         Result result = util.delete(id);
-        assertThat(result.isSuccess()).isTrue();
         assertThat(result.getStatus()).isEqualTo(Result.Status.SUCCESS);
 
         System.out.println("errors " + result.getErrors());

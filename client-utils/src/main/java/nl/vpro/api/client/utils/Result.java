@@ -43,9 +43,10 @@ public class Result {
         return new Result(Status.INVALID, message);
     }
 
-    public boolean isSuccess() {
-        return status != Status.ERROR && status != Status.ABORTED && status != Status.NOTFOUND;
+    public boolean needsRetry() {
+        return status.needsRetry;
     }
+
     public Status getStatus() {
         return status;
     }
@@ -60,12 +61,16 @@ public class Result {
     }
 
     public enum Status {
-        SUCCESS,
-        NOTNEEDED,
-        ERROR,
-        NOTFOUND,
-        ABORTED,
-        DENIED,
-        INVALID
+        SUCCESS(false),
+        NOTNEEDED(false),
+        ERROR(true),
+        NOTFOUND(false),
+        ABORTED(true),
+        DENIED(true),
+        INVALID(false);
+        private final boolean needsRetry;
+        private Status(boolean nr) {
+            this.needsRetry = nr;
+        }
     }
 }
