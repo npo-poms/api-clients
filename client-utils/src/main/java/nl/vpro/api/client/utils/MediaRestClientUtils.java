@@ -1,10 +1,10 @@
 package nl.vpro.api.client.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.ProcessingException;
@@ -14,9 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
@@ -76,12 +73,23 @@ public class MediaRestClientUtils {
         };
     }
 
-    public static MediaObject loadOrNull(MediaRestService restService, String id) {
+    public static MediaObject loadOrNull(MediaRestService restService, String id) throws IOException {
         try {
             return restService.load(id, null);
+        } catch (ProcessingException pe) {
+            unwrapIO(pe);
+            LOG.warn(restService + " " + pe.getMessage());
+            return null;
         } catch (Exception e) {
             LOG.warn(restService + " " + e.getMessage());
             return null;
+        }
+    }
+
+    public static void unwrapIO(ProcessingException pe) throws IOException {
+        Throwable t = pe.getCause();
+        if (t instanceof IOException) {
+            throw (IOException) t;
         }
     }
 
@@ -157,6 +165,15 @@ public class MediaRestClientUtils {
 
 
     static Properties properties = null;
+    static File propertiesFile = null;
+    static long timeStamp = -1;
+
+    public static void setIdToMidFile(File file) {
+        propertiesFile = file;
+        timeStamp = -1;
+        properties = null;
+    }
+
 
     /**
      * Only call this during the migration to NPO API while not everything is converted to MID yet.
@@ -164,11 +181,28 @@ public class MediaRestClientUtils {
      * @deprecated Migrate code and data from URN to MID.
      */
     @Deprecated
-    public static String toMid(final MediaRestService restService, final String urn) {
+    public static String toMid(final String urn) {
+        if (propertiesFile == null) {
+            if (System.getProperty("id_to_mid.file") != null) {
+                propertiesFile = new File(System.getProperty("id_to_mid.file"));
+            } else {
+                propertiesFile = new File("/e/ap/v3.rs.vpro.nl/data/id_to_mid.properties");
+            }
+        }
+        if (propertiesFile.exists() && propertiesFile.lastModified() > timeStamp) {
+            LOG.info("Will reload {}", propertiesFile);
+            properties = null;
+        }
         if (properties == null) {
             properties = new Properties();
             try {
-                 properties.load(MediaRestClientUtils.class.getResourceAsStream("/id_to_mid.properties"));
+                if (propertiesFile.exists()) {
+                    properties.load(new FileInputStream(propertiesFile));
+                    timeStamp = propertiesFile.lastModified();
+                } else {
+                    properties.load(MediaRestClientUtils.class.getResourceAsStream("/id_to_mid.properties"));
+                }
+
             } catch (IOException e) {
                 LOG.error(e.getMessage(), e);
                 properties = null;
@@ -184,4 +218,6 @@ public class MediaRestClientUtils {
         }
         return properties.getProperty(id);
     }
+
+
 }
