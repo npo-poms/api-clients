@@ -1,19 +1,9 @@
 package nl.vpro.api.client.utils;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
@@ -21,7 +11,14 @@ import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
-import nl.vpro.util.CloseableIterator;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Michiel Meeuwissen
@@ -45,12 +42,15 @@ public class NpoApiMediaUtil implements MediaProvider {
                 public Optional<MediaObject> load(@NotNull String mid) {
                     limiter.acquire();
                     try {
-                        MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
-                        limiter.upRate();
-                        //return Optional.ofNullable(object);
-                        return Optional.fromNullable(object);
-                    } catch (RuntimeException rte) {
-                        limiter.downRate();
+						MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
+						limiter.upRate();
+						//return Optional.ofNullable(object);
+						return Optional.fromNullable(object);
+					} catch (IOException ioe) {
+						limiter.downRate();
+						throw new RuntimeException((ioe));
+					} catch (RuntimeException rte) {
+						limiter.downRate();
                         throw rte;
                     }
                 }
