@@ -1,5 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -163,6 +165,15 @@ public class MediaRestClientUtils {
 
 
     static Properties properties = null;
+    static File propertiesFile = null;
+    static long timeStamp = -1;
+
+    public static void setIdToMidFile(File file) {
+        propertiesFile = file;
+        timeStamp = -1;
+        properties = null;
+    }
+
 
     /**
      * Only call this during the migration to NPO API while not everything is converted to MID yet.
@@ -171,11 +182,26 @@ public class MediaRestClientUtils {
      */
     @Deprecated
     public static String toMid(final String urn) {
-
+        if (propertiesFile == null) {
+            if (System.getProperty("id_to_mid.file") != null) {
+                propertiesFile = new File(System.getProperty("id_to_mid.file"));
+            } else {
+                propertiesFile = new File("/e/ap/v3.rs.vpro.nl/data/id_to_mid.properties");
+            }
+        }
+        if (propertiesFile.exists() && propertiesFile.lastModified() > timeStamp) {
+            LOG.info("Will reload {}", propertiesFile);
+            properties = null;
+        }
         if (properties == null) {
             properties = new Properties();
             try {
-                 properties.load(MediaRestClientUtils.class.getResourceAsStream("/id_to_mid.properties"));
+                if (propertiesFile.exists()) {
+                    properties.load(new FileInputStream(propertiesFile));
+                } else {
+                    properties.load(MediaRestClientUtils.class.getResourceAsStream("/id_to_mid.properties"));
+                }
+
             } catch (IOException e) {
                 LOG.error(e.getMessage(), e);
                 properties = null;
