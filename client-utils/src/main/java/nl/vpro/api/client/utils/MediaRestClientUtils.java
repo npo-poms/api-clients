@@ -1,21 +1,7 @@
 package nl.vpro.api.client.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
-import javax.annotation.Nullable;
-import javax.ws.rs.ProcessingException;
-
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.MediaForm;
@@ -23,6 +9,17 @@ import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.media.MediaSortField;
 import nl.vpro.domain.api.media.MediaSortOrder;
 import nl.vpro.domain.media.*;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import javax.ws.rs.ProcessingException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * @author Michiel Meeuwissen
