@@ -47,6 +47,10 @@ public class Result {
         return status.needsRetry;
     }
 
+    public boolean isOk() {
+        return status.ok;
+    }
+
     public Status getStatus() {
         return status;
     }
@@ -61,16 +65,21 @@ public class Result {
     }
 
     public enum Status {
-        SUCCESS(false),
-        NOTNEEDED(false),
-        ERROR(true),
-        NOTFOUND(false),
-        ABORTED(true),
-        DENIED(true),
-        INVALID(false);
+        SUCCESS(false, true),
+        NOTNEEDED(false, true),
+        NOTFOUND(false, true),
+
+        ERROR(true, false),
+        ABORTED(true, false),
+        DENIED(true, false),
+        INVALID(false, false);
+
         private final boolean needsRetry;
-        private Status(boolean nr) {
+        private final boolean ok;
+
+        private Status(boolean nr, boolean s) {
             this.needsRetry = nr;
+            this.ok = s;
         }
     }
 }
