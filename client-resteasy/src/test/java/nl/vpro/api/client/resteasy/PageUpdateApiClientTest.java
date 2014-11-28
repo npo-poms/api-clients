@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXB;
 
-import org.jboss.resteasy.api.validation.ViolationReport;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,7 +27,7 @@ public class PageUpdateApiClientTest {
     @Before
     public void setUp() throws MalformedURLException {
         clients = new PageUpdateApiClient(
-            "http://publish-dev.poms.omroep.nl/",
+            "http://publish-test.pages.omroep.nl/",
             "vpro-cms",
             "***REMOVED***", 10000);
     }
@@ -39,8 +38,8 @@ public class PageUpdateApiClientTest {
         PageUpdate instance = new PageUpdate(PageType.ARTICLE, "http://vpro.nl/test");
         Response response = client.save(instance);
         System.out.println(response.getStatus());
-        ViolationReport report = response.readEntity(ViolationReport.class);
-        System.out.println(response.readEntity(ViolationReport.class));
+        String report = response.readEntity(String.class);
+        //System.out.println(response.readEntity(ViolationReport.class));
         JAXB.marshal(instance, System.out);
     }
 
