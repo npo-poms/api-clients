@@ -107,7 +107,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     public JsonArrayIterator<Change> changes(String profile, long since, Order order, Integer max) {
         limiter.acquire();
         try {
-            JsonArrayIterator<Change> result = MediaRestClientUtils.changes(clients.getMediaService(), profile, since, order, max);
+            JsonArrayIterator<Change> result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, since, order, max);
             limiter.upRate();
             return result;
         } catch (IOException e) {
@@ -121,7 +121,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     public Iterator<MediaObject> iterate(MediaForm form, String profile)  {
         limiter.acquire();
         try {
-            Iterator<MediaObject> result = MediaRestClientUtils.iterate(clients.getMediaService(), form, profile);
+            Iterator<MediaObject> result = MediaRestClientUtils.iterate(clients.getMediaServiceNoTimeout(), form, profile);
             limiter.upRate();
             return result;
         } catch (Throwable e) {

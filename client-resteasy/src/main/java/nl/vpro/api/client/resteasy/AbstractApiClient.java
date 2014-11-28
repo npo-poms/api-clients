@@ -64,6 +64,8 @@ public class AbstractApiClient {
     }
 
     protected final ClientHttpEngine clientHttpEngine;
+    protected final ClientHttpEngine clientHttpEngineNoTimeout;
+
 
     private Thread connectionGuard;
 
@@ -71,6 +73,7 @@ public class AbstractApiClient {
 
     public AbstractApiClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
         clientHttpEngine = buildHttpEngine(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
+        clientHttpEngineNoTimeout = buildHttpEngine(0, 1, -1);
 
     }
 
@@ -96,7 +99,9 @@ public class AbstractApiClient {
         poolingClientConnectionManager.setMaxTotal(maxConnections);
         poolingClientConnectionManager.setDefaultSocketConfig(socketConfig);
 
-        watchIdleConnections(poolingClientConnectionManager, connectionTimeoutMillis);
+        if (maxConnections > 1) {
+            watchIdleConnections(poolingClientConnectionManager, connectionTimeoutMillis);
+        }
 
         RequestConfig defaultRequestConfig = RequestConfig.custom()
             .setExpectContinueEnabled(true)
@@ -119,7 +124,7 @@ public class AbstractApiClient {
         return client;
     }
 
-    // should be used as long as resteasy uses http clinet < 4.3
+    // should be used as long as resteasy uses http client < 4.3
     private HttpClient getHttpClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
 
         PoolingClientConnectionManager poolingClientConnectionManager = new PoolingClientConnectionManager(SchemeRegistryFactory.createDefault(),
@@ -127,7 +132,9 @@ public class AbstractApiClient {
         poolingClientConnectionManager.setDefaultMaxPerRoute(maxConnections);
         poolingClientConnectionManager.setMaxTotal(maxConnections);
 
-        watchIdleConnections(poolingClientConnectionManager, connectionTimeoutMillis);
+        if (maxConnections > 1) {
+            watchIdleConnections(poolingClientConnectionManager, connectionTimeoutMillis);
+        }
 
         HttpParams httpParams = new BasicHttpParams();
 
