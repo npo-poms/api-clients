@@ -107,11 +107,9 @@ public class PageUpdateApiUtil {
     protected Result exceptionToResult(Exception e) {
         Throwable cause = e.getCause();
         if (cause instanceof RequestAbortedException) {
-            return Result.aborted(pageUpdateApiClient + ":" + e.getClass().getName() + " " + cause.getMessage());
+            return returnResult(Result.aborted(pageUpdateApiClient + ":" + cause.getClass().getName() + " " + cause.getMessage()));
         } else {
-            limiter.downRate();
-            LOG.warn(e.getMessage());
-            return Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage());
+            return returnResult(Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage()));
         }
     }
 
@@ -167,12 +165,14 @@ public class PageUpdateApiUtil {
         }
     }
 
-    public Result returnResult(Result result) {
+    protected Result returnResult(Result result) {
         if (result.needsRetry()) {
             limiter.downRate();
         }
         if (result.isOk()) {
             limiter.upRate();
+        } else {
+            LOG.warn(result.getErrors());
         }
         return result;
     }

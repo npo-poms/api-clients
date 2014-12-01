@@ -73,7 +73,7 @@ public class AbstractApiClient {
 
     public AbstractApiClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
         clientHttpEngine = buildHttpEngine(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
-        clientHttpEngineNoTimeout = buildHttpEngine(0, 1, -1);
+        clientHttpEngineNoTimeout = buildHttpEngine(0, 3, -1);
 
     }
 
