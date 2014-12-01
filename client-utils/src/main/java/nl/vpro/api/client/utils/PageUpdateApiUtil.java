@@ -2,6 +2,7 @@ package nl.vpro.api.client.utils;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.SocketException;
 import java.util.HashMap;
 
 import javax.annotation.Nullable;
@@ -108,6 +109,8 @@ public class PageUpdateApiUtil {
         Throwable cause = e.getCause();
         if (cause instanceof RequestAbortedException) {
             return returnResult(Result.aborted(pageUpdateApiClient + ":" + cause.getClass().getName() + " " + cause.getMessage()));
+        } else if (cause instanceof SocketException) {
+            return returnResult(Result.error(pageUpdateApiClient + ":" + cause.getClass().getName() + " " + cause.getMessage()));
         } else {
             return returnResult(Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage()));
         }
@@ -172,7 +175,7 @@ public class PageUpdateApiUtil {
         if (result.isOk()) {
             limiter.upRate();
         } else {
-            LOG.warn(result.getErrors());
+            LOG.debug(result.getErrors());
         }
         return result;
     }

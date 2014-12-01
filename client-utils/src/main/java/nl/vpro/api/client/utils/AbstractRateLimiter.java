@@ -65,7 +65,7 @@ public class AbstractRateLimiter {
             LOG.info("Rate " + limiter.getRate() + " -> " + r);
             limiter.setRate(r);
         } else if (r == minRate) {
-            LOG.info("Rate " + limiter.getRate());
+            LOG.debug("Rate " + limiter.getRate());
         }
         return changed;
     }

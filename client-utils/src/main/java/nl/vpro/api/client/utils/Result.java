@@ -65,12 +65,16 @@ public class Result {
     }
 
     public enum Status {
+        //  ok
         SUCCESS(false, true),
         NOTNEEDED(false, true),
-        NOTFOUND(false, true),
 
+        // retryables errors
+        NOTFOUND(true, false),
         ERROR(true, false),
         ABORTED(true, false),
+
+        // non retryables errors
         DENIED(false, false),
         INVALID(false, false);
 
