@@ -178,6 +178,9 @@ public class MediaRestClientUtils {
     /**
      * Only call this during the migration to NPO API while not everything is converted to MID yet.
      *
+     * Refresh id_to_mid.properties like so:
+     * ssh vpro05ap@upload-sites.omroep.nl "psql -A -q -t -h poms2madb -U vpro mediadb -c 'select id,mid from mediaobject;'" | sed 's/|/=/' > /tmp/id_to_mid.properties ; scp /tmp/id_to_mid.properties uploadvpro:/e/ap/v3.rs.vpro.nl/data/
+     *
      * @deprecated Migrate code and data from URN to MID.
      */
     @Deprecated
