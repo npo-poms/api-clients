@@ -33,11 +33,11 @@ public class PageUpdateApiClientUtilTest  {
     }
 
     @Test
-    public void testSave() throws Exception {
+    public void testSaveInvalid() throws Exception {
         PageUpdate instance = new PageUpdate(PageType.ARTICLE, "http://vpro.nl/test");
         Result result = util.save(instance);
         assertThat(result.getStatus()).isEqualTo(Result.Status.INVALID);
-        System.out.println(result.getErrors());
+        assertThat(result.getErrors()).contains("may not be null");
     }
 
 
@@ -46,8 +46,7 @@ public class PageUpdateApiClientUtilTest  {
         String id  = "http://BESTAATNIET";
         Result result = util.delete(id);
         assertThat(result.getStatus()).isEqualTo(Result.Status.SUCCESS);
-
-        System.out.println("errors " + result.getErrors());
+        assertThat(result.getErrors()).isNull();
     }
 
     @Test
@@ -74,8 +73,8 @@ public class PageUpdateApiClientUtilTest  {
         //System.out.println(willCauseError);
         PageUpdate update = JAXB.unmarshal(new StringReader(willCauseDeny), PageUpdate.class);
         Result result = util.save(update);
-        System.out.println(result.getErrors());
         assertThat(result.getStatus()).isEqualTo(Result.Status.DENIED);
+        assertThat(result.getErrors()).contains("Access is denied");
 
 
     }

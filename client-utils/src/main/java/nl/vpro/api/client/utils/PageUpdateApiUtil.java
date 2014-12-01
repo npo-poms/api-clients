@@ -121,56 +121,59 @@ public class PageUpdateApiUtil {
                 case 200:
                 case 202:
                     LOG.debug(pageUpdateApiClient + " " + response.getStatus());
-                    limiter.upRate();
-                    return Result.success();
+                    return returnResult(Result.success());
                 case 400: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
-                    limiter.downRate();
-                    return Result.invalid(s);
+                    return returnResult(Result.invalid(s));
                 }
                 case 404: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
-                    limiter.downRate();
-                    return Result.notfound(s);
+                    return returnResult(Result.notfound(s));
                 }
                 case 403: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
-                    limiter.downRate();
-                    return Result.denied(s);
+                    return returnResult(Result.denied(s));
                 }
                 case 503: {
-                    limiter.downRate();
                     String string = pageUpdateApiClient + " " + response.getStatus() + " " + input.toString();
-                    return Result.error(string);
+                    return returnResult(Result.error(string));
                 }
                 default: {
                     MultivaluedMap<String, Object> headers = response.getHeaders();
                     if ("true".equals(headers.getFirst("validation-exception"))) {
-                        limiter.downRate();
                         if ("text/plain".equals(headers.getFirst("Content-Type"))) {
                             String string = response.readEntity(String.class);
-                            return Result.invalid(pageUpdateApiClient + ":" + string);
+                            return returnResult(Result.invalid(pageUpdateApiClient + ":" + string));
                         } else {
                             try {
                                 String string = response.readEntity(String.class);
-                                return Result.invalid(pageUpdateApiClient + ":" + string);
+                                return returnResult(Result.invalid(pageUpdateApiClient + ":" + string));
                             } catch (Exception e) {
-                                return Result.invalid(pageUpdateApiClient + ":" + String.valueOf(new HashMap<>(headers)) + "(" + e.getMessage() + ")");
+                                return returnResult(Result.invalid(pageUpdateApiClient + ":" + String.valueOf(new HashMap<>(headers)) + "(" + e.getMessage() + ")"));
                             }
                         }
                     } else {
-                        limiter.downRate();
                         String error = response.readEntity(String.class);
                         String string = pageUpdateApiClient + " " + response.getStatus() + " " + new HashMap<>(response.getStringHeaders()) + " " + error + " for: '" + toString.apply(input) + "'";
-                        return Result.error(string);
+                        return returnResult(Result.error(string));
                     }
                 }
             }
         } finally {
             response.close();
         }
+    }
+
+    public Result returnResult(Result result) {
+        if (result.needsRetry()) {
+            limiter.downRate();
+        }
+        if (result.isOk()) {
+            limiter.upRate();
+        }
+        return result;
     }
 }

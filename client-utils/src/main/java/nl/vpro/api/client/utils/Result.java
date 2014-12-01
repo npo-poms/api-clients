@@ -71,14 +71,14 @@ public class Result {
 
         ERROR(true, false),
         ABORTED(true, false),
-        DENIED(true, false),
+        DENIED(false, false),
         INVALID(false, false);
 
         private final boolean needsRetry;
         private final boolean ok;
 
-        private Status(boolean nr, boolean s) {
-            this.needsRetry = nr;
+        private Status(boolean needsRetry, boolean s) {
+            this.needsRetry = needsRetry;
             this.ok = s;
         }
     }
