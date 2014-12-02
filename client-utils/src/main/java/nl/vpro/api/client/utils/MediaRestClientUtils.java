@@ -78,10 +78,10 @@ public class MediaRestClientUtils {
             return restService.load(id, null);
         } catch (ProcessingException pe) {
             unwrapIO(pe);
-            LOG.warn(restService + " " + pe.getMessage());
+            LOG.warn(restService + " " + id + " " + pe.getMessage());
             return null;
         } catch (Exception e) {
-            LOG.warn(restService + " " + e.getMessage());
+            LOG.warn(restService + " " + id + " " + e.getMessage());
             return null;
         }
     }
