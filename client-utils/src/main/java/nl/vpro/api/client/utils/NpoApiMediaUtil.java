@@ -17,6 +17,7 @@ import com.google.common.cache.LoadingCache;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
+import nl.vpro.domain.api.MediaResult;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.media.MediaObject;
@@ -51,7 +52,7 @@ public class NpoApiMediaUtil implements MediaProvider {
                         limiter.upRate();
                         //return Optional.ofNullable(object);
                         return Optional.fromNullable(object);
-                    } catch (IOException | RuntimeException se ){
+                    } catch (IOException | RuntimeException se) {
                         limiter.downRate();
                         throw se;
                     }
@@ -85,9 +86,19 @@ public class NpoApiMediaUtil implements MediaProvider {
             }
             throw new RuntimeException(e);
         }
-
     }
 
+    public MediaResult listDescendants(String mid) {
+        limiter.acquire();
+        try {
+            MediaResult result = clients.getMediaService().listDescendants(mid, null, "ASC", 0l, 200);
+            limiter.upRate();
+            return result;
+        } catch (Exception e) {
+            limiter.downRate();
+            throw e;
+        }
+    }
     public MediaObject[] load(String... ids) throws IOException {
         limiter.acquire();
         try {
