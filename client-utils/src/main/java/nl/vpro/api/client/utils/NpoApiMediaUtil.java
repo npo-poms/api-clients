@@ -88,10 +88,10 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
-    public MediaResult listDescendants(String mid) {
+    public MediaResult listDescendants(String mid, Order order) {
         limiter.acquire();
         try {
-            MediaResult result = clients.getMediaService().listDescendants(mid, null, "ASC", 0l, 200);
+            MediaResult result = clients.getMediaService().listDescendants(mid, null, order.toString(), 0l, 200);
             limiter.upRate();
             return result;
         } catch (Exception e) {
