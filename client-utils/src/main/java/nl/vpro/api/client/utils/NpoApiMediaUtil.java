@@ -1,20 +1,9 @@
 package nl.vpro.api.client.utils;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.ProcessingException;
-
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.MediaResult;
@@ -23,6 +12,15 @@ import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.ProcessingException;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 
@@ -152,7 +150,8 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public MediaType getType(String mid) throws IOException {
-        return load(mid)[0].getMediaType();
+		MediaObject object = load(mid)[0];
+        return object == null ? MediaType.MEDIA : object.getMediaType();
     }
 
     @Override
