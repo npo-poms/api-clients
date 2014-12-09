@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -27,11 +28,15 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.google.common.base.Predicate;
+
 import nl.vpro.api.client.resteasy.NpoApiAuthentication;
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
+import nl.vpro.domain.api.MediaResult;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.MediaType;
 import nl.vpro.util.CloseableIterator;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -45,6 +50,7 @@ public class NpoApiClientUtilTest {
 
 
     private String target = "http://rs.poms.omroep.nl/v1/";
+    //private String target = "http://rs-dev.poms.omroep.nl/v1/";
     ///private String target = "http://rs-test.poms.omroep.nl/v1/";
     //private String target = "http://localhost:8070/v1/";
 
@@ -55,7 +61,7 @@ public class NpoApiClientUtilTest {
                 target,
                 "ione7ahfij",
                 "***REMOVED***",
-                "http://www.vpro.nl", 1000);
+                "http://www.vpro.nl", 10000);
             util = new NpoApiMediaUtil(clients, new NpoApiRateLimiter());
         }
 
@@ -117,6 +123,20 @@ public class NpoApiClientUtilTest {
 
     }
 
+
+    @Test
+    public void testListDescendants() throws Exception {
+        MediaResult result = util.listDescendants("RBX_S_NTR_553927", Order.DESC, new Predicate<MediaObject>() {
+            @Override
+            public boolean apply(@Nullable MediaObject input) {
+                return input.getMediaType() == MediaType.BROADCAST;
+
+            }
+        }, 321);
+        assertThat(result.getSize()).isEqualTo(321);
+
+
+    }
 
 
     @Test(expected = IOException.class)

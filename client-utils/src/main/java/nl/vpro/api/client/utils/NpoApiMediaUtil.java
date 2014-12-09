@@ -1,7 +1,9 @@
 package nl.vpro.api.client.utils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -11,9 +13,12 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
@@ -99,6 +104,40 @@ public class NpoApiMediaUtil implements MediaProvider {
             throw e;
         }
     }
+
+    public MediaResult listDescendants(String mid, Order order, Predicate<MediaObject> filter, int max) {
+        limiter.acquire();
+        if (filter == null) {
+            filter = Predicates.alwaysTrue();
+        }
+        try {
+            List<MediaObject> result = new ArrayList<>();
+            long offset = 0l;
+            int batch = 50;
+
+            long total;
+            long found = 0;
+            do {
+                MediaResult list = clients.getMediaService().listDescendants(mid, null, order.toString(), offset, batch);
+                total = list.getTotal();
+                for (MediaObject o : Iterables.filter(list, filter)) {
+                    result.add(o);
+                    if (result.size() == max) {
+                        break;
+                    }
+                }
+                offset += batch;
+                found += list.getSize();
+            } while (found < total && result.size() < max);
+
+            limiter.upRate();
+            return new MediaResult(result, 0l, max, total);
+        } catch (Exception e) {
+            limiter.downRate();
+            throw e;
+        }
+    }
+
     public MediaObject[] load(String... ids) throws IOException {
         limiter.acquire();
         try {
@@ -152,7 +191,8 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public MediaType getType(String mid) throws IOException {
-        return load(mid)[0].getMediaType();
+		MediaObject object = load(mid)[0];
+        return object == null ? MediaType.MEDIA : object.getMediaType();
     }
 
     @Override
