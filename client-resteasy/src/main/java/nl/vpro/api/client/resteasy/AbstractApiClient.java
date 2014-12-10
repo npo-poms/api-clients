@@ -48,19 +48,23 @@ import nl.vpro.util.ThreadPools;
 public class AbstractApiClient {
 
     static {
-        ResteasyProviderFactory resteasyProviderFactory = ResteasyProviderFactory.getInstance();
         try {
-            JacksonContextResolver jacksonContextResolver = new JacksonContextResolver();
-            resteasyProviderFactory.registerProviderInstance(jacksonContextResolver);
-        } catch(Exception e) {
-            throw new RuntimeException(e);
+            ResteasyProviderFactory resteasyProviderFactory = ResteasyProviderFactory.getInstance();
+            try {
+                JacksonContextResolver jacksonContextResolver = new JacksonContextResolver();
+                resteasyProviderFactory.registerProviderInstance(jacksonContextResolver);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            resteasyProviderFactory.addClientErrorInterceptor(new NpoApiClientErrorInterceptor());
+            //resteasyProviderFactory.addClientExceptionMapper(new ExceptionMapper());
+
+
+            RegisterBuiltin.register(resteasyProviderFactory);
+        } catch (Throwable t) {
+            System.err.println(t.getMessage());
         }
-
-        resteasyProviderFactory.addClientErrorInterceptor(new NpoApiClientErrorInterceptor());
-        //resteasyProviderFactory.addClientExceptionMapper(new ExceptionMapper());
-
-
-        RegisterBuiltin.register(resteasyProviderFactory);
     }
 
     protected final ClientHttpEngine clientHttpEngine;
