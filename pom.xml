@@ -16,6 +16,7 @@
   <modules>
     <module>client-resteasy</module>
     <module>client-utils</module>
+    <module>media-backend-rs-client</module>
   </modules>
 
   <scm>
