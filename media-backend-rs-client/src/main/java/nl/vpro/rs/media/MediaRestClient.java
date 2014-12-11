@@ -422,8 +422,10 @@ public class MediaRestClient {
 
         @Override
         public void filter(ClientRequestContext requestContext) throws IOException {
-            for (Map.Entry<String, Object> e : headers.entrySet()){
-                requestContext.getHeaders().add(e.getKey(), e.getValue());
+            if (headers != null) {
+                for (Map.Entry<String, Object> e : headers.entrySet()) {
+                    requestContext.getHeaders().add(e.getKey(), e.getValue());
+                }
             }
         }
     }
