@@ -25,5 +25,16 @@
     <url>https://subversion.vpro.nl/cgi-bin/viewvc.cgi/nl/vpro/api-clients/trunk</url>
   </scm>
 
-
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easytesting</groupId>
+      <artifactId>fest-assert</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
