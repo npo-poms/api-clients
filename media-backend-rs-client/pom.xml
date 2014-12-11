@@ -8,8 +8,8 @@
     <version>1.6-SNAPSHOT</version>
   </parent>
 
-  <artifactId>media-rs-client</artifactId>
-  <name>media-rs-client</name>
+  <artifactId>media-backend-rs-client</artifactId>
+  <name>media-backend-rs-client</name>
 
   <dependencies>
     <dependency>
