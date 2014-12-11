@@ -1,14 +1,13 @@
 package nl.vpro.rs.media;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.concurrent.Callable;
-
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ServiceUnavailableException;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXB;
-
+import com.google.common.util.concurrent.RateLimiter;
+import nl.vpro.domain.media.Group;
+import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.Program;
+import nl.vpro.domain.media.Segment;
+import nl.vpro.domain.media.search.MediaForm;
+import nl.vpro.domain.media.search.MediaListItem;
+import nl.vpro.domain.media.update.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -20,15 +19,17 @@ import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.util.concurrent.RateLimiter;
-
-import nl.vpro.domain.media.Group;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.media.Program;
-import nl.vpro.domain.media.Segment;
-import nl.vpro.domain.media.search.MediaForm;
-import nl.vpro.domain.media.search.MediaListItem;
-import nl.vpro.domain.media.update.*;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXB;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * A client for RESTful calls to a running MediaRestController
@@ -63,6 +64,7 @@ public class MediaRestClient {
     private final RateLimiter asynchronousThrottle = RateLimiter.create(0.4);
 
     private MediaRestController proxy;
+    private Map<String, Object> headers;
 
     static enum Type {
         SEGMENT,
@@ -133,6 +135,12 @@ public class MediaRestClient {
         this.waitForRetry = waitForRetry;
     }
 
+
+    public void setHeaders(Map<String, Object> headers) {
+        this.headers = headers;
+    }
+
+
     private ResteasyWebTarget newWebClient() {
 
         HttpClientContext context = HttpClientContext.create();
@@ -144,6 +152,7 @@ public class MediaRestClient {
                 .httpEngine(engine)
                 .register(new BasicAuthentication(userName, password))
                 .build();
+        client.register(new AddRequestHeadersFilter());
 
         return client.target(url);
     }
@@ -404,6 +413,19 @@ public class MediaRestClient {
 
     private void throttleAsynchronous() {
         asynchronousThrottle.acquire();
+    }
+
+    public class AddRequestHeadersFilter implements ClientRequestFilter {
+
+        public AddRequestHeadersFilter() {
+        }
+
+        @Override
+        public void filter(ClientRequestContext requestContext) throws IOException {
+            for (Map.Entry<String, Object> e : headers.entrySet()){
+                requestContext.getHeaders().add(e.getKey(), e.getValue());
+            }
+        }
     }
 
 }
