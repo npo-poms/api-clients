@@ -81,7 +81,7 @@ public class MediaRestClientUtils {
             LOG.warn(id + " " + pe.getMessage());
             return null;
         } catch (Exception e) {
-            LOG.warn(id + " " + e.getMessage());
+            LOG.error(id + " " + e.getClass().getName() + " " + e.getMessage());
             return null;
         }
     }
