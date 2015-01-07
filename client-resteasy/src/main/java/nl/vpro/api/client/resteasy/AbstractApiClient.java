@@ -38,7 +38,6 @@ import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
-import nl.vpro.resteasy.JacksonContextResolver;
 import nl.vpro.util.ThreadPools;
 
 /**
