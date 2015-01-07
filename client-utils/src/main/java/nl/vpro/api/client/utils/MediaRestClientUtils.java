@@ -18,10 +18,7 @@ import com.google.common.collect.Lists;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.*;
-import nl.vpro.domain.api.media.MediaForm;
-import nl.vpro.domain.api.media.MediaFormBuilder;
-import nl.vpro.domain.api.media.MediaSortField;
-import nl.vpro.domain.api.media.MediaSortOrder;
+import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.media.*;
 
 /**

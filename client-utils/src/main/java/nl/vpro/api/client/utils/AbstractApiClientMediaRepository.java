@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
-import nl.vpro.domain.api.MediaResult;
 import nl.vpro.domain.api.Order;
-import nl.vpro.domain.api.ProgramResult;
 import nl.vpro.domain.api.media.MediaForm;
+import nl.vpro.domain.api.media.MediaResult;
+import nl.vpro.domain.api.media.ProgramResult;
 import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
 

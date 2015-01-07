@@ -5,7 +5,7 @@
   <parent>
     <groupId>nl.vpro.poms</groupId>
     <artifactId>poms-parent</artifactId>
-    <version>3.3.4</version>
+    <version>3.3.6-SNAPSHOT</version>
   </parent>
 
   <groupId>nl.vpro.api-client</groupId>
@@ -18,6 +18,9 @@
     <module>client-utils</module>
     <module>media-backend-rs-client</module>
   </modules>
+  <properties>
+
+  </properties>
 
   <scm>
     <connection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/vpro/api-clients/trunk</connection>
