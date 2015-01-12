@@ -19,7 +19,7 @@
     <module>media-backend-rs-client</module>
   </modules>
   <properties>
-
+    <api.version>3.3.3-SNAPSHOT</api.version>
   </properties>
 
   <scm>
