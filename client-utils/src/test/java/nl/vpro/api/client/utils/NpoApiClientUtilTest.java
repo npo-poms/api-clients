@@ -82,6 +82,10 @@ public class NpoApiClientUtilTest {
         assertThat(result[0].getMid()).isEqualTo("AVRO_1656037");
         assertThat(result[1].getMid()).isEqualTo("AVRO_1656037");
         assertThat(result[2].getMid()).isEqualTo("POMS_VPRO_487567");
+        result = util.load("AVRO_1656037", "AVRO_1656037", "WO_VPRO_766753");
+        assertThat(result[0].getMid()).isEqualTo("AVRO_1656037");
+        assertThat(result[1].getMid()).isEqualTo("AVRO_1656037");
+        assertThat(result[2].getMid()).isEqualTo("WO_VPRO_766753");
     }
 
 
