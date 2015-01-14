@@ -136,8 +136,8 @@ public class NpoApiClientUtilTest {
                 return input.getMediaType() == MediaType.BROADCAST;
 
             }
-        }, 321);
-        assertThat(result.getSize()).isEqualTo(321);
+        }, 123);
+        assertThat(result.getSize()).isEqualTo(123);
 
 
     }
