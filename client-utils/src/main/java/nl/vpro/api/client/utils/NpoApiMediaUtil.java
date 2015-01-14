@@ -1,9 +1,7 @@
 package nl.vpro.api.client.utils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -93,6 +91,8 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
+
+
     public MediaResult listDescendants(String mid, Order order) {
         limiter.acquire();
         try {
@@ -138,21 +138,47 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
-    public MediaObject[] load(String... ids) throws IOException {
-        limiter.acquire();
-        try {
-            MediaObject[] result = MediaRestClientUtils.load(clients.getMediaService(), ids);
-            limiter.upRate();
-            return result;
-        } catch (ProcessingException pe) {
-            limiter.downRate();
-            unwrapIO(pe);
-            throw pe;
-        } catch (RuntimeException rte) {
-            limiter.downRate();
-            throw rte;
+    public MediaObject[] load(String... id) throws IOException {
+        Optional<MediaObject>[] result = new Optional[id.length];
+        Map<String, MediaObject> resultMap = new HashMap<>();
+        Set<String> toRequest = new HashSet<>();
+        for (int i = 0; i < id.length; i++) {
+            result[i] = cache.getIfPresent(id[i]);
+            if (result[i] == null) {
+                toRequest.add(id[i]);
+            }
         }
+        if (!toRequest.isEmpty()) {
+            limiter.acquire();
+            try {
+                MediaObject[] requested = MediaRestClientUtils.load(clients.getMediaService(), toRequest.toArray(new String[toRequest.size()]));
+                for (MediaObject found : requested) {
+                    resultMap.put(found.getMid(), found);
+                    Optional<MediaObject> optional = Optional.fromNullable(found);
+                    cache.put(found.getMid(), optional);
+                    for (int i = 0; i < id.length; i++) {
+                        if (id[i].equals(found.getMid())) {
+                            result[i] = optional;
+                        }
+                    }
+                }
+                limiter.upRate();
+            } catch (ProcessingException pe) {
+                limiter.downRate();
+                unwrapIO(pe);
+                throw pe;
+            } catch (RuntimeException rte) {
+                limiter.downRate();
+                throw rte;
+            }
+        }
+        MediaObject[] resultArray = new MediaObject[id.length];
+        for (int i = 0; i < id.length; i++) {
+            resultArray[i] = result[i].orNull();
+        }
+        return resultArray;
     }
+
 
     public JsonArrayIterator<Change> changes(String profile, long since, Order order, Integer max) {
         limiter.acquire();
@@ -201,7 +227,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
 
-    NpoApiClients getClients() {
+    public NpoApiClients getClients() {
         return clients;
     }
 
