@@ -41,26 +41,10 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     // TODO arrange caching via ehcache (ehcache4guice or something)
 
-    final LoadingCache<String, Optional<MediaObject>> cache = CacheBuilder.newBuilder()
-        .concurrencyLevel(4)
-        .maximumSize(1000)
-        .expireAfterWrite(5, TimeUnit.MINUTES)
-        .build(
-            new CacheLoader<String, Optional<MediaObject>>() {
-                @Override
-                public Optional<MediaObject> load(@NotNull String mid) throws IOException {
-                    limiter.acquire();
-                    try {
-                        MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
-                        limiter.upRate();
-                        //return Optional.ofNullable(object);
-                        return Optional.fromNullable(object);
-                    } catch (IOException | RuntimeException se) {
-                        limiter.downRate();
-                        throw se;
-                    }
-                }
-            });
+    private int cacheSize = 500;
+    private int ttlInMinutes = 5;
+
+    LoadingCache<String, Optional<MediaObject>> cache = buildCache();
 
 
     @Inject
@@ -76,6 +60,40 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     public void clearCache() {
         cache.invalidateAll();
+    }
+    @Named("npo-api-mediautil.cachesize")
+    public void setCacheSize(int size) {
+        cacheSize = size;
+        cache = buildCache();
+    }
+
+    @Named("npo-api-mediautil.cacheExpiryInMinutes")
+    public void setCacheExpiry(int ttlInMinutes) {
+        this.ttlInMinutes = ttlInMinutes;
+        cache = buildCache();
+    }
+
+    private LoadingCache<String, Optional<MediaObject>> buildCache() {
+        return CacheBuilder.newBuilder()
+            .concurrencyLevel(4)
+            .maximumSize(cacheSize)
+            .expireAfterWrite(ttlInMinutes, TimeUnit.MINUTES)
+            .build(
+                new CacheLoader<String, Optional<MediaObject>>() {
+                    @Override
+                    public Optional<MediaObject> load(@NotNull String mid) throws IOException {
+                        limiter.acquire();
+                        try {
+                            MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
+                            limiter.upRate();
+                            //return Optional.ofNullable(object);
+                            return Optional.fromNullable(object);
+                        } catch (IOException | RuntimeException se) {
+                            limiter.downRate();
+                            throw se;
+                        }
+                    }
+                });
     }
 
 
@@ -151,13 +169,14 @@ public class NpoApiMediaUtil implements MediaProvider {
         if (!toRequest.isEmpty()) {
             limiter.acquire();
             try {
-                MediaObject[] requested = MediaRestClientUtils.load(clients.getMediaService(), toRequest.toArray(new String[toRequest.size()]));
-                for (MediaObject found : requested) {
-                    resultMap.put(found.getMid(), found);
-                    Optional<MediaObject> optional = Optional.fromNullable(found);
-                    cache.put(found.getMid(), optional);
+                String[] array = toRequest.toArray(new String[toRequest.size()]);
+                MediaObject[] requested = MediaRestClientUtils.load(clients.getMediaService(), array);
+                for (int j = 0 ; j < array.length; j++) {
+                    resultMap.put(array[j], requested[j]);
+                    Optional<MediaObject> optional = Optional.fromNullable(requested[j]);
+                    cache.put(array[j], optional);
                     for (int i = 0; i < id.length; i++) {
-                        if (id[i].equals(found.getMid())) {
+                        if (id[i].equals(array[j])) {
                             result[i] = optional;
                         }
                     }
