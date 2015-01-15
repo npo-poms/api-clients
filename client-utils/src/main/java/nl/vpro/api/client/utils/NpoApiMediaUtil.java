@@ -158,8 +158,7 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     public MediaObject[] load(String... id) throws IOException {
         Optional<MediaObject>[] result = new Optional[id.length];
-        Map<String, MediaObject> resultMap = new HashMap<>();
-        Set<String> toRequest = new HashSet<>();
+        Set<String> toRequest = new LinkedHashSet<>();
         for (int i = 0; i < id.length; i++) {
             result[i] = cache.getIfPresent(id[i]);
             if (result[i] == null) {
@@ -172,7 +171,6 @@ public class NpoApiMediaUtil implements MediaProvider {
                 String[] array = toRequest.toArray(new String[toRequest.size()]);
                 MediaObject[] requested = MediaRestClientUtils.load(clients.getMediaService(), array);
                 for (int j = 0 ; j < array.length; j++) {
-                    resultMap.put(array[j], requested[j]);
                     Optional<MediaObject> optional = Optional.fromNullable(requested[j]);
                     cache.put(array[j], optional);
                     for (int i = 0; i < id.length; i++) {
