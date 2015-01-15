@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import javax.xml.bind.JAXB;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
@@ -14,7 +15,7 @@ import nl.vpro.domain.page.update.PageUpdate;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-//@Ignore("This required running server at publish-dev")
+@Ignore("This required running server at publish-dev")
 public class PageUpdateApiClientUtilTest  {
 
     private PageUpdateApiUtil util;
