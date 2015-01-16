@@ -27,7 +27,7 @@
 
   <properties>
     <api.version>3.3.3</api.version>
-    <media.version>3.3.0.API</media.version>
+    <media.version>3.3.2</media.version>
   </properties>
 
   <dependencies>
