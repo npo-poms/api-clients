@@ -41,7 +41,7 @@ import nl.vpro.util.CloseableIterator;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-//@Ignore("This is an integration test")
+@Ignore("This is an integration test")
 public class NpoApiClientUtilTest {
 
     private NpoApiMediaUtil util;
