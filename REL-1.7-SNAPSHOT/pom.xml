@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>nl.vpro.poms</groupId>
+    <artifactId>poms-parent</artifactId>
+    <version>3.3.5</version>
+  </parent>
+
+  <groupId>nl.vpro.api-client</groupId>
+  <artifactId>api-client-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>1.7.0</version>
+
+  <modules>
+    <module>client-resteasy</module>
+    <module>client-utils</module>
+    <module>media-backend-rs-client</module>
+  </modules>
+
+  <scm>
+    <connection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/vpro/api-clients/tags/REL-1.7.0</connection>
+    <developerConnection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/vpro/api-clients/tags/REL-1.7.0</developerConnection>
+    <url>https://subversion.vpro.nl/cgi-bin/viewvc.cgi/nl/vpro/api-clients/tags/REL-1.7.0</url>
+  </scm>
+
+  <properties>
+    <api.version>3.3.4</api.version>
+    <media.version>3.3.2</media.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easytesting</groupId>
+      <artifactId>fest-assert</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

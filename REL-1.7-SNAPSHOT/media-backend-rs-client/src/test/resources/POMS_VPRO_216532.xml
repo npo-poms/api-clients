@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<program xmlns:media="urn:vpro:media:2009" xmlns:shared="urn:vpro:shared:2009" xmlns="urn:vpro:media:update:2009" type="BROADCAST" avType="AUDIO" embeddable="true" mid="POMS_VPRO_216532" urn="urn:vpro:media:program:3075191">
+  <crid>crid://tmp.program.omroep.nl/6838631</crid>
+  <broadcaster>VPRO</broadcaster>
+  <title type="MAIN">Een auto naar Afrika</title>
+  <title type="SUB">Een auto naar Afrika</title>
+  <description type="MAIN">Woestijnrally Le Dakar is wegens dreiging van terroristen afgelast, maar dat weerhoudt Jeroen van Bergeijk en Gerbert van de Aa er niet van om per auto dwars door de Sahara te reizen. Met een roestig Renault Master transportbusje, bouwjaar 1989, 400.000 km op de teller, trekken ze door Algerije, met de hoop de auto in Mali met winst te verkopen. Regisseur van Bergeijk vraagt zich af: is dit een kwalijke vorm van dumpen van ons westerse afval in Afrika of handel die zowel Europa als Afrika ten goede komt? Jeroen van Bergeijk is journalist, documentairemaker en schrijver. Zijn reisboek Mijn Mercedes is niet te koop verschijnt dit jaar in vertaling in Duitsland, Engeland en Amerika. Gerbert van de Aa is Afrika-journalist en schrijft voor Elsevier en NRC Handelsblad. Hij publiceerde de boeken Nigeriaanse toestanden en dwars door Soedan.</description>
+  <description type="SHORT">De Dakar-rally is afgelast, maar dat weerhoudt Jeroen van Bergeijk en Gerbert van de Aa er niet van om per auto dwars door de Sahara te reizen.</description>
+  <duration>P0DT0H56M0.000S</duration>
+  <memberOf highlighted="false">urn:vpro:media:group:3152647</memberOf>
+  <memberOf position="4" highlighted="false">urn:vpro:media:group:3153029</memberOf>
+  <locations>
+    <location publishStart="2008-04-07T10:34:21+02:00" urn="urn:vpro:media:location:3075195">
+      <programUrl>http://cgi.omroep.nl/cgi-bin/streams?/radio1/nps/radioatelier/20080406-21.wma</programUrl>
+      <avAttributes>
+        <bitrate>96000</bitrate>
+        <avFileFormat>WM</avFileFormat>
+      </avAttributes>
+      <duration>P0DT1H0M0.000S</duration>
+    </location>
+    <location publishStart="2008-04-07T10:34:21+02:00" urn="urn:vpro:media:location:3075197">
+      <programUrl>http://player.omroep.nl/?aflID=6838631</programUrl>
+      <avAttributes>
+        <avFileFormat>HTML</avFileFormat>
+      </avAttributes>
+      <duration>P0DT1H0M0.000S</duration>
+    </location>
+  </locations>
+  <scheduleEvents>
+    <scheduleEvent channel="RAD1">
+      <start>2008-04-06T21:04:00+02:00</start>
+      <duration>P0DT1H0M0.000S</duration>
+    </scheduleEvent>
+  </scheduleEvents>
+  <images>
+    <image type="PICTURE" highlighted="false">
+      <title>Een auto naar Afrika</title>
+      <width>10</width>
+      <height>10</height>
+      <urn>urn:vpro.image:6691</urn>
+    </image>
+  </images>
+  <episodeOf position="137" highlighted="false">urn:vpro:media:group:73189</episodeOf>
+  <segments/>
+</program>
