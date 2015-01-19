@@ -34,14 +34,16 @@ import nl.vpro.api.client.resteasy.NpoApiAuthentication;
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
+import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.media.MediaResult;
+import nl.vpro.domain.api.media.MediaSearchResult;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaType;
 import nl.vpro.util.CloseableIterator;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-//@Ignore("This is an integration test")
+@Ignore("This is an integration test")
 public class NpoApiClientUtilTest {
 
     private NpoApiMediaUtil util;
@@ -140,6 +142,12 @@ public class NpoApiClientUtilTest {
         assertThat(result.getSize()).isEqualTo(123);
 
 
+    }
+
+    @Test
+    public void testListRelated() throws Exception {
+        MediaSearchResult result = util.getClients().getMediaService().findRelated(MediaFormBuilder.emptyForm(), "VPWON_1174495", "vpro", null, 10);
+        System.out.println(result.asList().get(0).getDescendantOf().iterator().next().getMidRef());
     }
 
 
