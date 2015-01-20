@@ -12,6 +12,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
+import nl.vpro.resteasy.JacksonContextResolver;
 
 @Named
 public class NpoApiClients extends AbstractApiClient {
@@ -46,13 +47,21 @@ public class NpoApiClients extends AbstractApiClient {
         baseUrl = apiBaseUrl + "api";
 
         mediaRestServiceProxy = getTarget(clientHttpEngine, baseUrl)
-            .proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_XML_TYPE).build();
+            .proxyBuilder(MediaRestService.class)
+            .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+            .build();
         mediaRestServiceProxyNoTimeout = getTarget(clientHttpEngineNoTimeout, baseUrl)
-            .proxyBuilder(MediaRestService.class).defaultConsumes(MediaType.APPLICATION_XML_TYPE).build();
+            .proxyBuilder(MediaRestService.class)
+            .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+            .build();
         pageRestServiceProxy  = getTarget(clientHttpEngine, baseUrl)
-            .proxyBuilder(PageRestService.class).defaultConsumes(MediaType.APPLICATION_XML_TYPE).build();
+            .proxyBuilder(PageRestService.class)
+            .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+            .build();
         profileRestServiceProxy = getTarget(clientHttpEngine, baseUrl)
-            .proxyBuilder(ProfileRestService.class).defaultConsumes(MediaType.APPLICATION_XML_TYPE).build();
+            .proxyBuilder(ProfileRestService.class)
+            .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+            .build();
     }
 
     public NpoApiClients(
@@ -89,6 +98,7 @@ public class NpoApiClients extends AbstractApiClient {
             new ResteasyClientBuilder()
                 .httpEngine(engine)
                 .register(authentication)
+                .register(JacksonContextResolver.class)
                 .build();
         return client.target(url);
     }
