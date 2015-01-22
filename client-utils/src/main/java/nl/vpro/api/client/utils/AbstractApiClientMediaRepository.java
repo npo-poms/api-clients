@@ -73,7 +73,7 @@ public class AbstractApiClientMediaRepository {
 
     }
 
-    public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form) {
+    public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, Integer max, Long offset) {
         throw new UnsupportedOperationException();
     }
 

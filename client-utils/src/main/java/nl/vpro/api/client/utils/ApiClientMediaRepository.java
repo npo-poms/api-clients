@@ -3,7 +3,6 @@ package nl.vpro.api.client.utils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.media.MediaRepository;
 
 /**
@@ -17,4 +16,6 @@ public class ApiClientMediaRepository extends AbstractApiClientMediaRepository i
     public ApiClientMediaRepository(NpoApiMediaUtil util) {
         super(util);
     }
+
+
 }

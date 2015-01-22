@@ -19,6 +19,7 @@ public class ApiClientMediaSearchRepository extends AbstractApiClientMediaReposi
         super(util);
     }
 
+
     @Override
     public MediaSearchResult find(ProfileDefinition<MediaObject> profile, MediaForm form, Long offset, Integer max) {
         return clients.getMediaService().find(form != null ? form : MediaFormBuilder.emptyForm(), profile != null ? profile.getName() : null, null, offset, max);
