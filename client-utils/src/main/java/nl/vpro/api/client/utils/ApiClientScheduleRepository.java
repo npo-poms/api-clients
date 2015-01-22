@@ -6,8 +6,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import nl.vpro.domain.api.Order;
+import nl.vpro.domain.api.ScheduleResult;
 import nl.vpro.domain.api.media.ScheduleRepository;
-import nl.vpro.domain.api.media.ScheduleResult;
 import nl.vpro.domain.media.Channel;
 import nl.vpro.domain.media.Net;
 

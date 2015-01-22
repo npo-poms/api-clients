@@ -3,7 +3,12 @@ package nl.vpro.api.client.utils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import nl.vpro.domain.api.media.*;
+import nl.vpro.domain.api.MediaSearchResult;
+import nl.vpro.domain.api.ProgramSearchResult;
+import nl.vpro.domain.api.ScheduleSearchResult;
+import nl.vpro.domain.api.media.MediaForm;
+import nl.vpro.domain.api.media.MediaFormBuilder;
+import nl.vpro.domain.api.media.MediaSearchRepository;
 import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
 
