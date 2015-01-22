@@ -11,7 +11,7 @@
   <groupId>nl.vpro.api-client</groupId>
   <artifactId>api-client-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.7.2-SNAPSHOT</version>
+  <version>1.7.2</version>
 
   <modules>
     <module>client-resteasy</module>
@@ -20,9 +20,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/vpro/api-clients/branches/REL-1.7-SNAPSHOT</connection>
-    <developerConnection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/vpro/api-clients/branches/REL-1.7-SNAPSHOT</developerConnection>
-    <url>https://subversion.vpro.nl/cgi-bin/viewvc.cgi/nl/vpro/api-clients/branches/REL-1.7-SNAPSHOT</url>
+    <connection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/vpro/api-clients/tags/REL-1.7.2</connection>
+    <developerConnection>scm:svn:svn+ssh://subversion.vpro.nl/export/svn/nl/vpro/api-clients/tags/REL-1.7.2</developerConnection>
+    <url>https://subversion.vpro.nl/cgi-bin/viewvc.cgi/nl/vpro/api-clients/tags/REL-1.7.2</url>
   </scm>
 
   <properties>
