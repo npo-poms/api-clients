@@ -12,6 +12,7 @@
   <artifactId>api-client-parent</artifactId>
   <packaging>pom</packaging>
   <version>1.8-SNAPSHOT</version>
+  <description>Client 1.8 is build against NPO API 3.3</description>
 
   <modules>
     <module>client-resteasy</module>
