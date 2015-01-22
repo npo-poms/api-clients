@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.resteasy.JacksonContextResolver;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 
 public class PageUpdateApiClient extends AbstractApiClient {
@@ -43,7 +44,11 @@ public class PageUpdateApiClient extends AbstractApiClient {
     ) {
         super(connectionTimeout, 16, 10000);
         this.authentication = new BasicAuthentication(user, password);
-        ResteasyClient client = new ResteasyClientBuilder().httpEngine(clientHttpEngine).register(authentication).build();
+        ResteasyClient client = new ResteasyClientBuilder()
+            .httpEngine(clientHttpEngine)
+            .register(authentication)
+            .register(JacksonContextResolver.class)
+            .build();
         ResteasyWebTarget target = client.target(apiBaseUrl + "api/");
         pageUpdateRestService = target.proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
         toString = user + "@" + apiBaseUrl;
