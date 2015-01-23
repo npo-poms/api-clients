@@ -61,12 +61,16 @@
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
+      <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-hibernatevalidator-provider</artifactId>
+      <artifactId>resteasy-validator-provider-11</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>nl.publiekeomroep</groupId>
+      <artifactId>poms-shared</artifactId>
     </dependency>
   </dependencies>
 </project>
