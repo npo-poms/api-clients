@@ -16,6 +16,7 @@ import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
 import nl.vpro.domain.media.update.GroupUpdate;
 import nl.vpro.domain.media.update.ProgramUpdate;
+import nl.vpro.util.XTrustProvider;
 
 import static org.fest.assertions.Assertions.assertThat;
 
