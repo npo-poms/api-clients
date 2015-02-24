@@ -5,7 +5,7 @@
   <parent>
     <groupId>nl.vpro.poms</groupId>
     <artifactId>poms-parent</artifactId>
-    <version>3.4.1</version>
+    <version>3.4.3</version>
   </parent>
 
   <groupId>nl.vpro.api-client</groupId>
@@ -27,7 +27,6 @@
 
   <properties>
     <!-- remove when media, api are released -->
-    <media.version>3.4-SNAPSHOT</media.version>
     <api.version>3.4-SNAPSHOT</api.version>
   </properties>
 
