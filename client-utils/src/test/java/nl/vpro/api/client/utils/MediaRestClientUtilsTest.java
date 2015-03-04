@@ -42,6 +42,11 @@ public class MediaRestClientUtilsTest {
     }
 
     @Test
+    public void testLoad() {
+
+    }
+
+    @Test
     public void testToMid() {
         assertThat(MediaRestClientUtils.toMid("urn:vpro:media:program:1906")).isEqualTo("POMS_VPRO_158299");
     }

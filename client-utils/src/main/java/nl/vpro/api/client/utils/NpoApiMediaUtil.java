@@ -17,6 +17,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
@@ -101,9 +102,12 @@ public class NpoApiMediaUtil implements MediaProvider {
         try {
             //return cache.get(id).orElse(null);
             return cache.get(id).orNull();
-        } catch (ExecutionException e) {
+        } catch (ExecutionException | UncheckedExecutionException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
+            }
+            if (e.getCause() instanceof  RuntimeException) {
+                throw (RuntimeException) e.getCause();
             }
             throw new RuntimeException(e);
         }

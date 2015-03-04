@@ -77,6 +77,8 @@ public class MediaRestClientUtils {
             unwrapIO(pe);
             LOG.warn(id + " " + pe.getMessage());
             return null;
+        } catch (RuntimeException ise) {
+            throw ise;
         } catch (Exception e) {
             LOG.error(id + " " + e.getClass().getName() + " " + e.getMessage());
             return null;
