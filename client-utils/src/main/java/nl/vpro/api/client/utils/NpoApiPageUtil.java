@@ -2,12 +2,8 @@ package nl.vpro.api.client.utils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.Valid;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
-import nl.vpro.domain.api.Constants;
 import nl.vpro.domain.api.IdList;
 import nl.vpro.domain.api.MultiplePageResult;
 import nl.vpro.domain.api.page.PageForm;
