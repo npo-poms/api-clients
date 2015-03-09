@@ -56,7 +56,7 @@ public class NpoApiAuthentication implements ClientRequestFilter {
 
         sb.append("x-npo-date:").append(now).append(',');
 
-        sb.append("uri:").append(uri.getPath());
+        sb.append("uri:").append(uri.getRawPath());
 
         List<NameValuePair> query = URLEncodedUtils.parse(uri.getQuery(), Charset.forName("utf-8"));
 
