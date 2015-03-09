@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.*;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 
 import org.apache.commons.io.IOUtils;
@@ -73,6 +74,8 @@ public class MediaRestClientUtils {
     public static MediaObject loadOrNull(MediaRestService restService, String id) throws IOException {
         try {
             return restService.load(id, null);
+        } catch (NotFoundException nfe) {
+            return null;
         } catch (ProcessingException pe) {
             unwrapIO(pe);
             LOG.warn(id + " " + pe.getMessage());
