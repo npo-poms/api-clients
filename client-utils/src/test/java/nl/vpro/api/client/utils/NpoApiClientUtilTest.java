@@ -37,6 +37,7 @@ import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.media.MediaResult;
 import nl.vpro.domain.api.media.MediaSearchResult;
+import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaType;
 import nl.vpro.util.CloseableIterator;
@@ -102,6 +103,13 @@ public class NpoApiClientUtilTest {
     public void testLoad() throws Exception {
         MediaObject result = util.loadOrNull("AVRO_1656037");
         assertThat(result.getMid()).isEqualTo("AVRO_1656037");
+    }
+
+
+    @Test
+    public void testLoadNotFound() throws Exception {
+        MediaObject result = util.loadOrNull("bestaat niet");
+        assertThat(result).isNull();
     }
 
 
@@ -200,6 +208,13 @@ public class NpoApiClientUtilTest {
 
         engine.invoke(invocation);
 
+    }
+
+
+    @Test
+    public void testLoadProfile() throws Exception {
+        Profile profile = util.getClients().getProfileService().load("human", null);
+        System.out.println(profile.getMediaProfile());
     }
 
     private HttpRequestBase getAuthenticatedRequest() throws URISyntaxException {
