@@ -1,13 +1,18 @@
 package nl.vpro.rs.media;
 
-import com.google.common.util.concurrent.RateLimiter;
-import nl.vpro.domain.media.Group;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.media.Program;
-import nl.vpro.domain.media.Segment;
-import nl.vpro.domain.media.search.MediaForm;
-import nl.vpro.domain.media.search.MediaListItem;
-import nl.vpro.domain.media.update.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXB;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -19,17 +24,15 @@ import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ServiceUnavailableException;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXB;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.Callable;
+import com.google.common.util.concurrent.RateLimiter;
+
+import nl.vpro.domain.media.Group;
+import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.Program;
+import nl.vpro.domain.media.Segment;
+import nl.vpro.domain.media.search.MediaForm;
+import nl.vpro.domain.media.search.MediaListItem;
+import nl.vpro.domain.media.update.*;
 
 /**
  * A client for RESTful calls to a running MediaRestController
@@ -429,5 +432,7 @@ public class MediaRestClient {
             }
         }
     }
+
+
 
 }
