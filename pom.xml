@@ -22,7 +22,7 @@
   <scm>
     <connection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/trunk</connection>
     <developerConnection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/trunk</developerConnection>
-    <url>https://subversion.vpro.nl/cgi-bin/viewvc.cgi/nl/vpro/api-clients/trunk</url>
+    <url>https://subversion.vpro.nl/viewvc/nl/vpro/api-clients/trunk</url>
   </scm>
 
   <properties>
