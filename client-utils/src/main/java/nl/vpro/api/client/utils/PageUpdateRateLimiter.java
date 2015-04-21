@@ -1,8 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import javax.inject.Inject;
 import javax.inject.Named;
-
-import com.google.inject.Inject;
 
 /**
  * @author Michiel Meeuwissen
@@ -10,13 +9,13 @@ import com.google.inject.Inject;
  */
 public class PageUpdateRateLimiter extends AbstractRateLimiter {
 
-    @Inject(optional = true)
+    @Inject
     @Override
     public void setBaseRate(@Named("pageupdate-api.baserate") double baseRate) {
         super.setBaseRate(baseRate);
     }
 
-    @Inject(optional = true)
+    @Inject
     @Override
     public void setMinRate(@Named("pageupdate-api.minrate") double minRate) {
         super.setMinRate(minRate);
