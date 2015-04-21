@@ -1,5 +1,6 @@
 package nl.vpro.api.client.utils;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
@@ -9,13 +10,13 @@ import javax.inject.Named;
 @Named
 public class NpoApiRateLimiter extends AbstractRateLimiter {
 
-    @com.google.inject.Inject(optional = true)
+    @Inject
     @Override
     public void setBaseRate(@Named("npo-api.baserate") double baseRate) {
         super.setBaseRate(baseRate);
     }
 
-    @com.google.inject.Inject(optional = true)
+    @Inject
     @Override
     public void setMinRate(@Named("npo-api.minrate") double minRate) {
         super.setMinRate(minRate);
