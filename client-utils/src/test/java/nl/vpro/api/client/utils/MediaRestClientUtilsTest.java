@@ -29,11 +29,23 @@ public class MediaRestClientUtilsTest {
 
         MediaRestService mediaRestService = mock(MediaRestService.class);
 
-
-        when(mediaRestService.changes(anyString(), anyString(), any(Long.class), eq("asc"), any(Integer.class), any(HttpServletRequest.class), any(HttpServletResponse.class))).thenReturn(new URL("file:///tmp/changes.json").openStream());
-        Iterator<Change> i = utils.changes(mediaRestService, "human", 0, Order.ASC, Integer.MAX_VALUE);
+        // michiel@baleno:~/github/npo-poms/api/bash/media$ ENV=prod ./changes.sh  1000000 vpro > /tmp/changes.json
+        when(mediaRestService.changes(
+            anyString(),
+            anyString(),
+            any(Long.class),
+            eq("asc"),
+            any(Integer.class),
+            any(HttpServletRequest.class),
+            any(HttpServletResponse.class)))
+            .thenReturn(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream());
+        Iterator<Change> i = utils.changes(mediaRestService, "vpro", 0, Order.ASC, Integer.MAX_VALUE);
         int count = 0;
         while(i.hasNext()) {
+            Change next = i.next();
+            if (! next.isDeleted()) {
+                assertThat(next.getMedia()).isNotNull();
+            }
             System.out.println(i.next());
             count++;
         }

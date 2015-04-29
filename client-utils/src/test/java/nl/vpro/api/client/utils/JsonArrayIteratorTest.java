@@ -18,7 +18,11 @@ public class JsonArrayIteratorTest {
         assertThat(it.next().getMid()).isEqualTo("POMS_NCRV_1138990");
         for (int i = 0; i < 8; i++) {
             assertThat(it.hasNext()).isTrue();
-            it.next();
+
+            Change change = it.next();
+            if (!change.isDeleted()) {
+                assertThat(change.getMedia()).isNotNull();
+            }
         }
         assertThat(it.hasNext()).isTrue();
         assertThat(it.next().getMid()).isEqualTo("POMS_VPRO_1139788");

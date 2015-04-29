@@ -136,12 +136,7 @@ public class MediaRestClientUtils {
     public static JsonArrayIterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
             final InputStream inputStream = restService.changes(profile, null, since, order.name().toLowerCase(), max, null, null);
-            return new JsonArrayIterator<>(inputStream, Change.class, new Runnable() {
-                @Override
-                public void run() {
-                    IOUtils.closeQuietly(inputStream);
-                }
-            });
+            return new JsonArrayIterator<>(inputStream, Change.class, () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
             throw new RuntimeException(t.getMessage(), t);
