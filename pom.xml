@@ -5,7 +5,7 @@
   <parent>
     <groupId>nl.vpro.poms</groupId>
     <artifactId>poms-parent</artifactId>
-    <version>3.5.7</version>
+    <version>3.5.8</version>
   </parent>
 
   <groupId>nl.vpro.api-client</groupId>
@@ -25,8 +25,6 @@
     <url>https://subversion.vpro.nl/viewvc/nl/vpro/api-clients/trunk</url>
   </scm>
 
-  <properties>
-  </properties>
 
   <dependencies>
     <dependency>
