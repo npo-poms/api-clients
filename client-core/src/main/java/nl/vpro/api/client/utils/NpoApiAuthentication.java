@@ -1,26 +1,17 @@
-/**
- * Copyright (C) 2014 All rights reserved
- * VPRO The Netherlands
- */
-package nl.vpro.api.client.resteasy;
+package nl.vpro.api.client.utils;
 
-import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.*;
-
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
 /**
- * @author Roelof Jan Koekoek
- * @since 3.0
+ * @author Michiel Meeuwissen
+ * @since 1.11
  */
-public class NpoApiAuthentication implements ClientRequestFilter {
+public class NpoApiAuthentication {
 
     private final String apiKey;
 
@@ -34,20 +25,18 @@ public class NpoApiAuthentication implements ClientRequestFilter {
         this.origin = origin;
     }
 
-    @Override
-    public void filter(ClientRequestContext requestContext) throws IOException {
-        authenticate(requestContext.getUri(), requestContext.getHeaders());
-    }
-
-    public void authenticate(URI uri, MultivaluedMap<String, Object> headers) {
+    public Map<String, Object> authenticate(URI uri) {
         String now = Util.rfc822(new Date());
 
         String message = message(uri, now);
 
-        headers.add("Authorization", "NPO " + apiKey + ':' + Util.hmacSHA256(secret, message));
-        headers.add("Origin", origin);
-        headers.add("X-NPO-Date", now);
+        Map<String, Object> headers = new TreeMap<>();
+        headers.put("Authorization", "NPO " + apiKey + ':' + Util.hmacSHA256(secret, message));
+        headers.put("Origin", origin);
+        headers.put("X-NPO-Date", now);
+        return headers;
     }
+
 
     private String message(URI uri, String now) {
 
@@ -64,7 +53,7 @@ public class NpoApiAuthentication implements ClientRequestFilter {
             @Override
             public int compare(NameValuePair o1, NameValuePair o2) {
                 int i = o1.getName().compareTo(o2.getName());
-                if(i != 0) {
+                if (i != 0) {
                     return i;
                 }
                 return o1.getValue().compareTo(o2.getValue());
@@ -73,7 +62,7 @@ public class NpoApiAuthentication implements ClientRequestFilter {
 
         sortedQuery.addAll(query);
 
-        for(NameValuePair pair : sortedQuery) {
+        for (NameValuePair pair : sortedQuery) {
             sb.append(',').append(pair.getName()).append(':').append(pair.getValue());
         }
 

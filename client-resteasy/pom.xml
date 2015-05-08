@@ -17,6 +17,11 @@
       <artifactId>media-classification</artifactId>
     </dependency>
     <dependency>
+      <groupId>nl.vpro.api-client</groupId>
+      <artifactId>client-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>

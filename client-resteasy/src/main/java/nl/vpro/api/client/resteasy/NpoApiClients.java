@@ -17,7 +17,7 @@ import nl.vpro.resteasy.JacksonContextResolver;
 @Named
 public class NpoApiClients extends AbstractApiClient {
 
-    private final NpoApiAuthentication authentication;
+    private final ApiAuthenticationRequestFilter authentication;
 
     private final MediaRestService mediaRestServiceProxy;
     private final MediaRestService mediaRestServiceProxyNoTimeout;
@@ -43,7 +43,7 @@ public class NpoApiClients extends AbstractApiClient {
         Integer connectionTimeout
     ) {
 		super(connectionTimeout, 16, 3);
-        this.authentication = new NpoApiAuthentication(apiKey, secret, origin);
+        this.authentication = new ApiAuthenticationRequestFilter(apiKey, secret, origin);
         baseUrl = apiBaseUrl + "api";
 
         mediaRestServiceProxy = getTarget(clientHttpEngine, baseUrl)
@@ -89,7 +89,7 @@ public class NpoApiClients extends AbstractApiClient {
         return profileRestServiceProxy;
     }
 
-    public NpoApiAuthentication getAuthentication() {
+    public ApiAuthenticationRequestFilter getAuthentication() {
         return authentication;
     }
 

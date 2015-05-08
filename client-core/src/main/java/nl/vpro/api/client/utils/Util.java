@@ -2,7 +2,7 @@
  * Copyright (C) 2013 All rights reserved
  * VPRO The Netherlands
  */
-package nl.vpro.api.client.resteasy;
+package nl.vpro.api.client.utils;
 
 import java.security.MessageDigest;
 import java.text.ParseException;

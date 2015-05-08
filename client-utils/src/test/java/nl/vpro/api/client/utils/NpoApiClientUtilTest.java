@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import com.google.common.base.Predicate;
 
-import nl.vpro.api.client.resteasy.NpoApiAuthentication;
+import nl.vpro.api.client.resteasy.ApiAuthenticationRequestFilter;
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
@@ -221,7 +221,7 @@ public class NpoApiClientUtilTest {
         //String host = "http://fake-response.appspot.com/?sleep=7";
         String host = target + "api/media/AVRO_1656037";
         URI uri = new URI(host);
-        NpoApiAuthentication authentication = utilShortTimeout.getClients().getAuthentication();
+        ApiAuthenticationRequestFilter authentication = utilShortTimeout.getClients().getAuthentication();
 
 
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
