@@ -82,7 +82,7 @@ public class AbstractApiClient {
     }
 
     protected ApacheHttpClient4Engine buildHttpEngine(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
-        return new ApacheHttpClient4Engine(getHttpClient(connectionTimeoutMillis, maxConnections, connectionInPoolTTL));
+        return new ApacheHttpClient4Engine(getHttpClient43(connectionTimeoutMillis, maxConnections, connectionInPoolTTL));
     }
 
 
