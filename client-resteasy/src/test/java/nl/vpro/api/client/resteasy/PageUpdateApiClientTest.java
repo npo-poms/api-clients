@@ -1,10 +1,12 @@
 package nl.vpro.api.client.resteasy;
 
 import java.net.MalformedURLException;
+import java.util.Arrays;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXB;
 
+import org.jboss.resteasy.api.validation.ViolationReport;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,11 +38,17 @@ public class PageUpdateApiClientTest {
     public void testGetPageUpdateRestService() throws Exception {
         PageUpdateRestService client = clients.getPageUpdateRestService();
         PageUpdate instance = new PageUpdate(PageType.ARTICLE, "http://vpro.nl/test");
+        instance.setTitle("my title");
+        instance.setBroadcasters(Arrays.asList("VPRO"));
         Response response = client.save(instance);
+        if (response.getStatus() == 400) {
+            ViolationReport report = response.readEntity(ViolationReport.class);
+            JAXB.marshal(report, System.out);
+            JAXB.marshal(instance, System.out);
+
+        }
         assertEquals(202, response.getStatus());
-        String report = response.readEntity(String.class);
-        //System.out.println(response.readEntity(ViolationReport.class));
-        JAXB.marshal(instance, System.out);
+
     }
 
     @Test
