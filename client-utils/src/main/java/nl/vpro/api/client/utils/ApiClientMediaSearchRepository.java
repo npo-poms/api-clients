@@ -47,8 +47,4 @@ public class ApiClientMediaSearchRepository extends AbstractApiClientMediaReposi
         return clients.getMediaService().findRelated(form != null ? form : MediaFormBuilder.emptyForm(), media.getMid(), profile != null ? profile.getName() : null, null, max);
     }
 
-    @Override
-    public ScheduleSearchResult findSchedules(ProfileDefinition<MediaObject> profile, MediaForm form, Long offset, Integer max) {
-        throw new UnsupportedOperationException();
-    }
 }
