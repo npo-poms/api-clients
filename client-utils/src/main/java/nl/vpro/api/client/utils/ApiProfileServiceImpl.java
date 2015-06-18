@@ -29,7 +29,6 @@ public class ApiProfileServiceImpl implements ProfileService {
 
     final ProfileRestService client;
 
-
     // TODO arrange caching via ehcache (ehcache4guice or something)
     final LoadingCache<String, Profile> cache = CacheBuilder.newBuilder()
         .concurrencyLevel(4)
@@ -38,7 +37,7 @@ public class ApiProfileServiceImpl implements ProfileService {
         .build(
             new CacheLoader<String, Profile>() {
                 @Override
-                public Profile load(@NotNull String profile )  {
+                public Profile load(@NotNull String profile)  {
                     return client.load(profile, null);
                 }
             });
@@ -69,6 +68,9 @@ public class ApiProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name) {
+        if (name == null) {
+            return null;
+        }
         return getProfile(name).getMediaProfile();
     }
 
