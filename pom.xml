@@ -26,7 +26,6 @@
     <url>https://subversion.vpro.nl/viewvc/nl/vpro/api-clients/trunk</url>
   </scm>
   <properties>
-    <api.version>3.7-SNAPSHOT</api.version>
   </properties>
 
 
