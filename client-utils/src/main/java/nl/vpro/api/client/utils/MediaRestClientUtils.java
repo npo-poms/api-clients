@@ -151,12 +151,7 @@ public class MediaRestClientUtils {
     @Deprecated
     public static Iterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) throws IOException {
         final InputStream inputStream = restService.iterate(form, profile, null, 0l, Integer.MAX_VALUE, null, null);
-        return new JsonArrayIterator<>(inputStream, MediaObject.class, new Runnable() {
-            @Override
-            public void run() {
-                IOUtils.closeQuietly(inputStream);
-            }
-        });
+        return new JsonArrayIterator<>(inputStream, MediaObject.class, () -> IOUtils.closeQuietly(inputStream));
 
     }
 
