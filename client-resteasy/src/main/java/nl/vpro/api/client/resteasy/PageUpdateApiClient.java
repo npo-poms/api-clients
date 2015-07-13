@@ -23,9 +23,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiClient.class);
 
-
-    private final BasicAuthentication authentication;
-
     private final PageUpdateRestService pageUpdateRestService;
 
     private final String toString;
@@ -43,7 +40,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Named("pageupdate-api.connectionTimeout") int connectionTimeout
     ) {
         super(connectionTimeout, 16, 10000);
-        this.authentication = new BasicAuthentication(user, password);
+        BasicAuthentication authentication = new BasicAuthentication(user, password);
         ResteasyClient client = new ResteasyClientBuilder()
             .httpEngine(clientHttpEngine)
             .register(authentication)
