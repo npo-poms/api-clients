@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.net.SocketException;
 import java.util.HashMap;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
@@ -24,8 +23,6 @@ import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.jackson2.Jackson2Mapper;
 
-//import org.apache.http.impl.execchain.RequestAbortedException;
-
 /**
  * @author Michiel Meeuwissen
  * @since 1.0
@@ -34,40 +31,25 @@ public class PageUpdateApiUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiUtil.class);
 
-
-
-    private static final Function<Object, String> STRING = new Function<Object, String>() {
-        @Override
-        public String apply(@Nullable Object input) {
-            return String.valueOf(input);
-
+    private static final Function<Object, String> STRING = String::valueOf;
+    private static final Function<Object, String> JACKSON = input -> {
+        StringWriter writer = new StringWriter();
+        try {
+            Jackson2Mapper.getInstance().writer().writeValue(writer, input);
+        } catch (IOException e) {
+            LOG.error(e.getMessage(), e);
         }
+        return writer.toString();
     };
-    private static final Function<Object, String> JACKSON = new Function<Object, String>() {
-        @Override
-        public String apply(@Nullable Object input) {
-            StringWriter writer = new StringWriter();
-            try {
-                Jackson2Mapper.getInstance().writer().writeValue(writer, input);
-            } catch (IOException e) {
-                LOG.error(e.getMessage(), e);
-            }
-            return writer.toString();
-        }
-    };
-
 
     private final PageUpdateApiClient pageUpdateApiClient;
     private final PageUpdateRateLimiter limiter;
-
 
     @Inject
     public PageUpdateApiUtil(PageUpdateApiClient clients, PageUpdateRateLimiter limiter) {
         pageUpdateApiClient = clients;
         this.limiter = limiter;
     }
-
-
 
     public Result save(@NotNull @Valid PageUpdate update) {
         limiter.acquire();
@@ -76,7 +58,6 @@ public class PageUpdateApiUtil {
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
-
     }
 
     public Result delete(@NotNull String id) {
@@ -86,9 +67,7 @@ public class PageUpdateApiUtil {
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
-
     }
-
 
     public Result deleteWhereStartsWith(@NotNull String id) {
         limiter.acquire();
@@ -97,13 +76,11 @@ public class PageUpdateApiUtil {
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
-
     }
 
     public ClassificationService getClassificationService() {
         return pageUpdateApiClient.getClassificationService();
     }
-
 
     protected Result exceptionToResult(Exception e) {
         Throwable cause = e.getCause();
