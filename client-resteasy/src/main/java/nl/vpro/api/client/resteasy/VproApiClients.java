@@ -1,6 +1,6 @@
 package nl.vpro.api.client.resteasy;
 
-import nl.vpro.domain.api.media.ScheduleService;
+import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.resteasy.JacksonContextResolver;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 @Named
 public class VproApiClients extends AbstractApiClient {
 
-    private final ScheduleService scheduleServiceProxy;
+    private final ScheduleRestService scheduleServiceProxy;
 
     private final String baseUrl;
 
@@ -36,12 +36,12 @@ public class VproApiClients extends AbstractApiClient {
                 .build();
         ResteasyWebTarget target = client.target(baseUrl);
 
-        scheduleServiceProxy = target.proxyBuilder(ScheduleService.class)
+        scheduleServiceProxy = target.proxyBuilder(ScheduleRestService.class)
                 .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
                 .build();
     }
 
-    public ScheduleService getScheduleService() {
+    public ScheduleRestService getScheduleService() {
         return scheduleServiceProxy;
     }
 
