@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.net.SocketException;
 import java.util.HashMap;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
@@ -16,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.inject.Inject;
 
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
 import nl.vpro.domain.classification.ClassificationService;
