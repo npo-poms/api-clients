@@ -70,7 +70,6 @@ public class AbstractApiClient {
     protected final ClientHttpEngine clientHttpEngine;
     protected final ClientHttpEngine clientHttpEngineNoTimeout;
 
-
     private Thread connectionGuard;
 
     private boolean shutdown = true;
@@ -78,13 +77,11 @@ public class AbstractApiClient {
     public AbstractApiClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
         clientHttpEngine = buildHttpEngine(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
         clientHttpEngineNoTimeout = buildHttpEngine(0, 3, -1);
-
     }
 
     protected ApacheHttpClient4Engine buildHttpEngine(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
         return new ApacheHttpClient4Engine(getHttpClient43(connectionTimeoutMillis, maxConnections, connectionInPoolTTL));
     }
-
 
     // See https://issues.jboss.org/browse/RESTEASY-975
     // You _must_ use httpclient 4.2.1 syntax.  Otherwise timeout settings will simply not work
@@ -96,7 +93,6 @@ public class AbstractApiClient {
             .setSoKeepAlive(true)
             .setSoReuseAddress(true)
             .build();
-
 
         PoolingHttpClientConnectionManager poolingClientConnectionManager = new PoolingHttpClientConnectionManager(connectionInPoolTTL, TimeUnit.MILLISECONDS);
         poolingClientConnectionManager.setDefaultMaxPerRoute(maxConnections);
@@ -152,7 +148,6 @@ public class AbstractApiClient {
     public ClientHttpEngine getClientHttpEngine() {
         return clientHttpEngine;
     }
-
 
     @PreDestroy
     public void shutdown() {
@@ -211,7 +206,7 @@ public class AbstractApiClient {
                             connectionManager.closeExpiredConnections();
                             connectionManager.closeIdleConnections(connectionTimeoutMillis, TimeUnit.MILLISECONDS);
                         }
-                    } catch(InterruptedException ex) {
+                    } catch (InterruptedException ignored) {
                     }
                 }
             }
@@ -231,7 +226,7 @@ public class AbstractApiClient {
                             connectionManager.closeExpiredConnections();
                             connectionManager.closeIdleConnections(connectionTimeoutMillis, TimeUnit.MILLISECONDS);
                         }
-                    } catch (InterruptedException ex) {
+                    } catch (InterruptedException ignored) {
                     }
                 }
             }
