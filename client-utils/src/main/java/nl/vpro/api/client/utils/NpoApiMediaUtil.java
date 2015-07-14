@@ -36,7 +36,6 @@ import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 @Named
 public class NpoApiMediaUtil implements MediaProvider {
 
-
     final NpoApiClients clients;
     final NpoApiRateLimiter limiter;
 
@@ -47,13 +46,11 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     LoadingCache<String, Optional<MediaObject>> cache = buildCache();
 
-
     @Inject
     public NpoApiMediaUtil(NpoApiClients clients, NpoApiRateLimiter limiter) {
         this.clients = clients;
         this.limiter = limiter;
     }
-
 
     public NpoApiMediaUtil(NpoApiClients clients) {
         this(clients, new NpoApiRateLimiter());
@@ -97,7 +94,6 @@ public class NpoApiMediaUtil implements MediaProvider {
                 });
     }
 
-
     public MediaObject loadOrNull(String id) throws IOException {
         try {
             //return cache.get(id).orElse(null);
@@ -112,8 +108,6 @@ public class NpoApiMediaUtil implements MediaProvider {
             throw new RuntimeException(e);
         }
     }
-
-
 
     public MediaResult listDescendants(String mid, Order order) {
         limiter.acquire();
@@ -200,7 +194,6 @@ public class NpoApiMediaUtil implements MediaProvider {
         return resultArray;
     }
 
-
     public JsonArrayIterator<Change> changes(String profile, long since, Order order, Integer max) {
         limiter.acquire();
         try {
@@ -212,7 +205,6 @@ public class NpoApiMediaUtil implements MediaProvider {
             throw new RuntimeException(clients + ":" + e.getMessage(), e);
         }
     }
-
 
     @Deprecated
     public Iterator<MediaObject> iterate(MediaForm form, String profile)  {
@@ -226,7 +218,6 @@ public class NpoApiMediaUtil implements MediaProvider {
             throw new RuntimeException(clients + ":" + e.getMessage(), e);
         }
     }
-
 
     @Override
     public MediaObject findByMid(String mid) {
@@ -247,9 +238,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         return String.valueOf(clients);
     }
 
-
     public NpoApiClients getClients() {
         return clients;
     }
-
 }
