@@ -1,6 +1,6 @@
 package nl.vpro.api.client.resteasy;
 
-import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
+import nl.vpro.api.rs.client.v3.schedule.ScheduleRestService;
 import nl.vpro.resteasy.JacksonContextResolver;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
