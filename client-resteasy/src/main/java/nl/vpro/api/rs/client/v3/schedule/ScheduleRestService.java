@@ -15,17 +15,14 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
- * Endpoint which facilitates RPC like requests on scheduled content. This API intents to capture meaningful and frequent
- * queries on scheduled media used when building a site or apps containing POMS media. This not a real REST API. It has no update
- * statements and it is mainly document oriented. Most calls will return a full media document and there are no separate
- * calls for sub-resources.
- * <p/>
- * The API returns three media instance pageTypes: Programs, Groups and Segments.
- * <p/>
- * Media id's must be mid's. Retrieval by crid is not implemented at this moment.
+ * Deze class is er omdat de annotaties op nl.vpro.api.rs.v3.schedule.ScheduleRestService voor datums 'one-way' zijn.
+ * Hierdoor kan de ResteasyClientBuilder niet het juiste format bepalen om de datums te marshallen.
+ *
+ * Door hier de argumenten van Date naar String te zetten, delegeren we dit probleem naar de uiteindelijke caller.
+ * Die wordt geacht de datums in de juiste format (yyyy-MM-dd of ISO8601) op te sturen.
  *
  * @author Rico Jansen
- * @since 3.0
+ * @since 1.13
  */
 @Path(ScheduleRestService.PATH)
 @Produces(
