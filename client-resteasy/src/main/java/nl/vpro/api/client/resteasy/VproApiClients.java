@@ -2,6 +2,9 @@ package nl.vpro.api.client.resteasy;
 
 import nl.vpro.api.rs.client.v3.schedule.ScheduleRestService;
 import nl.vpro.resteasy.JacksonContextResolver;
+import nl.vpro.rs.tips.TipPublisherRestService;
+import nl.vpro.rs.tips.TipRestService;
+
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -14,7 +17,11 @@ import javax.ws.rs.core.MediaType;
 @Named
 public class VproApiClients extends AbstractApiClient {
 
-    private final ScheduleRestService scheduleServiceProxy;
+    private final ScheduleRestService scheduleRestServiceProxy;
+
+    private final TipRestService tipRestServiceProxy;
+
+    private final TipPublisherRestService tipPublisherRestServiceProxy;
 
     private final String baseUrl;
 
@@ -36,13 +43,29 @@ public class VproApiClients extends AbstractApiClient {
                 .build();
         ResteasyWebTarget target = client.target(baseUrl);
 
-        scheduleServiceProxy = target.proxyBuilder(ScheduleRestService.class)
+        scheduleRestServiceProxy = target.proxyBuilder(ScheduleRestService.class)
+                .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+                .build();
+
+        tipRestServiceProxy = target.proxyBuilder(TipRestService.class)
+                .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+                .build();
+
+        tipPublisherRestServiceProxy = target.proxyBuilder(TipPublisherRestService.class)
                 .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
                 .build();
     }
 
-    public ScheduleRestService getScheduleService() {
-        return scheduleServiceProxy;
+    public ScheduleRestService getScheduleRestService() {
+        return scheduleRestServiceProxy;
+    }
+
+    public TipRestService getTipRestService() {
+        return tipRestServiceProxy;
+    }
+
+    public TipPublisherRestService getTipPublisherRestService() {
+        return tipPublisherRestServiceProxy;
     }
 
     @Override

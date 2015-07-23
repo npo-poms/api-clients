@@ -61,6 +61,10 @@
       <artifactId>pages-rs-services</artifactId>
     </dependency>
     <dependency>
+      <groupId>nl.vpro.vproapi</groupId>
+      <artifactId>vproapi-tips</artifactId>
+    </dependency>
+    <dependency>
     <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
     </dependency>
