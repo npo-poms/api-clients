@@ -343,12 +343,10 @@ public class MediaRestClient {
     }
 
     public Iterable<MediaListItem> find(MediaForm form)  {
-        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        JAXB.marshal(form, bytes);
         return call(new Callable<Iterable<MediaListItem>>() {
             @Override
             public Iterable<MediaListItem> call() throws Exception {
-                return getProxy().find(new ByteArrayInputStream(bytes.toByteArray()), false);
+                return getProxy().find(form, false);
             }
 
             @Override
