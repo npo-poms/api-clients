@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.base.Function;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.UnmodifiableIterator;
@@ -19,6 +21,9 @@ import nl.vpro.util.CloseableIterator;
  * @since 1.0
  */
 public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements CloseableIterator<T>, PeekingIterator<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JsonArrayIterator.class);
+
 
     final JsonParser jp;
 
@@ -60,19 +65,27 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements Clo
         return result;
     }
     protected void findNext() {
-        if (needsFindNext) {
-            try {
-                next = jp.readValueAs(clazz);
-                if (next == null) {
+        if(needsFindNext) {
+            while(true) {
+                try {
+                    TreeNode tree = jp.readValueAsTree();
+                    try {
+                        next = jp.getCodec().treeToValue(tree, clazz);
+                        if (next == null) {
+                            if (callback != null) {
+                                callback.run();
+                            }
+                        }
+                        break;
+                    } catch (JsonMappingException jme) {
+                        LOG.error(jme.getClass() + " " + jme.getMessage() + " for\n" + tree + "\nWill be skipped");
+                    }
+                } catch (IOException e) {
                     if (callback != null) {
                         callback.run();
                     }
+                    throw new RuntimeException(e);
                 }
-            } catch (IOException e) {
-                if (callback != null) {
-                    callback.run();
-                }
-                throw new RuntimeException(e);
             }
             needsFindNext = false;
         }
