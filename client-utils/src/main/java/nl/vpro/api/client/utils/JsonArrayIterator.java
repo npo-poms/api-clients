@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.base.Function;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.UnmodifiableIterator;
@@ -61,18 +65,26 @@ public class JsonArrayIterator<T> extends UnmodifiableIterator<T> implements Clo
     }
     protected void findNext() {
         if (needsFindNext) {
-            try {
-                next = jp.readValueAs(clazz);
-                if (next == null) {
+            while (true) {
+                try {
+                    TreeNode tree = jp.readValueAsTree();
+                    try {
+                        next = jp.getCodec().treeToValue(tree, clazz);
+                        if (next == null) {
+                            if (callback != null) {
+                                callback.run();
+                            }
+                        }
+                        break;
+                    } catch (JsonMappingException jme) {
+                        LoggerFactory.getLogger(JsonArrayIterator.class).error(jme.getClass() + " " + jme.getMessage() + " for\n" + tree + "\nWill be skipped");
+                    }
+                } catch (IOException e) {
                     if (callback != null) {
                         callback.run();
                     }
+                    throw new RuntimeException(e);
                 }
-            } catch (IOException e) {
-                if (callback != null) {
-                    callback.run();
-                }
-                throw new RuntimeException(e);
             }
             needsFindNext = false;
         }
