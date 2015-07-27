@@ -76,7 +76,7 @@ public class AbstractApiClient {
 
     public AbstractApiClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
         clientHttpEngine = buildHttpEngine(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
-        clientHttpEngineNoTimeout = buildHttpEngine(0, 3, -1);
+        clientHttpEngineNoTimeout = buildHttpEngine(0/*value of zero is interpreted as infinite timeout*/, 3, -1);
     }
 
     protected ApacheHttpClient4Engine buildHttpEngine(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
@@ -100,7 +100,7 @@ public class AbstractApiClient {
         poolingClientConnectionManager.setDefaultSocketConfig(socketConfig);
 
         if (maxConnections > 1) {
-            watchIdleConnections(poolingClientConnectionManager, connectionTimeoutMillis);
+            watchIdleConnections(poolingClientConnectionManager);
         }
 
         RequestConfig defaultRequestConfig = RequestConfig.custom()
@@ -133,7 +133,7 @@ public class AbstractApiClient {
         poolingClientConnectionManager.setMaxTotal(maxConnections);
 
         if (maxConnections > 1) {
-            watchIdleConnections(poolingClientConnectionManager, connectionTimeoutMillis);
+            watchIdleConnections(poolingClientConnectionManager);
         }
 
         HttpParams httpParams = new BasicHttpParams();
@@ -194,7 +194,7 @@ public class AbstractApiClient {
         }
     }
 
-   private void watchIdleConnections(final PoolingClientConnectionManager connectionManager, final int connectionTimeoutMillis) {
+   private void watchIdleConnections(final PoolingClientConnectionManager connectionManager) {
         ThreadFactory threadFactory = ThreadPools.createThreadFactory("API Client purge idle connections", false, Thread.NORM_PRIORITY);
         connectionGuard = threadFactory.newThread(new Runnable() {
             @Override
@@ -204,7 +204,6 @@ public class AbstractApiClient {
                         synchronized(this) {
                             wait(5000);
                             connectionManager.closeExpiredConnections();
-                            connectionManager.closeIdleConnections(connectionTimeoutMillis, TimeUnit.MILLISECONDS);
                         }
                     } catch (InterruptedException ignored) {
                     }
@@ -214,7 +213,7 @@ public class AbstractApiClient {
         connectionGuard.run();
     }
 
-    private void watchIdleConnections(final PoolingHttpClientConnectionManager connectionManager, final int connectionTimeoutMillis) {
+    private void watchIdleConnections(final PoolingHttpClientConnectionManager connectionManager) {
         ThreadFactory threadFactory = ThreadPools.createThreadFactory("API Client purge idle connections", false, Thread.NORM_PRIORITY);
         connectionGuard = threadFactory.newThread(new Runnable() {
             @Override
@@ -224,7 +223,6 @@ public class AbstractApiClient {
                         synchronized (this) {
                             wait(5000);
                             connectionManager.closeExpiredConnections();
-                            connectionManager.closeIdleConnections(connectionTimeoutMillis, TimeUnit.MILLISECONDS);
                         }
                     } catch (InterruptedException ignored) {
                     }
