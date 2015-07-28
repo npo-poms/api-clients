@@ -231,6 +231,6 @@ public class AbstractApiClient {
                 }
             }
         });
-        connectionGuard.run();
+        connectionGuard.start();
     }
 }
