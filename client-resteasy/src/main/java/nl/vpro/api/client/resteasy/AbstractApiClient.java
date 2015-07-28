@@ -204,14 +204,14 @@ public class AbstractApiClient {
                         synchronized(this) {
                             wait(5000);
                             connectionManager.closeExpiredConnections();
-                            connectionManager.closeIdleConnections(connectionTimeoutMillis, TimeUnit.MILLISECONDS);
+                            //connectionManager.closeIdleConnections(connectionTimeoutMillis, TimeUnit.MILLISECONDS);
                         }
                     } catch (InterruptedException ignored) {
                     }
                 }
             }
         });
-        connectionGuard.run();
+        connectionGuard.start();
     }
 
     private void watchIdleConnections(final PoolingHttpClientConnectionManager connectionManager, final int connectionTimeoutMillis) {
@@ -224,7 +224,7 @@ public class AbstractApiClient {
                         synchronized (this) {
                             wait(5000);
                             connectionManager.closeExpiredConnections();
-                            connectionManager.closeIdleConnections(connectionTimeoutMillis, TimeUnit.MILLISECONDS);
+                            //connectionManager.closeIdleConnections(connectionTimeoutMillis, TimeUnit.MILLISECONDS);
                         }
                     } catch (InterruptedException ignored) {
                     }
