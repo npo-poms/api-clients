@@ -72,7 +72,7 @@ public class AbstractApiClient {
 
     private Thread connectionGuard;
 
-    private boolean shutdown = true;
+    private boolean shutdown = false;
 
     public AbstractApiClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
         clientHttpEngine = buildHttpEngine(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
@@ -204,6 +204,7 @@ public class AbstractApiClient {
                         synchronized(this) {
                             wait(5000);
                             connectionManager.closeExpiredConnections();
+                            //connectionManager.closeIdleConnections(connectionTimeoutMillis, TimeUnit.MILLISECONDS);
                         }
                     } catch (InterruptedException ignored) {
                     }
@@ -223,6 +224,7 @@ public class AbstractApiClient {
                         synchronized (this) {
                             wait(5000);
                             connectionManager.closeExpiredConnections();
+                            //connectionManager.closeIdleConnections(connectionTimeoutMillis, TimeUnit.MILLISECONDS);
                         }
                     } catch (InterruptedException ignored) {
                     }
