@@ -211,7 +211,7 @@ public class AbstractApiClient {
                 }
             }
         });
-        connectionGuard.run();
+        connectionGuard.start();
     }
 
     private void watchIdleConnections(final PoolingHttpClientConnectionManager connectionManager) {
@@ -231,6 +231,6 @@ public class AbstractApiClient {
                 }
             }
         });
-        connectionGuard.run();
+        connectionGuard.start();
     }
 }
