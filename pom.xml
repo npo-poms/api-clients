@@ -27,7 +27,7 @@
   </scm>
 
   <properties>
-    <vproapi.version>3.9-SNAPSHOT</vproapi.version>
+    <vproapi.version>3.9.0</vproapi.version>
   </properties>
 
   <dependencyManagement>
