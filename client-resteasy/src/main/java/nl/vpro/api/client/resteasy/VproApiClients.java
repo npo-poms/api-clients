@@ -30,7 +30,7 @@ public class VproApiClients extends AbstractApiClient {
             @Named("vpro-api.url") String apiBaseUrl,
             @Named("vpro-api.user") String user,
             @Named("vpro-api.password") String password,
-            @Named("vpro-api.connectionTimeout") int connectionTimeout
+            @Named("vpro-api.connectionTimeout") Integer connectionTimeout
     ) {
         super(connectionTimeout, 16, 3);
         baseUrl = apiBaseUrl + "/v3/api";
