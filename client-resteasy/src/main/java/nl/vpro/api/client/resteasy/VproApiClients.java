@@ -1,18 +1,18 @@
 package nl.vpro.api.client.resteasy;
 
-import nl.vpro.api.rs.client.v3.schedule.ScheduleRestService;
-import nl.vpro.resteasy.JacksonContextResolver;
-import nl.vpro.rs.tips.TipPublisherRestService;
-import nl.vpro.rs.tips.TipRestService;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
+import nl.vpro.api.rs.client.v3.schedule.ScheduleRestService;
+import nl.vpro.resteasy.JacksonContextResolver;
+import nl.vpro.rs.tips.TipPublisherRestService;
+import nl.vpro.rs.tips.TipRestService;
 
 @Named
 public class VproApiClients extends AbstractApiClient {
