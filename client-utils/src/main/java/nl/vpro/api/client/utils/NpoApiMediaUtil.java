@@ -7,8 +7,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
