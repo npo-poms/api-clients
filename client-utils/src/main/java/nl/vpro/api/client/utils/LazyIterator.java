@@ -1,12 +1,12 @@
 package nl.vpro.api.client.utils;
 
 
-import com.google.common.base.Suppliers;
-
 import java.util.Iterator;
 import java.util.function.Supplier;
 
 /**
+ * Wrap's a supplier around an iterator. This way you can delay the instantiation of the actual iterator until the first call
+ * of hasNext() or next().
  * @author Michiel Meeuwissen
  */
 public class LazyIterator<T> implements Iterator<T> {
