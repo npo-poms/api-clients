@@ -11,6 +11,8 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import nl.vpro.api.rs.client.v3.schedule.ScheduleRestService;
 import nl.vpro.resteasy.JacksonContextResolver;
+import nl.vpro.rs.persons.PersonPublisherRestService;
+import nl.vpro.rs.persons.PersonRestService;
 import nl.vpro.rs.tips.TipPublisherRestService;
 import nl.vpro.rs.tips.TipRestService;
 
@@ -22,6 +24,10 @@ public class VproApiClients extends AbstractApiClient {
     private final TipRestService tipRestServiceProxy;
 
     private final TipPublisherRestService tipPublisherRestServiceProxy;
+
+    private final PersonRestService personRestServiceProxy;
+
+    private final PersonPublisherRestService personPublisherRestServiceProxy;
 
     private final String baseUrl;
 
@@ -54,6 +60,13 @@ public class VproApiClients extends AbstractApiClient {
         tipPublisherRestServiceProxy = target.proxyBuilder(TipPublisherRestService.class)
                 .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
                 .build();
+
+        personRestServiceProxy = target.proxyBuilder(PersonRestService.class)
+            .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+            .build();
+        personPublisherRestServiceProxy = target.proxyBuilder(PersonPublisherRestService.class)
+            .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+            .build();
     }
 
     public ScheduleRestService getScheduleRestService() {
@@ -66,6 +79,14 @@ public class VproApiClients extends AbstractApiClient {
 
     public TipPublisherRestService getTipPublisherRestService() {
         return tipPublisherRestServiceProxy;
+    }
+
+    public PersonRestService getPersonRestServiceProxy() {
+        return personRestServiceProxy;
+    }
+
+    public PersonPublisherRestService getPersonPublisherRestServiceProxy() {
+        return personPublisherRestServiceProxy;
     }
 
     @Override

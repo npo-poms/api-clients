@@ -27,7 +27,8 @@
   </scm>
 
   <properties>
-    <vproapi.version>3.9.0</vproapi.version>
+    <!-- originally clients had no dependency on vpro-api, only on npo api -->
+    <vproapi.version>3.10-SNAPSHOT</vproapi.version>
   </properties>
 
   <dependencyManagement>
@@ -35,6 +36,11 @@
       <dependency>
         <groupId>nl.vpro.vproapi</groupId>
         <artifactId>vproapi-tips</artifactId>
+        <version>${vproapi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.vpro.vproapi</groupId>
+        <artifactId>vproapi-persons</artifactId>
         <version>${vproapi.version}</version>
       </dependency>
     </dependencies>
