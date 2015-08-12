@@ -81,11 +81,11 @@ public class VproApiClients extends AbstractApiClient {
         return tipPublisherRestServiceProxy;
     }
 
-    public PersonRestService getPersonRestServiceProxy() {
+    public PersonRestService getPersonRestService() {
         return personRestServiceProxy;
     }
 
-    public PersonPublisherRestService getPersonPublisherRestServiceProxy() {
+    public PersonPublisherRestService getPersonPublisherRestService() {
         return personPublisherRestServiceProxy;
     }
 
