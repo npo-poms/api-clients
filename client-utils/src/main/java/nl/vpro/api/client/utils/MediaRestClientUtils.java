@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.NotFoundException;
@@ -150,9 +151,15 @@ public class MediaRestClientUtils {
      */
     @Deprecated
     public static Iterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) throws IOException {
-        final InputStream inputStream = restService.iterate(form, profile, null, 0l, Integer.MAX_VALUE, null, null);
-        return new JsonArrayIterator<>(inputStream, MediaObject.class, () -> IOUtils.closeQuietly(inputStream));
-
+		return new LazyIterator<>(
+				() -> {
+					try {
+						final InputStream inputStream = restService.iterate(form, profile, null, 0l, Integer.MAX_VALUE, null, null);
+						return new JsonArrayIterator<>(inputStream, MediaObject.class, () -> IOUtils.closeQuietly(inputStream));
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				});
     }
 
 
