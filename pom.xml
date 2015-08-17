@@ -28,7 +28,7 @@
 
   <properties>
     <!-- originally clients had no dependency on vpro-api, only on npo api -->
-    <vproapi.version>3.10-SNAPSHOT</vproapi.version>
+    <vproapi.version>3.10.0</vproapi.version>
   </properties>
 
   <dependencyManagement>
