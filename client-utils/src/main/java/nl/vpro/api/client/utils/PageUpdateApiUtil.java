@@ -156,4 +156,9 @@ public class PageUpdateApiUtil {
         }
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "PageUpdateApiUtil for " + pageUpdateApiClient.getDescription();
+    }
 }

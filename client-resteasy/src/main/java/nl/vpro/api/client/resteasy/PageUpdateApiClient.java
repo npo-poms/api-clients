@@ -25,7 +25,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     private final PageUpdateRestService pageUpdateRestService;
 
-    private final String toString;
+    private final String description;
 
     private final String baseUrl;
 
@@ -48,7 +48,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
             .build();
         ResteasyWebTarget target = client.target(apiBaseUrl + "api/");
         pageUpdateRestService = target.proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
-        toString = user + "@" + apiBaseUrl;
+        description = user + "@" + apiBaseUrl;
         this.baseUrl = apiBaseUrl;
 
     }
@@ -71,8 +71,12 @@ public class PageUpdateApiClient extends AbstractApiClient {
         return classificationService;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     @Override
     public String toString() {
-        return getClass().getName() + " " + toString;
+        return getClass().getName() + " " + getDescription();
     }
 }
