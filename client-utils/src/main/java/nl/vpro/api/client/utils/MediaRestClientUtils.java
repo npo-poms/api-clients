@@ -5,9 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 
@@ -15,7 +13,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
@@ -103,16 +100,9 @@ public class MediaRestClientUtils {
 
     private static MediaObject[] loadWithMultiple(MediaRestService restService, String... ids) {
         List<MediaObject> result = new ArrayList<>(ids.length);
-        for (List<String> idList : Lists.partition(Arrays.asList(ids), 500)) {
+        for (List<String> idList : Lists.partition(Arrays.asList(ids), 240)) {
             MultipleMediaResult mediaResult = restService.loadMultiple(new IdList(idList), null);
-            result.addAll(Lists.transform(mediaResult.getItems(), new Function<MultipleMediaEntry, MediaObject>() {
-                @Nullable
-                @Override
-                public MediaObject apply(MultipleMediaEntry input) {
-                    return input.getResult();
-
-                }
-            }));
+            result.addAll(Lists.transform(mediaResult.getItems(), MultipleEntry::getResult));
         }
         return result.toArray(new MediaObject[result.size()]);
     }
