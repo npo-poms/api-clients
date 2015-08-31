@@ -11,7 +11,7 @@
   <groupId>nl.vpro.api-client</groupId>
   <artifactId>api-client-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.16-SNAPSHOT</version>
+  <version>1.17-SNAPSHOT</version>
 
   <modules>
     <module>client-core</module>
@@ -21,9 +21,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/branches/REL-1.16-SNAPSHOT</connection>
-    <developerConnection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/branches/REL-1.16-SNAPSHOT</developerConnection>
-    <url>https://subversion.vpro.nl/viewvc/nl/vpro/api-clients/branches/REL-1.16-SNAPSHOT</url>
+    <connection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/trunk</connection>
+    <developerConnection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/trunk</developerConnection>
+    <url>https://subversion.vpro.nl/viewvc/nl/vpro/api-clients/trunk</url>
   </scm>
 
   <properties>
