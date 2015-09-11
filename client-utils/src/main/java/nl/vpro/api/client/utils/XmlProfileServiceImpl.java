@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.bind.JAXB;
 
 import nl.vpro.domain.api.profile.Profile;
@@ -32,13 +34,20 @@ public class XmlProfileServiceImpl implements ProfileService {
 
     public XmlProfileServiceImpl(String... resources) {
         for (String resource : resources) {
-            InputStream inputStream = getClass().getResourceAsStream(resource);
-            if (inputStream != null) {
-                Profile profile = JAXB.unmarshal(inputStream, Profile.class);
-                profiles.put(profile.getName(), profile);
+            for (String res : resource.split("\\s*,\\s*")) {
+                InputStream inputStream = getClass().getResourceAsStream(res);
+                if (inputStream != null) {
+                    Profile profile = JAXB.unmarshal(inputStream, Profile.class);
+                    profiles.put(profile.getName(), profile);
+                }
             }
         }
     }
+    @Inject
+    public XmlProfileServiceImpl(@Named("xmlprofileserviceimpl.resources") String resources) {
+        this(new String[] {resources});
+    }
+
 
     @Override
     public Profile getProfile(String name) {
