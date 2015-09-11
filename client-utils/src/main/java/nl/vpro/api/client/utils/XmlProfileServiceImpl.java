@@ -30,6 +30,16 @@ public class XmlProfileServiceImpl implements ProfileService {
         }
     }
 
+    public XmlProfileServiceImpl(String... resources) {
+        for (String resource : resources) {
+            InputStream inputStream = getClass().getResourceAsStream(resource);
+            if (inputStream != null) {
+                Profile profile = JAXB.unmarshal(inputStream, Profile.class);
+                profiles.put(profile.getName(), profile);
+            }
+        }
+    }
+
     @Override
     public Profile getProfile(String name) {
         return profiles.get(name);
