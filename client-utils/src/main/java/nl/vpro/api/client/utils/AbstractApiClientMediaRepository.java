@@ -19,6 +19,7 @@ import nl.vpro.domain.api.media.MediaResult;
 import nl.vpro.domain.api.media.ProgramResult;
 import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
+import nl.vpro.util.FilteringIterator;
 
 /**
  * @author Michiel Meeuwissen
@@ -73,11 +74,12 @@ public class AbstractApiClientMediaRepository {
 
     }
 
-    public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, Integer max, Long offset) {
-        throw new UnsupportedOperationException();
-    }
 
     public MediaResult list(Order order, Long offset, Integer max) {
         return clients.getMediaService().list(null, order.toString(), offset, max);
+    }
+
+    public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, Integer max, Long offset, FilteringIterator.KeepAlive keepAlive) {
+        throw new UnsupportedOperationException();
     }
 }
