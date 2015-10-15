@@ -1,5 +1,6 @@
 package nl.vpro.api.client.utils;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -33,6 +34,11 @@ public class ApiClientScheduleRepository implements ScheduleRepository {
 
     @Override
     public ScheduleResult listSchedules(Channel channel, Date start, Date stop, Order order, Long offset, int max) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ScheduleResult listSchedules(Channel channel, LocalDate guideDay, Order order, Long offset, int max) {
         throw new UnsupportedOperationException();
     }
 
