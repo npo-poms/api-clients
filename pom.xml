@@ -27,21 +27,16 @@
   </scm>
 
   <properties>
-    <!-- originally clients had no dependency on vpro-api, only on npo api -->
-    <vproapi.version>3.10.0</vproapi.version>
+    <media.version>4.1-SNAPSHOT</media.version>
+    <api.version>4.1-SNAPSHOT</api.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>nl.vpro.vproapi</groupId>
-        <artifactId>vproapi-tips</artifactId>
-        <version>${vproapi.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>nl.vpro.vproapi</groupId>
-        <artifactId>vproapi-persons</artifactId>
-        <version>${vproapi.version}</version>
+        <groupId>nl.vpro.api-client</groupId>
+        <artifactId>client-resteasy</artifactId>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

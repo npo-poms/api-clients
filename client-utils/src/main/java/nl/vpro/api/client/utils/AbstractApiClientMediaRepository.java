@@ -1,10 +1,7 @@
 package nl.vpro.api.client.utils;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.inject.Inject;
 
@@ -82,4 +79,15 @@ public class AbstractApiClientMediaRepository {
     public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, Integer max, Long offset, FilteringIterator.KeepAlive keepAlive) {
         throw new UnsupportedOperationException();
     }
+
+	public Optional<String> redirect(String s) {
+		MediaObject got = clients.getMediaService().load(s, "");
+		if (got == null) return Optional.empty();
+		if (got.getMid().equals(s)) {
+			return Optional.empty();
+		}
+		return Optional.of(got.getMid());
+
+	}
+
 }

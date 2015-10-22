@@ -24,9 +24,6 @@ import javax.ws.rs.ServiceUnavailableException;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXB;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -62,6 +59,8 @@ public class MediaRestClient {
 
     private final RateLimiter throttle = RateLimiter.create(1.0);
     private final RateLimiter asynchronousThrottle = RateLimiter.create(0.4);
+
+	private boolean followMerges = true;
 
     private MediaRestController proxy;
     private Map<String, Object> headers;
@@ -168,7 +167,7 @@ public class MediaRestClient {
         return call(new Callable<T>() {
             @Override
             public T call() throws Exception {
-                return (T) getProxy().getMedia(Type.valueOf(type).toString(), id);
+                return (T) getProxy().getMedia(Type.valueOf(type).toString(), id, followMerges);
             }
 
             @Override
@@ -182,7 +181,7 @@ public class MediaRestClient {
         return call(new Callable<T>() {
             @Override
             public T call() throws Exception {
-                return (T) getProxy().getFullMediaObject(Type.valueOf(type).toString(), id);
+                return (T) getProxy().getFullMediaObject(Type.valueOf(type).toString(), id, followMerges);
             }
 
             @Override
@@ -232,7 +231,7 @@ public class MediaRestClient {
         call(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-                getProxy().addLocation(type.toString(), location, id, errors);
+                getProxy().addLocation(type.toString(), location, id, followMerges, errors);
                 return null;
             }
             @Override
@@ -258,7 +257,7 @@ public class MediaRestClient {
         return call(new Callable<String>() {
             @Override
             public String call() throws Exception {
-                Response response = getProxy().update(type.toString(), update, errors, lookupCrids);
+                Response response = getProxy().update(type.toString(), update, followMerges, errors, lookupCrids);
                 return response.readEntity(String.class);
             }
 
@@ -298,7 +297,7 @@ public class MediaRestClient {
         return call(new Callable<Iterable<MemberUpdate>>() {
             @Override
             public Iterable<MemberUpdate> call() throws Exception {
-                return getProxy().getGroupMembers("media", id, offset, max, "ASC");
+                return getProxy().getGroupMembers("media", id, offset, max, "ASC", followMerges);
             }
 
             @Override
@@ -316,7 +315,7 @@ public class MediaRestClient {
         return call(new Callable<Iterable<MemberUpdate>>() {
             @Override
             public Iterable<MemberUpdate> call() throws Exception {
-                return getProxy().getGroupEpisodes(id, offset, max, "ASC");
+                return getProxy().getGroupEpisodes(id, offset, max, "ASC", followMerges);
             }
 
             @Override
