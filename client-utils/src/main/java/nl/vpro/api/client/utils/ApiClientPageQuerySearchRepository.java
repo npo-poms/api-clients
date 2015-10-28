@@ -23,7 +23,7 @@ public class ApiClientPageQuerySearchRepository implements QuerySearchRepository
     }
 
     @Override
-    public void index(Query query, Type type) {
+    public void index(Query query) {
 
     }
 

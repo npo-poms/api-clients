@@ -23,7 +23,7 @@ public class ApiClientMediaQuerySearchRepository implements QuerySearchRepositor
     }
 
     @Override
-    public void index(Query query, Type type) {
+    public void index(Query query) {
 
     }
 
