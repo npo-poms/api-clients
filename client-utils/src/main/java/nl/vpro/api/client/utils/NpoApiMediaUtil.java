@@ -4,19 +4,17 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
@@ -85,7 +83,7 @@ public class NpoApiMediaUtil implements MediaProvider {
                             MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
                             limiter.upRate();
                             //return Optional.ofNullable(object);
-                            return Optional.fromNullable(object);
+                            return Optional.ofNullable(object);
                         } catch (IOException | RuntimeException se) {
                             limiter.downRate();
                             throw se;
@@ -96,8 +94,7 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     public MediaObject loadOrNull(String id) throws IOException {
         try {
-            //return cache.get(id).orElse(null);
-            return cache.get(id).orNull();
+            return cache.get(id).orElse(null);
         } catch (ExecutionException | UncheckedExecutionException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
@@ -121,10 +118,16 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
-    public MediaResult listDescendants(String mid, Order order, Predicate<MediaObject> filter, int max) {
+    public MediaResult unPage(BiFunction<Integer, Long, MediaResult> supplier, Predicate<MediaObject> filter, int max) {
         limiter.acquire();
         if (filter == null) {
-            filter = Predicates.alwaysTrue();
+            filter = new Predicate<MediaObject>() {
+                @Override
+                public boolean test(MediaObject mediaObject) {
+                    return true;
+
+                }
+            };
         }
         try {
             List<MediaObject> result = new ArrayList<>();
@@ -134,14 +137,13 @@ public class NpoApiMediaUtil implements MediaProvider {
             long total;
             long found = 0;
             do {
-                MediaResult list = clients.getMediaService().listDescendants(mid, null, order.toString(), offset, batch);
+                MediaResult list = supplier.apply(batch, offset);
                 total = list.getTotal();
-                for (MediaObject o : Iterables.filter(list, filter)) {
-                    result.add(o);
-                    if (result.size() == max) {
-                        break;
+                list.getItems().stream().filter(filter).forEach(o -> {
+                    if (result.size() < max) {
+                        result.add(o);
                     }
-                }
+                });
                 offset += batch;
                 found += list.getSize();
             } while (found < total && result.size() < max);
@@ -153,6 +155,27 @@ public class NpoApiMediaUtil implements MediaProvider {
             throw e;
         }
     }
+
+    public MediaResult listDescendants(String mid, Order order, Predicate<MediaObject> filter, int max) {
+        BiFunction<Integer, Long, MediaResult> descendants = new BiFunction<Integer, Long, MediaResult>() {
+            @Override
+            public MediaResult apply(Integer batch, Long offset) {
+                return clients.getMediaService().listDescendants(mid, null, order.toString(), offset, batch);
+            }
+        };
+        return unPage(descendants, filter, max);
+    }
+
+    public MediaResult listMembers(String mid, Order order, Predicate<MediaObject> filter, int max) {
+        BiFunction<Integer, Long, MediaResult> members = new BiFunction<Integer, Long, MediaResult>() {
+            @Override
+            public MediaResult apply(Integer batch, Long offset) {
+                return clients.getMediaService().listMembers(mid, null, order.toString(), offset, batch);
+            }
+        };
+        return unPage(members, filter, max);
+    }
+
 
     public MediaObject[] load(String... id) throws IOException {
         Optional<MediaObject>[] result = new Optional[id.length];
@@ -169,7 +192,7 @@ public class NpoApiMediaUtil implements MediaProvider {
                 String[] array = toRequest.toArray(new String[toRequest.size()]);
                 MediaObject[] requested = MediaRestClientUtils.load(clients.getMediaService(), array);
                 for (int j = 0 ; j < array.length; j++) {
-                    Optional<MediaObject> optional = Optional.fromNullable(requested[j]);
+                    Optional<MediaObject> optional = Optional.ofNullable(requested[j]);
                     cache.put(array[j], optional);
                     for (int i = 0; i < id.length; i++) {
                         if (id[i].equals(array[j])) {
@@ -189,7 +212,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
         MediaObject[] resultArray = new MediaObject[id.length];
         for (int i = 0; i < id.length; i++) {
-            resultArray[i] = result[i].orNull();
+            resultArray[i] = result[i].orElse(null);
         }
         return resultArray;
     }

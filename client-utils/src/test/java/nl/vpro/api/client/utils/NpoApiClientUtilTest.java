@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.client.Client;
@@ -27,8 +28,6 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import com.google.common.base.Predicate;
 
 import nl.vpro.api.client.resteasy.ApiAuthenticationRequestFilter;
 import nl.vpro.api.client.resteasy.NpoApiClients;
@@ -140,13 +139,7 @@ public class NpoApiClientUtilTest {
 
     @Test
     public void testListDescendants() throws Exception {
-        MediaResult result = util.listDescendants("RBX_S_NTR_553927", Order.DESC, new Predicate<MediaObject>() {
-            @Override
-            public boolean apply(@Nullable MediaObject input) {
-                return input.getMediaType() == MediaType.BROADCAST;
-
-            }
-        }, 123);
+        MediaResult result = util.listDescendants("RBX_S_NTR_553927", Order.DESC, input -> input.getMediaType() == MediaType.BROADCAST, 123);
         assertThat(result.getSize()).isEqualTo(123);
 
 
