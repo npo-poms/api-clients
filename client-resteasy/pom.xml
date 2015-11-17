@@ -81,5 +81,9 @@
       <groupId>nl.publiekeomroep</groupId>
       <artifactId>poms-shared</artifactId>
     </dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+    </dependency>
   </dependencies>
 </project>
