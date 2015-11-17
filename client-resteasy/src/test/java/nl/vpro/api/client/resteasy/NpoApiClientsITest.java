@@ -165,4 +165,15 @@ public class NpoApiClientsITest {
 
     }
 
+    @Test
+    public void testGetDescendants() {
+        System.out.println("" + clients.getMediaService().findDescendants(
+            new MediaForm(),
+            "POMS_S_VPRO_216762",
+            "vpro",
+            "",
+            0l,
+            10));
+    }
+
 }

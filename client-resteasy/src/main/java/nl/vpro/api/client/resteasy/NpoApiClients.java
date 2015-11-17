@@ -48,7 +48,8 @@ public class NpoApiClients extends AbstractApiClient {
 
         mediaRestServiceProxy = getTarget(clientHttpEngine, baseUrl)
             .proxyBuilder(MediaRestService.class)
-            .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+            .defaultConsumes(MediaType.APPLICATION_JSON + "; charset=utf-8")
+            .defaultProduces(MediaType.APPLICATION_XML)
             .build();
         mediaRestServiceProxyNoTimeout = getTarget(clientHttpEngineNoTimeout, baseUrl)
             .proxyBuilder(MediaRestService.class)
