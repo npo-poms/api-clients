@@ -104,6 +104,10 @@ public class NpoApiClients extends AbstractApiClient {
         return client.target(url);
     }
 
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
 	@Override
 	public String toString() {
 		return super.toString() + " " + baseUrl;
