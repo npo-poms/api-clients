@@ -1,6 +1,7 @@
 package nl.vpro.api.client.utils;
 
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class XmlProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile getProfile(String name, Date on) {
+    public Profile getProfile(String name, Instant on) {
         return getProfile(name);
 
     }
