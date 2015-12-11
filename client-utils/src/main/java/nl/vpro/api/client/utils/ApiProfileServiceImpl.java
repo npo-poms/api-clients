@@ -1,5 +1,6 @@
 package nl.vpro.api.client.utils;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -56,9 +57,9 @@ public class ApiProfileServiceImpl implements ProfileService {
         }
     }
 
-    @Override
-    public Profile getProfile(String name, Date on) {
-        return client.load(name, on.getTime());
+	@Override
+	public Profile getProfile(String name, Instant on) {
+        return client.load(name, on.toEpochMilli());
     }
 
     @Override
