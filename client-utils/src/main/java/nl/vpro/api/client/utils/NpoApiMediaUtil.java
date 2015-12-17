@@ -25,6 +25,7 @@ import nl.vpro.domain.api.media.MediaResult;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
+import nl.vpro.jackson2.JsonArrayIterator;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 
@@ -109,7 +110,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     public MediaResult listDescendants(String mid, Order order) {
         limiter.acquire();
         try {
-            MediaResult result = clients.getMediaService().listDescendants(mid, null, order.toString(), 0l, 200);
+            MediaResult result = clients.getMediaService().listDescendants(mid, null, order.toString(), 0L, 200);
             limiter.upRate();
             return result;
         } catch (Exception e) {
@@ -131,7 +132,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
         try {
             List<MediaObject> result = new ArrayList<>();
-            long offset = 0l;
+            long offset = 0L;
             int batch = 50;
 
             long total;
@@ -149,7 +150,7 @@ public class NpoApiMediaUtil implements MediaProvider {
             } while (found < total && result.size() < max);
 
             limiter.upRate();
-            return new MediaResult(result, 0l, max, total);
+            return new MediaResult(result, 0L, max, total);
         } catch (Exception e) {
             limiter.downRate();
             throw e;

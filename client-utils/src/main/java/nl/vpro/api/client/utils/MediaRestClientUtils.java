@@ -19,6 +19,7 @@ import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.media.*;
+import nl.vpro.jackson2.JsonArrayIterator;
 
 /**
  * @author Michiel Meeuwissen
