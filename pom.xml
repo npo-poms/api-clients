@@ -5,7 +5,7 @@
   <parent>
     <groupId>nl.vpro.poms</groupId>
     <artifactId>poms-parent</artifactId>
-    <version>4.2-SNAPSHOT</version>
+    <version>4.2.0</version>
   </parent>
 
   <groupId>nl.vpro.api-client</groupId>
@@ -28,6 +28,8 @@
   </scm>
 
   <properties>
+    <api.version>4.2-SNAPSHOT</api.version>
+
   </properties>
 
   <dependencyManagement>
@@ -35,6 +37,11 @@
       <dependency>
         <groupId>nl.vpro.api-client</groupId>
         <artifactId>client-resteasy</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.vpro.api-client</groupId>
+        <artifactId>client-core</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
