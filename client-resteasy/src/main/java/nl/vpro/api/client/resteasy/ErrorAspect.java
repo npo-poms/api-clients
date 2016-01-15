@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import nl.vpro.domain.api.Error;
 import nl.vpro.jackson2.Jackson2Mapper;
 
 import static java.util.stream.Collectors.joining;
@@ -53,7 +54,7 @@ public class ErrorAspect<T> implements InvocationHandler {
             }
         } catch (BadRequestException b) {
 
-            String mes = b.getMessage();
+            String mes;
             try {
                 Response response = b.getResponse();
                 ClientResponse cre = (ClientResponse) response;
@@ -62,9 +63,15 @@ public class ErrorAspect<T> implements InvocationHandler {
                 InputStream is = (InputStream) m.invoke(cre);
                 java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
                 IOUtils.copy(is, out);
-                mes = mes + " body: " + new String(out.toByteArray());
+                try {
+                    Error error = Jackson2Mapper.getInstance().readValue(out.toByteArray(), Error.class);
+                    mes = error.toString();
+                } catch (Exception e) {
+                    mes = response.getStatus() + ":" + new String(out.toByteArray());
+                }
             } catch (Exception e) {
-
+                log.warn(e.getClass() + " " + e.getMessage());
+                mes = b.getMessage();
             }
 
 
