@@ -14,6 +14,7 @@ import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.MediaResult;
 import nl.vpro.domain.api.media.ProgramResult;
+import nl.vpro.domain.api.media.RedirectList;
 import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.util.FilteringIterator;
@@ -87,7 +88,11 @@ public class AbstractApiClientMediaRepository {
 			return Optional.empty();
 		}
 		return Optional.of(got.getMid());
-
 	}
+
+    public RedirectList redirects() {
+        return new RedirectList();
+
+    }
 
 }
