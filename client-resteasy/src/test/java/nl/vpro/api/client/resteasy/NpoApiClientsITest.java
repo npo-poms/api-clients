@@ -7,6 +7,7 @@ package nl.vpro.api.client.resteasy;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
@@ -163,6 +164,27 @@ public class NpoApiClientsITest {
 
         System.out.println(p);
 
+    }
+
+
+    @Test(expected = BadRequestException.class)
+    public void testBadRequest() throws Exception {
+        PageRestService pageService = clients.getPageService();
+
+        pageService.find(new PageForm(), null, "none", -1L, 1000);
+
+
+    }
+
+    @Test
+    public void testGetDescendants() {
+        System.out.println("" + clients.getMediaService().findDescendants(
+            new MediaForm(),
+            "POMS_S_VPRO_216762",
+            "vpro",
+            "",
+            0L,
+            10));
     }
 
 }
