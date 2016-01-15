@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
@@ -52,7 +53,7 @@ public class ErrorAspect<T> implements InvocationHandler {
                 Throwable cause = itc.getCause();
                 throw cause;
             }
-        } catch (BadRequestException b) {
+        } catch (WebApplicationException b) {
 
             String mes;
             try {
