@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import javax.ws.rs.BadRequestException;
 
@@ -28,9 +29,12 @@ public class ErrorAspect<T> implements InvocationHandler {
 
     private final T proxied;
 
-    public ErrorAspect(T proxied, Logger log) {
+    private final Supplier<String> string;
+
+    ErrorAspect(T proxied, Logger log, Supplier<String> string) {
         this.proxied = proxied;
         this.log = log;
+        this.string = string;
     }
 
 
@@ -44,8 +48,9 @@ public class ErrorAspect<T> implements InvocationHandler {
                 throw cause;
             }
         } catch (BadRequestException b) {
-            log.error("Bad request for {}(\n{}\n) {}",
-                method.getDeclaringClass().getName() + "#" + method.getName(),
+            log.error("Bad request for {}{}(\n{}\n) {}",
+                string.get(),
+                method.getDeclaringClass().getSimpleName() + "#" + method.getName(),
                 Arrays.asList(args).stream().map(ErrorAspect.this::valueToString).collect(joining("\n")),
                 b.getMessage());
             throw b;
@@ -66,9 +71,8 @@ public class ErrorAspect<T> implements InvocationHandler {
     }
 
 
-
-    public static <T> T proxyErrors(Logger logger, Class<T> inter, T service) {
-        return (T) Proxy.newProxyInstance(inter.getClassLoader(), new Class[]{inter}, new ErrorAspect<T>(service, logger));
+    public static <T> T proxyErrors(Logger logger, Supplier<String> info, Class<T> inter, T service) {
+        return (T) Proxy.newProxyInstance(inter.getClassLoader(), new Class[]{inter}, new ErrorAspect<T>(service, logger, info));
     }
 }
 

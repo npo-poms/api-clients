@@ -16,8 +16,6 @@ import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.resteasy.JacksonContextResolver;
 
-import static nl.vpro.api.client.resteasy.ErrorAspect.proxyErrors;
-
 @Named
 public class NpoApiClients extends AbstractApiClient {
 
@@ -54,7 +52,7 @@ public class NpoApiClients extends AbstractApiClient {
         baseUrl = apiBaseUrl + "api";
 
         mediaRestServiceProxy =
-            proxyErrors(LOG,
+            proxyErrors(
                 MediaRestService.class,
                 getTarget(clientHttpEngine, baseUrl)
                     .proxyBuilder(MediaRestService.class)
@@ -62,7 +60,7 @@ public class NpoApiClients extends AbstractApiClient {
                     .defaultProduces(MediaType.APPLICATION_XML)
                     .build());
         mediaRestServiceProxyNoTimeout =
-            proxyErrors(LOG,
+            proxyErrors(
                 MediaRestService.class,
                 getTarget(clientHttpEngineNoTimeout, baseUrl)
                     .proxyBuilder(MediaRestService.class)
@@ -71,7 +69,6 @@ public class NpoApiClients extends AbstractApiClient {
 
         pageRestServiceProxy  =
             proxyErrors(
-                LOG,
                 PageRestService.class,
                 getTarget(clientHttpEngine, baseUrl)
                     .proxyBuilder(PageRestService.class)
@@ -80,7 +77,6 @@ public class NpoApiClients extends AbstractApiClient {
             );
         profileRestServiceProxy =
             proxyErrors(
-                LOG,
                 ProfileRestService.class,
                 getTarget(clientHttpEngine, baseUrl)
                     .proxyBuilder(ProfileRestService.class)
@@ -88,6 +84,10 @@ public class NpoApiClients extends AbstractApiClient {
                     .build()
             )
         ;
+    }
+
+    <T> T proxyErrors(Class<T> clazz, T proxy) {
+        return ErrorAspect.proxyErrors(LOG, NpoApiClients.this::getInfo, clazz, proxy);
     }
 
     public NpoApiClients(
@@ -132,6 +132,11 @@ public class NpoApiClients extends AbstractApiClient {
     public String getBaseUrl() {
         return baseUrl;
     }
+
+    protected String getInfo() {
+        return getBaseUrl() + "/";
+    }
+
 
 	@Override
 	public String toString() {
