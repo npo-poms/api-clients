@@ -19,6 +19,8 @@ import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.resteasy.JacksonContextResolver;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 
+import static nl.vpro.api.client.resteasy.ErrorAspect.proxyErrors;
+
 public class PageUpdateApiClient extends AbstractApiClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiClient.class);
@@ -47,7 +49,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
             .register(JacksonContextResolver.class)
             .build();
         ResteasyWebTarget target = client.target(apiBaseUrl + "api/");
-        pageUpdateRestService = target.proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML).build();
+        pageUpdateRestService =
+            proxyErrors(LOG,
+                PageUpdateApiClient.this::getBaseUrl,
+                PageUpdateRestService.class,
+                target
+                    .proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML)
+                    .build());
         description = user + "@" + apiBaseUrl;
         this.baseUrl = apiBaseUrl;
 
@@ -78,5 +86,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
     @Override
     public String toString() {
         return getClass().getName() + " " + getDescription();
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
     }
 }
