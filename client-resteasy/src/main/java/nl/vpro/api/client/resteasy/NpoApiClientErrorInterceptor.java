@@ -8,9 +8,12 @@ import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.ClientErrorInterceptor;
 
 /**
+ * See {@link ErrorAspect} for a more straightforward implementation
  * @author Roelof Jan Koekoek
  * @since 3.0
  */
+//@ClientInterceptor
+//@Provider
 public class NpoApiClientErrorInterceptor implements ClientErrorInterceptor {
 
     @Override
