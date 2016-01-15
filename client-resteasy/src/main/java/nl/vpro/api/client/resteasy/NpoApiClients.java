@@ -8,14 +8,21 @@ import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.resteasy.JacksonContextResolver;
 
+import static nl.vpro.api.client.resteasy.ErrorAspect.proxyErrors;
+
 @Named
 public class NpoApiClients extends AbstractApiClient {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NpoApiClients.class);
+
 
     private final ApiAuthenticationRequestFilter authentication;
 
@@ -46,23 +53,41 @@ public class NpoApiClients extends AbstractApiClient {
         this.authentication = new ApiAuthenticationRequestFilter(apiKey, secret, origin);
         baseUrl = apiBaseUrl + "api";
 
-        mediaRestServiceProxy = getTarget(clientHttpEngine, baseUrl)
-            .proxyBuilder(MediaRestService.class)
-            .defaultConsumes(MediaType.APPLICATION_JSON + "; charset=utf-8")
-            .defaultProduces(MediaType.APPLICATION_XML)
-            .build();
-        mediaRestServiceProxyNoTimeout = getTarget(clientHttpEngineNoTimeout, baseUrl)
-            .proxyBuilder(MediaRestService.class)
-            .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
-            .build();
-        pageRestServiceProxy  = getTarget(clientHttpEngine, baseUrl)
-            .proxyBuilder(PageRestService.class)
-            .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
-            .build();
-        profileRestServiceProxy = getTarget(clientHttpEngine, baseUrl)
-            .proxyBuilder(ProfileRestService.class)
-            .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
-            .build();
+        mediaRestServiceProxy =
+            proxyErrors(LOG,
+                MediaRestService.class,
+                getTarget(clientHttpEngine, baseUrl)
+                    .proxyBuilder(MediaRestService.class)
+                    .defaultConsumes(MediaType.APPLICATION_JSON + "; charset=utf-8")
+                    .defaultProduces(MediaType.APPLICATION_XML)
+                    .build());
+        mediaRestServiceProxyNoTimeout =
+            proxyErrors(LOG,
+                MediaRestService.class,
+                getTarget(clientHttpEngineNoTimeout, baseUrl)
+                    .proxyBuilder(MediaRestService.class)
+                    .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+                    .build());
+
+        pageRestServiceProxy  =
+            proxyErrors(
+                LOG,
+                PageRestService.class,
+                getTarget(clientHttpEngine, baseUrl)
+                    .proxyBuilder(PageRestService.class)
+                    .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+                    .build()
+            );
+        profileRestServiceProxy =
+            proxyErrors(
+                LOG,
+                ProfileRestService.class,
+                getTarget(clientHttpEngine, baseUrl)
+                    .proxyBuilder(ProfileRestService.class)
+                    .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
+                    .build()
+            )
+        ;
     }
 
     public NpoApiClients(
