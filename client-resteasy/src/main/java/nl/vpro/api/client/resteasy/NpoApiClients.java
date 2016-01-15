@@ -21,12 +21,10 @@ public class NpoApiClients extends AbstractApiClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(NpoApiClients.class);
 
-
     private final ApiAuthenticationRequestFilter authentication;
 
     private final MediaRestService mediaRestServiceProxy;
     private final MediaRestService mediaRestServiceProxyNoTimeout;
-
 
     private final PageRestService pageRestServiceProxy;
 
@@ -52,38 +50,17 @@ public class NpoApiClients extends AbstractApiClient {
         baseUrl = apiBaseUrl + "api";
 
         mediaRestServiceProxy =
-            proxyErrors(
-                MediaRestService.class,
-                getTarget(clientHttpEngine, baseUrl)
-                    .proxyBuilder(MediaRestService.class)
-                    .defaultConsumes(MediaType.APPLICATION_JSON + "; charset=utf-8")
-                    .defaultProduces(MediaType.APPLICATION_XML)
-                    .build());
+            build(MediaRestService.class, clientHttpEngine);
+
         mediaRestServiceProxyNoTimeout =
-            proxyErrors(
-                MediaRestService.class,
-                getTarget(clientHttpEngineNoTimeout, baseUrl)
-                    .proxyBuilder(MediaRestService.class)
-                    .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
-                    .build());
+            build(MediaRestService.class, clientHttpEngineNoTimeout);
 
         pageRestServiceProxy  =
-            proxyErrors(
-                PageRestService.class,
-                getTarget(clientHttpEngine, baseUrl)
-                    .proxyBuilder(PageRestService.class)
-                    .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
-                    .build()
-            );
+            build(PageRestService.class, clientHttpEngine);
+
         profileRestServiceProxy =
-            proxyErrors(
-                ProfileRestService.class,
-                getTarget(clientHttpEngine, baseUrl)
-                    .proxyBuilder(ProfileRestService.class)
-                    .defaultConsumes(MediaType.APPLICATION_XML_TYPE)
-                    .build()
-            )
-        ;
+            build(ProfileRestService.class, clientHttpEngine);
+
     }
 
     public NpoApiClients(
@@ -95,10 +72,6 @@ public class NpoApiClients extends AbstractApiClient {
         this(apiBaseUrl, apiKey, secret, origin, 10);
     }
 
-
-    <T> T proxyErrors(Class<T> clazz, T proxy) {
-        return ErrorAspect.proxyErrors(LOG, NpoApiClients.this::getInfo, clazz, proxy);
-    }
 
     public MediaRestService getMediaService() {
         return mediaRestServiceProxy;
@@ -120,16 +93,6 @@ public class NpoApiClients extends AbstractApiClient {
         return authentication;
     }
 
-    private ResteasyWebTarget getTarget(ClientHttpEngine engine, String url) {
-        ResteasyClient client =
-            new ResteasyClientBuilder()
-                .httpEngine(engine)
-                .register(authentication)
-                .register(JacksonContextResolver.class)
-                .build();
-        return client.target(url);
-    }
-
     public String getBaseUrl() {
         return baseUrl;
     }
@@ -138,10 +101,31 @@ public class NpoApiClients extends AbstractApiClient {
         return getBaseUrl() + "/";
     }
 
-
 	@Override
 	public String toString() {
 		return super.toString() + " " + baseUrl;
 	}
+
+    private <T> T build(Class<T> service, ClientHttpEngine engine) {
+        return
+            ErrorAspect.proxyErrors(
+                LOG, NpoApiClients.this::getInfo,
+                service,
+                getTarget(engine)
+                    .proxyBuilder(service)
+                    .defaultConsumes(MediaType.APPLICATION_XML)
+                    .defaultProduces(MediaType.APPLICATION_XML)
+                    .build());
+    }
+
+    private ResteasyWebTarget getTarget(ClientHttpEngine engine) {
+        ResteasyClient client =
+            new ResteasyClientBuilder()
+                .httpEngine(engine)
+                .register(authentication)
+                .register(JacksonContextResolver.class)
+                .build();
+        return client.target(baseUrl);
+    }
 
 }
