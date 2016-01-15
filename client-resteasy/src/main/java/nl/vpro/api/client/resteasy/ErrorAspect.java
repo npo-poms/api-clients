@@ -7,6 +7,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -65,23 +67,38 @@ public class ErrorAspect<T> implements InvocationHandler {
         throw t;
     }
 
+    protected static final String[] HEADERS = new String[] {
+        "Set-Cookie", // may give information about which backend server was used
+        "X-ProxyInstancename",
+        "Content-Type" // problem may be related to json vs xml?
+    };
     protected String getMessage(WebApplicationException we) {
-        String mes;
+        StringBuilder mes = new StringBuilder();
         try {
             Response response = we.getResponse();
             response.bufferEntity();
             try {
                 Error error = response.readEntity(Error.class);
-                mes = error.toString();
+                mes.append(error.toString());
             } catch (Exception e) {
                 String m = response.readEntity(String.class);
-                mes = response.getStatus() + ":" + m;
+                mes.append(response.getStatus()).append(':').append(m);
+            }
+            for (String s : HEADERS) {
+                List<Object> v = response.getMetadata().get(s);
+                if (v != null) {
+                    mes.append("; ");
+                    mes.append(s);
+                    mes.append('=');
+                    mes.append(v.stream().map(Objects::toString).collect(joining(",")));
+                }
             }
         } catch (Exception e) {
             log.warn(e.getClass() + " " + e.getMessage());
-            mes = we.getMessage();
+            mes.append(we.getMessage());
         }
-        return mes;
+
+        return mes.toString();
     }
 
     protected String valueToString(Object o) {
