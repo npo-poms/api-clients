@@ -86,10 +86,6 @@ public class NpoApiClients extends AbstractApiClient {
         ;
     }
 
-    <T> T proxyErrors(Class<T> clazz, T proxy) {
-        return ErrorAspect.proxyErrors(LOG, NpoApiClients.this::getInfo, clazz, proxy);
-    }
-
     public NpoApiClients(
         String apiBaseUrl,
         String apiKey,
@@ -97,6 +93,11 @@ public class NpoApiClients extends AbstractApiClient {
         String origin
     ) {
         this(apiBaseUrl, apiKey, secret, origin, 10);
+    }
+
+
+    <T> T proxyErrors(Class<T> clazz, T proxy) {
+        return ErrorAspect.proxyErrors(LOG, NpoApiClients.this::getInfo, clazz, proxy);
     }
 
     public MediaRestService getMediaService() {

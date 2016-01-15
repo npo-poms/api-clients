@@ -1,5 +1,6 @@
 package nl.vpro.api.client.resteasy;
 
+import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,7 +9,10 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.client.jaxrs.internal.ClientResponse;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -48,11 +52,27 @@ public class ErrorAspect<T> implements InvocationHandler {
                 throw cause;
             }
         } catch (BadRequestException b) {
+
+            String mes = b.getMessage();
+            try {
+                Response response = b.getResponse();
+                ClientResponse cre = (ClientResponse) response;
+                Method m = ClientResponse.class.getDeclaredMethod("getEntityStream");
+                m.setAccessible(true);
+                InputStream is = (InputStream) m.invoke(cre);
+                java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+                IOUtils.copy(is, out);
+                mes = mes + " body: " + new String(out.toByteArray());
+            } catch (Exception e) {
+
+            }
+
+
             log.error("Bad request for {}{}(\n{}\n) {}",
                 string.get(),
                 method.getDeclaringClass().getSimpleName() + "#" + method.getName(),
                 Arrays.asList(args).stream().map(ErrorAspect.this::valueToString).collect(joining("\n")),
-                b.getMessage());
+                mes);
             throw b;
         }
     }
