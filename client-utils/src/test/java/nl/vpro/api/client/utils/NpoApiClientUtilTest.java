@@ -7,9 +7,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -24,6 +22,7 @@ import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 import org.jboss.resteasy.client.jaxrs.internal.ClientConfiguration;
 import org.jboss.resteasy.client.jaxrs.internal.ClientInvocation;
 import org.jboss.resteasy.client.jaxrs.internal.ClientRequestHeaders;
+import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -33,10 +32,12 @@ import nl.vpro.api.client.resteasy.ApiAuthenticationRequestFilter;
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
+import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.media.MediaResult;
 import nl.vpro.domain.api.media.MediaSearchResult;
 import nl.vpro.domain.api.profile.Profile;
+import nl.vpro.domain.media.DescendantRef;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaType;
 import nl.vpro.util.CloseableIterator;
@@ -51,9 +52,9 @@ public class NpoApiClientUtilTest {
     private NpoApiMediaUtil utilShortTimeout;
 
 
-    private String target = "http://rs.poms.omroep.nl/v1/";
-    //private String target = "http://rs-dev.poms.omroep.nl/v1/";
-    //private String target = "http://rs-test.poms.omroep.nl/v1/";
+    //private String target = "https://rs.poms.omroep.nl/v1/";
+    //private String target = "https://rs-dev.poms.omroep.nl/v1/";
+    private String target = "https://rs-test.poms.omroep.nl/v1/";
     //private String target = "http://localhost:8070/v1/";
 
     @Before
@@ -65,6 +66,7 @@ public class NpoApiClientUtilTest {
                 "***REMOVED***",
                 "http://www.vpro.nl", 10000);
             util = new NpoApiMediaUtil(clients, new NpoApiRateLimiter());
+
         }
 
         {
@@ -75,6 +77,7 @@ public class NpoApiClientUtilTest {
                 "http://www.vpro.nl", 1);
             utilShortTimeout = new NpoApiMediaUtil(clients, new NpoApiRateLimiter());
         }
+
 
     }
 
@@ -208,6 +211,30 @@ public class NpoApiClientUtilTest {
     public void testLoadProfile() throws Exception {
         Profile profile = util.getClients().getProfileService().load("human", null);
         System.out.println(profile.getMediaProfile());
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void badRequest() throws IOException {
+        //MediaForm form = Jackson2Mapper.getInstance().readValue("{\"searches\":{\"mediaIds\":[{\"value\":\"VPWON_1181924\",\"match\":\"not\"}],\"types\":[{\"value\":\"BROADCAST\",\"match\":\"should\"},{\"value\":\"CLIP\",\"match\":\"should\"},{\"value\":\"SEGMENT\",\"match\":\"should\"},{\"value\":\"TRACK\",\"match\":\"should\"}]}}", MediaForm.class);
+        /*String seriesRef = getSeriesRef(util.getClients().getMediaService().load("VPWON_1229797", null));
+        System.out.println("" + seriesRef);*/
+        System.out.println(util.getClients().getMediaService().findDescendants(new MediaForm(), "POMS_S_VPRO_522965", "vpro", "title,description,image", 0L, 1000).asList());
+
+    }
+
+
+    protected String getSeriesRef(MediaObject media) {
+        String seriesRef = null;
+        for (DescendantRef descendantRef : media.getDescendantOf()) {
+            if (descendantRef.getType() == MediaType.SEASON) {
+                seriesRef = descendantRef.getMidRef();
+                // here also might be a series, which is what we prefer
+            } else if (descendantRef.getType() == MediaType.SERIES) {
+                seriesRef = descendantRef.getMidRef();
+                break; // we found a series it belongs too!
+            }
+        }
+        return seriesRef;
     }
 
     private HttpRequestBase getAuthenticatedRequest() throws URISyntaxException {
