@@ -43,7 +43,7 @@ public class NpoApiClientsITest {
 
     private NpoApiClients clients;
 
-    private String target = "http://rs.poms.omroep.nl/v1/";
+    private String target = "https://rs-dev.poms.omroep.nl/v1/";
 
     //private String target = "http://localhost:8070/v1/";
 
