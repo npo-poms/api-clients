@@ -1,6 +1,25 @@
 package nl.vpro.rs.media;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Response;
+
+import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.util.concurrent.RateLimiter;
+
+import nl.vpro.api.client.resteasy.AbstractApiClient;
 import nl.vpro.domain.media.Group;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
@@ -8,25 +27,6 @@ import nl.vpro.domain.media.Segment;
 import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaListItem;
 import nl.vpro.domain.media.update.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ServiceUnavailableException;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 /**
  * A client for RESTful calls to a running MediaRestController
@@ -51,7 +51,7 @@ import java.util.concurrent.Callable;
  *
  * @author Michiel Meeuwissen
  */
-public class MediaRestClient {
+public class MediaRestClient extends AbstractApiClient {
 
     private static Logger LOG = LoggerFactory.getLogger(MediaRestClient.class);
 
@@ -64,6 +64,13 @@ public class MediaRestClient {
 
     private MediaRestController proxy;
     private Map<String, Object> headers;
+
+    public MediaRestClient() {
+        this(-1, 10, 2);
+    }
+    public MediaRestClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
+        super(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
+    }
 
     static enum Type {
         SEGMENT,
@@ -141,14 +148,9 @@ public class MediaRestClient {
 
 
     private ResteasyWebTarget newWebClient() {
-
-        HttpClientContext context = HttpClientContext.create();
-        HttpClient httpClient = new DefaultHttpClient();
-        ApacheHttpClient4Engine engine = new ApacheHttpClient4Engine(httpClient, context);
-
         ResteasyClient client =
             new ResteasyClientBuilder()
-                .httpEngine(engine)
+                .httpEngine(clientHttpEngine)
                 .register(new BasicAuthentication(userName, password))
                 .build();
         client.register(new AddRequestHeadersFilter());

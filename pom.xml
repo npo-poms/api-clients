@@ -28,6 +28,8 @@
   </scm>
 
   <properties>
+    <shared.version>0.33-SNAPSHOT</shared.version>
+    <guava.version>19.0</guava.version>
   </properties>
 
   <dependencyManagement>

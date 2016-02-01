@@ -16,7 +16,6 @@ import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
 import nl.vpro.domain.media.update.GroupUpdate;
 import nl.vpro.domain.media.update.ProgramUpdate;
-import nl.vpro.util.XTrustProvider;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -31,14 +30,13 @@ public class MediaRestClientTest {
 
     @Before
     public void setUp() {
-        XTrustProvider.install(); // api-dev doesn't have real certificates, and I can't be bothered any more.
-
         client = new MediaRestClient();
+        client.setTrustAll(true);
         client.setUserName("vpro-mediatools");
         client.setPassword("Id7shuu7");
         //client.setUrl("http://localhost:8071/rs/");
-        //client.setUrl("https://api-dev.poms.omroep.nl/");
-        client.setUrl("https://api-test.poms.omroep.nl/");
+        client.setUrl("https://api-dev.poms.omroep.nl/");
+        //client.setUrl("https://api-test.poms.omroep.nl/");
         client.setThrottleRate(50);
         client.setWaitForRetry(true);
 
