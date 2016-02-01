@@ -22,9 +22,11 @@ import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.MediaResult;
+import nl.vpro.domain.api.media.ProgramResult;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
+import nl.vpro.domain.media.Program;
 import nl.vpro.jackson2.JsonArrayIterator;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
@@ -157,6 +159,45 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
+    public ProgramResult unPageProgramResult(BiFunction<Integer, Long, ProgramResult> supplier, Predicate<MediaObject> filter, int max) {
+        limiter.acquire();
+        if (filter == null) {
+            filter = new Predicate<MediaObject>() {
+                @Override
+                public boolean test(MediaObject mediaObject) {
+                    return true;
+
+                }
+            };
+        }
+        try {
+            List<Program> result = new ArrayList<>();
+            long offset = 0L;
+            int batch = 50;
+
+            long total;
+            long found = 0;
+            do {
+                ProgramResult list = supplier.apply(batch, offset);
+                total = list.getTotal();
+                list.getItems().stream().filter(filter).forEach(o -> {
+                    if (result.size() < max) {
+                        result.add(o);
+                    }
+                });
+                offset += batch;
+                found += list.getSize();
+            } while (found < total && result.size() < max);
+
+            limiter.upRate();
+            return new ProgramResult(result, 0L, max, total);
+        } catch (Exception e) {
+            limiter.downRate();
+            throw e;
+        }
+    }
+
+
     public MediaResult listDescendants(String mid, Order order, Predicate<MediaObject> filter, int max) {
         BiFunction<Integer, Long, MediaResult> descendants = new BiFunction<Integer, Long, MediaResult>() {
             @Override
@@ -177,6 +218,15 @@ public class NpoApiMediaUtil implements MediaProvider {
         return unPage(members, filter, max);
     }
 
+    public ProgramResult listEpisodes(String mid, Order order, Predicate<MediaObject> filter, int max) {
+        BiFunction<Integer, Long, ProgramResult> members = new BiFunction<Integer, Long, ProgramResult>() {
+            @Override
+            public ProgramResult apply(Integer batch, Long offset) {
+                return clients.getMediaService().listEpisodes(mid, null, order.toString(), offset, batch);
+            }
+        };
+        return unPageProgramResult(members, filter, max);
+    }
 
     public MediaObject[] load(String... id) throws IOException {
         Optional<MediaObject>[] result = new Optional[id.length];
