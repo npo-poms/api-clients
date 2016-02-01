@@ -28,7 +28,7 @@
   </scm>
 
   <properties>
-    <shared.version>0.33-SNAPSHOT</shared.version>
+    <shared.version>0.33.1</shared.version>
     <guava.version>19.0</guava.version>
   </properties>
 
