@@ -389,6 +389,11 @@ public class MediaRestClient extends AbstractApiClient {
         this.asynchronousThrottle.setRate(rate);
     }
 
+    @Override
+    public String toString() {
+        return userName + "@" + url;
+    }
+
 
 
     private void retryAfterWaitOrException(String action, RuntimeException e) {
