@@ -115,7 +115,9 @@ public class NpoApiClients extends AbstractApiClient {
                     .proxyBuilder(service)
                     .defaultConsumes(MediaType.APPLICATION_XML)
                     .defaultProduces(MediaType.APPLICATION_XML)
-                    .build());
+                    .build(),
+                Error.class
+            );
     }
 
     private ResteasyWebTarget getTarget(ClientHttpEngine engine) {

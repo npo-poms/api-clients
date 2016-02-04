@@ -1,7 +1,5 @@
 package nl.vpro.api.client.resteasy;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,11 +9,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import nl.vpro.domain.api.Error;
 import nl.vpro.jackson2.Jackson2Mapper;
 
 import static java.util.stream.Collectors.joining;
@@ -35,10 +35,13 @@ public class ErrorAspect<T> implements InvocationHandler {
 
     private final Supplier<String> string;
 
-    ErrorAspect(T proxied, Logger log, Supplier<String> string) {
+    private final Class<?> errorClass;
+
+    ErrorAspect(T proxied, Logger log, Supplier<String> string, Class<?> errorClass) {
         this.proxied = proxied;
         this.log = log;
         this.string = string;
+        this.errorClass = errorClass;
     }
 
 
@@ -77,10 +80,16 @@ public class ErrorAspect<T> implements InvocationHandler {
         try {
             Response response = we.getResponse();
             response.bufferEntity();
-            try {
-                Error error = response.readEntity(Error.class);
-                mes.append(error.toString());
-            } catch (Exception e) {
+
+            if (errorClass != null) {
+                try {
+                    Object error = response.readEntity(errorClass);
+                    mes.append(error.toString());
+                } catch(Exception e) {
+                    // ignore and marshal to string
+                }
+            }
+            if (mes.length() == 0) {
                 String m = response.readEntity(String.class);
                 mes.append(response.getStatus()).append(':').append(m);
             }
@@ -115,8 +124,13 @@ public class ErrorAspect<T> implements InvocationHandler {
     }
 
 
-    public static <T> T proxyErrors(Logger logger, Supplier<String> info, Class<T> inter, T service) {
-        return (T) Proxy.newProxyInstance(inter.getClassLoader(), new Class[]{inter}, new ErrorAspect<T>(service, logger, info));
+    public static <T> T proxyErrors(Logger logger, Supplier<String> info, Class<T> restInterface, T service, Class<?> errorClass) {
+        return (T) Proxy.newProxyInstance(restInterface.getClassLoader(), new Class[]{restInterface}, new ErrorAspect<T>(service, logger, info, errorClass));
     }
+
+    public static <T> T proxyErrors(Logger logger, Supplier<String> info, Class<T> restInterface, T service) {
+        return proxyErrors(logger, info, restInterface, service, null);
+    }
+
 }
 

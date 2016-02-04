@@ -55,7 +55,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
                 PageUpdateRestService.class,
                 target
                     .proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML)
-                    .build());
+                    .build(),
+                Error.class
+            );
         description = user + "@" + apiBaseUrl;
         this.baseUrl = apiBaseUrl;
 
