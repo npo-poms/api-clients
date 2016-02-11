@@ -1,7 +1,9 @@
 package nl.vpro.api.client.utils;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -46,6 +48,11 @@ public class ApiProfileServiceImpl implements ProfileService {
     @Inject
     public ApiProfileServiceImpl(NpoApiClients client) {
         this.client = client.getProfileService();
+    }
+
+    @Override
+    public List<Profile> getProfiles() {
+        return new ArrayList<>(client.list(".*", null).getItems());
     }
 
     @Override
