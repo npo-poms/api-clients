@@ -2,9 +2,7 @@ package nl.vpro.api.client.utils;
 
 import java.io.InputStream;
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,6 +47,11 @@ public class XmlProfileServiceImpl implements ProfileService {
         this(new String[] {resources});
     }
 
+
+    @Override
+    public List<Profile> getProfiles() {
+        return new ArrayList<>(profiles.values());
+    }
 
     @Override
     public Profile getProfile(String name) {
