@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
+import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.resteasy.JacksonContextResolver;
 
 @Named
@@ -27,6 +28,8 @@ public class NpoApiClients extends AbstractApiClient {
     private final MediaRestService mediaRestServiceProxyNoTimeout;
 
     private final PageRestService pageRestServiceProxy;
+
+    private final ScheduleRestService scheduleRestServiceProxy;
 
     private final ProfileRestService profileRestServiceProxy;
 
@@ -55,6 +58,10 @@ public class NpoApiClients extends AbstractApiClient {
         mediaRestServiceProxyNoTimeout =
             build(MediaRestService.class, clientHttpEngineNoTimeout);
 
+        scheduleRestServiceProxy =
+            build(ScheduleRestService.class, clientHttpEngine);
+
+
         pageRestServiceProxy  =
             build(PageRestService.class, clientHttpEngine);
 
@@ -79,6 +86,10 @@ public class NpoApiClients extends AbstractApiClient {
 
     public MediaRestService getMediaServiceNoTimeout() {
         return mediaRestServiceProxyNoTimeout;
+    }
+
+    public ScheduleRestService getScheduleService() {
+        return scheduleRestServiceProxy;
     }
 
     public PageRestService getPageService() {

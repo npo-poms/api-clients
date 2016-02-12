@@ -6,6 +6,7 @@ package nl.vpro.api.client.resteasy;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
@@ -20,10 +21,9 @@ import org.junit.Test;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
-import nl.vpro.domain.api.media.MediaForm;
-import nl.vpro.domain.api.media.MediaFormBuilder;
-import nl.vpro.domain.api.media.MediaResult;
-import nl.vpro.domain.api.media.MediaSearchResult;
+import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
+import nl.vpro.domain.api.ApiScheduleEvent;
+import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.domain.api.page.PageFormBuilder;
 import nl.vpro.domain.api.page.PageSearchResult;
@@ -185,6 +185,14 @@ public class NpoApiClientsITest {
             "",
             0L,
             10));
+    }
+
+    @Test
+    public void testSchedule() {
+        ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, ScheduleRestService.ASC, null, 0L, 100);
+        for (ApiScheduleEvent event : result.getItems()) {
+            System.out.println(event);
+        }
     }
 
 }
