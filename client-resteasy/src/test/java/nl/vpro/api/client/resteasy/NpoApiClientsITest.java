@@ -23,6 +23,8 @@ import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.domain.api.ApiScheduleEvent;
+import nl.vpro.domain.api.IdList;
+import nl.vpro.domain.api.MultipleMediaResult;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.domain.api.page.PageFormBuilder;
@@ -43,7 +45,7 @@ public class NpoApiClientsITest {
 
     private NpoApiClients clients;
 
-    private String target = "https://rs-dev.poms.omroep.nl/v1/";
+    private String target = "https://rs.poms.omroep.nl/v1/";
 
     //private String target = "http://localhost:8070/v1/";
 
@@ -187,6 +189,16 @@ public class NpoApiClientsITest {
             10));
     }
 
+
+    @Test
+    public void testMultiple() {
+        String[] mids = {"POMS_S_BNN_097259"};
+        MultipleMediaResult mo = clients.getMediaService().loadMultiple(new IdList(mids), null);
+        for (int i = 0; i < mids.length; i++) {
+            assertThat(mo.getItems().get(i).getResult().getMid()).isEqualTo(mids[i]);
+        }
+    }
+
     @Test
     public void testSchedule() {
         ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, ScheduleRestService.ASC, null, 0L, 100);
@@ -194,5 +206,6 @@ public class NpoApiClientsITest {
             System.out.println(event);
         }
     }
+    
 
 }
