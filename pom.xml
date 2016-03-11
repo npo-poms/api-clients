@@ -29,6 +29,7 @@
 
   <properties>
     <guava.version>19.0</guava.version>
+    <api.version>4.2.3</api.version>
   </properties>
 
   <dependencyManagement>
