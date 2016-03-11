@@ -32,6 +32,10 @@ public class NpoApiPageUtil  {
         this.limiter = limiter;
     }
 
+    public NpoApiPageUtil(NpoApiClients clients) {
+        this(clients, new NpoApiRateLimiter());
+    }
+
     public Page[] load(String... id) {
         limiter.acquire();
         MultiplePageResult pageResult = clients.getPageService().loadMultiple(new IdList(id), null);
@@ -94,5 +98,10 @@ public class NpoApiPageUtil  {
     @Override
     public String toString() {
         return String.valueOf(clients);
+    }
+
+
+    public NpoApiClients getClients() {
+        return clients;
     }
 }
