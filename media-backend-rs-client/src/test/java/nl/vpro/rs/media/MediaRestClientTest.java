@@ -1,21 +1,18 @@
 package nl.vpro.rs.media;
 
+import java.time.Instant;
+
 import javax.xml.bind.JAXB;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import nl.vpro.domain.media.MediaType;
-import nl.vpro.domain.media.Program;
-import nl.vpro.domain.media.search.MediaForm;
-import nl.vpro.domain.media.search.MediaListItem;
-import nl.vpro.domain.media.search.Pager;
-import nl.vpro.domain.media.search.TitleForm;
+import nl.vpro.domain.media.*;
+import nl.vpro.domain.media.search.*;
 import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
-import nl.vpro.domain.media.update.GroupUpdate;
-import nl.vpro.domain.media.update.ProgramUpdate;
+import nl.vpro.domain.media.update.*;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -95,6 +92,51 @@ public class MediaRestClientTest {
 
         assertThat(result).isEqualTo("POMS_VPRO_216532");
 	}
+
+
+
+
+    @Test
+    public void addMemberOf() {
+        String groupCrid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest";
+        MediaBuilder.GroupBuilder group = MediaBuilder.group(GroupType.COLLECTION)
+            .crids(groupCrid)
+            .avType(AVType.MIXED)
+            .broadcasters("VPRO")
+            .mainTitle("Deze group gebruiken we in een junit test");
+        GroupUpdate groupUpdate = GroupUpdate.create(group);
+        String groupMid = client.set(groupUpdate);
+        System.out.println("Found group " + groupMid);
+
+        MediaBuilder.ProgramBuilder program = MediaBuilder.program(ProgramType.CLIP)
+            .avType(AVType.AUDIO)
+            .broadcasters("VPRO")
+            .mainTitle("Test " + Instant.now());
+        ProgramUpdate update = ProgramUpdate.create(program);
+
+        update.getMemberOf().add(new MemberRefUpdate(1, groupCrid));
+        String mid = client.set(update);
+        System.out.println("Created " + mid);
+
+
+    }
+
+    @Test
+    public void removeMemberOf() {
+        String groupCrid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest";
+
+        GroupUpdate groupUpdate = client.get(groupCrid);
+        Iterable<MemberUpdate> members = client.getGroupMembers(groupCrid);
+
+        for (MemberUpdate member : members) {
+            MediaUpdate<?> update = member.getMediaUpdate();
+            update.getMemberOf().removeIf(m -> m.getMediaRef().equals(groupUpdate.getMid()));
+            client.set(update);
+            System.out.println("Removed " + update.getMid() + " from group");
+            break;
+        }
+    }
+
 
     /*@Test
     public void testCouchDBClient() throws MalformedURLException {
