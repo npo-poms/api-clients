@@ -29,7 +29,6 @@
 
   <properties>
     <api.version>4.3-SNAPSHOT</api.version>
-    <media.version>4.3-SNAPSHOT</media.version>
     <pages.version>4.3-SNAPSHOT</pages.version>
   </properties>
 
