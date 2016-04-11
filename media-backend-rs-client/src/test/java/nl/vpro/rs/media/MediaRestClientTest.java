@@ -1,6 +1,9 @@
 package nl.vpro.rs.media;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.xml.bind.JAXB;
 
@@ -9,7 +12,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.vpro.domain.media.*;
-import nl.vpro.domain.media.search.*;
+import nl.vpro.domain.media.search.MediaForm;
+import nl.vpro.domain.media.search.MediaListItem;
+import nl.vpro.domain.media.search.Pager;
+import nl.vpro.domain.media.search.TitleForm;
 import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
 import nl.vpro.domain.media.update.*;
@@ -136,6 +142,44 @@ public class MediaRestClientTest {
             break;
         }
     }
+
+    @Test
+    public void copyLocations() {
+        ProgramUpdate program = client.get("POMS_VPRO_158078");
+
+        ProgramUpdate newProgram = new ProgramUpdate();
+        newProgram.setType(ProgramType.CLIP);
+        newProgram.setAVType(AVType.VIDEO);
+        newProgram.setBroadcasters(Arrays.asList("VPRO"));
+        newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla", TextualType.MAIN))));
+
+
+        // TODO. Isn't this odd?
+        program.getLocations().forEach(l -> {l.setUrn(null);});
+
+        newProgram.setLocations(program.getLocations());
+
+        System.out.println(client.set(newProgram));
+    }
+
+
+    @Test
+    public void addRelation() {
+
+        ProgramUpdate program = client.get("POMS_VPRO_1419533");
+        // create relation with source program
+        RelationUpdate relationUpdate = new RelationUpdate("ARTIST", "VPRO", null, "BLA " + Instant.now());
+        SortedSet<RelationUpdate> relationUpdateSortedSet = program.getRelations();
+        relationUpdateSortedSet.add(relationUpdate);
+        //program.setRelations(relationUpdateSortedSet);  Not needed.
+
+        JAXB.marshal(program, System.out);
+
+        System.out.println(client.set(program));
+
+
+    }
+
 
 
     /*@Test
