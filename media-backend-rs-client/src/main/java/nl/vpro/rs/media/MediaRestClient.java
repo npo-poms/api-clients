@@ -158,7 +158,7 @@ public class MediaRestClient extends AbstractApiClient {
         return client.target(url);
     }
 
-    protected MediaRestController getProxy() {
+    public MediaRestController getProxy() {
         if (proxy == null) {
             proxy = newWebClient().proxy(MediaRestController.class);
         }
@@ -225,7 +225,21 @@ public class MediaRestClient extends AbstractApiClient {
 
     public <T extends MediaUpdate> T get(String id) {
         return (T) get(MediaUpdate.class, id);
+    }
 
+    public Iterable<LocationUpdate> getLocations(String id) {
+        return
+            call(new Callable<Iterable<LocationUpdate>>() {
+                @Override
+                public Iterable<LocationUpdate> call() throws Exception {
+                    return getProxy().getLocations("media", id, true);
+                }
+
+                @Override
+                public String toString() {
+                    return "getLocations";
+                }
+            });
     }
 
     /** add a location to a Program, Segment or Group */
