@@ -38,8 +38,8 @@ public class MediaRestClientTest {
         client.setUserName("vpro-mediatools");
         client.setPassword("Id7shuu7");
         //client.setUrl("http://localhost:8071/rs/");
-        client.setUrl("https://api-dev.poms.omroep.nl/");
-        //client.setUrl("https://api-test.poms.omroep.nl/");
+        //client.setUrl("https://api-dev.poms.omroep.nl/");
+        client.setUrl("https://api-test.poms.omroep.nl/");
         client.setThrottleRate(50);
         client.setWaitForRetry(true);
 
@@ -144,7 +144,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void copyLocations() {
+    public void copyVisibleLocations() {
         ProgramUpdate program = client.get("POMS_VPRO_158078");
 
         ProgramUpdate newProgram = new ProgramUpdate();
@@ -155,11 +155,39 @@ public class MediaRestClientTest {
 
 
         // TODO. Isn't this odd?
-        program.getLocations().forEach(l -> {l.setUrn(null);});
+        program.getLocations().forEach(l -> {
+            l.setUrn(null);
+        });
 
         newProgram.setLocations(program.getLocations());
 
         System.out.println(client.set(newProgram));
+    }
+
+    @Test
+    public void copyLocations() {
+
+        ProgramUpdate newProgram = new ProgramUpdate();
+        newProgram.setType(ProgramType.CLIP);
+        newProgram.setAVType(AVType.VIDEO);
+        newProgram.setBroadcasters(Arrays.asList("VPRO"));
+        newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla", TextualType.MAIN))));
+
+
+
+        newProgram.setLocations(client.cloneLocations("VPRO_1142324"));
+
+        System.out.println(client.set(newProgram));
+    }
+
+    @Test
+    public void copyLocations2() {
+
+        ProgramUpdate exising = client.get("VPRO_1142324");
+        exising.setLocations(client.cloneLocations("POMS_VPRO_1419526"));
+
+        JAXB.marshal(exising, System.out);
+        System.out.println(client.set(exising));
     }
 
 

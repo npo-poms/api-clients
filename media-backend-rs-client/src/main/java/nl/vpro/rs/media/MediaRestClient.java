@@ -2,6 +2,8 @@ package nl.vpro.rs.media;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
 import javax.ws.rs.NotFoundException;
@@ -227,12 +229,17 @@ public class MediaRestClient extends AbstractApiClient {
         return (T) get(MediaUpdate.class, id);
     }
 
-    public Iterable<LocationUpdate> getLocations(String id) {
+    public SortedSet<LocationUpdate> cloneLocations(String id) {
         return
-            call(new Callable<Iterable<LocationUpdate>>() {
+            call(new Callable<SortedSet<LocationUpdate>>() {
                 @Override
-                public Iterable<LocationUpdate> call() throws Exception {
-                    return getProxy().getLocations("media", id, true);
+                public SortedSet<LocationUpdate> call() throws Exception {
+                    SortedSet<LocationUpdate> result = new TreeSet<>();
+                    for(LocationUpdate lu : getProxy().getLocations("media", id, true)) {
+                        lu.setUrn(null);
+                        result.add(lu);
+                    }
+                    return result;
                 }
 
                 @Override
