@@ -1,5 +1,6 @@
 package nl.vpro.rs.media;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.SortedSet;
@@ -38,8 +39,8 @@ public class MediaRestClientTest {
         client.setUserName("vpro-mediatools");
         client.setPassword("Id7shuu7");
         //client.setUrl("http://localhost:8071/rs/");
-        //client.setUrl("https://api-dev.poms.omroep.nl/");
-        client.setUrl("https://api-test.poms.omroep.nl/");
+        client.setUrl("https://api-dev.poms.omroep.nl/");
+        ///client.setUrl("https://api-test.poms.omroep.nl/");
         client.setThrottleRate(50);
         client.setWaitForRetry(true);
 
@@ -181,13 +182,20 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void copyLocations2() {
+    public void copyLocations2() throws IOException {
 
-        ProgramUpdate exising = client.get("VPRO_1142324");
-        exising.setLocations(client.cloneLocations("POMS_VPRO_1419526"));
+        ProgramUpdate existing = client.get("VPRO_1142324");
+        existing.setLocations(client.get("POMS_VPRO_1419526").getLocations());
 
-        JAXB.marshal(exising, System.out);
-        System.out.println(client.set(exising));
+        for (TitleUpdate o : existing.getTitles()) {
+            if (o.getType() == TextualType.MAIN) {
+                o.setTitle(o.getTitle() + " x");
+            }
+        }
+            
+        
+        JAXB.marshal(existing, System.out);
+        System.out.println(client.set(existing));
     }
 
 

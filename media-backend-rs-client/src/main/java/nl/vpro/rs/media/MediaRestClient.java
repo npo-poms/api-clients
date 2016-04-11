@@ -168,53 +168,26 @@ public class MediaRestClient extends AbstractApiClient {
             proxy = ErrorAspect.proxyErrors(MediaRestClient.LOG, () -> "media rest",
                 MediaRestController.class,
                 newWebClient().proxy(MediaRestController.class));
+            proxy = ThrottleAspect.proxy(this, proxy);
             //proxy = newWebClient().proxy(MediaRestController.class);
         }
         return proxy;
     }
 
     protected <T extends MediaUpdate> T get(final Class<T> type, final String id) {
-        return call(new Callable<T>() {
-            @Override
-            public T call() throws Exception {
-                return (T) getProxy().getMedia(Type.valueOf(type).toString(), id, followMerges);
-            }
-
-            @Override
-            public String toString() {
-                return "get";
-            }
-        });
+        try {
+            return (T) getProxy().getMedia(Type.valueOf(type).toString(), id, followMerges);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected <T extends MediaObject> T getFull(final Class<T> type, final String id) {
-        return call(new Callable<T>() {
-            @Override
-            public T call() throws Exception {
-                return (T) getProxy().getFullMediaObject(Type.valueOf(type).toString(), id, followMerges);
-            }
-
-            @Override
-            public String toString() {
-                return "getFull";
-            }
-        });
-    }
-
-    protected <T> T call(Callable<T> callable) {
-        while(true) {
-            throttle();
-            try {
-                return callable.call();
-            } catch (NotFoundException nfe) {
-                return null;
-            } catch (ServiceUnavailableException sue) {
-                retryAfterWaitOrException(callable.toString() + ": Service unavailable");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            return (T) getProxy().getFullMediaObject(Type.valueOf(type).toString(), id, followMerges);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
     }
 
 
@@ -236,43 +209,26 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     public SortedSet<LocationUpdate> cloneLocations(String id) {
-        return
-            call(new Callable<SortedSet<LocationUpdate>>() {
-                @Override
-                public SortedSet<LocationUpdate> call() throws Exception {
-                    SortedSet<LocationUpdate> result = new TreeSet<>();
-                    try {
-                        XmlCollection<LocationUpdate> i = getProxy().getLocations("media", id, true);
-                        for (LocationUpdate lu : i) {
-                            lu.setUrn(null);
-                            result.add(lu);
-                        }
-                    } catch(NullPointerException npe) {
-                        // dammit
-                    }
-                    return result;
-                }
-
-                @Override
-                public String toString() {
-                    return "getLocations";
-                }
-            });
+                    
+        SortedSet<LocationUpdate> result = new TreeSet<>();
+        try {
+            XmlCollection<LocationUpdate> i = getProxy().getLocations("media", id, true);
+            for (LocationUpdate lu : i) {
+                lu.setUrn(null);
+                result.add(lu);
+            }
+        } catch(NullPointerException npe) {
+            // dammit
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
     }
+
 
     /** add a location to a Program, Segment or Group */
     protected void addLocation(final Type type, final LocationUpdate location, final String id) {
-        call(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                getProxy().addLocation(type.toString(), location, id, followMerges, errors);
-                return null;
-            }
-            @Override
-            public String toString() {
-                return "addLocation";
-            }
-        });
+        getProxy().addLocation(type.toString(), location, id, followMerges, errors);
     }
 
     public void  addLocationToProgram(LocationUpdate location, String programId) {
@@ -288,18 +244,13 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     protected String set(final Type type, final MediaUpdate update) {
-        return call(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                Response response = getProxy().update(type.toString(), update, followMerges, errors, lookupCrids);
-                return response.readEntity(String.class);
-            }
-
-            @Override
-            public String toString() {
-                return "set";
-            }
-        });
+        
+        try {
+            Response response = getProxy().update(type.toString(), update, followMerges, errors, lookupCrids);
+            return response.readEntity(String.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected boolean success(int statusCode) {
@@ -328,17 +279,11 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     public Iterable<MemberUpdate> getGroupMembers(final String id, final int max, final long offset) {
-        return call(new Callable<Iterable<MemberUpdate>>() {
-            @Override
-            public Iterable<MemberUpdate> call() throws Exception {
-                return getProxy().getGroupMembers("media", id, offset, max, "ASC", followMerges);
-            }
-
-            @Override
-            public String toString() {
-                return "getMembers";
-            }
-        });
+        try {
+            return getProxy().getGroupMembers("media", id, offset, max, "ASC", followMerges);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Iterable<MemberUpdate> getGroupMembers(String id) {
@@ -346,17 +291,11 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     public Iterable<MemberUpdate> getGroupEpisodes(final String id, final int max, final long offset) {
-        return call(new Callable<Iterable<MemberUpdate>>() {
-            @Override
-            public Iterable<MemberUpdate> call() throws Exception {
-                return getProxy().getGroupEpisodes(id, offset, max, "ASC", followMerges);
-            }
-
-            @Override
-            public String toString() {
-                return "getGroupEpisodes";
-            }
-        });
+        try {
+            return getProxy().getGroupEpisodes(id, offset, max, "ASC", followMerges);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Iterable<MemberUpdate> getGroupEpisodes(String id) {
@@ -376,17 +315,11 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     public Iterable<MediaListItem> find(MediaForm form)  {
-        return call(new Callable<Iterable<MediaListItem>>() {
-            @Override
-            public Iterable<MediaListItem> call() throws Exception {
-                return getProxy().find(form, false);
-            }
-
-            @Override
-            public String toString() {
-                return "find";
-            }
-        });
+        try {
+            return getProxy().find(form, false);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void setDefaultMax(int max) {
@@ -428,12 +361,12 @@ public class MediaRestClient extends AbstractApiClient {
 
 
 
-    private void retryAfterWaitOrException(String action, RuntimeException e) {
+    void retryAfterWaitOrException(String action, RuntimeException e) {
         if (!waitForRetry) throw e;
         retryAfterWaitOrException(action + ":" + e.getMessage());
 
     }
-    private void retryAfterWaitOrException(String cause) {
+    void retryAfterWaitOrException(String cause) {
         if (!waitForRetry) throw new RuntimeException(cause);
         try {
             LOG.warn(userName + "@" + url + " " + cause + ", retrying after 30 s");
@@ -442,7 +375,7 @@ public class MediaRestClient extends AbstractApiClient {
             throw new RuntimeException(e);
         }
     }
-    private void throttle() {
+    void throttle() {
         throttle.acquire();
     }
 
