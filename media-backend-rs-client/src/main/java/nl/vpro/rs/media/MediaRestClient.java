@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
+import nl.vpro.api.client.resteasy.ErrorAspect;
 import nl.vpro.domain.media.Group;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
@@ -29,6 +30,7 @@ import nl.vpro.domain.media.Segment;
 import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaListItem;
 import nl.vpro.domain.media.update.*;
+import nl.vpro.domain.media.update.collections.XmlCollection;
 
 /**
  * A client for RESTful calls to a running MediaRestController
@@ -74,7 +76,7 @@ public class MediaRestClient extends AbstractApiClient {
         super(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
     }
 
-    static enum Type {
+    enum Type {
         SEGMENT,
         PROGRAM,
         GROUP,
@@ -155,14 +157,18 @@ public class MediaRestClient extends AbstractApiClient {
                 .httpEngine(clientHttpEngine)
                 .register(new BasicAuthentication(userName, password))
                 .build();
-        client.register(new AddRequestHeadersFilter());
+        client
+            .register(new AddRequestHeadersFilter());
 
         return client.target(url);
     }
 
     public MediaRestController getProxy() {
         if (proxy == null) {
-            proxy = newWebClient().proxy(MediaRestController.class);
+            proxy = ErrorAspect.proxyErrors(MediaRestClient.LOG, () -> "media rest",
+                MediaRestController.class,
+                newWebClient().proxy(MediaRestController.class));
+            //proxy = newWebClient().proxy(MediaRestController.class);
         }
         return proxy;
     }
@@ -196,8 +202,8 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     protected <T> T call(Callable<T> callable) {
-        throttle();
         while(true) {
+            throttle();
             try {
                 return callable.call();
             } catch (NotFoundException nfe) {
@@ -235,9 +241,14 @@ public class MediaRestClient extends AbstractApiClient {
                 @Override
                 public SortedSet<LocationUpdate> call() throws Exception {
                     SortedSet<LocationUpdate> result = new TreeSet<>();
-                    for(LocationUpdate lu : getProxy().getLocations("media", id, true)) {
-                        lu.setUrn(null);
-                        result.add(lu);
+                    try {
+                        XmlCollection<LocationUpdate> i = getProxy().getLocations("media", id, true);
+                        for (LocationUpdate lu : i) {
+                            lu.setUrn(null);
+                            result.add(lu);
+                        }
+                    } catch(NullPointerException npe) {
+                        // dammit
                     }
                     return result;
                 }
