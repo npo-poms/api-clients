@@ -169,7 +169,6 @@ public class MediaRestClient extends AbstractApiClient {
                 MediaRestController.class,
                 newWebClient().proxy(MediaRestController.class));
             proxy = ThrottleAspect.proxy(this, proxy);
-            //proxy = newWebClient().proxy(MediaRestController.class);
         }
         return proxy;
     }
@@ -362,12 +361,16 @@ public class MediaRestClient extends AbstractApiClient {
 
 
     void retryAfterWaitOrException(String action, RuntimeException e) {
-        if (!waitForRetry) throw e;
+        if (!waitForRetry) {
+            throw e;
+        }
         retryAfterWaitOrException(action + ":" + e.getMessage());
 
     }
     void retryAfterWaitOrException(String cause) {
-        if (!waitForRetry) throw new RuntimeException(cause);
+        if (!waitForRetry) {
+            throw new RuntimeException(cause);
+        }
         try {
             LOG.warn(userName + "@" + url + " " + cause + ", retrying after 30 s");
             Thread.sleep(30000);
