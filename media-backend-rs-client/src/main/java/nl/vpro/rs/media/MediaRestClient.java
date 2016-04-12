@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ServiceUnavailableException;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
@@ -163,19 +160,24 @@ public class MediaRestClient extends AbstractApiClient {
         return client.target(url);
     }
 
-    public MediaRestController getProxy() {
+    public MediaRestController getBackendRestService() {
         if (proxy == null) {
-            proxy = ErrorAspect.proxyErrors(MediaRestClient.LOG, () -> "media rest",
-                MediaRestController.class,
-                newWebClient().proxy(MediaRestController.class));
-            proxy = ThrottleAspect.proxy(this, proxy);
+            LOG.info("Creating proxy for {}", MediaRestController.class);
+            proxy = ThrottleAspect.proxy(
+                this,
+                ErrorAspect.proxyErrors(
+                    MediaRestClient.LOG, () -> "media rest", MediaRestController.class,
+                    newWebClient().proxy(MediaRestController.class)
+                )
+            );
+
         }
         return proxy;
     }
 
     protected <T extends MediaUpdate> T get(final Class<T> type, final String id) {
         try {
-            return (T) getProxy().getMedia(Type.valueOf(type).toString(), id, followMerges);
+            return (T) getBackendRestService().getMedia(Type.valueOf(type).toString(), id, followMerges);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -183,7 +185,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     protected <T extends MediaObject> T getFull(final Class<T> type, final String id) {
         try {
-            return (T) getProxy().getFullMediaObject(Type.valueOf(type).toString(), id, followMerges);
+            return (T) getBackendRestService().getFullMediaObject(Type.valueOf(type).toString(), id, followMerges);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -211,7 +213,7 @@ public class MediaRestClient extends AbstractApiClient {
                     
         SortedSet<LocationUpdate> result = new TreeSet<>();
         try {
-            XmlCollection<LocationUpdate> i = getProxy().getLocations("media", id, true);
+            XmlCollection<LocationUpdate> i = getBackendRestService().getLocations("media", id, true);
             for (LocationUpdate lu : i) {
                 lu.setUrn(null);
                 result.add(lu);
@@ -227,7 +229,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     /** add a location to a Program, Segment or Group */
     protected void addLocation(final Type type, final LocationUpdate location, final String id) {
-        getProxy().addLocation(type.toString(), location, id, followMerges, errors);
+        getBackendRestService().addLocation(type.toString(), location, id, followMerges, errors);
     }
 
     public void  addLocationToProgram(LocationUpdate location, String programId) {
@@ -245,7 +247,7 @@ public class MediaRestClient extends AbstractApiClient {
     protected String set(final Type type, final MediaUpdate update) {
         
         try {
-            Response response = getProxy().update(type.toString(), update, followMerges, errors, lookupCrids);
+            Response response = getBackendRestService().update(type.toString(), update, followMerges, errors, lookupCrids);
             return response.readEntity(String.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -279,7 +281,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public Iterable<MemberUpdate> getGroupMembers(final String id, final int max, final long offset) {
         try {
-            return getProxy().getGroupMembers("media", id, offset, max, "ASC", followMerges);
+            return getBackendRestService().getGroupMembers("media", id, offset, max, "ASC", followMerges);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -291,7 +293,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public Iterable<MemberUpdate> getGroupEpisodes(final String id, final int max, final long offset) {
         try {
-            return getProxy().getGroupEpisodes(id, offset, max, "ASC", followMerges);
+            return getBackendRestService().getGroupEpisodes(id, offset, max, "ASC", followMerges);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -315,7 +317,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public Iterable<MediaListItem> find(MediaForm form)  {
         try {
-            return getProxy().find(form, false);
+            return getBackendRestService().find(form, false);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
