@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import nl.vpro.domain.image.ImageType;
 import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaListItem;
@@ -41,6 +42,7 @@ public class MediaRestClientTest {
         client.setUrl("http://localhost:8071/rs/");
         //client.setUrl("https://api-dev.poms.omroep.nl/");
         //client.setUrl("https://api-test.poms.omroep.nl/");
+        client.setErrors("michiel.meeuwissen@gmail.com");
         client.setThrottleRate(50);
         client.setWaitForRetry(true);
 
@@ -206,7 +208,7 @@ public class MediaRestClientTest {
         newProgram.setBroadcasters(Arrays.asList("VPRO"));
         newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla " + Instant.now(), TextualType.MAIN))));
 
-        newProgram.setLocations(client.get("WO_NCRV_517054").getLocations());
+        newProgram.setLocations(client.get("WO_BNN_351473").getLocations());
 
         JAXB.marshal(newProgram, System.out);
         System.out.println(client.set(newProgram));
@@ -231,7 +233,35 @@ public class MediaRestClientTest {
     }
 
 
+    @Test
+    public void addImage() {
+        String program = sampleProgram("addImage");
 
+        client.getBackendRestService().addImage(
+            new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/bril.png")),
+            "media",
+            program,
+            client.isFollowMerges(),
+            null
+        );
+        System.out.println("Added image to " + program);
+
+
+    }
+
+    protected String sampleProgram(String test) {
+        String crid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest/" + test;
+        MediaBuilder.ProgramBuilder program = MediaBuilder.program(ProgramType.CLIP)
+            .crids(crid)
+            .avType(AVType.MIXED)
+            .broadcasters("VPRO")
+            .mainTitle("Deze clip gebruiken we in een junit test");
+        ProgramUpdate programUpdate = ProgramUpdate.create(program);
+        String programMid = client.set(programUpdate);
+        System.out.println("" + crid + " ->  " + programMid);
+        return programMid;
+
+    }
     /*@Test
     public void testCouchDBClient() throws MalformedURLException {
         List<Map<String, Object>> media = new ArrayList<>();

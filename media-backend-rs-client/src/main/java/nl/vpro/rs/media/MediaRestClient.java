@@ -134,6 +134,18 @@ public class MediaRestClient extends AbstractApiClient {
         this.errors = errors;
     }
 
+    public String getErrors() {
+        return errors;
+    }
+
+    public boolean isFollowMerges() {
+        return followMerges;
+    }
+
+    public void setFollowMerges(boolean followMerges) {
+        this.followMerges = followMerges;
+    }
+
     public boolean isWaitForRetry() {
         return waitForRetry;
     }
@@ -163,7 +175,7 @@ public class MediaRestClient extends AbstractApiClient {
     public MediaRestController getBackendRestService() {
         if (proxy == null) {
             LOG.info("Creating proxy for {} {}@{}", MediaRestController.class, userName, url);
-            proxy = ThrottleAspect.proxy(
+            proxy = MediaRestClientAspect.proxy(
                 this,
                 ErrorAspect.proxyErrors(
                     MediaRestClient.LOG, () -> "media rest", MediaRestController.class,
