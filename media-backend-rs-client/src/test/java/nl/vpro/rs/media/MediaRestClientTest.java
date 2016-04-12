@@ -38,9 +38,9 @@ public class MediaRestClientTest {
         client.setTrustAll(true);
         client.setUserName("vpro-mediatools");
         client.setPassword("Id7shuu7");
-        //client.setUrl("http://localhost:8071/rs/");
-        client.setUrl("https://api-dev.poms.omroep.nl/");
-        ///client.setUrl("https://api-test.poms.omroep.nl/");
+        client.setUrl("http://localhost:8071/rs/");
+        //client.setUrl("https://api-dev.poms.omroep.nl/");
+        //client.setUrl("https://api-test.poms.omroep.nl/");
         client.setThrottleRate(50);
         client.setWaitForRetry(true);
 
@@ -152,7 +152,7 @@ public class MediaRestClientTest {
         newProgram.setType(ProgramType.CLIP);
         newProgram.setAVType(AVType.VIDEO);
         newProgram.setBroadcasters(Arrays.asList("VPRO"));
-        newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla", TextualType.MAIN))));
+        newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla " , TextualType.MAIN))));
 
 
         // TODO. Isn't this odd?
@@ -184,7 +184,7 @@ public class MediaRestClientTest {
     @Test
     public void copyLocations2() throws IOException {
 
-        ProgramUpdate existing = client.get("VPRO_1142324");
+        ProgramUpdate existing = client.get("POMS_VARA_256131");
         existing.setLocations(client.get("POMS_VPRO_1419526").getLocations());
 
         for (TitleUpdate o : existing.getTitles()) {
@@ -192,12 +192,26 @@ public class MediaRestClientTest {
                 o.setTitle(o.getTitle() + " x");
             }
         }
-            
-        
+
+
         JAXB.marshal(existing, System.out);
         System.out.println(client.set(existing));
     }
 
+    @Test
+    public void copyLocations3() {
+        ProgramUpdate newProgram = new ProgramUpdate();
+        newProgram.setType(ProgramType.CLIP);
+        newProgram.setAVType(AVType.VIDEO);
+        newProgram.setBroadcasters(Arrays.asList("VPRO"));
+        newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla " + Instant.now(), TextualType.MAIN))));
+
+        newProgram.setLocations(client.get("WO_NCRV_517054").getLocations());
+
+        JAXB.marshal(newProgram, System.out);
+        System.out.println(client.set(newProgram));
+
+    }
 
     @Test
     public void addRelation() {

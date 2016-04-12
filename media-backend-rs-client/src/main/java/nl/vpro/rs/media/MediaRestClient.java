@@ -162,7 +162,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public MediaRestController getBackendRestService() {
         if (proxy == null) {
-            LOG.info("Creating proxy for {}", MediaRestController.class);
+            LOG.info("Creating proxy for {} {}@{}", MediaRestController.class, userName, url);
             proxy = ThrottleAspect.proxy(
                 this,
                 ErrorAspect.proxyErrors(
@@ -210,7 +210,7 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     public SortedSet<LocationUpdate> cloneLocations(String id) {
-                    
+
         SortedSet<LocationUpdate> result = new TreeSet<>();
         try {
             XmlCollection<LocationUpdate> i = getBackendRestService().getLocations("media", id, true);
@@ -245,7 +245,7 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     protected String set(final Type type, final MediaUpdate update) {
-        
+
         try {
             Response response = getBackendRestService().update(type.toString(), update, followMerges, errors, lookupCrids);
             return response.readEntity(String.class);
