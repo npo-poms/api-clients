@@ -35,7 +35,16 @@ import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
 
 /**
- * A client for RESTful calls to a running MediaRestController
+ * A client for RESTful calls to a running MediaBackendRestService.
+ *
+ * Several utilities are provided (like {@link #get(String)} ${@link #set(MediaUpdate}). All raw calls can be done via {@link #getBackendRestService()}
+ *
+ * The raw calls have more arguments which you may not always want to set. In future version arguments can be added.
+ * If in these 'raw' calls leave arguments <code>null</code> which are also set in the client (like 'errors'), then they will be automaticly filled
+ * (the MediaBackendInterface is proxied (with {@link MediaRestClientAspect}) to make this possible)
+ *
+ * Also this client can implicitely trottle itself. Calls like this are rated on the POMS side, and like this you can aovoid using it up too quickly.
+ *
  * <p/>
  * Use it like this:
  * <pre>
