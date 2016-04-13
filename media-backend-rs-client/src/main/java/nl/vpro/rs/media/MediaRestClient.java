@@ -37,11 +37,10 @@ import nl.vpro.domain.media.update.collections.XmlCollection;
 /**
  * A client for RESTful calls to a running MediaRestController
  * <p/>
- * A client is stateful, so normally you may need create a new one for every call.
- * E.g. use it like this:
+ * Use it like this:
  * <pre>
- * protected Client getClient(Map<String, Object> headers) {
- * Client client = new Client();
+ * protected MediaRestClient getClient(Map<String, Object> headers) {
+ * MeidaRestClient client = new MediaRestClient();
  * client.setUrl(mediaRsUrl);
  * client.setUserName(userName);
  * client.setPassword(password);
@@ -50,10 +49,13 @@ import nl.vpro.domain.media.update.collections.XmlCollection;
  * return client;
  * }
  * private void send(ProgramUpdate update) {
- * Client client = getClient(getHeaders());
+ * MediaRest client = getClient(getHeaders());
  * client.set(update);
  * }
+ **
  * </pre>
+ * You can also configured it implicetely:
+ * MediaRestClient client = new MediaRestClient().configured();
  *
  * @author Michiel Meeuwissen
  */
@@ -106,7 +108,6 @@ public class MediaRestClient extends AbstractApiClient {
     protected String url = "https://api-dev.poms.omroep.nl";
     protected String errors;
     protected boolean waitForRetry = false;
-
 	protected boolean lookupCrids = true;
 
 
@@ -141,9 +142,9 @@ public class MediaRestClient extends AbstractApiClient {
                     Class<?> parameterClass = m.getParameters()[0].getType();
                     if (String.class.isAssignableFrom(parameterClass)) {
                         m.invoke(this, v);
-                    } else if (Boolean.class.isAssignableFrom(parameterClass) || boolean.class.isAssignableFrom(parameterClass)) {
+                    } else if (boolean.class.isAssignableFrom(parameterClass)) {
                         m.invoke(this, Boolean.valueOf(v));
-                    } else if (Integer.class.isAssignableFrom(parameterClass) || int.class.isAssignableFrom(parameterClass)) {
+                    } else if (int.class.isAssignableFrom(parameterClass)) {
                         m.invoke(this, Integer.valueOf(v));
                     } else if (double.class.isAssignableFrom(parameterClass)) {
                         m.invoke(this, Double.valueOf(v));
