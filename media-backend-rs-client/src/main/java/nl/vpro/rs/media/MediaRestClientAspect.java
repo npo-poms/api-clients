@@ -25,16 +25,16 @@ class MediaRestClientAspect implements InvocationHandler {
     private static Logger LOG = LoggerFactory.getLogger(MediaRestClientAspect.class);
 
     private final MediaRestClient client;
-    private final MediaRestController proxied;
+    private final MediaBackendRestService proxied;
 
-    MediaRestClientAspect(MediaRestClient client, MediaRestController proxied) {
+    MediaRestClientAspect(MediaRestClient client, MediaBackendRestService proxied) {
         this.client = client;
         this.proxied = proxied;
     }
 
-    public static MediaRestController proxy(MediaRestClient client, MediaRestController restController) {
-        return (MediaRestController) Proxy.newProxyInstance(MediaRestClient.class.getClassLoader(),
-            new Class[]{MediaRestController.class}, new MediaRestClientAspect(client, restController));
+    public static MediaBackendRestService proxy(MediaRestClient client, MediaBackendRestService restController) {
+        return (MediaBackendRestService) Proxy.newProxyInstance(MediaRestClient.class.getClassLoader(),
+            new Class[]{MediaBackendRestService.class}, new MediaRestClientAspect(client, restController));
     }
 
 
