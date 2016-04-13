@@ -38,9 +38,9 @@ public class MediaRestClientTest {
         client = new MediaRestClient().configured();
         client.setTrustAll(true);
         client.setUserName("vpro-mediatools");
-        client.setUrl("http://localhost:8071/rs/");
-        //client.setUrl("https://api-dev.poms.omroep.nl/");
-        client.setUrl("https://api-test.poms.omroep.nl/");
+        //client.setUrl("http://localhost:8071/rs/");
+        client.setUrl("https://api-dev.poms.omroep.nl/");
+        //client.setUrl("https://api-test.poms.omroep.nl/");
         //client.setThrottleRate(50);
         client.setWaitForRetry(true);
 
@@ -252,7 +252,7 @@ public class MediaRestClientTest {
 
     @Test
     public void addImage() {
-        String program = sampleProgram("addImage");
+        String program = sampleProgram("addImage").id;
 
         client.getBackendRestService().addImage(
             new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/bril.png")),
@@ -272,7 +272,22 @@ public class MediaRestClientTest {
         JAXB.marshal(group, System.out);
     }
 
-    protected String sampleProgram(String test) {
+    @Test
+    public void testCreateWitPortal() {
+        WithId<ProgramUpdate> sample = sampleProgram("withPortal");
+        ProgramUpdate update = sample.update;
+        update.setBroadcasters(Arrays.asList("EO"));
+        PortalRestrictionUpdate restrictionUpdate  = new PortalRestrictionUpdate();
+        restrictionUpdate.setPortal("NETINNL");
+        update.setPortalRestrictions(Arrays.asList(restrictionUpdate));
+        update.setPortals(Arrays.asList("NETINNL"));
+        
+        client.set(sample.update);
+
+        System.out.println(sample.id);
+    }
+
+    protected WithId<ProgramUpdate> sampleProgram(String test) {
         String crid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest/" + test;
         MediaBuilder.ProgramBuilder program = MediaBuilder.program(ProgramType.CLIP)
             .crids(crid)
@@ -282,9 +297,11 @@ public class MediaRestClientTest {
         ProgramUpdate programUpdate = ProgramUpdate.create(program);
         String programMid = client.set(programUpdate);
         System.out.println("" + crid + " ->  " + programMid);
-        return programMid;
+        return new WithId<>(programUpdate, programMid);
 
     }
+
+
     /*@Test
     public void testCouchDBClient() throws MalformedURLException {
         List<Map<String, Object>> media = new ArrayList<>();
