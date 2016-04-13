@@ -276,12 +276,10 @@ public class MediaRestClientTest {
     public void testCreateWitPortal() {
         WithId<ProgramUpdate> sample = sampleProgram("withPortal");
         ProgramUpdate update = sample.update;
-        update.setBroadcasters(Arrays.asList("EO"));
-        PortalRestrictionUpdate restrictionUpdate  = new PortalRestrictionUpdate();
-        restrictionUpdate.setPortal("NETINNL");
-        update.setPortalRestrictions(Arrays.asList(restrictionUpdate));
-        update.setPortals(Arrays.asList("NETINNL"));
-        
+        update.setBroadcasters("EO");
+        update.setPortalRestrictions("NETINNL");
+        update.setPortals("NETINNL");
+
         client.set(sample.update);
 
         System.out.println(sample.id);

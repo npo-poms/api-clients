@@ -70,7 +70,7 @@ public class MediaRestClient extends AbstractApiClient {
 
 	private boolean followMerges = true;
 
-    private MediaRestController proxy;
+    private MediaBackendRestService proxy;
     private Map<String, Object> headers;
 
     public MediaRestClient() {
@@ -232,14 +232,14 @@ public class MediaRestClient extends AbstractApiClient {
         return client.target(url);
     }
 
-    public MediaRestController getBackendRestService() {
+    public MediaBackendRestService getBackendRestService() {
         if (proxy == null) {
-            LOG.info("Creating proxy for {} {}@{}", MediaRestController.class, userName, url);
+            LOG.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, url);
             proxy = MediaRestClientAspect.proxy(
                 this,
                 ErrorAspect.proxyErrors(
-                    MediaRestClient.LOG, () -> "media rest", MediaRestController.class,
-                    newWebClient().proxy(MediaRestController.class)
+                    MediaRestClient.LOG, () -> "media rest", MediaBackendRestService.class,
+                    newWebClient().proxy(MediaBackendRestService.class)
                 )
             );
 

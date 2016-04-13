@@ -29,6 +29,7 @@
 
   <properties>
     <api.version>4.3-SNAPSHOT</api.version>
+    <media.version>4.3.1-SNAPSHOT</media.version>
   </properties>
 
   <dependencyManagement>
