@@ -1,7 +1,12 @@
 package nl.vpro.rs.media;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -103,6 +108,60 @@ public class MediaRestClient extends AbstractApiClient {
     protected boolean waitForRetry = false;
 
 	protected boolean lookupCrids = true;
+
+
+    public MediaRestClient configured(String configFile) throws IOException {
+        Properties properties = new Properties();
+        File file = new File(configFile);
+        if (! file.canRead()) {
+            LOG.info("The file {} cannot be read", file);
+        } else {
+            LOG.info("Reading properties from {}", file);
+            properties.load(new FileInputStream(file));
+            properties.forEach(this::setProperty);
+        }
+        return this;
+    }
+
+    /**
+     * Read configuration from a config file in ${user.home}/conf/mediarestclient.properties
+     */
+    public MediaRestClient configured() throws IOException {
+        return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "mediarestclient.properties");
+
+    }
+    protected void setProperty(Object key, Object value)  {
+        Method[] methods = this.getClass().getMethods();
+        String k = (String) key;
+        String v = (String) value;
+        String setter = "set" + Character.toUpperCase(k.charAt(0)) + k.substring(1);
+        for (Method m : methods) {
+            if (m.getName().equals(setter) && m.getParameterCount() == 1) {
+                try {
+                    Class<?> parameterClass = m.getParameters()[0].getType();
+                    if (String.class.isAssignableFrom(parameterClass)) {
+                        m.invoke(this, v);
+                    } else if (Boolean.class.isAssignableFrom(parameterClass) || boolean.class.isAssignableFrom(parameterClass)) {
+                        m.invoke(this, Boolean.valueOf(v));
+                    } else if (Integer.class.isAssignableFrom(parameterClass) || int.class.isAssignableFrom(parameterClass)) {
+                        m.invoke(this, Integer.valueOf(v));
+                    } else if (double.class.isAssignableFrom(parameterClass)) {
+                        m.invoke(this, Double.valueOf(v));
+                    } else {
+                        LOG.warn("Unrecognized parameter type");
+                        continue;
+                    }
+                    LOG.debug("Set {} from config file", key);
+                    return;
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    LOG.error(e.getMessage(), e);
+                }
+            }
+
+        }
+
+        LOG.error("Unrecognized property {}", key);
+    }
 
 
 

@@ -34,16 +34,14 @@ public class MediaRestClientTest {
     private MediaRestClient client;
 
     @Before
-    public void setUp() {
-        client = new MediaRestClient();
+    public void setUp() throws IOException {
+        client = new MediaRestClient().configured();
         client.setTrustAll(true);
         client.setUserName("vpro-mediatools");
-        client.setPassword("Id7shuu7");
         client.setUrl("http://localhost:8071/rs/");
         //client.setUrl("https://api-dev.poms.omroep.nl/");
-        //client.setUrl("https://api-test.poms.omroep.nl/");
-        client.setErrors("michiel.meeuwissen@gmail.com");
-        client.setThrottleRate(50);
+        client.setUrl("https://api-test.poms.omroep.nl/");
+        //client.setThrottleRate(50);
         client.setWaitForRetry(true);
 
     }
@@ -201,6 +199,7 @@ public class MediaRestClientTest {
     }
 
     @Test
+    // Shows MSE-3224
     public void copyLocations3() {
         ProgramUpdate newProgram = new ProgramUpdate();
         newProgram.setType(ProgramType.CLIP);
@@ -214,6 +213,24 @@ public class MediaRestClientTest {
         System.out.println(client.set(newProgram));
 
     }
+
+
+    @Test
+    // Shows MSE-3224
+    public void copyImages() {
+        ProgramUpdate newProgram = new ProgramUpdate();
+        newProgram.setType(ProgramType.CLIP);
+        newProgram.setAVType(AVType.VIDEO);
+        newProgram.setBroadcasters(Arrays.asList("VPRO"));
+        newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla " + Instant.now(), TextualType.MAIN))));
+
+        newProgram.setImages(client.get("WO_MAX_382054").getImages());
+
+        JAXB.marshal(newProgram, System.out);
+        System.out.println(client.set(newProgram));
+
+    }
+
 
     @Test
     public void addRelation() {
@@ -247,6 +264,12 @@ public class MediaRestClientTest {
         System.out.println("Added image to " + program);
 
 
+    }
+
+    @Test
+    public void testGetGroup() {
+        GroupUpdate group = client.getGroup("POMS_S_VPRO_1416538");
+        JAXB.marshal(group, System.out);
     }
 
     protected String sampleProgram(String test) {
