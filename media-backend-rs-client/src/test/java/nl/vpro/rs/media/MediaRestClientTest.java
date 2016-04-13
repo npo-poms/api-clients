@@ -2,9 +2,6 @@ package nl.vpro.rs.media;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.xml.bind.JAXB;
 
@@ -36,11 +33,9 @@ public class MediaRestClientTest {
     @Before
     public void setUp() throws IOException {
         client = new MediaRestClient().configured();
-        client.setTrustAll(true);
-        client.setUserName("vpro-mediatools");
         //client.setUrl("http://localhost:8071/rs/");
-        client.setUrl("https://api-dev.poms.omroep.nl/");
-        //client.setUrl("https://api-test.poms.omroep.nl/");
+        //client.setUrl("https://api-dev.poms.omroep.nl/");
+        client.setUrl("https://api-test.poms.omroep.nl/");
         //client.setThrottleRate(50);
         client.setWaitForRetry(true);
 
@@ -151,8 +146,8 @@ public class MediaRestClientTest {
         ProgramUpdate newProgram = new ProgramUpdate();
         newProgram.setType(ProgramType.CLIP);
         newProgram.setAVType(AVType.VIDEO);
-        newProgram.setBroadcasters(Arrays.asList("VPRO"));
-        newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla " , TextualType.MAIN))));
+        newProgram.setBroadcasters("VPRO");
+        newProgram.setMainTitle("bla");
 
 
         // TODO. Isn't this odd?
@@ -171,10 +166,8 @@ public class MediaRestClientTest {
         ProgramUpdate newProgram = new ProgramUpdate();
         newProgram.setType(ProgramType.CLIP);
         newProgram.setAVType(AVType.VIDEO);
-        newProgram.setBroadcasters(Arrays.asList("VPRO"));
-        newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla", TextualType.MAIN))));
-
-
+        newProgram.setBroadcasters("VPRO");
+        newProgram.setMainTitle("bla");
 
         newProgram.setLocations(client.cloneLocations("VPRO_1142324"));
 
@@ -204,8 +197,8 @@ public class MediaRestClientTest {
         ProgramUpdate newProgram = new ProgramUpdate();
         newProgram.setType(ProgramType.CLIP);
         newProgram.setAVType(AVType.VIDEO);
-        newProgram.setBroadcasters(Arrays.asList("VPRO"));
-        newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla " + Instant.now(), TextualType.MAIN))));
+        newProgram.setBroadcasters("VPRO");
+        newProgram.setMainTitle("bla " + Instant.now());
 
         newProgram.setLocations(client.get("WO_BNN_351473").getLocations());
 
@@ -221,8 +214,8 @@ public class MediaRestClientTest {
         ProgramUpdate newProgram = new ProgramUpdate();
         newProgram.setType(ProgramType.CLIP);
         newProgram.setAVType(AVType.VIDEO);
-        newProgram.setBroadcasters(Arrays.asList("VPRO"));
-        newProgram.setTitles(new TreeSet<>(Arrays.asList(new TitleUpdate("bla " + Instant.now(), TextualType.MAIN))));
+        newProgram.setBroadcasters("VPRO");
+        newProgram.setMainTitle("bla " + Instant.now());
 
         newProgram.setImages(client.get("WO_MAX_382054").getImages());
 
@@ -234,13 +227,10 @@ public class MediaRestClientTest {
 
     @Test
     public void addRelation() {
-
+        RelationDefinition artist = RelationDefinition.of("ARTIST", "VPRO");
         ProgramUpdate program = client.get("POMS_VPRO_1419533");
         // create relation with source program
-        RelationUpdate relationUpdate = new RelationUpdate("ARTIST", "VPRO", null, "BLA " + Instant.now());
-        SortedSet<RelationUpdate> relationUpdateSortedSet = program.getRelations();
-        relationUpdateSortedSet.add(relationUpdate);
-        //program.setRelations(relationUpdateSortedSet);  Not needed.
+        program.getRelations().add(RelationUpdate.text(artist, "BLA " + Instant.now()));
 
         JAXB.marshal(program, System.out);
 
