@@ -28,8 +28,8 @@
   </scm>
 
   <properties>
-    <api.version>4.3-SNAPSHOT</api.version>
-    <media.version>4.3.1-SNAPSHOT</media.version>
+    <media.version>4.3.0.1</media.version>
+    <shared.version>0.38.0</shared.version>
   </properties>
 
   <dependencyManagement>
