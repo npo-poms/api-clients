@@ -4,6 +4,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
+import java.lang.reflect.Proxy;
+
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -14,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
+import nl.vpro.api.rs.v3.schedule.LeaveDefaultsProxyHandler;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
+import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
 import nl.vpro.resteasy.JacksonContextResolver;
 
 @Named
@@ -29,7 +33,7 @@ public class NpoApiClients extends AbstractApiClient {
 
     private final PageRestService pageRestServiceProxy;
 
-    private final ScheduleRestService scheduleRestServiceProxy;
+    private final ScheduleRestServiceWithDefaults scheduleRestServiceProxy;
 
     private final ProfileRestService profileRestServiceProxy;
 
@@ -53,20 +57,20 @@ public class NpoApiClients extends AbstractApiClient {
         baseUrl = apiBaseUrl + "api";
 
         mediaRestServiceProxy =
-            build(MediaRestService.class, clientHttpEngine);
+            build(clientHttpEngine, MediaRestService.class);
 
         mediaRestServiceProxyNoTimeout =
-            build(MediaRestService.class, clientHttpEngineNoTimeout);
+            build(clientHttpEngineNoTimeout, MediaRestService.class);
 
         scheduleRestServiceProxy =
-            build(ScheduleRestService.class, clientHttpEngine);
+            build(clientHttpEngine, ScheduleRestServiceWithDefaults.class, ScheduleRestService.class);
 
 
         pageRestServiceProxy  =
-            build(PageRestService.class, clientHttpEngine);
+            build(clientHttpEngine, PageRestService.class);
 
         profileRestServiceProxy =
-            build(ProfileRestService.class, clientHttpEngine);
+            build(clientHttpEngine, ProfileRestService.class);
 
     }
 
@@ -88,7 +92,7 @@ public class NpoApiClients extends AbstractApiClient {
         return mediaRestServiceProxyNoTimeout;
     }
 
-    public ScheduleRestService getScheduleService() {
+    public ScheduleRestServiceWithDefaults getScheduleService() {
         return scheduleRestServiceProxy;
     }
 
@@ -117,18 +121,34 @@ public class NpoApiClients extends AbstractApiClient {
 		return super.toString() + " " + baseUrl;
 	}
 
-    private <T> T build(Class<T> service, ClientHttpEngine engine) {
+    private <T, S> T build(ClientHttpEngine engine, Class<T> service, Class<S> restEasyService) { 
+        T proxy;
+        if (restEasyService == null) {
+            proxy = builderResteasy(engine, service);
+        } else {
+            S resteasy = builderResteasy(engine, restEasyService);
+            proxy = (T) Proxy.newProxyInstance(NpoApiClients.class.getClassLoader(),
+                new Class[]{restEasyService, service}, new LeaveDefaultsProxyHandler(resteasy));
+        }
+            
         return
             ErrorAspect.proxyErrors(
-                LOG, NpoApiClients.this::getInfo,
+                LOG,
+                NpoApiClients.this::getInfo,
                 service,
-                getTarget(engine)
-                    .proxyBuilder(service)
-                    .defaultConsumes(MediaType.APPLICATION_XML)
-                    .defaultProduces(MediaType.APPLICATION_XML)
-                    .build(),
-                Error.class
-            );
+                proxy);
+    }
+
+    private <T> T build(ClientHttpEngine engine, Class<T> service) {
+        return build(engine, service, null);
+    }
+    
+    private <T> T builderResteasy(ClientHttpEngine engine, Class<T> service) {
+        return getTarget(engine)
+            .proxyBuilder(service)
+            .defaultConsumes(MediaType.APPLICATION_XML)
+            .defaultProduces(MediaType.APPLICATION_XML)
+            .build();
     }
 
     private ResteasyWebTarget getTarget(ClientHttpEngine engine) {
