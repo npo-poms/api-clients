@@ -16,10 +16,11 @@ import org.slf4j.LoggerFactory;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
-import nl.vpro.api.rs.v3.schedule.LeaveDefaultsProxyHandler;
+
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
 import nl.vpro.resteasy.JacksonContextResolver;
+import nl.vpro.util.LeaveDefaultsProxyHandler;
 
 @Named
 public class NpoApiClients extends AbstractApiClient {

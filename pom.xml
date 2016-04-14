@@ -29,8 +29,8 @@
 
   <properties>
     <media.version>4.3.0.1</media.version>
-    <shared.version>0.38.0</shared.version>
-    <api.version>4.4-SNAPSHOT</api.version>
+    <shared.version>0.38.1</shared.version>
+    <api.version>4.3.0.1</api.version>
   </properties>
 
   <dependencyManagement>
