@@ -7,6 +7,7 @@ package nl.vpro.api.client.resteasy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.Date;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
@@ -202,6 +203,14 @@ public class NpoApiClientsITest {
     @Test
     public void testSchedule() {
         ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, ScheduleRestService.ASC, null, 0L, 100);
+        for (ApiScheduleEvent event : result.getItems()) {
+            System.out.println(event);
+        }
+    }
+
+    @Test
+    public void testScheduleWithDefaults() {
+        ScheduleResult result = clients.getScheduleService().list(new Date(), null, null, ScheduleRestService.ASC, null, 0L, 100);
         for (ApiScheduleEvent event : result.getItems()) {
             System.out.println(event);
         }
