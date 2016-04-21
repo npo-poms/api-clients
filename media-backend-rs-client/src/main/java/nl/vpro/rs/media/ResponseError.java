@@ -13,7 +13,7 @@ public class ResponseError extends RuntimeException {
     private final String entity;
 
     public ResponseError(int status, Response.StatusType statusType, String entity) {
-        super(status + ":" + entity);
+        super(status + ":" + statusType + ":" + entity);
         this.status = status;
         this.statusInfo = statusType;
         this.entity = entity;
