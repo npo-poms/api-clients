@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
@@ -118,6 +119,8 @@ public class MediaRestClient extends AbstractApiClient {
     protected String errors;
     protected boolean waitForRetry = false;
 	protected boolean lookupCrids = true;
+
+    protected Integer lastStatus = null;
 
 
     public MediaRestClient configured(String configFile) throws IOException {
@@ -241,6 +244,11 @@ public class MediaRestClient extends AbstractApiClient {
         return client.target(url);
     }
 
+
+    /**
+     * returns the proxied interface as is actually used on the POMS backend.
+     * This is (as long as your client's version corresponds) garantueed to be complete and correct.
+     */
     public MediaBackendRestService getBackendRestService() {
         if (proxy == null) {
             LOG.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, url);
@@ -329,7 +337,13 @@ public class MediaRestClient extends AbstractApiClient {
 
         try {
             Response response = getBackendRestService().update(type.toString(), update, followMerges, errors, lookupCrids);
-            return response.readEntity(String.class);
+            lastStatus = response.getStatus();
+            String result = response.readEntity(String.class);
+            if (response.getStatus() != HttpServletResponse.SC_ACCEPTED) {
+                throw new ResponseError(response.getStatus(), response.getStatusInfo(), result);
+            }
+            return result;
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -33,10 +33,7 @@ public class MediaRestClientTest {
     @Before
     public void setUp() throws IOException {
         client = new MediaRestClient().configured();
-        //client.setUrl("http://localhost:8071/rs/");
-        //client.setUrl("https://api-dev.poms.omroep.nl/");
         client.setUrl("https://api-test.poms.omroep.nl/");
-        //client.setThrottleRate(50);
         client.setWaitForRetry(true);
 
     }
@@ -96,6 +93,15 @@ public class MediaRestClientTest {
 	}
 
 
+    @Test(expected = nl.vpro.rs.media.ResponseError.class)
+    public void postInvalid() {
+        ProgramUpdate update = JAXB.unmarshal(getClass().getResourceAsStream("/POMS_VPRO_216532.xml"), ProgramUpdate.class);
+        update.getTitles().clear();
+        client.setLookupCrid(false);
+        String result = client.set(update);
+
+        assertThat(result).isEqualTo("POMS_VPRO_216532");
+    }
 
 
     @Test
