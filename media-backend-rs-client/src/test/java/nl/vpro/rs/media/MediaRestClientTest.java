@@ -180,9 +180,11 @@ public class MediaRestClientTest {
     }
 
     @Test
+    @Ignore
     public void copyLocations2() throws IOException {
 
         ProgramUpdate existing = client.get("POMS_VARA_256131");
+
         existing.setLocations(client.get("POMS_VPRO_1419526").getLocations());
 
         for (TitleUpdate o : existing.getTitles()) {
@@ -194,6 +196,7 @@ public class MediaRestClientTest {
 
         JAXB.marshal(existing, System.out);
         System.out.println(client.set(existing));
+
     }
 
     @Test
@@ -278,8 +281,10 @@ public class MediaRestClientTest {
 
     @Test
     public void testGetGroup() {
-        GroupUpdate group = client.getGroup("POMS_S_VPRO_1416538");
+        GroupUpdate group = client.getGroup("TELEA_1051096");
+
         JAXB.marshal(group, System.out);
+
     }
 
     @Test
