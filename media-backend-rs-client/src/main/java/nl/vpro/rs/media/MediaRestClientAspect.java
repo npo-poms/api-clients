@@ -9,6 +9,7 @@ import java.lang.reflect.Proxy;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
  * This Proxy:
  * - throttles all calls
  * - automaticly fills some common arguments (recognized by @QueryParam annotations)
+ * - if the return type is Response, it also checks the status code
  * @author Michiel Meeuwissen
  * @since 4.3
  */
@@ -46,7 +48,21 @@ class MediaRestClientAspect implements InvocationHandler {
             try {
                 try {
                     fillErrorParameterIfEmpty(method, args);
-                    return method.invoke(proxied, args);
+                    Object result = method.invoke(proxied, args);
+                    if (result instanceof Response) {
+                        Response response = (Response) result;
+                        if (response.getStatusInfo() == Response.Status.SERVICE_UNAVAILABLE) {
+                            String message = response.readEntity(String.class);
+                            // retry
+                            client.retryAfterWaitOrException(method.getName() + " " + message);
+                            continue;
+                        }
+                        if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+                            throw new ResponseError(client.toString(), method, response.getStatus(), response.getStatusInfo(), response.readEntity(String.class));
+                        }
+
+                    }
+                    return result;
                 } catch (InvocationTargetException itc) {
                     throw itc.getCause();
                 }
@@ -54,6 +70,10 @@ class MediaRestClientAspect implements InvocationHandler {
                 return null;
             } catch (ServiceUnavailableException sue) {
                 client.retryAfterWaitOrException(method.getName() + ": Service unavailable");
+                // retry
+                continue;
+            } catch (RuntimeException re) {
+                throw re;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

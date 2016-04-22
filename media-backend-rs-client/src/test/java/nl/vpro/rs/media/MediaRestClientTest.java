@@ -33,7 +33,6 @@ public class MediaRestClientTest {
     @Before
     public void setUp() throws IOException {
         client = new MediaRestClient().configured();
-        client.setUrl("https://api-test.poms.omroep.nl/");
         client.setWaitForRetry(true);
 
     }
@@ -259,6 +258,21 @@ public class MediaRestClientTest {
         );
         System.out.println("Added image to " + program);
 
+
+    }
+
+
+    @Test(expected = ResponseError.class)
+    public void addImage404() {
+        String program = sampleProgram("addImage").id;
+
+        client.getBackendRestService().addImage(
+            new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/BESTAATNIET.png")),
+            "media",
+            program,
+            client.isFollowMerges(),
+            null
+        );
 
     }
 
