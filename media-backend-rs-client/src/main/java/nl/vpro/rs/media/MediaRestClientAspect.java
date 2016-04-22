@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.ServiceUnavailableException;
 import javax.ws.rs.core.Response;
@@ -93,6 +94,13 @@ class MediaRestClientAspect implements InvocationHandler {
                     if ("followMerges".equals(queryParam.value())) {
                         LOG.debug("Implicetely set followMerges to {}", client.isFollowMerges());
                         args[i] = client.isFollowMerges();
+                    }
+                }
+                if (annotations[i][j] instanceof PathParam && args[i] == null) {
+                    PathParam pathParam  = (PathParam) annotations[i][j];
+                    if ("entity".equals(pathParam.value())) {
+                        LOG.debug("Implicetely set entity to media");
+                        args[i] = "media";
                     }
 
                 }

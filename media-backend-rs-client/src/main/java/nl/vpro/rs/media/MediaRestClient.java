@@ -309,6 +309,40 @@ public class MediaRestClient extends AbstractApiClient {
         addLocation(Type.GROUP, location, groupId);
     }
 
+    public void createMember(String owner, String member, Integer number) {
+        try {
+            getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void removeMember(String owner, String member, Integer number) {
+        try {
+            getBackendRestService().removeMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void createEpisode(String owner, String member, Integer number) {
+        try {
+            getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void removeEpisode(String owner, String member, Integer number) {
+        try {
+            getBackendRestService().removeEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected String set(final Type type, final MediaUpdate update) {
 
         try {
