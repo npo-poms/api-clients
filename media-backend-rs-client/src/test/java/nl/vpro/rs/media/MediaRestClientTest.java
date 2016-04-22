@@ -180,7 +180,6 @@ public class MediaRestClientTest {
     }
 
     @Test
-    @Ignore
     public void copyLocations2() throws IOException {
 
         ProgramUpdate existing = client.get("POMS_VARA_256131");

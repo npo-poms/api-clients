@@ -51,25 +51,13 @@ public class NpoApiClientsITest {
     //private String target = "http://localhost:8070/v1/";
 
     @Before
-    public void setUp() {
-        clients = new NpoApiClients(
-            target,
-            "ione7ahfij",
-            "***REMOVED***",
-            "http://www.vpro.nl",
-            10000
-        );
+    public void setUp() throws IOException {
+        clients = NpoApiClients.configured().setApiBaseUrl(target).build();
     }
 
     @Test(expected = NotAuthorizedException.class)
     public void testAccessForbidden() throws Exception {
-        NpoApiClients wrongPassword = new NpoApiClients(
-            target,
-            "ione7ahfij",
-            "WRONG_PASSWORD",
-            "http://www.vpro.nl",
-            10000
-        );
+        NpoApiClients wrongPassword = NpoApiClients.configured().setSecret("WRONG PASSWORD").build();
 
         wrongPassword.getMediaService().list(null, null, null, null);
     }
@@ -215,6 +203,6 @@ public class NpoApiClientsITest {
             System.out.println(event);
         }
     }
-    
+
 
 }
