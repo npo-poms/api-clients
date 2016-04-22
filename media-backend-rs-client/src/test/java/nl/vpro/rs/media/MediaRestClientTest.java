@@ -136,6 +136,25 @@ public class MediaRestClientTest {
 
 
     @Test
+    public void addMemberOfOtherBroadcasterBetterVersion() throws IOException {
+        WithId<GroupUpdate> group = sampleGroup("createMember", "VPRO");
+        System.out.println(group.id);
+
+        client.createMember(group.id, "EO_101205912", 1);
+
+    }
+
+
+    @Test
+    public void removeMemberOfOtherBroadcasterBetterVersion() throws IOException {
+        WithId<GroupUpdate> group = sampleGroup("createMember", "VPRO");
+        System.out.println(group.id);
+
+        client.removeMember(group.id, "EO_101205912", null);
+
+    }
+
+    @Test
     public void removeMemberOf() throws IOException {
         String groupCrid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest";
 

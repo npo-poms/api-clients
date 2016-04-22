@@ -319,7 +319,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void removeMember(String owner, String member, Integer number) {
         try {
-            getBackendRestService().removeMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors);
+            getBackendRestService().removeMemberOf("media", member, owner, number, followMerges, errors);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -337,7 +337,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void removeEpisode(String owner, String member, Integer number) {
         try {
-            getBackendRestService().removeEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors);
+            getBackendRestService().removeEpisodeOf(member, owner, number, followMerges, errors);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
