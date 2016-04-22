@@ -51,9 +51,16 @@ class MediaRestClientAspect implements InvocationHandler {
                     Object result = method.invoke(proxied, args);
                     if (result instanceof Response) {
                         Response response = (Response) result;
-                        if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-                            throw new ResponseError(response.getStatus(), response.getStatusInfo(), response.readEntity(String.class));
+                        if (response.getStatusInfo() == Response.Status.SERVICE_UNAVAILABLE) {
+                            String message = response.readEntity(String.class);
+                            // retry
+                            client.retryAfterWaitOrException(method.getName() + " " + message);
+                            continue;
                         }
+                        if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+                            throw new ResponseError(client.toString(), method, response.getStatus(), response.getStatusInfo(), response.readEntity(String.class));
+                        }
+
                     }
                     return result;
                 } catch (InvocationTargetException itc) {
@@ -63,6 +70,8 @@ class MediaRestClientAspect implements InvocationHandler {
                 return null;
             } catch (ServiceUnavailableException sue) {
                 client.retryAfterWaitOrException(method.getName() + ": Service unavailable");
+                // retry
+                continue;
             } catch (RuntimeException re) {
                 throw re;
             } catch (Exception e) {
