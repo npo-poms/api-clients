@@ -93,9 +93,5 @@
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>nl.vpro.shared</groupId>
-      <artifactId>shared-util</artifactId>
-    </dependency>
   </dependencies>
 </project>
