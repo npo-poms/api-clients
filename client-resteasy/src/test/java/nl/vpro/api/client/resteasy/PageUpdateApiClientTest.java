@@ -15,6 +15,7 @@ import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.update.LinkUpdate;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.domain.page.update.PageUpdateBuilder;
+import nl.vpro.domain.page.update.ParagraphUpdate;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +37,7 @@ public class PageUpdateApiClientTest {
     public void testSave() throws Exception {
         PageUpdateRestService client = clients.getPageUpdateRestService();
         PageUpdate instance = PageUpdateBuilder.article("http://www.meeuw.org/test/1234")
-            .title("my title")
+            .title("my title " + Instant.now())
             .broadcasters("VPRO").build();
         Response response = client.save(instance);
         if (response.getStatus() == 400) {
@@ -52,14 +53,18 @@ public class PageUpdateApiClientTest {
     @Test
     public void testSaveTopStory() throws Exception {
         PageUpdateRestService client = clients.getPageUpdateRestService();
-        PageUpdate instance = PageUpdateBuilder.article("http://www.meeuw.nl/test/topstory")
-            .title("supergoed, dit!")
-            .broadcasters("VPRO").build();
-        Response response = client.save(instance);
+        PageUpdate page = PageUpdateBuilder.article("http://www.meeuw.org/test/topstory")
+            .title("supergoed, dit! (" + Instant.now() + ")")
+            .paragraphs(ParagraphUpdate.of("paragraaf1", "bla bla, blie blie"), ParagraphUpdate.of("alinea 2", "bloe bloe"))
+            .broadcasters("VPRO")
+            .build();
+        JAXB.marshal(page, System.out);
+
+        Response response = client.save(page);
         if (response.getStatus() == 400) {
             ViolationReport report = response.readEntity(ViolationReport.class);
             JAXB.marshal(report, System.out);
-            JAXB.marshal(instance, System.out);
+            JAXB.marshal(page, System.out);
 
         }
         assertEquals(202, response.getStatus());
@@ -69,11 +74,11 @@ public class PageUpdateApiClientTest {
     @Test
     public void testSaveWithTopStory() throws Exception {
         PageUpdateRestService client = clients.getPageUpdateRestService();
-        PageUpdate page = PageUpdateBuilder.article("http://www.meeuw.nl/test/page_with_topstory")
+        PageUpdate page = PageUpdateBuilder.article("http://www.meeuw.org/test/page_with_topstory")
             .broadcasters("VPRO")
             .lastModified(Instant.now())
-            .title("Page with topstory")
-            .links(LinkUpdate.topStory("http://www.meeuw.nl/test/topstory", "heel goed artikel"))
+            .title("Page with topstory (" + Instant.now() + ")")
+            .links(LinkUpdate.topStory("http://www.meeuw.org/test/topstory", "heel goed artikel"))
             .build();
         Response response = client.save(page);
         JAXB.marshal(page, System.out);
@@ -92,6 +97,20 @@ public class PageUpdateApiClientTest {
     public void testDelete() throws Exception {
         PageUpdateRestService client = clients.getPageUpdateRestService();
         Response response = client.delete("http://www.meeuw.org/test/1234", false, 1);
+        if (response.getStatus() == 400) {
+            ViolationReport report = response.readEntity(ViolationReport.class);
+            JAXB.marshal(report, System.out);
+
+        }
+        assertEquals(202, response.getStatus());
+
+    }
+
+
+    @Test
+    public void testDeleteMultiple() throws Exception {
+        PageUpdateRestService client = clients.getPageUpdateRestService();
+        Response response = client.delete("http://www.meeuw.org/", true, 100);
         if (response.getStatus() == 400) {
             ViolationReport report = response.readEntity(ViolationReport.class);
             JAXB.marshal(report, System.out);

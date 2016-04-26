@@ -3,6 +3,7 @@ package nl.vpro.api.client.resteasy;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
@@ -68,6 +69,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     public static Builder configured(String... configFiles) throws IOException {
         PageUpdateApiClient.Builder builder = new PageUpdateApiClient.Builder();
+        LOG.info("Reading configuration from {}", Arrays.asList(configFiles));
         ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
