@@ -1,13 +1,13 @@
 package nl.vpro.api.client.resteasy;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.util.Arrays;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXB;
 
 import org.jboss.resteasy.api.validation.ViolationReport;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -22,16 +22,13 @@ import static org.junit.Assert.assertEquals;
 @Ignore("This required running server at publish-dev")
 public class PageUpdateApiClientTest {
 
-    private PageUpdateApiClient clients;
+    private static PageUpdateApiClient clients;
 
 
 
-    @Before
-    public void setUp() throws MalformedURLException {
-        clients = new PageUpdateApiClient(
-            "http://publish-test.pages.omroep.nl/",
-            "vpro-cms",
-            "***REMOVED***", 10000);
+    @BeforeClass
+    public static void setUp() throws IOException {
+        clients = PageUpdateApiClient.configured().build();
     }
 
     @Test
