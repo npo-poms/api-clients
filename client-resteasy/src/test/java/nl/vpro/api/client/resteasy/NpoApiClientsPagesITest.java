@@ -19,6 +19,7 @@ import nl.vpro.domain.api.FacetOrder;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.SearchResultItem;
 import nl.vpro.domain.api.page.*;
+import nl.vpro.domain.media.Schedule;
 import nl.vpro.domain.page.*;
 import nl.vpro.jackson2.Jackson2Mapper;
 
@@ -244,21 +245,28 @@ public class NpoApiClientsPagesITest {
 
 
     @Test
-    @Ignore("fails")
     public void testLastModified() throws JsonProcessingException {
-        PageForm form =
-            PageFormBuilder.form()
-                .addSortField(PageSortField.lastModified, Order.ASC)
-                .build();
-        LOG.info(Jackson2Mapper.getLenientInstance().writeValueAsString(form));
+        String[] profiles = {null, "cultura", "woord", "vpro"};
 
-        PageSearchResult result = clients.getPageService().find(form, null, null, 0L, 5);
-        Instant prev = Instant.MIN;
-        for (SearchResultItem<? extends Page> r : result) {
-            Instant lastModified = r.getResult().getLastModified();
-            System.out.println(lastModified);
-            assertThat(prev.isBefore(lastModified) || prev.equals(lastModified)).isTrue();
-            prev = lastModified;
+        for (String profile : profiles) {
+            PageForm form =
+                PageFormBuilder.form()
+                    .addSortField(PageSortField.lastModified, Order.DESC)
+                    .build();
+            LOG.info(Jackson2Mapper.getLenientInstance().writeValueAsString(form));
+
+            PageSearchResult result = clients.getPageService().find(form, profile, null, 0L, 5);
+            Instant prev = Instant.MAX;
+            for (SearchResultItem<? extends Page> r : result) {
+                Instant lastModified = r.getResult().getLastModified();
+                if (lastModified == null){
+                    LOG.warn(r.getResult() + ": NULL");
+                    continue;
+                }
+                LOG.info(r.getResult().getUrl() + ":" + lastModified.atZone(Schedule.ZONE_ID));
+                assertThat(prev.isAfter(lastModified) || prev.equals(lastModified)).isTrue();
+                prev = lastModified;
+            }
         }
     }
 /*
