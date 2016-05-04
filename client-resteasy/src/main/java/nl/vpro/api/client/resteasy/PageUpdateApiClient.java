@@ -75,7 +75,10 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
     public static Builder configured() throws IOException {
-        return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "pageupdateapiclient.properties");
+        return configured(
+            System.getProperty("user.home") + 
+            File.separator + "conf" + 
+            File.separator + "pageupdateapiclient.properties");
     }
 
     public PageUpdateRestService getPageUpdateRestService() {

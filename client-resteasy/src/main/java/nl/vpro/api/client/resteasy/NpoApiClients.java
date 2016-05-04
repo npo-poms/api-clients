@@ -177,7 +177,7 @@ public class NpoApiClients extends AbstractApiClient {
 
     public static class Builder {
 
-        private String apiBaseUrl;
+        private String apiBaseUrl = "http://rs.poms.omroep.nl/v1/";
         private String apiKey;
         private String secret;
         private String origin;
