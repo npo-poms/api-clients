@@ -3,6 +3,7 @@ package nl.vpro.rs.media;
 import java.io.IOException;
 import java.time.Instant;
 
+import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXB;
 
 import org.junit.Before;
@@ -105,40 +106,76 @@ public class MediaRestClientTest {
 
     @Test
     public void addMemberOf() {
-        String groupCrid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest";
-        MediaBuilder.GroupBuilder group = MediaBuilder.group(GroupType.COLLECTION)
-            .crids(groupCrid)
-            .avType(AVType.MIXED)
-            .broadcasters("VPRO")
-            .mainTitle("Deze group gebruiken we in een junit test");
-        GroupUpdate groupUpdate = GroupUpdate.create(group);
-        String groupMid = client.set(groupUpdate);
-        System.out.println("Found group " + groupMid);
+        WithId<GroupUpdate> group = sampleGroup("addMemberOf", "VPRO");
 
-        MediaBuilder.ProgramBuilder program = MediaBuilder.program(ProgramType.CLIP)
-            .avType(AVType.AUDIO)
-            .broadcasters("VPRO")
-            .mainTitle("Test " + Instant.now());
-        ProgramUpdate update = ProgramUpdate.create(program);
-
-        update.getMemberOf().add(new MemberRefUpdate(1, groupCrid));
+        ProgramUpdate update = sampleProgram("addMemberOf").update;
+        update.getMemberOf().add(new MemberRefUpdate(1, group.id));
         String mid = client.set(update);
         System.out.println("Created " + mid);
+    }
 
+    @Test
+    public void addMemberOfOtherBroadcaster() {
+        WithId<GroupUpdate> group = sampleGroup("addMemberOfDisallowed", "VPRO");
+
+        ProgramUpdate update = client.get("EO_101205912");
+        update.getMemberOf().add(new MemberRefUpdate(1, group.id));
+        String mid = client.set(update);
+        System.out.println("Created " + mid);
+    }
+
+    @Test
+    public void addMemberOfOtherBroadcasterWorkingVersion() throws IOException {
+        WithId<GroupUpdate> group = sampleGroup("addMemberOfDisallowed", "VPRO");
+        System.out.println(group.id);
+        ProgramUpdate update = client.get("EO_101205912");
+        update.getMemberOf().add(new MemberRefUpdate(1, group.id));
+        Response response = client.getBackendRestService().addMemberOf(new MemberRefUpdate(1, "POMS_S_VPRO_1421920"/*owner*/), null,  update.getMid()/*member*/, true, null);
+        System.out.println("Created " + response.getEntity());
+    }
+
+
+    @Test
+    public void addMemberOfOtherBroadcasterBetterVersion() throws IOException {
+        WithId<GroupUpdate> group = sampleGroup("createMember", "VPRO");
+        System.out.println(group.id);
+
+        client.createMember(group.id, "EO_101205912", 1);
+
+    }
+
+
+    @Test
+    public void removeMemberOfOtherBroadcasterBetterVersion() throws IOException {
+        WithId<GroupUpdate> group = sampleGroup("createMember", "VPRO");
+        System.out.println(group.id);
+
+        client.removeMember(group.id, "EO_101205912", null);
 
     }
 
     @Test
-    public void removeMemberOf() {
+    public void removeMemberOf() throws IOException {
         String groupCrid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest";
 
         GroupUpdate groupUpdate = client.get(groupCrid);
         Iterable<MemberUpdate> members = client.getGroupMembers(groupCrid);
 
+
+
         for (MemberUpdate member : members) {
             MediaUpdate<?> update = member.getMediaUpdate();
-            update.getMemberOf().removeIf(m -> m.getMediaRef().equals(groupUpdate.getMid()));
-            client.set(update);
+            for (MemberRefUpdate r : update.getMemberOf()) {
+                if (r.getMediaRef().equals(groupUpdate.getMid())) {
+
+                    JAXB.marshal(r, System.out);
+                    //r.setMediaRef(null);
+                    System.out.println("" + groupUpdate + "->" + r.getMediaRef());
+                    client.getBackendRestService().addMemberOf(r, null, groupUpdate.getMid(), true, null);
+                }
+            }
+            //update.getMemberOf().removeIf(m -> m.getMediaRef().equals(groupUpdate.getMid()));
+
             System.out.println("Removed " + update.getMid() + " from group");
             break;
         }
@@ -183,6 +220,7 @@ public class MediaRestClientTest {
     public void copyLocations2() throws IOException {
 
         ProgramUpdate existing = client.get("POMS_VARA_256131");
+
         existing.setLocations(client.get("POMS_VPRO_1419526").getLocations());
 
         for (TitleUpdate o : existing.getTitles()) {
@@ -194,6 +232,7 @@ public class MediaRestClientTest {
 
         JAXB.marshal(existing, System.out);
         System.out.println(client.set(existing));
+
     }
 
     @Test
@@ -278,8 +317,10 @@ public class MediaRestClientTest {
 
     @Test
     public void testGetGroup() {
-        GroupUpdate group = client.getGroup("POMS_S_VPRO_1416538");
+        GroupUpdate group = client.getGroup("TELEA_1051096");
+
         JAXB.marshal(group, System.out);
+
     }
 
     @Test
@@ -295,17 +336,36 @@ public class MediaRestClientTest {
         System.out.println(sample.id);
     }
 
-    protected WithId<ProgramUpdate> sampleProgram(String test) {
-        String crid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest/" + test;
+
+
+    protected WithId<ProgramUpdate> sampleProgram(String test, String... broadcasters) {
+        String crid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest/program/" + test;
+        if (broadcasters.length == 0) {
+            broadcasters = new String[] {"VPRO"};
+        }
         MediaBuilder.ProgramBuilder program = MediaBuilder.program(ProgramType.CLIP)
             .crids(crid)
             .avType(AVType.MIXED)
-            .broadcasters("VPRO")
+            .broadcasters(broadcasters)
             .mainTitle("Deze clip gebruiken we in een junit test");
         ProgramUpdate programUpdate = ProgramUpdate.create(program);
         String programMid = client.set(programUpdate);
         System.out.println("" + crid + " ->  " + programMid);
         return new WithId<>(programUpdate, programMid);
+
+    }
+
+    protected WithId<GroupUpdate> sampleGroup(String cridPostFix, String broadcaster) {
+        String groupCrid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest/group/" + cridPostFix;
+        MediaBuilder.GroupBuilder group = MediaBuilder.group(GroupType.COLLECTION)
+            .crids(groupCrid)
+            .avType(AVType.MIXED)
+            .broadcasters(broadcaster)
+            .mainTitle("Deze group gebruiken we in een junit test");
+        GroupUpdate groupUpdate = GroupUpdate.create(group);
+        String groupMid = client.set(groupUpdate);
+        System.out.println("" + groupCrid + " ->  " + groupMid);
+        return new WithId<>(groupUpdate, groupMid);
 
     }
 

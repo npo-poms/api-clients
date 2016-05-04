@@ -3,8 +3,6 @@ package nl.vpro.rs.media;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -33,6 +31,7 @@ import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaListItem;
 import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
+import nl.vpro.util.ReflectionUtils;
 
 /**
  * A client for RESTful calls to a running MediaBackendRestService.
@@ -120,16 +119,8 @@ public class MediaRestClient extends AbstractApiClient {
 	protected boolean lookupCrids = true;
 
 
-    public MediaRestClient configured(String configFile) throws IOException {
-        Properties properties = new Properties();
-        File file = new File(configFile);
-        if (! file.canRead()) {
-            LOG.info("The file {} cannot be read", file);
-        } else {
-            LOG.info("Reading properties from {}", file);
-            properties.load(new FileInputStream(file));
-            properties.forEach(this::setProperty);
-        }
+    public MediaRestClient configured(String... configFiles) throws IOException {
+        ReflectionUtils.configured(this, configFiles);
         return this;
     }
 
@@ -137,41 +128,21 @@ public class MediaRestClient extends AbstractApiClient {
      * Read configuration from a config file in ${user.home}/conf/mediarestclient.properties
      */
     public MediaRestClient configured() throws IOException {
-        return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "mediarestclient.properties");
-
-    }
-    protected void setProperty(Object key, Object value)  {
-        Method[] methods = this.getClass().getMethods();
-        String k = (String) key;
-        String v = (String) value;
-        String setter = "set" + Character.toUpperCase(k.charAt(0)) + k.substring(1);
-        for (Method m : methods) {
-            if (m.getName().equals(setter) && m.getParameterCount() == 1) {
-                try {
-                    Class<?> parameterClass = m.getParameters()[0].getType();
-                    if (String.class.isAssignableFrom(parameterClass)) {
-                        m.invoke(this, v);
-                    } else if (boolean.class.isAssignableFrom(parameterClass)) {
-                        m.invoke(this, Boolean.valueOf(v));
-                    } else if (int.class.isAssignableFrom(parameterClass)) {
-                        m.invoke(this, Integer.valueOf(v));
-                    } else if (double.class.isAssignableFrom(parameterClass)) {
-                        m.invoke(this, Double.valueOf(v));
-                    } else {
-                        LOG.warn("Unrecognized parameter type");
-                        continue;
-                    }
-                    LOG.debug("Set {} from config file", key);
-                    return;
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    LOG.error(e.getMessage(), e);
-                }
+        configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "mediarestclient.properties");
+        File credsFile = new File(System.getProperty("user.home") + File.separator + "conf" + File.separator + "creds.properties");
+        if (credsFile.canRead()) {
+            Properties creds = new Properties();
+            creds.load(new FileInputStream(credsFile));
+            if (creds.contains("user")) {
+                setUserNamePassword(creds.getProperty("user"));
             }
 
         }
+        return this;
 
-        LOG.error("Unrecognized property {}", key);
+
     }
+
 
 
 
@@ -189,6 +160,14 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setUserNamePassword(String semicolonSeperated) {
+        String[] userNamePassword = semicolonSeperated.split(":", 2);
+        setUserName(userNamePassword[0]);
+        if (userNamePassword.length == 2) {
+            setPassword(userNamePassword[1]);
+        }
     }
 
     public String getUrl() {
@@ -328,6 +307,40 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void  addLocationToGroup(LocationUpdate location, String groupId) {
         addLocation(Type.GROUP, location, groupId);
+    }
+
+    public void createMember(String owner, String member, Integer number) {
+        try {
+            getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void removeMember(String owner, String member, Integer number) {
+        try {
+            getBackendRestService().removeMemberOf("media", member, owner, number, followMerges, errors);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void createEpisode(String owner, String member, Integer number) {
+        try {
+            getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void removeEpisode(String owner, String member, Integer number) {
+        try {
+            getBackendRestService().removeEpisodeOf(member, owner, number, followMerges, errors);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected String set(final Type type, final MediaUpdate update) {

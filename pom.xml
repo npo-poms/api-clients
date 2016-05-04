@@ -28,6 +28,7 @@
   </scm>
 
   <properties>
+    <pages.version>4.3.8</pages.version>
   </properties>
 
   <dependencyManagement>

@@ -1,10 +1,12 @@
 package nl.vpro.api.client.resteasy;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Proxy;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
-
-import java.lang.reflect.Proxy;
 
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -16,11 +18,11 @@ import org.slf4j.LoggerFactory;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
-
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
 import nl.vpro.resteasy.JacksonContextResolver;
 import nl.vpro.util.LeaveDefaultsProxyHandler;
+import nl.vpro.util.ReflectionUtils;
 
 @Named
 public class NpoApiClients extends AbstractApiClient {
@@ -56,7 +58,6 @@ public class NpoApiClients extends AbstractApiClient {
 		super(connectionTimeout, 16, 3);
         this.authentication = new ApiAuthenticationRequestFilter(apiKey, secret, origin);
         baseUrl = apiBaseUrl + "api";
-
         mediaRestServiceProxy =
             build(clientHttpEngine, MediaRestService.class);
 
@@ -67,11 +68,12 @@ public class NpoApiClients extends AbstractApiClient {
             build(clientHttpEngine, ScheduleRestServiceWithDefaults.class, ScheduleRestService.class);
 
 
-        pageRestServiceProxy  =
+        pageRestServiceProxy =
             build(clientHttpEngine, PageRestService.class);
 
         profileRestServiceProxy =
             build(clientHttpEngine, ProfileRestService.class);
+
 
     }
 
@@ -82,6 +84,17 @@ public class NpoApiClients extends AbstractApiClient {
         String origin
     ) {
         this(apiBaseUrl, apiKey, secret, origin, 10);
+    }
+
+
+    public static Builder configured(String... configFiles) throws IOException {
+        Builder builder = new Builder();
+        ReflectionUtils.configured(builder, configFiles);
+        return builder;
+    }
+
+    public static Builder configured() throws IOException {
+        return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "apiclient.properties");
     }
 
 
@@ -122,7 +135,7 @@ public class NpoApiClients extends AbstractApiClient {
 		return super.toString() + " " + baseUrl;
 	}
 
-    private <T, S> T build(ClientHttpEngine engine, Class<T> service, Class<S> restEasyService) { 
+    private <T, S> T build(ClientHttpEngine engine, Class<T> service, Class<S> restEasyService) {
         T proxy;
         if (restEasyService == null) {
             proxy = builderResteasy(engine, service);
@@ -131,7 +144,7 @@ public class NpoApiClients extends AbstractApiClient {
             proxy = (T) Proxy.newProxyInstance(NpoApiClients.class.getClassLoader(),
                 new Class[]{restEasyService, service}, new LeaveDefaultsProxyHandler(resteasy));
         }
-            
+
         return
             ErrorAspect.proxyErrors(
                 LOG,
@@ -143,7 +156,7 @@ public class NpoApiClients extends AbstractApiClient {
     private <T> T build(ClientHttpEngine engine, Class<T> service) {
         return build(engine, service, null);
     }
-    
+
     private <T> T builderResteasy(ClientHttpEngine engine, Class<T> service) {
         return getTarget(engine)
             .proxyBuilder(service)
@@ -160,6 +173,64 @@ public class NpoApiClients extends AbstractApiClient {
                 .register(JacksonContextResolver.class)
                 .build();
         return client.target(baseUrl);
+    }
+
+    public static class Builder {
+
+        private String apiBaseUrl;
+        private String apiKey;
+        private String secret;
+        private String origin;
+        private Integer connectionTimeout = 10000;
+
+        public NpoApiClients build() {
+            return new NpoApiClients(apiBaseUrl, apiKey, secret, origin, connectionTimeout);
+        }
+
+        public String getApiBaseUrl() {
+            return apiBaseUrl;
+        }
+
+        public Builder setApiBaseUrl(String apiBaseUrl) {
+            this.apiBaseUrl = apiBaseUrl;
+            return this;
+        }
+
+        public String getApiKey() {
+            return apiKey;
+        }
+
+        public Builder setApiKey(String apiKey) {
+            this.apiKey = apiKey;
+            return this;
+        }
+
+        public String getSecret() {
+            return secret;
+        }
+
+        public Builder setSecret(String secret) {
+            this.secret = secret;
+            return this;
+        }
+
+        public String getOrigin() {
+            return origin;
+        }
+
+        public Builder setOrigin(String origin) {
+            this.origin = origin;
+            return this;
+        }
+
+        public Integer getConnectionTimeout() {
+            return connectionTimeout;
+        }
+
+        public Builder setConnectionTimeout(Integer connectionTimeout) {
+            this.connectionTimeout = connectionTimeout;
+            return this;
+        }
     }
 
 }

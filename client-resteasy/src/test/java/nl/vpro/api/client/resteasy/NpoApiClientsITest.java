@@ -51,25 +51,13 @@ public class NpoApiClientsITest {
     //private String target = "http://localhost:8070/v1/";
 
     @Before
-    public void setUp() {
-        clients = new NpoApiClients(
-            target,
-            "ione7ahfij",
-            "***REMOVED***",
-            "http://www.vpro.nl",
-            10000
-        );
+    public void setUp() throws IOException {
+        clients = NpoApiClients.configured().setApiBaseUrl(target).build();
     }
 
     @Test(expected = NotAuthorizedException.class)
     public void testAccessForbidden() throws Exception {
-        NpoApiClients wrongPassword = new NpoApiClients(
-            target,
-            "ione7ahfij",
-            "WRONG_PASSWORD",
-            "http://www.vpro.nl",
-            10000
-        );
+        NpoApiClients wrongPassword = NpoApiClients.configured().setSecret("WRONG PASSWORD").build();
 
         wrongPassword.getMediaService().list(null, null, null, null);
     }
@@ -133,13 +121,13 @@ public class NpoApiClientsITest {
 
     @Test
     public void testChanges() throws IOException {
-        InputStream response = clients.getMediaService().changes("vpro", null, 0l, null, 10, null, null);
+        InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, 10, null, null);
         IOUtils.copy(response, System.out);
     }
 
     @Test(expected = NotFoundException.class)
     public void testChangesError() throws IOException {
-        clients.getMediaService().changes("no profile", null, -1l, "ASC", 100, null, null);
+        clients.getMediaService().changes("no profile", null, -1L, "ASC", 100, null, null);
     }
 
 
@@ -215,6 +203,6 @@ public class NpoApiClientsITest {
             System.out.println(event);
         }
     }
-    
+
 
 }
