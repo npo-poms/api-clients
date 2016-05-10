@@ -1,6 +1,7 @@
 package nl.vpro.rs.media;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 
 import javax.ws.rs.core.Response;
@@ -336,6 +337,20 @@ public class MediaRestClientTest {
         System.out.println(sample.id);
     }
 
+    @Test
+    public void testCreateSegment() {
+        WithId<SegmentUpdate> sample = sampleSegment("createSegment");
+
+        System.out.println(sample.id);
+    }
+
+    @Test
+    public void testCreateProgram() {
+        WithId<ProgramUpdate> sample = sampleProgram("createProgram");
+
+        System.out.println(sample.id);
+    }
+
 
 
     protected WithId<ProgramUpdate> sampleProgram(String test, String... broadcasters) {
@@ -352,6 +367,23 @@ public class MediaRestClientTest {
         String programMid = client.set(programUpdate);
         System.out.println("" + crid + " ->  " + programMid);
         return new WithId<>(programUpdate, programMid);
+
+    }
+
+
+    protected WithId<SegmentUpdate> sampleSegment(String test) {
+        String crid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest/segment/" + test;
+        MediaBuilder.SegmentBuilder segment = MediaBuilder.segment()
+            .crids(crid)
+            .broadcasters("VPRO")
+            .start(Duration.ofMillis(0))
+            .avType(AVType.MIXED)
+            .mainTitle("Dit segment gebruiken we in een junit test");
+        SegmentUpdate segmentUpdate = SegmentUpdate.create(segment);
+        segmentUpdate.setMidRef("WO_VPRO_783763");
+        String segmentMid = client.set(segmentUpdate);
+        System.out.println("" + crid + " ->  " + segmentMid);
+        return new WithId<>(segmentUpdate, segmentMid);
 
     }
 
