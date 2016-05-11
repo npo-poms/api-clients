@@ -177,12 +177,12 @@ public class MediaRestClientTest {
                     JAXB.marshal(r, System.out);
                     //r.setMediaRef(null);
                     System.out.println("" + groupUpdate + "->" + r.getMediaRef());
-                    client.getBackendRestService().addMemberOf(r, null, groupUpdate.getMid(), true, null);
+                    client.getBackendRestService().removeMemberOf(null, r.getMediaRef(), groupUpdate.getMid(), null, true, null);
                 }
             }
             //update.getMemberOf().removeIf(m -> m.getMediaRef().equals(groupUpdate.getMid()));
 
-            System.out.println("Removed " + update.getMid() + " from group");
+            System.out.println("Removed " + update.getMid() + " from group " + groupUpdate.getMid());
             break;
         }
     }
