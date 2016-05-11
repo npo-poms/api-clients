@@ -6,11 +6,13 @@
       <param name="ConversionPattern" value="%d %p %C %M.%L %m%n"/>
     </layout>
   </appender>
-  
-  <logger name="nl.vpro">
-    <level value="DEBUG" />
-  </logger>
 
+  <logger name="nl.vpro">
+    <level value="INFO" />
+  </logger>
+  <logger name="nl.vpro.util.ReflectionUtils">
+    <level value="INFO" />
+  </logger>
   <root>
     <level value="INFO"/>
     <appender-ref ref="stdout"/>

@@ -34,7 +34,7 @@ public class MediaRestClientTest {
 
     @Before
     public void setUp() throws IOException {
-        client = new MediaRestClient().configured();
+        client = new MediaRestClient().configured("test");
         client.setWaitForRetry(true);
 
     }
@@ -339,7 +339,7 @@ public class MediaRestClientTest {
 
     @Test
     public void testCreateSegment() {
-        WithId<SegmentUpdate> sample = sampleSegment("createSegment");
+        WithId<SegmentUpdate> sample = sampleSegment("createSegment/" + System.currentTimeMillis());
 
         System.out.println(sample.id);
     }
@@ -362,7 +362,9 @@ public class MediaRestClientTest {
             .crids(crid)
             .avType(AVType.MIXED)
             .broadcasters(broadcasters)
-            .mainTitle("Deze clip gebruiken we in een junit test");
+            .mainTitle("Deze clip gebruiken we in een junit test")
+            .mainDescription(String.valueOf(Instant.now()))
+            ;
         ProgramUpdate programUpdate = ProgramUpdate.create(program);
         String programMid = client.set(programUpdate);
         System.out.println("" + crid + " ->  " + programMid);
@@ -378,7 +380,9 @@ public class MediaRestClientTest {
             .broadcasters("VPRO")
             .start(Duration.ofMillis(0))
             .avType(AVType.MIXED)
-            .mainTitle("Dit segment gebruiken we in een junit test");
+            .mainTitle("Dit segment gebruiken we in een junit test")
+            .mainDescription(String.valueOf(Instant.now()))
+            ;
         SegmentUpdate segmentUpdate = SegmentUpdate.create(segment);
         segmentUpdate.setMidRef("WO_VPRO_783763");
         String segmentMid = client.set(segmentUpdate);
@@ -393,7 +397,9 @@ public class MediaRestClientTest {
             .crids(groupCrid)
             .avType(AVType.MIXED)
             .broadcasters(broadcaster)
-            .mainTitle("Deze group gebruiken we in een junit test");
+            .mainTitle("Deze group gebruiken we in een junit test")
+            .mainDescription(String.valueOf(Instant.now()))
+            ;
         GroupUpdate groupUpdate = GroupUpdate.create(group);
         String groupMid = client.set(groupUpdate);
         System.out.println("" + groupCrid + " ->  " + groupMid);

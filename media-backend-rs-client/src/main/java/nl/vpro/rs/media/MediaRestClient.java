@@ -119,16 +119,16 @@ public class MediaRestClient extends AbstractApiClient {
 	protected boolean lookupCrids = true;
 
 
-    public MediaRestClient configured(String... configFiles) throws IOException {
-        ReflectionUtils.configured(this, configFiles);
+    public MediaRestClient configured(String env, String... configFiles) throws IOException {
+        ReflectionUtils.configured(env, this, configFiles);
         return this;
     }
 
     /**
      * Read configuration from a config file in ${user.home}/conf/mediarestclient.properties
      */
-    public MediaRestClient configured() throws IOException {
-        configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "mediarestclient.properties");
+    public MediaRestClient configured(String env) throws IOException {
+        configured(env, "classpath:/mediarestclient.properties", System.getProperty("user.home") + File.separator + "conf" + File.separator + "mediarestclient.properties");
         File credsFile = new File(System.getProperty("user.home") + File.separator + "conf" + File.separator + "creds.properties");
         if (credsFile.canRead()) {
             Properties creds = new Properties();
@@ -136,15 +136,13 @@ public class MediaRestClient extends AbstractApiClient {
             if (creds.contains("user")) {
                 setUserNamePassword(creds.getProperty("user"));
             }
-
         }
         return this;
-
-
     }
 
-
-
+    public MediaRestClient configured() throws IOException {
+        return configured(null);
+    }
 
     public String getUserName() {
         return userName;
