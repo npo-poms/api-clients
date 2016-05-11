@@ -6,10 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXB;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nl.vpro.domain.media.update.GroupUpdate;
+import nl.vpro.domain.media.update.MediaUpdate;
 import nl.vpro.domain.media.update.ProgramUpdate;
 import nl.vpro.domain.media.update.SegmentUpdate;
 import nl.vpro.rs.media.MediaRestClient;
@@ -20,6 +25,16 @@ import nl.vpro.rs.media.MediaRestClient;
 public class Cleanup {
 
     private static final Logger LOG = LoggerFactory.getLogger(Cleanup.class);
+
+    private static Unmarshaller UNMARSHAL;
+    static {
+        try {
+            UNMARSHAL = JAXBContext.newInstance(SegmentUpdate.class, ProgramUpdate.class, GroupUpdate.class).createUnmarshaller();
+        } catch (JAXBException e) {
+            LOG.error(e.getMessage(), e);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         MediaRestClient client = new MediaRestClient().configured("prod");
 
@@ -54,29 +69,62 @@ public class Cleanup {
                     if (split.length < 7) {
                         continue;
                     }
+                    if ("400".equals(split[6])) {
+                        continue;
+                    }
+                    if ("202".equals(split[6])) {
+                        continue;
+                    }
+                    if ("200".equals(split[6])) {
+                        continue;
+                    }
                     xml += split[6];
-                    SegmentUpdate segment;
+                    if (! xml.endsWith(">")) {
+                        continue;
+                    }
+                    MediaUpdate media;
                     try {
-                        segment = JAXB.unmarshal(new StringReader(xml), SegmentUpdate.class);
+                        media = (MediaUpdate) UNMARSHAL.unmarshal(new StringReader(xml));
                     } catch (Exception ue) {
+                        LOG.error(xml + "\n" + ue.getMessage());
+                        xml = "";
+                        continue;
+                    }
+                    xml = "";
+                    LOG.debug("{}", media);
+                    if (! (media instanceof SegmentUpdate)) {
                         continue;
 
+                    }
+                    SegmentUpdate segment = (SegmentUpdate) media;
+
+                    if (segment.getMid() == null) {
+                        boolean matched = false;
+                        ProgramUpdate parent = client.getProgram(segment.getMidRef());
+
+                        for (SegmentUpdate segmentUpdate : parent.getSegments()) {
+                            if (segmentUpdate.getStart().equals(segment.getStart())) {
+                                matched = true;
+                                segment.setMid(segmentUpdate.getMid());
+                            }
+                        }
+                        if (!matched) {
+                            LOG.info("Not found {}", segment);
+                            continue;
+                        }
                     }
 
                     if (!midsToFix.contains(segment.getMid())) {
+                        LOG.info("No need to fix {}", segment);
                         continue;
                     }
-                    System.out.println(segment.getMidRef() + " " + Duration.ofMillis(segment.getStart().getTime()) + " " + segment.getTitles());
-                    xml = "";
-                    ProgramUpdate parent = client.getProgram(segment.getMidRef());
-                    boolean matched = false;
-                    for (SegmentUpdate segmentUpdate : parent.getSegments()) {
-                        if (segmentUpdate.getStart().equals(segment.getStart())) {
-                            matched = true;
-                            LOG.info("Matched " + segmentUpdate);
-                            midsToFix.remove(segmentUpdate.getMid());
-                        }
-                    }
+                    LOG.info(segment.getMidRef() + " " + Duration.ofMillis(segment.getStart().getTime()) + " " + segment.getTitles());
+                    File dir = new File("/tmp/mse3162/" + segment.getBroadcasters().get(0));
+                    dir.mkdirs();
+                    File create = new File(dir, segment.getMid() + ".xml");
+                    JAXB.marshal(segment, create);
+                    LOG.info("Created {}", create);
+                    midsToFix.remove(segment.getMid());
                 } finally {
                     line = buffered.readLine();
                 }
@@ -88,6 +136,7 @@ public class Cleanup {
 
         }
         LOG.info("Unhandled mids " + midsToFix + " " + midsToFix.size());
+        LOG.info("READY");
 
     }
 
