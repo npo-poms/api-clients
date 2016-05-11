@@ -14,6 +14,7 @@
     <dependency>
       <groupId>nl.vpro.api-client</groupId>
       <artifactId>media-backend-rs-client</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

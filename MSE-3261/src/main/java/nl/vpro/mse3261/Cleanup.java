@@ -21,7 +21,7 @@ public class Cleanup {
 
     private static final Logger LOG = LoggerFactory.getLogger(Cleanup.class);
     public static void main(String[] args) throws IOException {
-        MediaRestClient client = new MediaRestClient().configured();
+        MediaRestClient client = new MediaRestClient().configured("prod");
 
         List<String> midsToFix = new ArrayList<>();
         File errorneous = new File("/tmp/segmentswithoutittle.txt");
@@ -43,23 +43,31 @@ public class Cleanup {
             BufferedReader buffered = new BufferedReader(reader);
         ) {
             String line = buffered.readLine();
+            String xml = "";
             while (line != null) {
-                String xml = line.split("\\s+", 7)[6];
                 try {
+                    String[] split = line.split("\\s+", 7);
+                    String method = split[4];
+                    if (! "POST".equals(method)) {
+                        continue;
+                    }
+                    if (split.length < 7) {
+                        continue;
+                    }
+                    xml += split[6];
                     SegmentUpdate segment;
                     try {
                         segment = JAXB.unmarshal(new StringReader(xml), SegmentUpdate.class);
-
-                        if (! midsToFix.contains(segment.getMid())) {
-                            continue;
-                        }
-                        System.out.println(segment.getMidRef() + " " + Duration.ofMillis(segment.getStart().getTime()) + " " + segment.getTitles());
-
                     } catch (Exception ue) {
-                        LOG.error(line + " " + ue.getMessage());
                         continue;
 
                     }
+
+                    if (!midsToFix.contains(segment.getMid())) {
+                        continue;
+                    }
+                    System.out.println(segment.getMidRef() + " " + Duration.ofMillis(segment.getStart().getTime()) + " " + segment.getTitles());
+                    xml = "";
                     ProgramUpdate parent = client.getProgram(segment.getMidRef());
                     boolean matched = false;
                     for (SegmentUpdate segmentUpdate : parent.getSegments()) {
