@@ -7,6 +7,7 @@ import java.time.Instant;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXB;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,6 +38,10 @@ public class MediaRestClientTest {
         client = new MediaRestClient().configured("test");
         client.setWaitForRetry(true);
 
+    }
+    @After
+    public void shutdown() {
+        client.shutdown();
     }
 
     @Test

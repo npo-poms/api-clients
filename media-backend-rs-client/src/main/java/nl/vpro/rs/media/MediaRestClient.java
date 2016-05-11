@@ -207,6 +207,9 @@ public class MediaRestClient extends AbstractApiClient {
 
 
     private ResteasyWebTarget newWebClient() {
+        if (userName == null || password == null) {
+            throw new IllegalStateException("User name (" + userName + ") and password (" + password + ") should both be non null");
+        }
         ResteasyClient client =
             new ResteasyClientBuilder()
                 .httpEngine(clientHttpEngine)
