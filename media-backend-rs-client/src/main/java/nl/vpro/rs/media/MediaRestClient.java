@@ -31,6 +31,7 @@ import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaListItem;
 import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
+import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
 
 /**
@@ -70,6 +71,8 @@ import nl.vpro.util.ReflectionUtils;
 public class MediaRestClient extends AbstractApiClient {
 
     private static Logger LOG = LoggerFactory.getLogger(MediaRestClient.class);
+
+
 
     private int defaultMax = 50;
 
@@ -119,7 +122,7 @@ public class MediaRestClient extends AbstractApiClient {
 	protected boolean lookupCrids = true;
 
 
-    public MediaRestClient configured(String env, String... configFiles) throws IOException {
+    public MediaRestClient configured(Env env, String... configFiles) throws IOException {
         ReflectionUtils.configured(env, this, configFiles);
         return this;
     }
@@ -127,7 +130,7 @@ public class MediaRestClient extends AbstractApiClient {
     /**
      * Read configuration from a config file in ${user.home}/conf/mediarestclient.properties
      */
-    public MediaRestClient configured(String env) throws IOException {
+    public MediaRestClient configured(Env env) throws IOException {
         configured(env, "classpath:/mediarestclient.properties", System.getProperty("user.home") + File.separator + "conf" + File.separator + "mediarestclient.properties");
         File credsFile = new File(System.getProperty("user.home") + File.separator + "conf" + File.separator + "creds.properties");
         if (credsFile.canRead()) {

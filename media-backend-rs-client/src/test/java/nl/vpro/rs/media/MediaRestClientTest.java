@@ -21,6 +21,7 @@ import nl.vpro.domain.media.search.TitleForm;
 import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
 import nl.vpro.domain.media.update.*;
+import nl.vpro.util.Env;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -35,7 +36,7 @@ public class MediaRestClientTest {
 
     @Before
     public void setUp() throws IOException {
-        client = new MediaRestClient().configured("prod");
+        client = new MediaRestClient().configured(Env.LOCALHOST);
         client.setWaitForRetry(true);
 
     }
@@ -344,11 +345,18 @@ public class MediaRestClientTest {
 
     @Test
     public void testCreateSegment() {
-        WithId<SegmentUpdate> sample = sampleSegment("createSegment/" + System.currentTimeMillis());
+        WithId<SegmentUpdate> sample = sampleSegment("createSegment/" + System.currentTimeMillis(), null);
 
         System.out.println(sample.id);
     }
 
+
+    @Test
+    public void testUpdateSegment() {
+        WithId<SegmentUpdate> sample = sampleSegment("createSegment/" + System.currentTimeMillis(), "POMS_VPRO_1424050");
+
+        System.out.println(sample.id);
+    }
     @Test
     public void testCreateProgram() {
         WithId<ProgramUpdate> sample = sampleProgram("createProgram/" + System.currentTimeMillis());
@@ -386,15 +394,17 @@ public class MediaRestClientTest {
     }
 
 
-    protected WithId<SegmentUpdate> sampleSegment(String test) {
+    protected WithId<SegmentUpdate> sampleSegment(String test, String mid) {
         String crid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest/segment/" + test;
         MediaBuilder.SegmentBuilder segment = MediaBuilder.segment()
             .crids(crid)
+            .mid(mid)
             .broadcasters("VPRO")
             .start(Duration.ofMillis(0))
             .avType(AVType.MIXED)
             .mainTitle("Dit segment gebruiken we in een junit test")
             .mainDescription(String.valueOf(Instant.now()))
+            .persons(new Person("Pietje", "Puk", RoleType.UNDEFINED), new Person("Michiel", "Meeuwissen", RoleType.UNDEFINED))
             ;
         SegmentUpdate segmentUpdate = SegmentUpdate.create(segment);
         segmentUpdate.setMidRef("WO_VPRO_783763");
