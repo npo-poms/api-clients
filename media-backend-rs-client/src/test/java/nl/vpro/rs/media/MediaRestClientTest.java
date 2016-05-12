@@ -35,7 +35,7 @@ public class MediaRestClientTest {
 
     @Before
     public void setUp() throws IOException {
-        client = new MediaRestClient().configured("test");
+        client = new MediaRestClient().configured("prod");
         client.setWaitForRetry(true);
 
     }
@@ -351,11 +351,18 @@ public class MediaRestClientTest {
 
     @Test
     public void testCreateProgram() {
-        WithId<ProgramUpdate> sample = sampleProgram("createProgram");
+        WithId<ProgramUpdate> sample = sampleProgram("createProgram/" + System.currentTimeMillis());
 
         System.out.println(sample.id);
     }
 
+
+    @Test
+    public void testUpdateProgram() {
+        WithId<ProgramUpdate> sample = sampleProgram("createProgram");
+
+        System.out.println(sample.id);
+    }
 
 
     protected WithId<ProgramUpdate> sampleProgram(String test, String... broadcasters) {
@@ -369,6 +376,7 @@ public class MediaRestClientTest {
             .broadcasters(broadcasters)
             .mainTitle("Deze clip gebruiken we in een junit test")
             .mainDescription(String.valueOf(Instant.now()))
+            .persons(new Person("Pietje", "Puk", RoleType.UNDEFINED), new Person("Michiel", "Meeuwissen", RoleType.UNDEFINED))
             ;
         ProgramUpdate programUpdate = ProgramUpdate.create(program);
         String programMid = client.set(programUpdate);

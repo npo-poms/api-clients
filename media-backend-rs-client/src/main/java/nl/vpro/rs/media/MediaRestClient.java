@@ -241,7 +241,8 @@ public class MediaRestClient extends AbstractApiClient {
         return proxy;
     }
 
-    protected <T extends MediaUpdate> T get(final Class<T> type, final String id) {
+    @SuppressWarnings("unchecked")
+    protected <T extends MediaUpdate<?>> T get(final Class<T> type, final String id) {
         try {
             return (T) getBackendRestService().getMedia(Type.valueOf(type).toString(), id, followMerges);
         } catch (IOException e) {
@@ -249,6 +250,7 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected <T extends MediaObject> T getFull(final Class<T> type, final String id) {
         try {
             return (T) getBackendRestService().getFullMediaObject(Type.valueOf(type).toString(), id, followMerges);
@@ -261,7 +263,6 @@ public class MediaRestClient extends AbstractApiClient {
     /**
      * Returns the program (as an 'update' object'), with the given id. Or <code>null</code> if not found.
      * @param id This can be an URN, MID, or crid.
-     * @return
      */
     public ProgramUpdate getProgram(String id) {
         return get(ProgramUpdate.class, id);
@@ -271,7 +272,8 @@ public class MediaRestClient extends AbstractApiClient {
         return get(SegmentUpdate.class, id);
     }
 
-    public <T extends MediaUpdate> T get(String id) {
+    @SuppressWarnings("unchecked")
+    public <T extends MediaUpdate<?>> T get(String id) {
         return (T) get(MediaUpdate.class, id);
     }
 
@@ -377,6 +379,7 @@ public class MediaRestClient extends AbstractApiClient {
         return getFull(Group.class, id);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends MediaObject> T getFull(String id) {
         return (T) getFull(MediaObject.class, id);
     }
@@ -443,7 +446,6 @@ public class MediaRestClient extends AbstractApiClient {
 
     /**
      * Sets the number of requests per seconds
-     * @param rate
      */
     public void setThrottleRate(double rate) {
         this.throttle.setRate(rate);
