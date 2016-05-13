@@ -3,6 +3,7 @@ package nl.vpro.rs.media;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXB;
@@ -36,7 +37,7 @@ public class MediaRestClientTest {
 
     @Before
     public void setUp() throws IOException {
-        client = new MediaRestClient().configured(Env.LOCALHOST);
+        client = new MediaRestClient().configured(Env.TEST);
         client.setWaitForRetry(true);
 
     }
@@ -382,9 +383,17 @@ public class MediaRestClientTest {
             .crids(crid)
             .avType(AVType.MIXED)
             .broadcasters(broadcasters)
-            .mainTitle("Deze clip gebruiken we in een junit test")
-            .mainDescription(String.valueOf(Instant.now()))
-            .persons(new Person("Pietje", "Puk", RoleType.UNDEFINED), new Person("Michiel", "Meeuwissen", RoleType.UNDEFINED))
+            .mainTitle("Deze clip gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID).toString())
+            .mainDescription(LocalDateTime.now(Schedule.ZONE_ID).toString())
+            .persons(
+                new Person("Pietje", "Puk", RoleType.UNDEFINED),
+                new Person("Michiel", "Meeuwissen", RoleType.UNDEFINED),
+                new Person("Jan", LocalDateTime.now(Schedule.ZONE_ID).toString(), RoleType.COMPOSER)
+            )
+            .locations(
+                new Location("http://vpro.nl/bla/1", OwnerType.BROADCASTER),
+                new Location("http://vpro.nl/bla/" + LocalDateTime.now(Schedule.ZONE_ID).toString(), OwnerType.BROADCASTER)
+            )
             ;
         ProgramUpdate programUpdate = ProgramUpdate.create(program);
         String programMid = client.set(programUpdate);
@@ -402,9 +411,17 @@ public class MediaRestClientTest {
             .broadcasters("VPRO")
             .start(Duration.ofMillis(0))
             .avType(AVType.MIXED)
-            .mainTitle("Dit segment gebruiken we in een junit test")
-            .mainDescription(String.valueOf(Instant.now()))
-            .persons(new Person("Pietje", "Puk", RoleType.UNDEFINED), new Person("Michiel", "Meeuwissen", RoleType.UNDEFINED))
+            .mainTitle("Dit segment gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID).toString())
+            .mainDescription(LocalDateTime.now(Schedule.ZONE_ID).toString())
+            .persons(
+                new Person("Pietje", "Puk", RoleType.UNDEFINED),
+                new Person("Michiel", "Meeuwissen", RoleType.UNDEFINED),
+                new Person("Jan", LocalDateTime.now(Schedule.ZONE_ID).toString(), RoleType.COMPOSER)
+            )
+            .locations(
+                new Location("http://vpro.nl/bla/1", OwnerType.BROADCASTER),
+                new Location("http://vpro.nl/bla/" + LocalDateTime.now(Schedule.ZONE_ID).toString(), OwnerType.BROADCASTER)
+            )
             ;
         SegmentUpdate segmentUpdate = SegmentUpdate.create(segment);
         segmentUpdate.setMidRef("WO_VPRO_783763");
@@ -420,8 +437,8 @@ public class MediaRestClientTest {
             .crids(groupCrid)
             .avType(AVType.MIXED)
             .broadcasters(broadcaster)
-            .mainTitle("Deze group gebruiken we in een junit test")
-            .mainDescription(String.valueOf(Instant.now()))
+            .mainTitle("Deze group gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID).toString())
+            .mainDescription(LocalDateTime.now(Schedule.ZONE_ID).toString())
             ;
         GroupUpdate groupUpdate = GroupUpdate.create(group);
         String groupMid = client.set(groupUpdate);
