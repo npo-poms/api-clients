@@ -28,6 +28,9 @@
   </scm>
 
   <properties>
+    <api.version>4.4-SNAPSHOT</api.version>
+    <pages.version>4.4-SNAPSHOT</pages.version>
+    <media.version>4.4-SNAPSHOT</media.version>
   </properties>
 
   <dependencyManagement>
