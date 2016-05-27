@@ -18,6 +18,7 @@ import nl.vpro.domain.media.update.MediaUpdate;
 import nl.vpro.domain.media.update.ProgramUpdate;
 import nl.vpro.domain.media.update.SegmentUpdate;
 import nl.vpro.rs.media.MediaRestClient;
+import nl.vpro.util.Env;
 
 /**
  * @author Michiel Meeuwissen
@@ -36,10 +37,10 @@ public class Cleanup {
     }
 
     public static void main(String[] args) throws IOException {
-        MediaRestClient client = new MediaRestClient().configured("prod");
+        MediaRestClient client = new MediaRestClient().configured(Env.PROD);
 
         List<String> midsToFix = new ArrayList<>();
-        File errorneous = new File("/tmp/segmentswithoutittle.txt");
+        File errorneous = new File("/tmp/segmentswithoutitle.txt");
         try (FileReader reader = new FileReader(errorneous);
              BufferedReader buffered = new BufferedReader(reader);
         ) {
@@ -114,17 +115,19 @@ public class Cleanup {
                         }
                     }
 
-                    if (!midsToFix.contains(segment.getMid())) {
-                        LOG.info("No need to fix {}", segment);
-                        continue;
-                    }
                     LOG.info(segment.getMidRef() + " " + Duration.ofMillis(segment.getStart().getTime()) + " " + segment.getTitles());
-                    File dir = new File("/tmp/mse3162/" + segment.getBroadcasters().get(0));
+
+                    File baseDir = new File("/tmp/mse3162");
+                    File dir;
+                    if (! midsToFix.contains(segment.getMid())) {
+                        dir = new File(baseDir, "noneed");
+                    } else {
+                        dir = new File(baseDir, segment.getBroadcasters().get(0));
+                    }
                     dir.mkdirs();
                     File create = new File(dir, segment.getMid() + ".xml");
                     JAXB.marshal(segment, create);
                     LOG.info("Created {}", create);
-                    midsToFix.remove(segment.getMid());
                 } finally {
                     line = buffered.readLine();
                 }
@@ -137,6 +140,7 @@ public class Cleanup {
         }
         LOG.info("Unhandled mids " + midsToFix + " " + midsToFix.size());
         LOG.info("READY");
+        client.shutdown();
 
     }
 
