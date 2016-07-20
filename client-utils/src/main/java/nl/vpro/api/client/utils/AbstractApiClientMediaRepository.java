@@ -1,6 +1,7 @@
 package nl.vpro.api.client.utils;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 
 import javax.inject.Inject;
@@ -95,4 +96,22 @@ public class AbstractApiClientMediaRepository {
 
     }
 
+
+    public Iterator<Change> changes(Instant since, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive) {
+        //clients.getMediaService().changes(current.getName(), null, since)
+        throw new UnsupportedOperationException();
+
+    }
+
+    public Long getCurrentSince() {
+        return Instant.now().toEpochMilli();
+
+    }
+    public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, Long offset, Integer max, FilteringIterator.KeepAlive keepAlive) {
+        //InputStream i = clients.getMediaService().iterate(form, profile.getName(), null, offset, max, keepAlive, null, null);
+        throw new UnsupportedOperationException();
+
+    }
+
 }
+
