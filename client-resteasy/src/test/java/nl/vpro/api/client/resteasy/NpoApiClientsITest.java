@@ -121,13 +121,13 @@ public class NpoApiClientsITest {
 
     @Test
     public void testChanges() throws IOException {
-        InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, 10, null, null);
+        InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null);
         IOUtils.copy(response, System.out);
     }
 
     @Test(expected = NotFoundException.class)
     public void testChangesError() throws IOException {
-        clients.getMediaService().changes("no profile", null, -1L, "ASC", 100, null, null);
+        clients.getMediaService().changes("no profile", null, -1L, null, "ASC", 100, null, null);
     }
 
 
