@@ -1,6 +1,7 @@
 package nl.vpro.api.client.utils;
 
 import java.net.URL;
+import java.time.Instant;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ public class MediaRestClientUtilsTest {
             anyString(),
             anyString(),
             any(Long.class),
+            any(Instant.class),
             eq("asc"),
             any(Integer.class),
             any(HttpServletRequest.class),
