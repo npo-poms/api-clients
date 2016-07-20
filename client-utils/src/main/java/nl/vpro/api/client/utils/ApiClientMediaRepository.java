@@ -9,7 +9,7 @@ import nl.vpro.domain.api.media.MediaRepository;
  * @author Michiel Meeuwissen
  * @since 1.1
  */
-@Named
+@Named("mediaLoadRepository")
 public class ApiClientMediaRepository extends AbstractApiClientMediaRepository implements MediaRepository {
 
     @Inject
