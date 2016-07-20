@@ -43,9 +43,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <!-- jaxb unbinding as done in client not properly working otherwise -->
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-core</artifactId>
     </dependency>
 
   </dependencies>
