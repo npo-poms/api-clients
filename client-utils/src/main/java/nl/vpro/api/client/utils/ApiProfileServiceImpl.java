@@ -2,7 +2,6 @@ package nl.vpro.api.client.utils;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -66,7 +65,7 @@ public class ApiProfileServiceImpl implements ProfileService {
 
 	@Override
 	public Profile getProfile(String name, Instant on) {
-        return client.load(name, on.toEpochMilli());
+        return client.load(name, on);
     }
 
     @Override
@@ -83,7 +82,9 @@ public class ApiProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name, Long since) {
+    public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name, Instant since) {
         return client.load(name, since).getMediaProfile();
+
     }
+
 }
