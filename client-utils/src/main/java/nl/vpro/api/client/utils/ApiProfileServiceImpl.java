@@ -70,7 +70,11 @@ public class ApiProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileDefinition<Page> getPageProfileDefinition(String name) {
-        return getProfile(name).getPageProfile();
+        if (name == null) {
+            return null;
+        }
+        Profile profile = getProfile(name);
+        return profile == null ? null : profile.getPageProfile();
     }
 
     @Override
@@ -78,7 +82,8 @@ public class ApiProfileServiceImpl implements ProfileService {
         if (name == null) {
             return null;
         }
-        return getProfile(name).getMediaProfile();
+        Profile profile = getProfile(name);
+        return profile == null ? null : profile.getMediaProfile();
     }
 
     @Override
