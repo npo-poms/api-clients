@@ -73,6 +73,8 @@ public class ApiProfileServiceImpl implements ProfileService {
         if (name == null) {
             return null;
         }
+
+
         Profile profile = getProfile(name);
         return profile == null ? null : profile.getPageProfile();
     }
