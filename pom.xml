@@ -5,7 +5,7 @@
   <parent>
     <groupId>nl.vpro.poms</groupId>
     <artifactId>poms-parent</artifactId>
-    <version>4.7.3</version>
+    <version>4.7.5</version>
   </parent>
 
   <groupId>nl.vpro.api-client</groupId>
@@ -18,9 +18,7 @@
     <module>client-core</module>
     <module>client-resteasy</module>
     <module>client-utils</module>
-    <!--
-        <module>media-backend-rs-client</module>
-        -->
+    <module>media-backend-rs-client</module>
   </modules>
 
   <scm>
