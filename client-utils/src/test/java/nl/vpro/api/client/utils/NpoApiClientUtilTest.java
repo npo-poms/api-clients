@@ -1,14 +1,16 @@
 package nl.vpro.api.client.utils;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.client.Client;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -17,13 +19,8 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
-import org.jboss.resteasy.client.jaxrs.internal.ClientConfiguration;
-import org.jboss.resteasy.client.jaxrs.internal.ClientInvocation;
-import org.jboss.resteasy.client.jaxrs.internal.ClientRequestHeaders;
-import org.jboss.resteasy.spi.BadRequestException;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,34 +48,20 @@ public class NpoApiClientUtilTest {
 
     private NpoApiMediaUtil utilShortTimeout;
 
+    private Instant start;
 
-    //private String target = "https://rs.poms.omroep.nl/v1/";
-    //private String target = "https://rs-dev.poms.omroep.nl/v1/";
-    private String target = "https://rs-test.poms.omroep.nl/v1/";
-    //private String target = "http://localhost:8070/v1/";
 
     @Before
-    public void setUp() throws MalformedURLException {
-        {
-            NpoApiClients clients = new NpoApiClients(
-                target,
-                "ione7ahfij",
-                "***REMOVED***",
-                "http://www.vpro.nl", 10000);
-            util = new NpoApiMediaUtil(clients, new NpoApiRateLimiter());
+    public void setUp() throws IOException {
 
-        }
-
-        {
-            NpoApiClients clients = new NpoApiClients(
-                target,
-                "ione7ahfij",
-                "***REMOVED***",
-                "http://www.vpro.nl", 1);
-            utilShortTimeout = new NpoApiMediaUtil(clients, new NpoApiRateLimiter());
-        }
-
-
+        util = new NpoApiMediaUtil(NpoApiClients.configured().build(), new NpoApiRateLimiter());
+        utilShortTimeout = new NpoApiMediaUtil(NpoApiClients.configured().setConnectionTimeout(1).build(), new NpoApiRateLimiter());
+        start = Instant.now();
+        System.out.println("Testing " + util);
+    }
+    @After
+    public void after() {
+        System.out.println("Test took "  + Duration.between(start, Instant.now()));
     }
 
     @Test
@@ -92,6 +75,8 @@ public class NpoApiClientUtilTest {
         assertThat(result[1].getMid()).isEqualTo("AVRO_1656037");
         assertThat(result[2].getMid()).isEqualTo("VPWON_1167222");
     }
+
+
 
 
     @Test(expected = IOException.class)
@@ -125,6 +110,7 @@ public class NpoApiClientUtilTest {
 
 
     @Test
+    @Ignore("Takes long!!")
     public void testChanges() throws Exception {
         CloseableIterator<Change> result = util.changes("woord", 14703333l, Order.ASC, Integer.MAX_VALUE);
         long i = 0;
@@ -137,6 +123,19 @@ public class NpoApiClientUtilTest {
         }
 
 
+    }
+
+    @Test
+    public void testIterate() throws IOException {
+        Iterator<MediaObject> result = util.iterate(new MediaForm(), "vpro");
+        long i = 0;
+        while (result.hasNext()) {
+            MediaObject next = result.next();
+            if (i++ % 100 == 0) {
+                System.out.println(i + " " + next +  " " + next.getLastPublished());
+                //Thread.sleep(10000);
+            }
+        }
     }
 
 
@@ -153,6 +152,7 @@ public class NpoApiClientUtilTest {
         MediaSearchResult result = util.getClients().getMediaService().findRelated(MediaFormBuilder.emptyForm(), "VPWON_1174495", "vpro", null, 10);
         System.out.println(result.asList().get(0).getDescendantOf().iterator().next().getMidRef());
     }
+
 
 
     @Test(expected = IOException.class)
@@ -186,7 +186,7 @@ public class NpoApiClientUtilTest {
     @Test(expected = IOException.class)
     @Ignore("Doesn't test api, but httpclient")
     public void timeoutWithInvoke() throws URISyntaxException, IOException {
-        ApacheHttpClient4Engine engine = (ApacheHttpClient4Engine) utilShortTimeout.getClients().getClientHttpEngine();
+        /*ApacheHttpClient4Engine engine = (ApacheHttpClient4Engine) utilShortTimeout.getClients().getClientHttpEngine();
         String host = target + "api/media/AVRO_1656037";
         URI uri = new URI(host);
 
@@ -203,7 +203,7 @@ public class NpoApiClientUtilTest {
 
 
         engine.invoke(invocation);
-
+*/
     }
 
 
@@ -239,7 +239,7 @@ public class NpoApiClientUtilTest {
 
     private HttpRequestBase getAuthenticatedRequest() throws URISyntaxException {
         //String host = "http://fake-response.appspot.com/?sleep=7";
-        String host = target + "api/media/AVRO_1656037";
+        String host = utilShortTimeout.getClients().getBaseUrl() + "api/media/AVRO_1656037";
         URI uri = new URI(host);
         ApiAuthenticationRequestFilter authentication = utilShortTimeout.getClients().getAuthentication();
 

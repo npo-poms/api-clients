@@ -19,6 +19,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.google.common.io.ByteStreams;
+
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
@@ -46,13 +48,9 @@ public class NpoApiClientsITest {
 
     private NpoApiClients clients;
 
-    private String target = "https://rs.poms.omroep.nl/v1/";
-
-    //private String target = "http://localhost:8070/v1/";
-
     @Before
     public void setUp() throws IOException {
-        clients = NpoApiClients.configured().setApiBaseUrl(target).build();
+        clients = NpoApiClients.configured().build();
     }
 
     @Test(expected = NotAuthorizedException.class)
@@ -123,6 +121,12 @@ public class NpoApiClientsITest {
     public void testChanges() throws IOException {
         InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null);
         IOUtils.copy(response, System.out);
+    }
+
+    @Test
+    public void testIterate() throws IOException {
+        InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro", null, 0L, Integer.MAX_VALUE, null, null);
+        IOUtils.copy(response, ByteStreams.nullOutputStream());
     }
 
     @Test(expected = NotFoundException.class)
