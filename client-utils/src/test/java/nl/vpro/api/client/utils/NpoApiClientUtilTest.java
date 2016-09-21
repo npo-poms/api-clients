@@ -112,7 +112,7 @@ public class NpoApiClientUtilTest {
     @Test
     @Ignore("Takes long!!")
     public void testChanges() throws Exception {
-        CloseableIterator<Change> result = util.changes("woord", 14703333l, Order.ASC, Integer.MAX_VALUE);
+        CloseableIterator<Change> result = util.changes("woord", 14703333L, Order.ASC, Integer.MAX_VALUE);
         long i = 0;
         while (result.hasNext()) {
             Change next = result.next();
@@ -126,7 +126,9 @@ public class NpoApiClientUtilTest {
     }
 
     @Test
+    @Ignore("Takes long!")
     public void testIterate() throws IOException {
+        Instant start = Instant.now();
         Iterator<MediaObject> result = util.iterate(new MediaForm(), "vpro");
         long i = 0;
         while (result.hasNext()) {
@@ -136,6 +138,9 @@ public class NpoApiClientUtilTest {
                 //Thread.sleep(10000);
             }
         }
+        System.out.println("" + i + " " + Duration.between(start, Instant.now()));
+        // couchdb 57355 PT4M45.904S
+        // es      51013 PT1M5 .879 S
     }
 
 

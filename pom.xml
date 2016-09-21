@@ -28,6 +28,8 @@
   </scm>
 
   <properties>
+    <pages.version>4.8-SNAPSHOT</pages.version>
+    <api.version>4.8-SNAPSHOT</api.version>
   </properties>
 
   <dependencyManagement>
