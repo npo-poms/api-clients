@@ -83,8 +83,10 @@ public class AbstractApiClientMediaRepository {
     }
 
 	public Optional<String> redirect(String s) {
-		MediaObject got = clients.getMediaService().load(s, "");
-		if (got == null) return Optional.empty();
+		MediaObject got = clients.getMediaService().load(s, "", null);
+		if (got == null) {
+		    return Optional.empty();
+        }
 		if (got.getMid().equals(s)) {
 			return Optional.empty();
 		}

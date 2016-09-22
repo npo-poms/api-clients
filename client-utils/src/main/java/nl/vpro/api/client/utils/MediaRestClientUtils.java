@@ -72,7 +72,7 @@ public class MediaRestClientUtils {
 
     public static MediaObject loadOrNull(MediaRestService restService, String id) throws IOException {
         try {
-            return restService.load(id, null);
+            return restService.load(id, null, null);
         } catch (NotFoundException nfe) {
             return null;
         } catch (ProcessingException pe) {
@@ -101,9 +101,11 @@ public class MediaRestClientUtils {
 
     private static MediaObject[] loadWithMultiple(MediaRestService restService, String... ids) {
         List<MediaObject> result = new ArrayList<>(ids.length);
-        for (List<String> idList : Lists.partition(Arrays.asList(ids), 240)) {
-            MultipleMediaResult mediaResult = restService.loadMultiple(new IdList(idList), null);
-            result.addAll(Lists.transform(mediaResult.getItems(), MultipleEntry::getResult));
+        if (! result.isEmpty()) {
+            for (List<String> idList : Lists.partition(Arrays.asList(ids), 240)) {
+                MultipleMediaResult mediaResult = restService.loadMultiple(new IdList(idList), null, null);
+                result.addAll(Lists.transform(mediaResult.getItems(), MultipleEntry::getResult));
+            }
         }
         return result.toArray(new MediaObject[result.size()]);
     }

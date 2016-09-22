@@ -9,8 +9,6 @@ import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
 
-import java.util.Optional;
-
 /**
  * @author Michiel Meeuwissen
  * @since 1.1
@@ -50,6 +48,12 @@ public class ApiClientMediaSearchRepository extends AbstractApiClientMediaReposi
     @Override
     public MediaSearchResult findRelated(MediaObject media, ProfileDefinition<MediaObject> profile, MediaForm form, Integer max) {
         return clients.getMediaService().findRelated(form != null ? form : MediaFormBuilder.emptyForm(), media.getMid(), profile != null ? profile.getName() : null, null, max);
+    }
+
+    @Override
+    public MediaSearchResult findRelatedInTopspin(MediaObject media, ProfileDefinition<MediaObject> profile, MediaForm form, Integer max) {
+        return findRelated(media, profile, form, max);
+
     }
 
 

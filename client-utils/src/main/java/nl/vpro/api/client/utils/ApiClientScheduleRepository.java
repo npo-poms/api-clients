@@ -1,7 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,12 +29,12 @@ public class ApiClientScheduleRepository implements ScheduleRepository {
     }
 
     @Override
-    public ScheduleResult listSchedules(Date start, Date stop, Order order, Long offset, int max) {
+    public ScheduleResult listSchedules(Instant start, Instant stop, Order order, Long offset, int max) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ScheduleResult listSchedules(Channel channel, Date start, Date stop, Order order, Long offset, int max) {
+    public ScheduleResult listSchedules(Channel channel, Instant start, Instant stop, Order order, Long offset, int max) {
         throw new UnsupportedOperationException();
     }
 
@@ -44,23 +44,23 @@ public class ApiClientScheduleRepository implements ScheduleRepository {
     }
 
     @Override
-    public ScheduleResult listSchedules(Net net, Date start, Date stop, Order order, Long offset, int max) {
+    public ScheduleResult listSchedules(Net net, Instant start, Instant stop, Order order, Long offset, int max) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ScheduleResult listSchedulesForBroadcaster(String broadcaster, Date start, Date stop, Order order, Long offset, int max) {
+    public ScheduleResult listSchedulesForBroadcaster(String broadcaster, Instant start, Instant stop, Order order, Long offset, int max) {
         throw new UnsupportedOperationException();
 
     }
 
     @Override
-    public ScheduleResult listSchedulesForAncestor(String mediaId, Date start, Date stop, Order order, Long offset, int max) {
+    public ScheduleResult listSchedulesForAncestor(String mediaId, Instant start, Instant stop, Order order, Long offset, int max) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ScheduleResult listSchedulesForMediaType(MediaType mediaType, Date start, Date stop, Order order, Long offset, int max) {
+    public ScheduleResult listSchedulesForMediaType(MediaType mediaType, Instant start, Instant stop, Order order, Long offset, int max) {
         throw new UnsupportedOperationException();
     }
 }

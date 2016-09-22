@@ -37,14 +37,17 @@ public class NpoApiPageUtil  {
     }
 
     public Page[] load(String... id) {
-        limiter.acquire();
-        MultiplePageResult pageResult = clients.getPageService().loadMultiple(new IdList(id), null);
-
         Page[] result = new Page[id.length];
-        for (int i = 0; i < id.length; i++) {
-            result[i] = pageResult.getItems().get(i).getResult();
+        if (id.length > 0) {
+            limiter.acquire();
+            MultiplePageResult pageResult = clients.getPageService().loadMultiple(new IdList(id), null, null);
+
+            for (int i = 0; i < id.length; i++) {
+                result[i] = pageResult.getItems().get(i).getResult();
+            }
+
+            limiter.upRate();
         }
-        limiter.upRate();
         return result;
     }
 
