@@ -52,6 +52,8 @@ public class ApiClientMediaSearchRepository extends AbstractApiClientMediaReposi
 
     @Override
     public MediaSearchResult findRelatedInTopspin(MediaObject media, ProfileDefinition<MediaObject> profile, MediaForm form, Integer max) {
+
+        // TODO, this should of course go to topspin!
         return findRelated(media, profile, form, max);
 
     }
