@@ -24,7 +24,6 @@ import com.google.common.io.ByteStreams;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
-import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.domain.api.ApiScheduleEvent;
 import nl.vpro.domain.api.IdList;
 import nl.vpro.domain.api.MultipleMediaResult;
@@ -37,7 +36,9 @@ import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
 import nl.vpro.domain.page.Page;
 
+import static nl.vpro.domain.api.Constants.ASC;
 import static org.fest.assertions.Assertions.assertThat;
+
 
 /**
  * @author Roelof Jan Koekoek
@@ -62,7 +63,7 @@ public class NpoApiClientsITest {
 
     @Test(expected = NotFoundException.class)
     public void testNotFound() throws Exception {
-        clients.getMediaService().load("DOES_NOT_EXIST", null);
+        clients.getMediaService().load("DOES_NOT_EXIST", null, null);
     }
 
 
@@ -70,7 +71,7 @@ public class NpoApiClientsITest {
 
     @Test
 	public void testFound() throws Exception {
-		Program program = (Program) clients.getMediaService().load("POMS_VPRO_158299", null);
+		Program program = (Program) clients.getMediaService().load("POMS_VPRO_158299", null, null);
 		System.out.println(program.getMainTitle());
 	}
 
@@ -83,7 +84,7 @@ public class NpoApiClientsITest {
 
         String mid = list.getItems().get(1).getMid();
 
-        MediaObject filtered = mediaService.load(mid, null);
+        MediaObject filtered = mediaService.load(mid, null, null);
         assertThat(filtered).isNotNull();
         assertThat(filtered.getTitles()).hasSize(1);
 
@@ -186,7 +187,7 @@ public class NpoApiClientsITest {
     @Test
     public void testMultiple() {
         String[] mids = {"POMS_S_BNN_097259"};
-        MultipleMediaResult mo = clients.getMediaService().loadMultiple(new IdList(mids), null);
+        MultipleMediaResult mo = clients.getMediaService().loadMultiple(new IdList(mids), null, null);
         for (int i = 0; i < mids.length; i++) {
             assertThat(mo.getItems().get(i).getResult().getMid()).isEqualTo(mids[i]);
         }
@@ -194,7 +195,7 @@ public class NpoApiClientsITest {
 
     @Test
     public void testSchedule() {
-        ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, ScheduleRestService.ASC, null, 0L, 100);
+        ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, ASC, null, 0L, 100);
         for (ApiScheduleEvent event : result.getItems()) {
             System.out.println(event);
         }
@@ -202,7 +203,7 @@ public class NpoApiClientsITest {
 
     @Test
     public void testScheduleWithDefaults() {
-        ScheduleResult result = clients.getScheduleService().list(new Date(), null, null, ScheduleRestService.ASC, null, 0L, 100);
+        ScheduleResult result = clients.getScheduleService().list(new Date(), null, null, ASC, null, 0L, 100);
         for (ApiScheduleEvent event : result.getItems()) {
             System.out.println(event);
         }
