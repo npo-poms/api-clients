@@ -25,20 +25,17 @@ import nl.vpro.util.LeaveDefaultsProxyHandler;
 import nl.vpro.util.ReflectionUtils;
 
 @Named
-public class NpoApiClients extends AbstractApiClient {
+public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(NpoApiClients.class);
 
     private final ApiAuthenticationRequestFilter authentication;
 
-    private final MediaRestService mediaRestServiceProxy;
-    private final MediaRestService mediaRestServiceProxyNoTimeout;
-
-    private final PageRestService pageRestServiceProxy;
-
-    private final ScheduleRestServiceWithDefaults scheduleRestServiceProxy;
-
-    private final ProfileRestService profileRestServiceProxy;
+    private MediaRestService mediaRestServiceProxy;
+    private MediaRestService mediaRestServiceProxyNoTimeout;
+    private PageRestService pageRestServiceProxy;
+    private ScheduleRestServiceWithDefaults scheduleRestServiceProxy;
+    private ProfileRestService profileRestServiceProxy;
 
 	private final String baseUrl;
 
@@ -58,21 +55,7 @@ public class NpoApiClients extends AbstractApiClient {
 		super(connectionTimeout, 16, 3);
         this.authentication = new ApiAuthenticationRequestFilter(apiKey, secret, origin);
         baseUrl = apiBaseUrl + "api";
-        mediaRestServiceProxy =
-            build(clientHttpEngine, MediaRestService.class);
 
-        mediaRestServiceProxyNoTimeout =
-            build(clientHttpEngineNoTimeout, MediaRestService.class);
-
-        scheduleRestServiceProxy =
-            build(clientHttpEngine, ScheduleRestServiceWithDefaults.class, ScheduleRestService.class);
-
-
-        pageRestServiceProxy =
-            build(clientHttpEngine, PageRestService.class);
-
-        profileRestServiceProxy =
-            build(clientHttpEngine, ProfileRestService.class);
 
 
     }
@@ -99,23 +82,52 @@ public class NpoApiClients extends AbstractApiClient {
 
 
     public MediaRestService getMediaService() {
+        if (mediaRestServiceProxy == null) {
+            mediaRestServiceProxy =
+                build(clientHttpEngine, MediaRestService.class);
+        }
         return mediaRestServiceProxy;
     }
 
     public MediaRestService getMediaServiceNoTimeout() {
+        if (mediaRestServiceProxyNoTimeout == null) {
+            build(clientHttpEngineNoTimeout, MediaRestService.class);
+        }
         return mediaRestServiceProxyNoTimeout;
     }
 
     public ScheduleRestServiceWithDefaults getScheduleService() {
+        if (scheduleRestServiceProxy == null) {
+            scheduleRestServiceProxy =
+                build(clientHttpEngine, ScheduleRestServiceWithDefaults.class, ScheduleRestService.class);
+        }
         return scheduleRestServiceProxy;
     }
 
     public PageRestService getPageService() {
+        if (pageRestServiceProxy == null) {
+            pageRestServiceProxy =
+                build(clientHttpEngine, PageRestService.class);
+        }
         return pageRestServiceProxy;
     }
 
     public ProfileRestService getProfileService() {
+        if (profileRestServiceProxy == null) {
+            profileRestServiceProxy =
+                build(clientHttpEngine, ProfileRestService.class);
+        }
         return profileRestServiceProxy;
+    }
+
+    @Override
+    protected void invalidate() {
+        super.invalidate();
+        mediaRestServiceProxy = null;
+        mediaRestServiceProxyNoTimeout = null;
+        scheduleRestServiceProxy = null;
+        pageRestServiceProxy = null;
+        profileRestServiceProxy = null;
     }
 
     public ApiAuthenticationRequestFilter getAuthentication() {
@@ -195,6 +207,7 @@ public class NpoApiClients extends AbstractApiClient {
             this.apiBaseUrl = apiBaseUrl;
             return this;
         }
+
 
         public String getApiKey() {
             return apiKey;

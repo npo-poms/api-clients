@@ -5,7 +5,7 @@
   <parent>
     <groupId>nl.vpro.poms</groupId>
     <artifactId>poms-parent</artifactId>
-    <version>4.8.1</version>
+    <version>4.8.2</version>
   </parent>
 
   <groupId>nl.vpro.api-client</groupId>
@@ -28,7 +28,7 @@
   </scm>
 
   <properties>
-    <pages.version>4.8-SNAPSHOT</pages.version>
+    <shared.version>0.51-SNAPSHOT</shared.version>
     <api.version>4.8-SNAPSHOT</api.version>
   </properties>
 
