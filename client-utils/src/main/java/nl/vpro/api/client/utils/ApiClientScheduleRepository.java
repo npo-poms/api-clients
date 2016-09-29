@@ -2,8 +2,6 @@ package nl.vpro.api.client.utils;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -76,21 +74,4 @@ public class ApiClientScheduleRepository implements ScheduleRepository {
 
     }
 
-    @Override
-    public List<MediaObject> loadAll(List<String> list) {
-        throw new UnsupportedOperationException();
-
-    }
-
-    @Override
-    public MediaObject load(String s) {
-        throw new UnsupportedOperationException();
-
-    }
-
-    @Override
-    public Optional<String> redirect(String s) {
-        throw new UnsupportedOperationException();
-
-    }
 }
