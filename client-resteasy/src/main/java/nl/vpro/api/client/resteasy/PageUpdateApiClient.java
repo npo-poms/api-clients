@@ -48,7 +48,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         super(connectionTimeout, 16, 10000);
         BasicAuthentication authentication = new BasicAuthentication(user, password);
         ResteasyClient client = new ResteasyClientBuilder()
-            .httpEngine(clientHttpEngine)
+            .httpEngine(getClientHttpEngine())
             .register(authentication)
             .register(JacksonContextResolver.class)
             .build();

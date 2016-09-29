@@ -89,14 +89,14 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     public MediaRestService getMediaService() {
         if (mediaRestServiceProxy == null) {
             mediaRestServiceProxy =
-                build(clientHttpEngine, MediaRestService.class);
+                build(getClientHttpEngine(), MediaRestService.class);
         }
         return mediaRestServiceProxy;
     }
 
     public MediaRestService getMediaServiceNoTimeout() {
         if (mediaRestServiceProxyNoTimeout == null) {
-            build(clientHttpEngineNoTimeout, MediaRestService.class);
+            build(getClientHttpEngineNoTimeout(), MediaRestService.class);
         }
         return mediaRestServiceProxyNoTimeout;
     }
@@ -104,7 +104,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     public ScheduleRestServiceWithDefaults getScheduleService() {
         if (scheduleRestServiceProxy == null) {
             scheduleRestServiceProxy =
-                build(clientHttpEngine, ScheduleRestServiceWithDefaults.class, ScheduleRestService.class);
+                build(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class);
         }
         return scheduleRestServiceProxy;
     }
@@ -112,7 +112,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     public PageRestService getPageService() {
         if (pageRestServiceProxy == null) {
             pageRestServiceProxy =
-                build(clientHttpEngine, PageRestService.class);
+                build(getClientHttpEngine(), PageRestService.class);
         }
         return pageRestServiceProxy;
     }
@@ -120,7 +120,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     public ProfileRestService getProfileService() {
         if (profileRestServiceProxy == null) {
             profileRestServiceProxy =
-                build(clientHttpEngine, ProfileRestService.class);
+                build(getClientHttpEngine(), ProfileRestService.class);
         }
         return profileRestServiceProxy;
     }
@@ -194,7 +194,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
 
     public static class Builder {
 
-        private String apiBaseUrl = "http://rs.poms.omroep.nl/v1/";
+        private String apiBaseUrl = "https://rs.poms.omroep.nl/v1/";
         private String apiKey;
         private String secret;
         private String origin;
