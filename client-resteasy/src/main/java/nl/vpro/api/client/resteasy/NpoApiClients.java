@@ -60,6 +60,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
 
     }
 
+
     public NpoApiClients(
         String apiBaseUrl,
         String apiKey,
@@ -194,6 +195,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
         private String secret;
         private String origin;
         private Integer connectionTimeout = 10000;
+        private Integer timeOut = 10000;
 
         public NpoApiClients build() {
             return new NpoApiClients(apiBaseUrl, apiKey, secret, origin, connectionTimeout);
@@ -242,6 +244,15 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
 
         public Builder setConnectionTimeout(Integer connectionTimeout) {
             this.connectionTimeout = connectionTimeout;
+            return this;
+        }
+
+        public Integer getTimeOut() {
+            return timeOut;
+        }
+
+        public Builder setTimeOut(Integer timeOut) {
+            this.timeOut = timeOut;
             return this;
         }
     }

@@ -33,7 +33,6 @@ import nl.vpro.domain.api.page.PageFormBuilder;
 import nl.vpro.domain.api.page.PageSearchResult;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.media.Program;
 import nl.vpro.domain.page.Page;
 
 import static nl.vpro.domain.api.Constants.ASC;
@@ -51,7 +50,9 @@ public class NpoApiClientsITest {
 
     @Before
     public void setUp() throws IOException {
-        clients = NpoApiClients.configured().build();
+        clients = NpoApiClients.configured()
+            .setConnectionTimeout(100)
+            .setApiBaseUrl("http://rs.poms.omroep.nl:8070/v1/").build();
     }
 
     @Test(expected = NotAuthorizedException.class)
@@ -71,8 +72,10 @@ public class NpoApiClientsITest {
 
     @Test
 	public void testFound() throws Exception {
-		Program program = (Program) clients.getMediaService().load("POMS_VPRO_158299", null, null);
-		System.out.println(program.getMainTitle());
+        for (int i = 0; i < 100; i++) {
+            MediaObject program = clients.getMediaService().load("POMS_S_VPRO_827832", null, null);
+            System.out.println(i + ":" + program.getMainTitle());
+        }
 	}
 
     @Test

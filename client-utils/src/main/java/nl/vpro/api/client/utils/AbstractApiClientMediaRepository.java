@@ -59,26 +59,26 @@ public class AbstractApiClientMediaRepository {
         throw new UnsupportedOperationException();
     }
 
-    public MediaResult listDescendants(MediaObject media, Order order, Long offset, Integer max) {
+    public MediaResult listDescendants(MediaObject media, Order order, long offset, Integer max) {
         return clients.getMediaService().listDescendants(media.getMid(), null, order.toString(), offset, max);
 
     }
 
-    public ProgramResult listEpisodes(MediaObject media, Order order, Long offset, Integer max) {
+    public ProgramResult listEpisodes(MediaObject media, Order order, long offset, Integer max) {
         return clients.getMediaService().listEpisodes(media.getMid(), null, order.toString(), offset, max);
     }
 
-    public MediaResult listMembers(MediaObject media, Order order, Long offset, Integer max) {
+    public MediaResult listMembers(MediaObject media, Order order, long offset, Integer max) {
         return clients.getMediaService().listMembers(media.getMid(), null, order.toString(), offset, max);
 
     }
 
 
-    public MediaResult list(Order order, Long offset, Integer max) {
+    public MediaResult list(Order order, long offset, Integer max) {
         return clients.getMediaService().list(null, order.toString(), offset, max);
     }
 
-    public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, Integer max, Long offset, FilteringIterator.KeepAlive keepAlive) {
+    public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, Integer max, long offset, FilteringIterator.KeepAlive keepAlive) {
         throw new UnsupportedOperationException();
     }
 
@@ -109,7 +109,7 @@ public class AbstractApiClientMediaRepository {
         return Instant.now().toEpochMilli();
 
     }
-    public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, Long offset, Integer max, FilteringIterator.KeepAlive keepAlive) {
+    public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, long offset, Integer max, FilteringIterator.KeepAlive keepAlive) {
         //InputStream i = clients.getMediaService().iterate(form, profile.getName(), null, offset, max, keepAlive, null, null);
         throw new UnsupportedOperationException();
 
