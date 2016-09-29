@@ -71,13 +71,17 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     }
 
 
-    public static Builder configured(String... configFiles) throws IOException {
+    public static Builder configured(String... configFiles)  {
         Builder builder = new Builder();
-        ReflectionUtils.configured(builder, configFiles);
+        try {
+            ReflectionUtils.configured(builder, configFiles);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
         return builder;
     }
 
-    public static Builder configured() throws IOException {
+    public static Builder configured() {
         return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "apiclient.properties");
     }
 

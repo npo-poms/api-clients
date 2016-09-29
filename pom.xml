@@ -29,6 +29,7 @@
 
   <properties>
     <api.version>4.8-SNAPSHOT</api.version>
+    <shared.version>0.52-SNAPSHOT</shared.version>
   </properties>
 
   <dependencyManagement>
