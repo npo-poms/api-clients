@@ -215,7 +215,7 @@ public class MediaRestClient extends AbstractApiClient {
         }
         ResteasyClient client =
             new ResteasyClientBuilder()
-                .httpEngine(clientHttpEngine)
+                .httpEngine(getClientHttpEngine())
                 .register(new BasicAuthentication(userName, password))
                 .build();
         client
