@@ -28,7 +28,6 @@
   </scm>
 
   <properties>
-    <api.version>4.8-SNAPSHOT</api.version>
   </properties>
 
   <dependencyManagement>
