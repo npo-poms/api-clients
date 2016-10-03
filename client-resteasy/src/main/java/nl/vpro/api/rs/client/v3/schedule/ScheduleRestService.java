@@ -4,15 +4,15 @@
  */
 package nl.vpro.api.rs.client.v3.schedule;
 
+import javax.validation.Valid;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
 import nl.vpro.domain.api.ApiScheduleEvent;
 import nl.vpro.domain.api.Constants;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.ScheduleResult;
 import nl.vpro.domain.api.media.ScheduleSearchResult;
-
-import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 
 /**
  * Deze class is er omdat de annotaties op nl.vpro.api.rs.v3.schedule.ScheduleRestService voor datums 'one-way' zijn.
@@ -29,27 +29,27 @@ import javax.ws.rs.core.MediaType;
         {MediaType.APPLICATION_JSON + "; charset=utf-8",
                 MediaType.APPLICATION_XML + "; charset=utf-8"})
 public interface ScheduleRestService {
-    static final String PATH = "/schedule";
+    String PATH = "/schedule";
 
-    static final String CHANNEL = "channel";
-    static final String NET = "net";
-    static final String BROADCASTER = "broadcaster";
-    static final String ANCESTOR = "ancestor";
+    String CHANNEL = "channel";
+    String NET = "net";
+    String BROADCASTER = "broadcaster";
+    String ANCESTOR = "ancestor";
 
-    static final String GUIDE_DAY = "guideDay";
-    static final String START = "start";
-    static final String STOP = "stop";
-    static final String PROPERTIES = "properties";
-    static final String SORT = "sort";
-    static final String OFFSET = "offset";
-    static final String MAX = "max";
-    static final String PROFILE = "profile";
+    String GUIDE_DAY = "guideDay";
+    String START = "start";
+    String STOP = "stop";
+    String PROPERTIES = "properties";
+    String SORT = "sort";
+    String OFFSET = "offset";
+    String MAX = "max";
+    String PROFILE = "profile";
 
-    static final String YEAR_MONTH_DATE = "yyyy-MM-dd";
+    String YEAR_MONTH_DATE = "yyyy-MM-dd";
 
-    static final String ASC = "asc";
+    String ASC = "asc";
 
-    static final String ZERO = "0";
+    String ZERO = "0";
 
     @GET
     ScheduleResult list(
