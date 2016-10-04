@@ -147,7 +147,7 @@ public class MediaRestClientUtils {
 		return new LazyIterator<>(
 				() -> {
 					try {
-						final InputStream inputStream = restService.iterate(form, profile, null, 0l, Integer.MAX_VALUE, null, null);
+						final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE, null, null);
 						return new JsonArrayIterator<>(inputStream, MediaObject.class, () -> IOUtils.closeQuietly(inputStream));
 					} catch (IOException e) {
 						throw new RuntimeException(e);
