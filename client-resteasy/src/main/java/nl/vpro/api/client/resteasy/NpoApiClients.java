@@ -96,7 +96,8 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
 
     public MediaRestService getMediaServiceNoTimeout() {
         if (mediaRestServiceProxyNoTimeout == null) {
-            build(getClientHttpEngineNoTimeout(), MediaRestService.class);
+            mediaRestServiceProxyNoTimeout =
+                build(getClientHttpEngineNoTimeout(), MediaRestService.class);
         }
         return mediaRestServiceProxyNoTimeout;
     }
