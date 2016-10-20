@@ -28,6 +28,7 @@
   </scm>
 
   <properties>
+    <shared.version>1.55-SNAPSHOT</shared.version>
   </properties>
 
   <dependencyManagement>
