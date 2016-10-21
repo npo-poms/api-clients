@@ -8,10 +8,7 @@ import java.util.Arrays;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
-import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.jboss.resteasy.client.jaxrs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,11 +26,11 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiClient.class);
 
-    private final PageUpdateRestService pageUpdateRestService;
+    private PageUpdateRestService pageUpdateRestService;
 
     private final String description;
 
-    private final String baseUrl;
+    private final BasicAuthentication authentication;
 
     @Inject(optional = true)
     private ClassificationService classificationService;
@@ -45,25 +42,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Named("pageupdate-api.password") String password,
         @Named("pageupdate-api.connectionTimeout") int connectionTimeout
     ) {
-        super(connectionTimeout, 16, 10000);
-        BasicAuthentication authentication = new BasicAuthentication(user, password);
-        ResteasyClient client = new ResteasyClientBuilder()
-            .httpEngine(getClientHttpEngine())
-            .register(authentication)
-            .register(JacksonContextResolver.class)
-            .build();
-        ResteasyWebTarget target = client.target(apiBaseUrl + "api/");
-        pageUpdateRestService =
-            proxyErrors(LOG,
-                PageUpdateApiClient.this::getBaseUrl,
-                PageUpdateRestService.class,
-                target
-                    .proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML)
-                    .build(),
-                Error.class
-            );
+        super(apiBaseUrl + "api", connectionTimeout, 16, 10000);
+        authentication = new BasicAuthentication(user, password);
         description = user + "@" + apiBaseUrl;
-        this.baseUrl = apiBaseUrl;
 
     }
 
@@ -76,12 +57,23 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     public static Builder configured() throws IOException {
         return configured(
-            System.getProperty("user.home") + 
-            File.separator + "conf" + 
+            System.getProperty("user.home") +
+            File.separator + "conf" +
             File.separator + "pageupdateapiclient.properties");
     }
 
     public PageUpdateRestService getPageUpdateRestService() {
+        if (pageUpdateRestService == null) {
+            pageUpdateRestService =
+                proxyErrors(LOG,
+                    PageUpdateApiClient.this::getBaseUrl,
+                    PageUpdateRestService.class,
+                    getTarget(getClientHttpEngine())
+                        .proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML)
+                        .build(),
+                    Error.class
+                );
+        }
         return pageUpdateRestService;
     }
 
@@ -108,9 +100,16 @@ public class PageUpdateApiClient extends AbstractApiClient {
         return getClass().getName() + " " + getDescription();
     }
 
-    public String getBaseUrl() {
-        return baseUrl;
+    @Override
+    protected ResteasyWebTarget getTarget(ClientHttpEngine clientHttpEngine) {
+        ResteasyClient client = new ResteasyClientBuilder()
+            .httpEngine(getClientHttpEngine())
+            .register(authentication)
+            .register(JacksonContextResolver.class)
+            .build();
+        return client.target(baseUrl);
     }
+
 
     public static class Builder {
         private String apiBaseUrl;
