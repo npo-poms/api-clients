@@ -111,6 +111,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
 
+    @Override
+    protected synchronized void invalidate() {
+        super.invalidate();
+        pageUpdateRestService = null;
+    }
+
+
     public static class Builder {
         private String apiBaseUrl;
         private String user;

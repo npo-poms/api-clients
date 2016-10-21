@@ -3,6 +3,7 @@ package nl.vpro.rs.media;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -12,10 +13,7 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.jboss.resteasy.client.jaxrs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,8 +86,14 @@ public class MediaRestClient extends AbstractApiClient {
         this(-1, 10, 2);
     }
     public MediaRestClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
-        super(connectionTimeoutMillis, maxConnections, connectionInPoolTTL);
+        super(null,
+            Duration.ofMillis(connectionTimeoutMillis),
+            Duration.ofMillis(connectionTimeoutMillis),
+            Duration.ofMillis(connectionTimeoutMillis),
+            maxConnections,
+            Duration.ofMillis(connectionInPoolTTL));
     }
+
 
     enum Type {
         SEGMENT,
@@ -208,8 +212,8 @@ public class MediaRestClient extends AbstractApiClient {
         this.headers = headers;
     }
 
-
-    private ResteasyWebTarget newWebClient() {
+    @Override
+    protected ResteasyWebTarget getTarget(ClientHttpEngine engine) {
         if (userName == null || password == null) {
             throw new IllegalStateException("User name (" + userName + ") and password (" + password + ") should both be non null");
         }
@@ -236,7 +240,7 @@ public class MediaRestClient extends AbstractApiClient {
                 this,
                 ErrorAspect.proxyErrors(
                     MediaRestClient.LOG, () -> "media rest", MediaBackendRestService.class,
-                    newWebClient().proxy(MediaBackendRestService.class)
+                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class)
                 )
             );
 
@@ -460,6 +464,13 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void setAsynchronousThrottleRate(double rate) {
         this.asynchronousThrottle.setRate(rate);
+    }
+
+
+    @Override
+    protected synchronized void invalidate() {
+        super.invalidate();
+        proxy = null;
     }
 
     @Override
