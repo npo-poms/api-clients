@@ -94,11 +94,6 @@ public class MediaRestClient extends AbstractApiClient {
             Duration.ofMillis(connectionInPoolTTL));
     }
 
-    @Override
-    protected ResteasyWebTarget getTarget(ClientHttpEngine engine) {
-        return null;
-
-    }
 
     enum Type {
         SEGMENT,
@@ -217,8 +212,8 @@ public class MediaRestClient extends AbstractApiClient {
         this.headers = headers;
     }
 
-
-    private ResteasyWebTarget newWebClient() {
+    @Override
+    protected ResteasyWebTarget getTarget(ClientHttpEngine engine) {
         if (userName == null || password == null) {
             throw new IllegalStateException("User name (" + userName + ") and password (" + password + ") should both be non null");
         }
@@ -245,7 +240,7 @@ public class MediaRestClient extends AbstractApiClient {
                 this,
                 ErrorAspect.proxyErrors(
                     MediaRestClient.LOG, () -> "media rest", MediaBackendRestService.class,
-                    newWebClient().proxy(MediaBackendRestService.class)
+                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class)
                 )
             );
 
@@ -469,6 +464,13 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void setAsynchronousThrottleRate(double rate) {
         this.asynchronousThrottle.setRate(rate);
+    }
+
+
+    @Override
+    protected synchronized void invalidate() {
+        super.invalidate();
+        proxy = null;
     }
 
     @Override
