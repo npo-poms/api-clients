@@ -85,6 +85,7 @@ public class MediaRestClient extends AbstractApiClient {
     public MediaRestClient() {
         this(-1, 10, 2);
     }
+
     public MediaRestClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
         super(null,
             Duration.ofMillis(connectionTimeoutMillis),
