@@ -31,6 +31,15 @@ public class NpoApiAuthentication {
         String message = message(uri, now);
 
         Map<String, Object> headers = new TreeMap<>();
+        if (secret == null) {
+            throw new IllegalStateException("No npo api secret found");
+        }
+        if (apiKey == null) {
+            throw new IllegalStateException("No npo api apiKey found");
+        }
+        if (origin == null) {
+            throw new IllegalStateException("No npo api origin found");
+        }
         headers.put("Authorization", "NPO " + apiKey + ':' + Util.hmacSHA256(secret, message));
         headers.put("Origin", origin);
         headers.put("X-NPO-Date", now);

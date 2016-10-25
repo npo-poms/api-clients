@@ -1,12 +1,9 @@
 package nl.vpro.api.client.resteasy;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -21,7 +18,6 @@ import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
 import nl.vpro.resteasy.JacksonContextResolver;
-import nl.vpro.util.LeaveDefaultsProxyHandler;
 import nl.vpro.util.ReflectionUtils;
 
 @Named
@@ -69,11 +65,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
 
     public static Builder configured(String... configFiles)  {
         Builder builder = new Builder();
-        try {
-            ReflectionUtils.configured(builder, configFiles);
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
+        ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
 
@@ -161,9 +153,12 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
         private String origin;
         private Integer connectionTimeout = 10000;
         private Integer timeOut = 10000;
+        private boolean trustAll = false;
 
         public NpoApiClients build() {
-            return new NpoApiClients(apiBaseUrl, apiKey, secret, origin, connectionTimeout);
+            NpoApiClients result = new NpoApiClients(apiBaseUrl, apiKey, secret, origin, connectionTimeout);
+            result.setTrustAll(trustAll);
+            return result;
         }
 
         public String getApiBaseUrl() {
@@ -214,6 +209,10 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
 
         public Integer getTimeOut() {
             return timeOut;
+        }
+
+        public void setTrustAll(boolean xtrustAll) {
+            this.trustAll = xtrustAll;
         }
 
         public Builder setTimeOut(Integer timeOut) {

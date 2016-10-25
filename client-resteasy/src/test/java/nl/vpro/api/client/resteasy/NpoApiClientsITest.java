@@ -169,10 +169,7 @@ public class NpoApiClientsITest {
     @Test(expected = BadRequestException.class)
     public void testBadRequest() throws Exception {
         PageRestService pageService = clients.getPageService();
-
         pageService.find(new PageForm(), null, "none", -1L, 1000);
-
-
     }
 
     @Test
