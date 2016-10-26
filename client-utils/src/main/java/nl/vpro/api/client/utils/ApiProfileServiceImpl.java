@@ -29,7 +29,8 @@ import nl.vpro.domain.page.Page;
 @Named
 public class ApiProfileServiceImpl implements ProfileService {
 
-    final ProfileRestService client;
+
+    final NpoApiClients clients;
 
     // TODO arrange caching via ehcache (ehcache4guice or something)
     final LoadingCache<String, Profile> cache = CacheBuilder.newBuilder()
@@ -40,18 +41,18 @@ public class ApiProfileServiceImpl implements ProfileService {
             new CacheLoader<String, Profile>() {
                 @Override
                 public Profile load(@NotNull String profile)  {
-                    return client.load(profile, null);
+                    return getClient().load(profile, null);
                 }
             });
 
     @Inject
-    public ApiProfileServiceImpl(NpoApiClients client) {
-        this.client = client.getProfileService();
+    public ApiProfileServiceImpl(NpoApiClients clients) {
+        this.clients = clients;
     }
 
     @Override
     public List<Profile> getProfiles() {
-        return new ArrayList<>(client.list(".*", null).getItems());
+        return new ArrayList<>(getClient().list(".*", null).getItems());
     }
 
     @Override
@@ -65,7 +66,7 @@ public class ApiProfileServiceImpl implements ProfileService {
 
 	@Override
 	public Profile getProfile(String name, Instant on) {
-        return client.load(name, on);
+        return getClient().load(name, on);
     }
 
     @Override
@@ -90,13 +91,17 @@ public class ApiProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name, Instant since) {
-        return client.load(name, since).getMediaProfile();
+        return getClient().load(name, since).getMediaProfile();
 
     }
 
     @Override
     public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name, Long since) {
        throw new UnsupportedOperationException();
+    }
+
+    protected ProfileRestService getClient() {
+        return clients.getProfileService();
     }
 
 }
