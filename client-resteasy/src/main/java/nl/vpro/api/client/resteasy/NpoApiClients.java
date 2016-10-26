@@ -1,7 +1,6 @@
 package nl.vpro.api.client.resteasy;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -67,11 +66,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
 
     public static Builder configured(String... configFiles)  {
         Builder builder = new Builder();
-        try {
-            ReflectionUtils.configured(builder, configFiles);
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
+        ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
 
