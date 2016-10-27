@@ -1,6 +1,7 @@
 package nl.vpro.api.client.utils;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -269,9 +270,24 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public JsonArrayIterator<Change> changes(String profile, long since, Order order, Integer max) {
+        return changes(profile, since, null,  order, max);
+    }
+
+    public JsonArrayIterator<Change> changes(String profile, Instant since, Order order, Integer max) {
+        return changes(profile, null, since, order, max);
+    }
+
+
+    protected  JsonArrayIterator<Change> changes(String profile, Long sinceSequence, Instant since, Order order, Integer max) {
         limiter.acquire();
         try {
-            JsonArrayIterator<Change> result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, since, order, max);
+
+            JsonArrayIterator<Change> result;
+            if (sinceSequence == null) {
+                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, since, order, max);
+            } else {
+                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, sinceSequence, order, max);
+            }
             limiter.upRate();
             return result;
         } catch (IOException e) {
