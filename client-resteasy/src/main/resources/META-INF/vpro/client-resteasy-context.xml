@@ -39,6 +39,10 @@
     <constructor-arg value="${vpro-api.connectionTimeout}"/>
   </bean>
 
+  <bean class="java.lang.Boolean" factory-method="valueOf" id="vpro-api.trustAll">
+    <constructor-arg value="${vpro-api.trustAll}"/>
+  </bean>
+
   <context:component-scan base-package="nl.vpro.api.client.resteasy"/>
 
 </beans>
