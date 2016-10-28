@@ -28,7 +28,10 @@ public class NpoApiPageUtilTest {
                 target,
                 "ione7ahfij",
                 "***REMOVED***",
-                "http://www.vpro.nl", 10000);
+                "http://www.vpro.nl",
+                10000,
+                true
+            );
             util = new NpoApiPageUtil(clients, new NpoApiRateLimiter());
         }
 
