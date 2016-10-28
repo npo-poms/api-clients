@@ -149,9 +149,10 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
         private String origin;
         private Integer connectionTimeout = 10000;
         private Integer timeOut = 10000;
+        private Boolean trustAll = false;
 
         public NpoApiClients build() {
-            return new NpoApiClients(apiBaseUrl, apiKey, secret, origin, connectionTimeout);
+            return new NpoApiClients(apiBaseUrl, apiKey, secret, origin, connectionTimeout, trustAll);
         }
 
         public String getApiBaseUrl() {
@@ -207,6 +208,14 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
         public Builder setTimeOut(Integer timeOut) {
             this.timeOut = timeOut;
             return this;
+        }
+
+        public Boolean getTrustAll() {
+            return trustAll;
+        }
+
+        public void setTrustAll(Boolean trustAll) {
+            this.trustAll = trustAll;
         }
     }
 
