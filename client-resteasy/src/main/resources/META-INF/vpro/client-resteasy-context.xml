@@ -25,23 +25,10 @@
     <constructor-arg value="${npo-api.connectionTimeout}"/>
   </bean>
 
-  <bean class="java.lang.String"  id="vpro-api.url">
-    <constructor-arg value="${vpro-api.url}"/>
+  <bean class="java.lang.Boolean" factory-method="valueOf" id="npo-api.trustAll">
+    <constructor-arg value="${npo-api.trustAll}"/>
   </bean>
 
-  <bean class="java.lang.String" id="vpro-api.user">
-    <constructor-arg value="${vpro-api.user}"/>
-  </bean>
-  <bean class="java.lang.String" id="vpro-api.password">
-    <constructor-arg value="${vpro-api.password}"/>
-  </bean>
-  <bean class="java.lang.Integer" factory-method="valueOf"  id="vpro-api.connectionTimeout">
-    <constructor-arg value="${vpro-api.connectionTimeout}"/>
-  </bean>
-
-  <bean class="java.lang.Boolean" factory-method="valueOf" id="vpro-api.trustAll">
-    <constructor-arg value="${vpro-api.trustAll}"/>
-  </bean>
 
   <context:component-scan base-package="nl.vpro.api.client.resteasy"/>
 
