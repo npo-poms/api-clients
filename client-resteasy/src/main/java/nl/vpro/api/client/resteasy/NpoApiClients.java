@@ -1,5 +1,6 @@
 package nl.vpro.api.client.resteasy;
 
+
 import java.io.File;
 
 import javax.inject.Inject;
@@ -37,19 +38,16 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
 
     @Inject
     public NpoApiClients(
-        @Named("npo-api.baseUrl")
-        String apiBaseUrl,
-        @Named("npo-api.apiKey")
-        String apiKey,
-        @Named("npo-api.secret")
-        String secret,
-        @Named("npo-api.origin")
-        String origin,
-        @Named("npo-api.connectionTimeout")
-        Integer connectionTimeout
-    ) {
+        @Named("npo-api.baseUrl") String apiBaseUrl,
+        @Named("npo-api.apiKey") String apiKey,
+        @Named("npo-api.secret") String secret,
+        @Named("npo-api.origin") String origin,
+        @Named("npo-api.connectionTimeout") Integer connectionTimeout,
+        @Named("npo-api.trustall") Boolean trustAll
+        ) {
 		super(apiBaseUrl + "api", connectionTimeout, 16, 3);
         this.authentication = new ApiAuthenticationRequestFilter(apiKey, secret, origin);
+        super.setTrustAll(trustAll);
     }
 
 
@@ -59,7 +57,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
         String secret,
         String origin
     ) {
-        this(apiBaseUrl, apiKey, secret, origin, 10);
+        this(apiBaseUrl, apiKey, secret, origin, 10, false);
     }
 
 
@@ -156,9 +154,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
         private boolean trustAll = false;
 
         public NpoApiClients build() {
-            NpoApiClients result = new NpoApiClients(apiBaseUrl, apiKey, secret, origin, connectionTimeout);
-            result.setTrustAll(trustAll);
-            return result;
+            return new NpoApiClients(apiBaseUrl, apiKey, secret, origin, connectionTimeout, trustAll);
         }
 
         public String getApiBaseUrl() {
