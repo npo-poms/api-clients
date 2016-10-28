@@ -1,6 +1,9 @@
 package nl.vpro.api.client.resteasy;
 
 
+import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 
 import javax.inject.Inject;
@@ -10,8 +13,6 @@ import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
@@ -22,11 +23,8 @@ import nl.vpro.resteasy.JacksonContextResolver;
 import nl.vpro.util.ReflectionUtils;
 
 @Named
+@Slf4j
 public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMBean {
-
-    private static final Logger LOG = LoggerFactory.getLogger(NpoApiClients.class);
-
-    private final ApiAuthenticationRequestFilter authentication;
 
     private MediaRestService mediaRestServiceProxy;
     private MediaRestService mediaRestServiceProxyNoTimeout;
@@ -34,9 +32,12 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     private ScheduleRestServiceWithDefaults scheduleRestServiceProxy;
     private ProfileRestService profileRestServiceProxy;
 
-
+    private String apiKey;
+    private String secret;
+    private String origin;
 
     @Inject
+    @Builder
     public NpoApiClients(
         @Named("npo-api.baseUrl") String apiBaseUrl,
         @Named("npo-api.apiKey") String apiKey,
@@ -45,12 +46,14 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
         @Named("npo-api.connectionTimeout") Integer connectionTimeout,
         @Named("npo-api.trustAll") Boolean trustAll
         ) {
-		super(apiBaseUrl + "api", connectionTimeout, 16, 3);
-        this.authentication = new ApiAuthenticationRequestFilter(apiKey, secret, origin);
-        super.setTrustAll(trustAll);
+		super((apiBaseUrl == null ? "https://rs.poms.omroep.nl/v1/" : apiBaseUrl)  + "api", connectionTimeout, 16, 3);
+        this.apiKey = apiKey;
+        this.secret = secret;
+        this.origin = origin;
+        if (trustAll != null) {
+            super.setTrustAll(trustAll);
+        }
     }
-
-
     public NpoApiClients(
         String apiBaseUrl,
         String apiKey,
@@ -60,14 +63,40 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
         this(apiBaseUrl, apiKey, secret, origin, 10, false);
     }
 
+    public String getApiKey() {
+        return apiKey;
+    }
 
-    public static Builder configured(String... configFiles)  {
-        Builder builder = new Builder();
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+        this.invalidate();
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+        this.invalidate();
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+        this.invalidate();
+    }
+
+    public static NpoApiClientsBuilder configured(String... configFiles)  {
+        NpoApiClientsBuilder builder = builder();
         ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
 
-    public static Builder configured() {
+    public static NpoApiClientsBuilder configured() {
         return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "apiclient.properties");
     }
 
@@ -123,7 +152,7 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     }
 
     public ApiAuthenticationRequestFilter getAuthentication() {
-        return authentication;
+        return new ApiAuthenticationRequestFilter(apiKey, secret, origin);
     }
 
 	@Override
@@ -137,84 +166,12 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
         ResteasyClient client =
             new ResteasyClientBuilder()
                 .httpEngine(engine)
-                .register(authentication)
+                .register(getAuthentication())
                 .register(JacksonContextResolver.class)
                 .build();
         return client.target(baseUrl);
     }
 
-    public static class Builder {
 
-        private String apiBaseUrl = "https://rs.poms.omroep.nl/v1/";
-        private String apiKey;
-        private String secret;
-        private String origin;
-        private Integer connectionTimeout = 10000;
-        private Integer timeOut = 10000;
-        private boolean trustAll = false;
-
-        public NpoApiClients build() {
-            return new NpoApiClients(apiBaseUrl, apiKey, secret, origin, connectionTimeout, trustAll);
-        }
-
-        public String getApiBaseUrl() {
-            return apiBaseUrl;
-        }
-
-        public Builder setApiBaseUrl(String apiBaseUrl) {
-            this.apiBaseUrl = apiBaseUrl;
-            return this;
-        }
-
-
-        public String getApiKey() {
-            return apiKey;
-        }
-
-        public Builder setApiKey(String apiKey) {
-            this.apiKey = apiKey;
-            return this;
-        }
-
-        public String getSecret() {
-            return secret;
-        }
-
-        public Builder setSecret(String secret) {
-            this.secret = secret;
-            return this;
-        }
-
-        public String getOrigin() {
-            return origin;
-        }
-
-        public Builder setOrigin(String origin) {
-            this.origin = origin;
-            return this;
-        }
-
-        public Integer getConnectionTimeout() {
-            return connectionTimeout;
-        }
-
-        public Builder setConnectionTimeout(Integer connectionTimeout) {
-            this.connectionTimeout = connectionTimeout;
-            return this;
-        }
-
-        public Integer getTimeOut() {
-            return timeOut;
-        }
-
-        public void setTrustAll(boolean xtrustAll) {
-            this.trustAll = xtrustAll;
-        }
-
-        public Builder setTimeOut(Integer timeOut) {
-            this.timeOut = timeOut;
-            return this;
-        }
-    }
 
 }
