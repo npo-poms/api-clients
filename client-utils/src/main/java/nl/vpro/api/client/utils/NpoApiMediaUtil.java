@@ -96,9 +96,9 @@ public class NpoApiMediaUtil implements MediaProvider {
                 });
     }
 
-    public MediaObject loadOrNull(String id) throws IOException {
+    public <T extends MediaObject> T loadOrNull(String id) throws IOException {
         try {
-            return cache.get(id).orElse(null);
+            return (T) cache.get(id).orElse(null);
         } catch (ExecutionException | UncheckedExecutionException e) {
             if (e.getCause() instanceof IOException) {
                 throw (IOException) e.getCause();
