@@ -1,5 +1,7 @@
 package nl.vpro.rs.media;
 
+import lombok.Builder;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -86,6 +88,7 @@ public class MediaRestClient extends AbstractApiClient {
         this(-1, 10, 2);
     }
 
+
     public MediaRestClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
         super(null,
             Duration.ofMillis(connectionTimeoutMillis),
@@ -95,6 +98,20 @@ public class MediaRestClient extends AbstractApiClient {
             Duration.ofMillis(connectionInPoolTTL));
     }
 
+    @Builder
+    public MediaRestClient(String baseUrl, Duration connectionRequestTimeout, Duration connectTimeout, Duration socketTimeout, int maxConnections, Duration connectionInPoolTTL, int defaultMax, boolean followMerges, MediaBackendRestService proxy, Map<String, Object> headers, String userName, String password, String url, String errors, boolean waitForRetry, boolean lookupCrids) {
+        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL);
+        this.defaultMax = defaultMax;
+        this.followMerges = followMerges;
+        this.proxy = proxy;
+        this.headers = headers;
+        this.userName = userName;
+        this.password = password;
+        this.url = url;
+        this.errors = errors;
+        this.waitForRetry = waitForRetry;
+        this.lookupCrids = lookupCrids;
+    }
 
     enum Type {
         SEGMENT,
