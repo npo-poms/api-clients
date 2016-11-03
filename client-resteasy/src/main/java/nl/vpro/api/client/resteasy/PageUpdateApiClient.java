@@ -1,5 +1,7 @@
 package nl.vpro.api.client.resteasy;
 
+import lombok.Builder;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -36,6 +38,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
     private ClassificationService classificationService;
 
     @Inject
+    @Builder
     public PageUpdateApiClient(
         @Named("pageupdate-api.baseUrl") String apiBaseUrl,
         @Named("pageupdate-api.user") String user,
@@ -48,18 +51,15 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     }
 
-    public static Builder configured(String... configFiles) throws IOException {
-        PageUpdateApiClient.Builder builder = new PageUpdateApiClient.Builder();
+    public static PageUpdateApiClientBuilder configured(String... configFiles) throws IOException {
+        PageUpdateApiClientBuilder builder = builder();
         LOG.info("Reading configuration from {}", Arrays.asList(configFiles));
         ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
 
-    public static Builder configured() throws IOException {
-        return configured(
-            System.getProperty("user.home") +
-            File.separator + "conf" +
-            File.separator + "pageupdateapiclient.properties");
+    public static PageUpdateApiClientBuilder configured() throws IOException {
+        return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "pageupdateapiclient.properties");
     }
 
     public PageUpdateRestService getPageUpdateRestService() {
@@ -120,51 +120,4 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
 
-    public static class Builder {
-        private String apiBaseUrl;
-        private String user;
-        private String password;
-        private int connectionTimeout = 10000;
-
-
-        public PageUpdateApiClient build() {
-            return new PageUpdateApiClient(apiBaseUrl, user, password, connectionTimeout);
-        }
-
-        public String getApiBaseUrl() {
-            return apiBaseUrl;
-        }
-
-        public Builder setApiBaseUrl(String apiBaseUrl) {
-            this.apiBaseUrl = apiBaseUrl;
-            return this;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public Builder setUser(String user) {
-            this.user = user;
-            return this;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public Builder setPassword(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public int getConnectionTimeout() {
-            return connectionTimeout;
-        }
-
-        public Builder setConnectionTimeout(int connectionTimeout) {
-            this.connectionTimeout = connectionTimeout;
-            return this;
-        }
-    }
 }
