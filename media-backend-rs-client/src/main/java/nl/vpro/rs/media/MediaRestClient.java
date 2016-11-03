@@ -99,11 +99,25 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     @Builder
-    public MediaRestClient(String baseUrl, Duration connectionRequestTimeout, Duration connectTimeout, Duration socketTimeout, int maxConnections, Duration connectionInPoolTTL, int defaultMax, boolean followMerges, MediaBackendRestService proxy, Map<String, Object> headers, String userName, String password, String url, String errors, boolean waitForRetry, boolean lookupCrids) {
+    public MediaRestClient(
+        String baseUrl,
+        Duration connectionRequestTimeout,
+        Duration connectTimeout,
+        Duration socketTimeout,
+        int maxConnections,
+        Duration connectionInPoolTTL,
+        int defaultMax,
+        boolean followMerges,
+        Map<String, Object> headers,
+        String userName,
+        String password,
+        String url,
+        String errors,
+        boolean waitForRetry,
+        boolean lookupCrids) {
         super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL);
         this.defaultMax = defaultMax;
         this.followMerges = followMerges;
-        this.proxy = proxy;
         this.headers = headers;
         this.userName = userName;
         this.password = password;
