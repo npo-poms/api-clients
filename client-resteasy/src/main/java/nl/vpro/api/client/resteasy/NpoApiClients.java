@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -93,6 +94,12 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     public static NpoApiClientsBuilder configured(String... configFiles)  {
         NpoApiClientsBuilder builder = builder();
         ReflectionUtils.configured(builder, configFiles);
+        return builder;
+    }
+
+    public static NpoApiClientsBuilder configured(Map<String, String> settings) {
+        NpoApiClientsBuilder builder = builder();
+        ReflectionUtils.configured(builder, settings);
         return builder;
     }
 
