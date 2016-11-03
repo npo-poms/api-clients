@@ -5,6 +5,7 @@ import lombok.Builder;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.Duration;
 import java.util.Arrays;
 
 import javax.inject.Named;
@@ -38,17 +39,29 @@ public class PageUpdateApiClient extends AbstractApiClient {
     private ClassificationService classificationService;
 
     @Inject
-    @Builder
     public PageUpdateApiClient(
         @Named("pageupdate-api.baseUrl") String apiBaseUrl,
         @Named("pageupdate-api.user") String user,
         @Named("pageupdate-api.password") String password,
         @Named("pageupdate-api.connectionTimeout") int connectionTimeout
     ) {
-        super(apiBaseUrl + "api", connectionTimeout, 16, 10000);
-        authentication = new BasicAuthentication(user, password);
-        description = user + "@" + apiBaseUrl;
+        this(apiBaseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), 16, Duration.ofMillis(10000), user, password);
+    }
 
+    @Builder
+    public PageUpdateApiClient(
+        String baseUrl,
+        Duration connectionRequestTimeout,
+        Duration connectTimeout,
+        Duration socketTimeout,
+        int maxConnections,
+        Duration connectionInPoolTTL,
+        String user,
+        String password
+        ) {
+        super(baseUrl + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL);
+        authentication = new BasicAuthentication(user, password);
+        description = user + "@" + baseUrl + "api";
     }
 
     public static PageUpdateApiClientBuilder configured(String... configFiles) throws IOException {
