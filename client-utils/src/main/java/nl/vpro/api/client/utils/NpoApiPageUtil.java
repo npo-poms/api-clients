@@ -64,10 +64,6 @@ public class NpoApiPageUtil  {
 
 	/**
 	 * @since 1.16
-	 * @param profiles
-	 * @param props
-	 * @param mids
-	 * @return
 	 */
     public Page[] loadByMid(List<String> profiles, String props, String... mids) {
 
@@ -80,12 +76,14 @@ public class NpoApiPageUtil  {
 
                 builder.mediaForm().mediaIds(idList.toArray(new String[idList.size()]));
                 PageSearchResult pages =
-                    clients.getPageService().find(builder.build(), profile, props, 0l, 240);
+                    clients.getPageService().find(builder.build(), profile, props, 0L, 240);
                 for (Page page : pages.asList()) {
-                    for (Embed embed : page.getEmbeds()) {
-                        String mid = embed.getMedia().getMid();
-                        if (! map.containsKey(mid)) {
-                            map.put(mid, page);
+                    if (page != null && page.getEmbeds() != null) {
+                        for (Embed embed : page.getEmbeds()) {
+                            String mid = embed.getMedia().getMid();
+                            if (!map.containsKey(mid)) {
+                                map.put(mid, page);
+                            }
                         }
                     }
                 }
