@@ -51,8 +51,8 @@ public class NpoApiClientsITest {
     @Before
     public void setUp() throws IOException {
         clients = NpoApiClients.configured()
-            .connectionTimeout(100)
-            .apiBaseUrl("http://rs.poms.omroep.nl:8070/v1/").build();
+            .build();
+        System.out.println(clients);
     }
 
     @Test(expected = NotAuthorizedException.class)

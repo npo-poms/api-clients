@@ -276,7 +276,8 @@ public class MediaRestClient extends AbstractApiClient {
                 this,
                 ErrorAspect.proxyErrors(
                     MediaRestClient.LOG, () -> "media rest", MediaBackendRestService.class,
-                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class)
+                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class),
+                    counter
                 )
             );
 

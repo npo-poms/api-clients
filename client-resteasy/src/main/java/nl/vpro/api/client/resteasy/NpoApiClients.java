@@ -4,7 +4,6 @@ package nl.vpro.api.client.resteasy;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -21,6 +20,7 @@ import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
 import nl.vpro.resteasy.JacksonContextResolver;
+import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
 
 @Named
@@ -104,7 +104,13 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     }
 
     public static NpoApiClientsBuilder configured() {
-        return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "apiclient.properties");
+        return configured((Env) null);
+    }
+
+    public static NpoApiClientsBuilder configured(Env env) {
+        NpoApiClientsBuilder builder = builder();
+        ReflectionUtils.configuredInHome(env, builder, "apiclient.properties");
+        return builder;
     }
 
 
