@@ -71,7 +71,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
                     getTarget(getClientHttpEngine())
                         .proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML)
                         .build(),
-                    Error.class
+                    Error.class,
+                    counter
                 );
         }
         return pageUpdateRestService;
