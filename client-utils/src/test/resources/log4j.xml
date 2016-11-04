@@ -8,7 +8,7 @@
   </appender>
 
   <logger name="nl.vpro">
-    <level value="DEBUG"/>
+    <level value="INFO"/>
   </logger>
   <root>
     <level value="INFO"/>

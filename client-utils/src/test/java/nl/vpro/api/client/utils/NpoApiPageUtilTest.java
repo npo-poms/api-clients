@@ -12,6 +12,8 @@ import org.junit.Test;
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.page.Page;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Ignore("This is an integration test")
 public class NpoApiPageUtilTest {
 
@@ -25,6 +27,8 @@ public class NpoApiPageUtilTest {
     public void testLoadMultiple() throws Exception {
         Page[] result = util.loadByMid(Arrays.asList("vpro", null), null, TEST_MIDS);
 		System.out.println(Arrays.asList(result));
+        System.out.println(util.getClients().getCounts());
+        assertThat(util.getClients().getCount("PageRestService.find")).isEqualTo(2);
 
     }
 
@@ -34,9 +38,14 @@ public class NpoApiPageUtilTest {
         for (String m : TEST_MIDS) {
             result.add(util.supplyByMid(Arrays.asList("vpro", null), m));
         }
+
+        System.out.println(util.getClients().getCounts());
+
         for (Supplier<Optional<Page>> p : result) {
             System.out.println(p.get().orElse(null));
         }
+        System.out.println(util.getClients().getCounts());
+        assertThat(util.getClients().getCount("PageRestService.find")).isEqualTo(2);
 
     }
 
