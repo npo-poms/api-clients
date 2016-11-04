@@ -1,6 +1,7 @@
 package nl.vpro.api.client.utils;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,6 +52,15 @@ public class NpoApiPageUtil  {
         return result;
     }
 
+    private final Map<List<String>, PageSupplier> pageSupplier = new HashMap<>();
+
+    public Supplier<Optional<Page>> supplyByMid(List<String> profiles, String mid) {
+        PageSupplier supplier = pageSupplier.computeIfAbsent(profiles, PageSupplier::new);
+        supplier.add(mid);
+
+        return () -> supplier.get(mid);
+    }
+
     public PageSearchResult find(
         PageForm form,
         String profile,
@@ -62,9 +72,7 @@ public class NpoApiPageUtil  {
         return result;
     }
 
-	/**
-	 * @since 1.16
-	 */
+
     public Page[] loadByMid(List<String> profiles, String props, String... mids) {
 
         Map<String, Page> map = new HashMap<>();
@@ -104,5 +112,32 @@ public class NpoApiPageUtil  {
 
     public NpoApiClients getClients() {
         return clients;
+    }
+
+    private class PageSupplier {
+        private List<String> mids = new ArrayList<>();
+        private Page[] results;
+
+        private final List<String> profiles;
+
+        private PageSupplier(List<String> profiles) {
+            this.profiles = profiles;
+        }
+
+        void add(String mid) {
+            if (results != null) {
+                throw new IllegalStateException();
+            }
+            if (!mids.contains(mid)) {
+                mids.add(mid);
+            }
+        }
+
+        Optional<Page> get(String mid) {
+            NpoApiPageUtil.this.pageSupplier.put(profiles, new PageSupplier(profiles));
+            results = NpoApiPageUtil.this.loadByMid(profiles, null, mids.toArray(new String[mids.size()]));
+            return Optional.ofNullable(results[mids.indexOf(mid)]);
+        }
+
     }
 }
