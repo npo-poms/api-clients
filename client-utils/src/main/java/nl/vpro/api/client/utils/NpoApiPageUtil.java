@@ -56,9 +56,7 @@ public class NpoApiPageUtil  {
 
     public Supplier<Optional<Page>> supplyByMid(List<String> profiles, String mid) {
         PageSupplier supplier = pageSupplier.computeIfAbsent(profiles, PageSupplier::new);
-        supplier.add(mid);
-
-        return () -> supplier.get(mid);
+        return supplier.add(mid);
     }
 
     public PageSearchResult find(
@@ -124,18 +122,21 @@ public class NpoApiPageUtil  {
             this.profiles = profiles;
         }
 
-        void add(String mid) {
+        Supplier<Optional<Page>> add(final String mid) {
             if (results != null) {
                 throw new IllegalStateException();
             }
             if (!mids.contains(mid)) {
                 mids.add(mid);
             }
+            return () -> get(mid);
         }
 
-        Optional<Page> get(String mid) {
+        private Optional<Page> get(String mid) {
             NpoApiPageUtil.this.pageSupplier.put(profiles, new PageSupplier(profiles));
-            results = NpoApiPageUtil.this.loadByMid(profiles, null, mids.toArray(new String[mids.size()]));
+            if (results == null) {
+                results = NpoApiPageUtil.this.loadByMid(profiles, null, mids.toArray(new String[mids.size()]));
+            }
             return Optional.ofNullable(results[mids.indexOf(mid)]);
         }
 
