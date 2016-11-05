@@ -1,5 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import lombok.EqualsAndHashCode;
+
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -52,10 +54,22 @@ public class NpoApiPageUtil  {
         return result;
     }
 
-    private final Map<List<String>, PageSupplier> pageSupplier = new HashMap<>();
+    @EqualsAndHashCode
+    private class SupplyKey {
+        private final List<String> profiles;
+        private final String props;
 
-    public Supplier<Optional<Page>> supplyByMid(List<String> profiles, String mid) {
-        PageSupplier supplier = pageSupplier.computeIfAbsent(profiles, PageSupplier::new);
+        private SupplyKey(List<String> profiles, String props) {
+            this.profiles = profiles;
+            this.props = props;
+        }
+
+    }
+    private final Map<SupplyKey, PageSupplier> pageSupplier = new HashMap<>();
+
+    public Supplier<Optional<Page>> supplyByMid(List<String> profiles, String props, String mid) {
+        SupplyKey key = new SupplyKey(profiles, props);
+        PageSupplier supplier = pageSupplier.computeIfAbsent(key, PageSupplier::new);
         return supplier.add(mid);
     }
 
@@ -116,10 +130,10 @@ public class NpoApiPageUtil  {
         private List<String> mids = new ArrayList<>();
         private Page[] results;
 
-        private final List<String> profiles;
+        private final SupplyKey key;
 
-        private PageSupplier(List<String> profiles) {
-            this.profiles = profiles;
+        private PageSupplier(SupplyKey key) {
+            this.key = key;
         }
 
         Supplier<Optional<Page>> add(final String mid) {
@@ -133,9 +147,9 @@ public class NpoApiPageUtil  {
         }
 
         private Optional<Page> get(String mid) {
-            NpoApiPageUtil.this.pageSupplier.put(profiles, new PageSupplier(profiles));
+            NpoApiPageUtil.this.pageSupplier.put(key, new PageSupplier(key));
             if (results == null) {
-                results = NpoApiPageUtil.this.loadByMid(profiles, null, mids.toArray(new String[mids.size()]));
+                results = NpoApiPageUtil.this.loadByMid(key.profiles, key.props, mids.toArray(new String[mids.size()]));
             }
             return Optional.ofNullable(results[mids.indexOf(mid)]);
         }
