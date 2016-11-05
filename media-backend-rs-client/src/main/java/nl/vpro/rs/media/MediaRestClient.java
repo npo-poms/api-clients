@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
-import nl.vpro.api.client.resteasy.ErrorAspect;
 import nl.vpro.domain.media.Group;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
@@ -238,10 +237,9 @@ public class MediaRestClient extends AbstractApiClient {
             LOG.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, url);
             proxy = MediaRestClientAspect.proxy(
                 this,
-                ErrorAspect.proxyErrors(
-                    MediaRestClient.LOG, () -> "media rest", MediaBackendRestService.class,
-                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class),
-                    counter
+                proxyErrorsAndCount(
+                    MediaBackendRestService.class,
+                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class)
                 )
             );
 

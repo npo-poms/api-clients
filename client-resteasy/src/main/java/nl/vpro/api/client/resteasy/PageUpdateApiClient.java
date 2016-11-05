@@ -1,8 +1,11 @@
 package nl.vpro.api.client.resteasy;
 
+import lombok.Builder;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.Duration;
 import java.util.Arrays;
 
 import javax.inject.Named;
@@ -19,8 +22,6 @@ import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.resteasy.JacksonContextResolver;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.util.ReflectionUtils;
-
-import static nl.vpro.api.client.resteasy.ErrorAspect.proxyErrors;
 
 public class PageUpdateApiClient extends AbstractApiClient {
 
@@ -42,37 +43,45 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Named("pageupdate-api.password") String password,
         @Named("pageupdate-api.connectionTimeout") int connectionTimeout
     ) {
-        super(apiBaseUrl + "api", connectionTimeout, 16, 10000);
-        authentication = new BasicAuthentication(user, password);
-        description = user + "@" + apiBaseUrl;
-
+        this(apiBaseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), 16, Duration.ofMillis(10000), user, password);
     }
 
-    public static Builder configured(String... configFiles) throws IOException {
-        PageUpdateApiClient.Builder builder = new PageUpdateApiClient.Builder();
+    @Builder
+    public PageUpdateApiClient(
+        String baseUrl,
+        Duration connectionRequestTimeout,
+        Duration connectTimeout,
+        Duration socketTimeout,
+        int maxConnections,
+        Duration connectionInPoolTTL,
+        String user,
+        String password
+        ) {
+        super(baseUrl + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL);
+        authentication = new BasicAuthentication(user, password);
+        description = user + "@" + baseUrl + "api";
+    }
+
+    public static PageUpdateApiClientBuilder configured(String... configFiles) throws IOException {
+        PageUpdateApiClientBuilder builder = builder();
         LOG.info("Reading configuration from {}", Arrays.asList(configFiles));
         ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
 
-    public static Builder configured() throws IOException {
-        return configured(
-            System.getProperty("user.home") +
-            File.separator + "conf" +
-            File.separator + "pageupdateapiclient.properties");
+    public static PageUpdateApiClientBuilder configured() throws IOException {
+        return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "pageupdateapiclient.properties");
     }
 
     public PageUpdateRestService getPageUpdateRestService() {
         if (pageUpdateRestService == null) {
             pageUpdateRestService =
-                proxyErrors(LOG,
-                    PageUpdateApiClient.this::getBaseUrl,
+                proxyErrorsAndCount(
                     PageUpdateRestService.class,
                     getTarget(getClientHttpEngine())
-                        .proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML)
-                        .build(),
-                    Error.class,
-                    counter
+                        .proxyBuilder(PageUpdateRestService.class)
+                        .defaultConsumes(MediaType.APPLICATION_XML).build(),
+                    Error.class
                 );
         }
         return pageUpdateRestService;
@@ -119,51 +128,4 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
 
-    public static class Builder {
-        private String apiBaseUrl;
-        private String user;
-        private String password;
-        private int connectionTimeout = 10000;
-
-
-        public PageUpdateApiClient build() {
-            return new PageUpdateApiClient(apiBaseUrl, user, password, connectionTimeout);
-        }
-
-        public String getApiBaseUrl() {
-            return apiBaseUrl;
-        }
-
-        public Builder setApiBaseUrl(String apiBaseUrl) {
-            this.apiBaseUrl = apiBaseUrl;
-            return this;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public Builder setUser(String user) {
-            this.user = user;
-            return this;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public Builder setPassword(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public int getConnectionTimeout() {
-            return connectionTimeout;
-        }
-
-        public Builder setConnectionTimeout(int connectionTimeout) {
-            this.connectionTimeout = connectionTimeout;
-            return this;
-        }
-    }
 }
