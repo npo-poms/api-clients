@@ -55,7 +55,8 @@ public class NpoApiClientUtilTest {
     public void setUp() throws IOException {
 
         util = new NpoApiMediaUtil(NpoApiClients.configured().build(), new NpoApiRateLimiter());
-        utilShortTimeout = new NpoApiMediaUtil(NpoApiClients.configured().setConnectionTimeout(1).build(), new NpoApiRateLimiter());
+        utilShortTimeout = new NpoApiMediaUtil(NpoApiClients.configured()
+            .connectTimeout(Duration.ofMillis(1)).build(), new NpoApiRateLimiter());
         start = Instant.now();
         System.out.println("Testing " + util);
     }

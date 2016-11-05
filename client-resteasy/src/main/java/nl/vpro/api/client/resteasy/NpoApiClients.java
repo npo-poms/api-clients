@@ -4,6 +4,7 @@ package nl.vpro.api.client.resteasy;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Duration;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -38,7 +39,6 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     private String origin;
 
     @Inject
-    @Builder
     public NpoApiClients(
         @Named("npo-api.baseUrl") String apiBaseUrl,
         @Named("npo-api.apiKey") String apiKey,
@@ -63,6 +63,30 @@ public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMB
     ) {
         this(apiBaseUrl, apiKey, secret, origin, 10, false);
     }
+
+    @Builder
+    public NpoApiClients(
+        String apiBaseUrl,
+        Duration connectionRequestTimeout,
+        Duration connectTimeout,
+        Duration socketTimeout,
+        int maxConnections,
+        Duration connectionInPoolTTL,
+        String apiKey,
+        String secret,
+        String origin,
+        Boolean trustAll
+    ) {
+        super((apiBaseUrl == null ? "https://rs.poms.omroep.nl/v1/" : apiBaseUrl) + "api",
+            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL);
+        this.apiKey = apiKey;
+        this.secret = secret;
+        this.origin = origin;
+        if (trustAll != null) {
+            super.setTrustAll(trustAll);
+        }
+    }
+
 
     public String getApiKey() {
         return apiKey;
