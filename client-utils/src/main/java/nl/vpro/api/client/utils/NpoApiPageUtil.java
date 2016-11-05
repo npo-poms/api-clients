@@ -92,7 +92,7 @@ public class NpoApiPageUtil  {
 
         for (String profile : profiles) {
             PageFormBuilder builder = PageFormBuilder.form();
-            for (List<String> idList : Lists.partition(Arrays.asList(mids), 100)) {
+            for (List<String> idList : Lists.partition(Arrays.asList(mids), 500)) {
 
                 builder.mediaForm().mediaIds(idList.toArray(new String[idList.size()]));
                 PageSearchResult pages =
