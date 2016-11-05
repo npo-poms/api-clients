@@ -50,14 +50,13 @@ public class NpoApiClientsITest {
 
     @Before
     public void setUp() throws IOException {
-        clients = NpoApiClients.configured()
-            .setConnectionTimeout(100)
-            .setApiBaseUrl("http://rs.poms.omroep.nl:8070/v1/").build();
+        clients = NpoApiClients.configured().build();
     }
 
     @Test(expected = NotAuthorizedException.class)
     public void testAccessForbidden() throws Exception {
-        NpoApiClients wrongPassword = NpoApiClients.configured().setSecret("WRONG PASSWORD").build();
+        NpoApiClients wrongPassword = NpoApiClients.configured()
+            .secret("WRONG PASSWORD").build();
 
         wrongPassword.getMediaService().list(null, null, null, null);
     }
