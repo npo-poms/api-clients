@@ -127,7 +127,7 @@ public class NpoApiClientsITest {
         IOUtils.copy(response, System.out);
     }
 
-    @Test
+    //@Test
     public void testIterate() throws IOException {
         InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro", null, 0L, Integer.MAX_VALUE, null, null);
         IOUtils.copy(response, ByteStreams.nullOutputStream());
