@@ -26,7 +26,7 @@ import nl.vpro.util.ReflectionUtils;
 
 @Named
 @Slf4j
-public class NpoApiClients extends AbstractApiClient implements  NpoApiClientsMBean {
+public class NpoApiClients extends AbstractApiClient  {
 
     private MediaRestService mediaRestServiceProxy;
     private MediaRestService mediaRestServiceProxyNoTimeout;
