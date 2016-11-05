@@ -36,7 +36,7 @@ public class NpoApiPageUtilTest {
     public void testSupplier() throws Exception {
         List<Supplier<Optional<Page>>> result = new ArrayList<>();
         for (String m : TEST_MIDS) {
-            result.add(util.supplyByMid(Arrays.asList("vpro", null), m));
+            result.add(util.supplyByMid(Arrays.asList("vpro", null), null, m));
         }
 
         System.out.println(util.getClients().getCounts());
