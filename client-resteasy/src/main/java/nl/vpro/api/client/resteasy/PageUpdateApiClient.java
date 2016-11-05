@@ -23,8 +23,6 @@ import nl.vpro.resteasy.JacksonContextResolver;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.util.ReflectionUtils;
 
-import static nl.vpro.api.client.resteasy.ErrorAspect.proxyErrors;
-
 public class PageUpdateApiClient extends AbstractApiClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiClient.class);
@@ -78,15 +76,12 @@ public class PageUpdateApiClient extends AbstractApiClient {
     public PageUpdateRestService getPageUpdateRestService() {
         if (pageUpdateRestService == null) {
             pageUpdateRestService =
-                proxyErrors(LOG,
-                    PageUpdateApiClient.this::getBaseUrl,
+                proxyErrorsAndCount(
                     PageUpdateRestService.class,
                     getTarget(getClientHttpEngine())
-                        .proxyBuilder(PageUpdateRestService.class).defaultConsumes(MediaType.APPLICATION_XML)
-                        .build(),
-                    Error.class, counter
-
-
+                        .proxyBuilder(PageUpdateRestService.class)
+                        .defaultConsumes(MediaType.APPLICATION_XML).build(),
+                    Error.class
                 );
         }
         return pageUpdateRestService;
