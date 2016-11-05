@@ -92,11 +92,11 @@ public class NpoApiPageUtil  {
 
         for (String profile : profiles) {
             PageFormBuilder builder = PageFormBuilder.form();
-            for (List<String> idList : Lists.partition(Arrays.asList(mids), 100)) {
+            for (List<String> idList : Lists.partition(Arrays.asList(mids), 500)) {
 
                 builder.mediaForm().mediaIds(idList.toArray(new String[idList.size()]));
                 PageSearchResult pages =
-                    clients.getPageService().find(builder.build(), profile, props, 0l, 240);
+                    clients.getPageService().find(builder.build(), profile, props, 0L, 240);
                 for (Page page : pages.asList()) {
                     for (Embed embed : page.getEmbeds()) {
                         String mid = embed.getMedia().getMid();
