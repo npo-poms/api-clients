@@ -28,7 +28,7 @@
   </scm>
 
   <properties>
-    <shared.version>1.57-SNAPSHOT</shared.version>
+    <shared.version>1.57.0</shared.version>
   </properties>
 
   <dependencyManagement>
