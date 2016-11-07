@@ -122,9 +122,23 @@ public class NpoApiClients extends AbstractApiClient  {
         return builder;
     }
 
+    public static NpoApiClientsBuilder configured(Env env, String... configFiles) {
+        NpoApiClientsBuilder builder = builder();
+        ReflectionUtils.configured(env, builder, configFiles);
+        return builder;
+    }
+
+
     public static NpoApiClientsBuilder configured(Map<String, String> settings) {
         NpoApiClientsBuilder builder = builder();
         ReflectionUtils.configured(builder, settings);
+        return builder;
+    }
+
+
+    public static NpoApiClientsBuilder configured(Env env, Map<String, String> settings) {
+        NpoApiClientsBuilder builder = builder();
+        ReflectionUtils.configured(env, builder, settings);
         return builder;
     }
 
