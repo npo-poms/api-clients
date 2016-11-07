@@ -66,7 +66,7 @@ public class NpoApiClients extends AbstractApiClient  {
 
     @Builder
     public NpoApiClients(
-        String apiBaseUrl,
+        String baseUrl,
         Duration connectionRequestTimeout,
         Duration connectTimeout,
         Duration socketTimeout,
@@ -78,7 +78,7 @@ public class NpoApiClients extends AbstractApiClient  {
         String origin,
         Boolean trustAll
     ) {
-        super((apiBaseUrl == null ? "https://rs.poms.omroep.nl/v1/" : apiBaseUrl) + "api",
+        super((baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl) + "api",
             connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow);
         this.apiKey = apiKey;
         this.secret = secret;
