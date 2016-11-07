@@ -43,7 +43,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Named("pageupdate-api.password") String password,
         @Named("pageupdate-api.connectionTimeout") int connectionTimeout
     ) {
-        this(baseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), 16, Duration.ofMillis(10000), user, password);
+        this(baseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), 16, Duration.ofMillis(10000), Duration.ofMinutes(15), user, password);
     }
 
     @Builder
@@ -54,10 +54,11 @@ public class PageUpdateApiClient extends AbstractApiClient {
         Duration socketTimeout,
         int maxConnections,
         Duration connectionInPoolTTL,
+        Duration countWindow,
         String user,
         String password
         ) {
-        super(baseUrl + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL);
+        super(baseUrl + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow);
         authentication = new BasicAuthentication(user, password);
         description = user + "@" + baseUrl + "api";
     }
