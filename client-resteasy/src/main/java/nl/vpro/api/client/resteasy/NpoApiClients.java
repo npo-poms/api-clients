@@ -72,13 +72,14 @@ public class NpoApiClients extends AbstractApiClient  {
         Duration socketTimeout,
         int maxConnections,
         Duration connectionInPoolTTL,
+        Duration countWindow,
         String apiKey,
         String secret,
         String origin,
         Boolean trustAll
     ) {
         super((apiBaseUrl == null ? "https://rs.poms.omroep.nl/v1/" : apiBaseUrl) + "api",
-            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL);
+            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
