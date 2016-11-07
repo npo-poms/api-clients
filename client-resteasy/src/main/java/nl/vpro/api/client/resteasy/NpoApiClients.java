@@ -40,14 +40,14 @@ public class NpoApiClients extends AbstractApiClient  {
 
     @Inject
     public NpoApiClients(
-        @Named("npo-api.baseUrl") String apiBaseUrl,
+        @Named("npo-api.baseUrl") String baseUrl,
         @Named("npo-api.apiKey") String apiKey,
         @Named("npo-api.secret") String secret,
         @Named("npo-api.origin") String origin,
         @Named("npo-api.connectionTimeout") Integer connectionTimeout,
         @Named("npo-api.trustAll") Boolean trustAll
         ) {
-		super((apiBaseUrl == null ? "https://rs.poms.omroep.nl/v1/" : apiBaseUrl)  + "api", connectionTimeout, 16, 3);
+		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl)  + "api", connectionTimeout, 16, 3);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
