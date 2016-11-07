@@ -38,12 +38,12 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     @Inject
     public PageUpdateApiClient(
-        @Named("pageupdate-api.baseUrl") String apiBaseUrl,
+        @Named("pageupdate-api.baseUrl") String baseUrl,
         @Named("pageupdate-api.user") String user,
         @Named("pageupdate-api.password") String password,
         @Named("pageupdate-api.connectionTimeout") int connectionTimeout
     ) {
-        this(apiBaseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), 16, Duration.ofMillis(10000), user, password);
+        this(baseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), 16, Duration.ofMillis(10000), user, password);
     }
 
     @Builder
