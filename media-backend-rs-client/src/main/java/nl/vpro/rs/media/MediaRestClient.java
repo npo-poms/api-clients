@@ -6,16 +6,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Map;
-import java.util.Properties;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.client.jaxrs.*;
+import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +93,8 @@ public class MediaRestClient extends AbstractApiClient {
             Duration.ofMillis(connectionTimeoutMillis),
             maxConnections,
             Duration.ofMillis(connectionInPoolTTL),
-            Duration.ofMinutes(60)
+            Duration.ofMinutes(60),
+            null
         );
     }
 
@@ -108,6 +107,7 @@ public class MediaRestClient extends AbstractApiClient {
         int maxConnections,
         Duration connectionInPoolTTL,
         Duration rateWindow,
+        List<Locale> acceptableLanguages,
         int defaultMax,
         boolean followMerges,
         Map<String, Object> headers,
@@ -117,7 +117,7 @@ public class MediaRestClient extends AbstractApiClient {
         String errors,
         boolean waitForRetry,
         boolean lookupCrids) {
-        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow);
+        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow, acceptableLanguages);
         this.defaultMax = defaultMax;
         this.followMerges = followMerges;
         this.headers = headers;
@@ -251,19 +251,15 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     @Override
-    protected ResteasyWebTarget getTarget(ClientHttpEngine engine) {
+    protected void buildResteasy(ResteasyClientBuilder builder) {
         if (userName == null || password == null) {
             throw new IllegalStateException("User name (" + userName + ") and password (" + password + ") should both be non null");
         }
-        ResteasyClient client =
-            new ResteasyClientBuilder()
-                .httpEngine(getClientHttpEngine())
-                .register(new BasicAuthentication(userName, password))
-                .build();
-        client
+
+        builder.httpEngine(getClientHttpEngine())
+            .register(new BasicAuthentication(userName, password))
             .register(new AddRequestHeadersFilter());
 
-        return client.target(url);
     }
 
 

@@ -5,15 +5,14 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
@@ -21,7 +20,6 @@ import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
 import nl.vpro.domain.api.Error;
-import nl.vpro.resteasy.JacksonContextResolver;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
 
@@ -74,13 +72,14 @@ public class NpoApiClients extends AbstractApiClient  {
         int maxConnections,
         Duration connectionInPoolTTL,
         Duration countWindow,
+        List<Locale> acceptableLanguages,
         String apiKey,
         String secret,
         String origin,
         Boolean trustAll
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl) + "api",
-            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow);
+            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
@@ -215,16 +214,9 @@ public class NpoApiClients extends AbstractApiClient  {
 
 
 	@Override
-    protected ResteasyWebTarget getTarget(ClientHttpEngine engine) {
-        ResteasyClient client =
-            new ResteasyClientBuilder()
-                .httpEngine(engine)
-                .register(getAuthentication())
-                .register(JacksonContextResolver.class)
-                .build();
-        return client.target(baseUrl);
+    protected void buildResteasy(ResteasyClientBuilder builder) {
+        builder.register(getAuthentication());
     }
-
 
 
 }
