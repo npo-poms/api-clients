@@ -20,6 +20,7 @@ import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
+import nl.vpro.domain.api.Error;
 import nl.vpro.resteasy.JacksonContextResolver;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
@@ -156,7 +157,7 @@ public class NpoApiClients extends AbstractApiClient  {
     public MediaRestService getMediaService() {
         if (mediaRestServiceProxy == null) {
             mediaRestServiceProxy =
-                build(getClientHttpEngine(), MediaRestService.class);
+                buildWithErrorClass(getClientHttpEngine(), MediaRestService.class,  Error.class);
         }
         return mediaRestServiceProxy;
     }
@@ -164,7 +165,7 @@ public class NpoApiClients extends AbstractApiClient  {
     public MediaRestService getMediaServiceNoTimeout() {
         if (mediaRestServiceProxyNoTimeout == null) {
             mediaRestServiceProxyNoTimeout =
-                build(getClientHttpEngineNoTimeout(), MediaRestService.class);
+                buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class);
         }
         return mediaRestServiceProxyNoTimeout;
     }
@@ -172,7 +173,7 @@ public class NpoApiClients extends AbstractApiClient  {
     public ScheduleRestServiceWithDefaults getScheduleService() {
         if (scheduleRestServiceProxy == null) {
             scheduleRestServiceProxy =
-                build(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class);
+                buildWithErrorClass(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class, Error.class);
         }
         return scheduleRestServiceProxy;
     }
