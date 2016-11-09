@@ -1,9 +1,8 @@
 package nl.vpro.rs.media;
 
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
@@ -14,8 +13,6 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.RateLimiter;
 
@@ -65,11 +62,9 @@ import nl.vpro.util.ReflectionUtils;
  *
  * @author Michiel Meeuwissen
  */
+
+@Slf4j
 public class MediaRestClient extends AbstractApiClient {
-
-    private static Logger LOG = LoggerFactory.getLogger(MediaRestClient.class);
-
-
 
     private int defaultMax = 50;
 
@@ -113,6 +108,7 @@ public class MediaRestClient extends AbstractApiClient {
         Map<String, Object> headers,
         String userName,
         String password,
+        String user,
         String url,
         String errors,
         boolean waitForRetry,
@@ -121,8 +117,21 @@ public class MediaRestClient extends AbstractApiClient {
         this.defaultMax = defaultMax;
         this.followMerges = followMerges;
         this.headers = headers;
-        this.userName = userName;
-        this.password = password;
+        if (user != null) {
+            setUserNamePassword(user);
+        }
+
+        if (userName != null) {
+            if (userName.contains(":")) {
+                log.info("User seem to be configured with password");
+                setUserNamePassword(userName);
+            } else {
+                this.userName = userName;
+            }
+        }
+        if (password != null) {
+            this.password = password;
+        }
         this.url = url;
         this.errors = errors;
         this.waitForRetry = waitForRetry;
@@ -160,32 +169,28 @@ public class MediaRestClient extends AbstractApiClient {
 	protected boolean lookupCrids = true;
 
 
-    public MediaRestClient configured(Env env, String... configFiles) {
-        ReflectionUtils.configured(env, this, configFiles);
-        return this;
+    public static MediaRestClientBuilder configured(Env env, String... configFiles) {
+        MediaRestClientBuilder builder = builder();
+        ReflectionUtils.configured(env, builder, configFiles);
+        return builder;
     }
 
     /**
      * Read configuration from a config file in ${user.home}/conf/mediarestclient.properties
      */
-    public MediaRestClient configured(Env env) {
-        configured(env, "classpath:/mediarestclient.properties", System.getProperty("user.home") + File.separator + "conf" + File.separator + "mediarestclient.properties");
-        File credsFile = new File(System.getProperty("user.home") + File.separator + "conf" + File.separator + "creds.properties");
-        if (credsFile.canRead()) {
-            Properties creds = new Properties();
-            try {
-                creds.load(new FileInputStream(credsFile));
-                if (creds.contains("user")) {
-                    setUserNamePassword(creds.getProperty("user"));
-                }
-            } catch (IOException e) {
-                throw new RuntimeException();
-            }
-        }
-        return this;
+    public static MediaRestClientBuilder configured(Env env) {
+        MediaRestClientBuilder builder = builder();
+        ReflectionUtils.configuredInHome(env, builder, "mediarestclient.properties", "creds.properties");
+        return builder;
     }
 
-    public MediaRestClient configured()  {
+    public static MediaRestClientBuilder configured(Env env, Map<String, String> settings) {
+        MediaRestClientBuilder builder = builder();
+        ReflectionUtils.configured(env, builder, settings);
+        return builder;
+    }
+
+    public static MediaRestClientBuilder configured()  {
         return configured(null);
     }
 
@@ -269,7 +274,7 @@ public class MediaRestClient extends AbstractApiClient {
      */
     public MediaBackendRestService getBackendRestService() {
         if (proxy == null) {
-            LOG.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, url);
+            log.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, url);
             proxy = MediaRestClientAspect.proxy(
                 this,
                 proxyErrorsAndCount(MediaBackendRestService.class,
@@ -524,7 +529,7 @@ public class MediaRestClient extends AbstractApiClient {
             throw new RuntimeException(cause);
         }
         try {
-            LOG.warn(userName + "@" + url + " " + cause + ", retrying after 30 s");
+            log.warn(userName + "@" + url + " " + cause + ", retrying after 30 s");
             Thread.sleep(30000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
