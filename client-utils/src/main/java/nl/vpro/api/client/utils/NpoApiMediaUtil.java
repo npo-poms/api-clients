@@ -163,13 +163,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     public ProgramResult unPageProgramResult(BiFunction<Integer, Long, ProgramResult> supplier, Predicate<MediaObject> filter, int max) {
         limiter.acquire();
         if (filter == null) {
-            filter = new Predicate<MediaObject>() {
-                @Override
-                public boolean test(MediaObject mediaObject) {
-                    return true;
-
-                }
-            };
+            filter = mediaObject -> true;
         }
         try {
             List<Program> result = new ArrayList<>();
@@ -210,22 +204,12 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public MediaResult listMembers(String mid, Order order, Predicate<MediaObject> filter, int max) {
-        BiFunction<Integer, Long, MediaResult> members = new BiFunction<Integer, Long, MediaResult>() {
-            @Override
-            public MediaResult apply(Integer batch, Long offset) {
-                return clients.getMediaService().listMembers(mid, null, order.toString(), offset, batch);
-            }
-        };
+        BiFunction<Integer, Long, MediaResult> members = (batch, offset) -> clients.getMediaService().listMembers(mid, null, order.toString(), offset, batch);
         return unPage(members, filter, max);
     }
 
     public ProgramResult listEpisodes(String mid, Order order, Predicate<MediaObject> filter, int max) {
-        BiFunction<Integer, Long, ProgramResult> members = new BiFunction<Integer, Long, ProgramResult>() {
-            @Override
-            public ProgramResult apply(Integer batch, Long offset) {
-                return clients.getMediaService().listEpisodes(mid, null, order.toString(), offset, batch);
-            }
-        };
+        BiFunction<Integer, Long, ProgramResult> members = (batch, offset) -> clients.getMediaService().listEpisodes(mid, null, order.toString(), offset, batch);
         return unPageProgramResult(members, filter, max);
     }
 
