@@ -89,6 +89,7 @@ public class MediaRestClient extends AbstractApiClient {
             maxConnections,
             Duration.ofMillis(connectionInPoolTTL),
             Duration.ofMinutes(60),
+            null,
             null
         );
     }
@@ -113,7 +114,7 @@ public class MediaRestClient extends AbstractApiClient {
         String errors,
         boolean waitForRetry,
         boolean lookupCrids) {
-        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow, acceptableLanguages);
+        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow, acceptableLanguages, null);
         this.defaultMax = defaultMax;
         this.followMerges = followMerges;
         this.headers = headers;
