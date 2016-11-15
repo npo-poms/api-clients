@@ -61,7 +61,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         String user,
         String password
         ) {
-        super(baseUrl + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages);
+        super(baseUrl + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, null);
         authentication = new BasicAuthentication(user, password);
         description = user + "@" + baseUrl + "api";
     }
