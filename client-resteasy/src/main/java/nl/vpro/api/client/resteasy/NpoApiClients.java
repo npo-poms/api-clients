@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
@@ -73,19 +74,22 @@ public class NpoApiClients extends AbstractApiClient  {
         Duration connectionInPoolTTL,
         Duration countWindow,
         List<Locale> acceptableLanguages,
+        MediaType mediaType,
         String apiKey,
         String secret,
         String origin,
         Boolean trustAll
+
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl) + "api",
-            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages);
+            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, mediaType);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
         if (trustAll != null) {
             super.setTrustAll(trustAll);
         }
+
     }
 
 
@@ -115,6 +119,8 @@ public class NpoApiClients extends AbstractApiClient  {
         this.origin = origin;
         this.invalidate();
     }
+
+
 
     public static NpoApiClientsBuilder configured(String... configFiles)  {
         NpoApiClientsBuilder builder = builder();
