@@ -56,17 +56,20 @@ public class NpoApiAuthentication {
 
         sb.append("uri:").append(uri.getRawPath());
 
-        List<NameValuePair> query = URLEncodedUtils.parse(uri.getQuery(), Charset.forName("utf-8"));
+        String q = uri.getQuery();
+        final List<NameValuePair> query;
+        if (q != null) {
+            query = URLEncodedUtils.parse(uri.getQuery(), Charset.forName("utf-8"));
+        } else {
+            query = new ArrayList<>();
+        }
 
-        SortedSet<NameValuePair> sortedQuery = new TreeSet<>(new Comparator<NameValuePair>() {
-            @Override
-            public int compare(NameValuePair o1, NameValuePair o2) {
-                int i = o1.getName().compareTo(o2.getName());
-                if (i != 0) {
-                    return i;
-                }
-                return o1.getValue().compareTo(o2.getValue());
+        SortedSet<NameValuePair> sortedQuery = new TreeSet<>((o1, o2) -> {
+            int i = o1.getName().compareTo(o2.getName());
+            if (i != 0) {
+                return i;
             }
+            return o1.getValue().compareTo(o2.getValue());
         });
 
         sortedQuery.addAll(query);
