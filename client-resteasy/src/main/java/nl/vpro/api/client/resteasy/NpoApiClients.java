@@ -75,20 +75,19 @@ public class NpoApiClients extends AbstractApiClient  {
         Duration countWindow,
         List<Locale> acceptableLanguages,
         MediaType mediaType,
+        Boolean trustAll,
         String apiKey,
         String secret,
-        String origin,
-        Boolean trustAll
+        String origin
+
 
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl) + "api",
-            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, mediaType);
+            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, mediaType, trustAll);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
-        if (trustAll != null) {
-            super.setTrustAll(trustAll);
-        }
+
 
     }
 
