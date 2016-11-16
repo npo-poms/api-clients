@@ -146,7 +146,13 @@ public class MediaRestClientUtils {
             return new JsonArrayIterator<>(inputStream, Change.class, () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
-            throw new RuntimeException(t.getMessage(), t);
+            if (t instanceof RuntimeException) {
+                throw (RuntimeException) t;
+            } else if (t instanceof IOException) {
+                throw (IOException) t;
+            } else {
+                throw new RuntimeException(t.getMessage(), t);
+            }
         }
 
     }
