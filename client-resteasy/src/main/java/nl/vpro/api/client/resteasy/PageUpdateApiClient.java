@@ -122,7 +122,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
 
     @Override
-    protected synchronized void invalidate() {
+    public synchronized void invalidate() {
         super.invalidate();
         pageUpdateRestService = null;
     }

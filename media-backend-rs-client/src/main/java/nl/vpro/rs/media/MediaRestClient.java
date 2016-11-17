@@ -508,7 +508,7 @@ public class MediaRestClient extends AbstractApiClient {
 
 
     @Override
-    protected synchronized void invalidate() {
+    public synchronized void invalidate() {
         super.invalidate();
         proxy = null;
     }

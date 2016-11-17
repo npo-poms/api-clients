@@ -199,7 +199,7 @@ public class NpoApiClients extends AbstractApiClient  {
     }
 
     @Override
-    protected void invalidate() {
+    public void invalidate() {
         super.invalidate();
         mediaRestServiceProxy = null;
         mediaRestServiceProxyNoTimeout = null;
