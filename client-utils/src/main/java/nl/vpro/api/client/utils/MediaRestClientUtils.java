@@ -21,6 +21,7 @@ import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.LazyIterator;
 
 /**
  * @author Michiel Meeuwissen

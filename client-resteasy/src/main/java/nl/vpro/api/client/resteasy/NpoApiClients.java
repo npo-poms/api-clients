@@ -47,7 +47,7 @@ public class NpoApiClients extends AbstractApiClient  {
         @Named("npo-api.connectionTimeout") Integer connectionTimeout,
         @Named("npo-api.trustAll") Boolean trustAll
         ) {
-		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl)  + "api", connectionTimeout, 16, 3);
+		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl)  + "/api", connectionTimeout, 16, 3);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
@@ -82,7 +82,7 @@ public class NpoApiClients extends AbstractApiClient  {
 
 
     ) {
-        super((baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl) + "api",
+        super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
             connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, mediaType, trustAll);
         this.apiKey = apiKey;
         this.secret = secret;
