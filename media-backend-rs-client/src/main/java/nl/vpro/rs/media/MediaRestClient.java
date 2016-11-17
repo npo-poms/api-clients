@@ -112,7 +112,6 @@ public class MediaRestClient extends AbstractApiClient {
         String userName,
         String password,
         String user,
-        String url,
         String errors,
         boolean waitForRetry,
         boolean lookupCrids) {
@@ -135,7 +134,6 @@ public class MediaRestClient extends AbstractApiClient {
         if (password != null) {
             this.password = password;
         }
-        this.url = url;
         this.errors = errors;
         this.waitForRetry = waitForRetry;
         this.lookupCrids = lookupCrids;
@@ -166,7 +164,6 @@ public class MediaRestClient extends AbstractApiClient {
 
     protected String userName;
     protected String password;
-    protected String url = "https://api-dev.poms.omroep.nl";
     protected String errors;
     protected boolean waitForRetry = false;
 	protected boolean lookupCrids = true;
@@ -221,14 +218,6 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public void setErrors(String errors) {
         this.errors = errors;
     }
@@ -277,7 +266,7 @@ public class MediaRestClient extends AbstractApiClient {
      */
     public MediaBackendRestService getBackendRestService() {
         if (proxy == null) {
-            log.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, url);
+            log.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, baseUrl);
             proxy = MediaRestClientAspect.proxy(
                 this,
                 proxyErrorsAndCount(MediaBackendRestService.class,
@@ -515,7 +504,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     @Override
     public String toString() {
-        return userName + "@" + url;
+        return userName + "@" + baseUrl;
     }
 
 
@@ -532,7 +521,7 @@ public class MediaRestClient extends AbstractApiClient {
             throw new RuntimeException(cause);
         }
         try {
-            log.warn(userName + "@" + url + " " + cause + ", retrying after 30 s");
+            log.warn(userName + "@" + baseUrl + " " + cause + ", retrying after 30 s");
             Thread.sleep(30000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
