@@ -95,11 +95,6 @@ public class ApiProfileServiceImpl implements ProfileService {
 
     }
 
-    @Override
-    public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name, Long since) {
-       throw new UnsupportedOperationException();
-    }
-
     protected ProfileRestService getClient() {
         return clients.getProfileService();
     }
