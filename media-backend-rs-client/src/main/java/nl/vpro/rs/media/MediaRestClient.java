@@ -1,21 +1,18 @@
 package nl.vpro.rs.media;
 
-import java.io.File;
-import java.io.FileInputStream;
+import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Map;
-import java.util.Properties;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.client.jaxrs.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import com.google.common.util.concurrent.RateLimiter;
 
@@ -65,11 +62,9 @@ import nl.vpro.util.ReflectionUtils;
  *
  * @author Michiel Meeuwissen
  */
+
+@Slf4j
 public class MediaRestClient extends AbstractApiClient {
-
-    private static Logger LOG = LoggerFactory.getLogger(MediaRestClient.class);
-
-
 
     private int defaultMax = 50;
 
@@ -90,9 +85,57 @@ public class MediaRestClient extends AbstractApiClient {
             Duration.ofMillis(connectionTimeoutMillis),
             Duration.ofMillis(connectionTimeoutMillis),
             maxConnections,
-            Duration.ofMillis(connectionInPoolTTL));
+            Duration.ofMillis(connectionInPoolTTL),
+            Duration.ofMinutes(60),
+            null,
+            null,
+            null
+        );
     }
 
+    @Builder
+    public MediaRestClient(
+        String baseUrl,
+        Duration connectionRequestTimeout,
+        Duration connectTimeout,
+        Duration socketTimeout,
+        int maxConnections,
+        Duration connectionInPoolTTL,
+        Duration rateWindow,
+        List<Locale> acceptableLanguages,
+        Boolean trustAll,
+        int defaultMax,
+        boolean followMerges,
+        Map<String, Object> headers,
+        String userName,
+        String password,
+        String user,
+        String errors,
+        boolean waitForRetry,
+        boolean lookupCrids) {
+        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow, acceptableLanguages, null, trustAll);
+        this.defaultMax = defaultMax;
+        this.followMerges = followMerges;
+        this.headers = headers;
+        if (user != null) {
+            setUserNamePassword(user);
+        }
+
+        if (userName != null) {
+            if (userName.contains(":")) {
+                log.info("User seem to be configured with password");
+                setUserNamePassword(userName);
+            } else {
+                this.userName = userName;
+            }
+        }
+        if (password != null) {
+            this.password = password;
+        }
+        this.errors = errors;
+        this.waitForRetry = waitForRetry;
+        this.lookupCrids = lookupCrids;
+    }
 
     enum Type {
         SEGMENT,
@@ -119,34 +162,33 @@ public class MediaRestClient extends AbstractApiClient {
 
     protected String userName;
     protected String password;
-    protected String url = "https://api-dev.poms.omroep.nl";
     protected String errors;
     protected boolean waitForRetry = false;
 	protected boolean lookupCrids = true;
 
 
-    public MediaRestClient configured(Env env, String... configFiles) throws IOException {
-        ReflectionUtils.configured(env, this, configFiles);
-        return this;
+    public static MediaRestClientBuilder configured(Env env, String... configFiles) {
+        MediaRestClientBuilder builder = builder();
+        ReflectionUtils.configured(env, builder, configFiles);
+        return builder;
     }
 
     /**
      * Read configuration from a config file in ${user.home}/conf/mediarestclient.properties
      */
-    public MediaRestClient configured(Env env) throws IOException {
-        configured(env, "classpath:/mediarestclient.properties", System.getProperty("user.home") + File.separator + "conf" + File.separator + "mediarestclient.properties");
-        File credsFile = new File(System.getProperty("user.home") + File.separator + "conf" + File.separator + "creds.properties");
-        if (credsFile.canRead()) {
-            Properties creds = new Properties();
-            creds.load(new FileInputStream(credsFile));
-            if (creds.contains("user")) {
-                setUserNamePassword(creds.getProperty("user"));
-            }
-        }
-        return this;
+    public static MediaRestClientBuilder configured(Env env) {
+        MediaRestClientBuilder builder = builder();
+        ReflectionUtils.configuredInHome(env, builder, "mediarestclient.properties", "creds.properties");
+        return builder;
     }
 
-    public MediaRestClient configured() throws IOException {
+    public static MediaRestClientBuilder configured(Env env, Map<String, String> settings) {
+        MediaRestClientBuilder builder = builder();
+        ReflectionUtils.configured(env, builder, settings);
+        return builder;
+    }
+
+    public static MediaRestClientBuilder configured()  {
         return configured(null);
     }
 
@@ -172,14 +214,6 @@ public class MediaRestClient extends AbstractApiClient {
         if (userNamePassword.length == 2) {
             setPassword(userNamePassword[1]);
         }
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public void setErrors(String errors) {
@@ -212,19 +246,15 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     @Override
-    protected ResteasyWebTarget getTarget(ClientHttpEngine engine) {
+    protected void buildResteasy(ResteasyClientBuilder builder) {
         if (userName == null || password == null) {
             throw new IllegalStateException("User name (" + userName + ") and password (" + password + ") should both be non null");
         }
-        ResteasyClient client =
-            new ResteasyClientBuilder()
-                .httpEngine(getClientHttpEngine())
-                .register(new BasicAuthentication(userName, password))
-                .build();
-        client
+
+        builder.httpEngine(getClientHttpEngine())
+            .register(new BasicAuthentication(userName, password))
             .register(new AddRequestHeadersFilter());
 
-        return client.target(url);
     }
 
 
@@ -234,7 +264,7 @@ public class MediaRestClient extends AbstractApiClient {
      */
     public MediaBackendRestService getBackendRestService() {
         if (proxy == null) {
-            LOG.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, url);
+            log.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, baseUrl);
             proxy = MediaRestClientAspect.proxy(
                 this,
                 proxyErrorsAndCount(
@@ -467,14 +497,14 @@ public class MediaRestClient extends AbstractApiClient {
 
 
     @Override
-    protected synchronized void invalidate() {
+    public synchronized void invalidate() {
         super.invalidate();
         proxy = null;
     }
 
     @Override
     public String toString() {
-        return userName + "@" + url;
+        return userName + "@" + baseUrl;
     }
 
 
@@ -491,7 +521,7 @@ public class MediaRestClient extends AbstractApiClient {
             throw new RuntimeException(cause);
         }
         try {
-            LOG.warn(userName + "@" + url + " " + cause + ", retrying after 30 s");
+            log.warn(userName + "@" + baseUrl + " " + cause + ", retrying after 30 s");
             Thread.sleep(30000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

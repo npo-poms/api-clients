@@ -20,6 +20,7 @@ import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.LazyIterator;
 
 /**
  * @author Michiel Meeuwissen
@@ -134,6 +135,23 @@ public class MediaRestClientUtils {
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
             throw new RuntimeException(t.getMessage(), t);
+        }
+
+    }
+
+    public static JsonArrayIterator<Change> changes(MediaRestService restService, String profile, Instant since, Order order, Integer max) throws IOException {
+        try {
+            final InputStream inputStream = restService.changes(profile, null, null, since, order.name().toLowerCase(), max, null, null);
+            return new JsonArrayIterator<>(inputStream, Change.class, () -> IOUtils.closeQuietly(inputStream));
+        } catch (ProcessingException pi) {
+            Throwable t = pi.getCause();
+            if (t instanceof RuntimeException) {
+                throw (RuntimeException) t;
+            } else if (t instanceof IOException) {
+                throw (IOException) t;
+            } else {
+                throw new RuntimeException(t.getMessage(), t);
+            }
         }
 
     }

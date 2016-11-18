@@ -22,7 +22,6 @@ import nl.vpro.domain.media.search.TitleForm;
 import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
 import nl.vpro.domain.media.update.*;
-import nl.vpro.util.Env;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -37,7 +36,7 @@ public class MediaRestClientTest {
 
     @Before
     public void setUp() throws IOException {
-        client = new MediaRestClient().configured(Env.TEST);
+        client = MediaRestClient.configured().build();
         client.setWaitForRetry(true);
 
     }

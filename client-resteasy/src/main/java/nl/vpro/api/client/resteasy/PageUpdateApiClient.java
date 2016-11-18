@@ -7,11 +7,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
-import org.jboss.resteasy.client.jaxrs.*;
+import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +22,6 @@ import com.google.inject.Inject;
 
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
-import nl.vpro.resteasy.JacksonContextResolver;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.util.ReflectionUtils;
 
@@ -43,7 +45,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Named("pageupdate-api.password") String password,
         @Named("pageupdate-api.connectionTimeout") int connectionTimeout
     ) {
-        this(baseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), 16, Duration.ofMillis(10000), user, password);
+        this(baseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), 16, Duration.ofMillis(10000), Duration.ofMinutes(15), null, null, user, password);
     }
 
     @Builder
@@ -54,10 +56,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
         Duration socketTimeout,
         int maxConnections,
         Duration connectionInPoolTTL,
+        Duration countWindow,
+        List<Locale> acceptableLanguages,
+        Boolean trustAll,
         String user,
         String password
         ) {
-        super(baseUrl + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL);
+        super(baseUrl + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, null,  trustAll);
         authentication = new BasicAuthentication(user, password);
         description = user + "@" + baseUrl + "api";
     }
@@ -111,18 +116,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
     @Override
-    protected ResteasyWebTarget getTarget(ClientHttpEngine clientHttpEngine) {
-        ResteasyClient client = new ResteasyClientBuilder()
-            .httpEngine(getClientHttpEngine())
-            .register(authentication)
-            .register(JacksonContextResolver.class)
-            .build();
-        return client.target(baseUrl);
+    protected void buildResteasy(ResteasyClientBuilder builder) {
+        builder.register(authentication);
     }
 
 
     @Override
-    protected synchronized void invalidate() {
+    public synchronized void invalidate() {
         super.invalidate();
         pageUpdateRestService = null;
     }

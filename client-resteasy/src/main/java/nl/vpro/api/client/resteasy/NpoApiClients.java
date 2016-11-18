@@ -5,22 +5,22 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
 
-import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
-import nl.vpro.resteasy.JacksonContextResolver;
+import nl.vpro.domain.api.Error;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
 
@@ -47,7 +47,7 @@ public class NpoApiClients extends AbstractApiClient  {
         @Named("npo-api.connectionTimeout") Integer connectionTimeout,
         @Named("npo-api.trustAll") Boolean trustAll
         ) {
-		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl)  + "api", connectionTimeout, 16, 3);
+		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl)  + "/api", connectionTimeout, 16, 3);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
@@ -72,19 +72,23 @@ public class NpoApiClients extends AbstractApiClient  {
         Duration socketTimeout,
         int maxConnections,
         Duration connectionInPoolTTL,
+        Duration countWindow,
+        List<Locale> acceptableLanguages,
+        MediaType mediaType,
+        Boolean trustAll,
         String apiKey,
         String secret,
-        String origin,
-        Boolean trustAll
+        String origin
+
+
     ) {
-        super((baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl) + "api",
-            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL);
+        super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
+            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, mediaType, trustAll);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
-        if (trustAll != null) {
-            super.setTrustAll(trustAll);
-        }
+
+
     }
 
 
@@ -115,15 +119,31 @@ public class NpoApiClients extends AbstractApiClient  {
         this.invalidate();
     }
 
+
+
     public static NpoApiClientsBuilder configured(String... configFiles)  {
         NpoApiClientsBuilder builder = builder();
         ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
 
+    public static NpoApiClientsBuilder configured(Env env, String... configFiles) {
+        NpoApiClientsBuilder builder = builder();
+        ReflectionUtils.configured(env, builder, configFiles);
+        return builder;
+    }
+
+
     public static NpoApiClientsBuilder configured(Map<String, String> settings) {
         NpoApiClientsBuilder builder = builder();
         ReflectionUtils.configured(builder, settings);
+        return builder;
+    }
+
+
+    public static NpoApiClientsBuilder configured(Env env, Map<String, String> settings) {
+        NpoApiClientsBuilder builder = builder();
+        ReflectionUtils.configured(env, builder, settings);
         return builder;
     }
 
@@ -141,7 +161,7 @@ public class NpoApiClients extends AbstractApiClient  {
     public MediaRestService getMediaService() {
         if (mediaRestServiceProxy == null) {
             mediaRestServiceProxy =
-                build(getClientHttpEngine(), MediaRestService.class);
+                buildWithErrorClass(getClientHttpEngine(), MediaRestService.class,  Error.class);
         }
         return mediaRestServiceProxy;
     }
@@ -149,7 +169,7 @@ public class NpoApiClients extends AbstractApiClient  {
     public MediaRestService getMediaServiceNoTimeout() {
         if (mediaRestServiceProxyNoTimeout == null) {
             mediaRestServiceProxyNoTimeout =
-                build(getClientHttpEngineNoTimeout(), MediaRestService.class);
+                buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class);
         }
         return mediaRestServiceProxyNoTimeout;
     }
@@ -157,7 +177,7 @@ public class NpoApiClients extends AbstractApiClient  {
     public ScheduleRestServiceWithDefaults getScheduleService() {
         if (scheduleRestServiceProxy == null) {
             scheduleRestServiceProxy =
-                build(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class);
+                buildWithErrorClass(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class, Error.class);
         }
         return scheduleRestServiceProxy;
     }
@@ -179,7 +199,7 @@ public class NpoApiClients extends AbstractApiClient  {
     }
 
     @Override
-    protected void invalidate() {
+    public void invalidate() {
         super.invalidate();
         mediaRestServiceProxy = null;
         mediaRestServiceProxyNoTimeout = null;
@@ -199,16 +219,9 @@ public class NpoApiClients extends AbstractApiClient  {
 
 
 	@Override
-    protected ResteasyWebTarget getTarget(ClientHttpEngine engine) {
-        ResteasyClient client =
-            new ResteasyClientBuilder()
-                .httpEngine(engine)
-                .register(getAuthentication())
-                .register(JacksonContextResolver.class)
-                .build();
-        return client.target(baseUrl);
+    protected void buildResteasy(ResteasyClientBuilder builder) {
+        builder.register(getAuthentication());
     }
-
 
 
 }

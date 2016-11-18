@@ -84,9 +84,4 @@ public class XmlProfileServiceImpl implements ProfileService {
         return getMediaProfileDefinition(name);
     }
 
-    @Override
-    public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name, Long since) {
-        return getMediaProfileDefinition(name);
-
-    }
 }
