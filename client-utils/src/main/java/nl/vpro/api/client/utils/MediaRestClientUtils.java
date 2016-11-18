@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.*;
 
 import javax.ws.rs.NotFoundException;
@@ -128,6 +129,7 @@ public class MediaRestClientUtils {
         return result.toArray(new MediaObject[result.size()]);
     }
 
+    @Deprecated
     public static JsonArrayIterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
             final InputStream inputStream = restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null);
