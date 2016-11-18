@@ -4,16 +4,26 @@ package nl.vpro.api.client.resteasy;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
@@ -89,6 +99,37 @@ public class NpoApiClients extends AbstractApiClient  {
         this.origin = origin;
 
 
+    }
+
+
+    private static final Pattern VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
+    public String getVersion() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonFactory factory = new JsonFactory();
+            URL url = new URL(baseUrl + "/swagger.json");
+            JsonParser jp = factory.createParser(url.openStream());
+            JsonNode swagger = mapper.readTree(jp);
+            String versionString = swagger.get("info").get("version").asText();
+            Matcher matcher = VERSION.matcher(versionString);
+            if (matcher.find()) {
+                return matcher.group(1);
+            } else {
+                return versionString;
+            }
+        } catch (JsonParseException jpe) {
+            log.warn(jpe.getMessage());
+            return "4.7.3";
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return "unknown";
+        }
+
+    }
+    public Float getVersionNumber() {
+        Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(getVersion());
+        matcher.find();
+        return Float.parseFloat(matcher.group(1));
     }
 
 
@@ -214,7 +255,7 @@ public class NpoApiClients extends AbstractApiClient  {
 
 	@Override
 	public String toString() {
-		return super.toString() + " " + baseUrl;
+		return getApiKey() + "@" + baseUrl;
 	}
 
 
