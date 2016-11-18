@@ -6,6 +6,8 @@ package nl.vpro.api.client.resteasy;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -13,8 +15,11 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -221,5 +226,52 @@ public class NpoApiClientsITest {
         }
     }
 
+    @Test
+    public void testInfiniteTimeout() {
+        Instant start = Instant.now();
+        String url = "https://httpbin.org/delay/10";
+        ClientHttpEngine httpClient = clients.getClientHttpEngineNoTimeout();
+        ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
+        Response response = builder.build().target(url).request().get();
+        Duration duration = Duration.between(start, Instant.now());
+        assertThat(duration.getSeconds()).isGreaterThanOrEqualTo(10);
+        assertThat(response.getStatus()).isEqualTo(200);
+        System.out.println(response.readEntity(String.class));
+    }
+
+    @Test
+    public void testInfiniteTimeoutSocket() {
+        Instant start = Instant.now();
+        String url = "https://httpbin.org/drip?duration=12&numbytes=5&code=200";
+        ClientHttpEngine httpClient = clients.getClientHttpEngineNoTimeout();
+        ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
+        Response response = builder.build().target(url).request().get();
+        assertThat(response.getStatus()).isEqualTo(200);
+        System.out.println(response.readEntity(String.class));
+        Duration duration = Duration.between(start, Instant.now());
+        assertThat(duration.getSeconds()).isGreaterThanOrEqualTo(10);
+
+    }
+
+
+    @Test(expected = javax.ws.rs.ProcessingException.class)
+    public void testTimeout() {
+        String url = "https://httpbin.org/delay/11";
+        ClientHttpEngine httpClient = clients.getClientHttpEngine();
+        ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
+        Response response = builder.build().target(url).request().get();
+    }
+
+
+    @Test(expected = javax.ws.rs.ProcessingException.class)
+    public void testTimeoutSocket() {
+        String url = "https://httpbin.org/drip?duration=12&numbytes=5&code=200";
+        clients.setSocketTimeout("PT0.01S");
+        ClientHttpEngine httpClient = clients.getClientHttpEngine();
+        ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
+        Response response = builder.build().target(url).request().get();
+        assertThat(response.getStatus()).isEqualTo(200);
+        System.out.println(response.readEntity(String.class));
+    }
 
 }
