@@ -254,10 +254,6 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public JsonArrayIterator<Change> changes(String profile, Instant since, Order order, Integer max) {
-        return changes(profile, since, null,  order, max);
-    }
-
-    public JsonArrayIterator<Change> changes(String profile, Instant since, Order order, Integer max) {
         return changes(profile, null, since, order, max);
     }
 
