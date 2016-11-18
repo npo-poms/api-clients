@@ -126,6 +126,11 @@ public class NpoApiClients extends AbstractApiClient  {
         }
 
     }
+    public Float getVersionNumber() {
+        Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(getVersion());
+        matcher.find();
+        return Float.parseFloat(matcher.group(1));
+    }
 
 
     public String getApiKey() {
