@@ -130,6 +130,7 @@ public class MediaRestClientUtils {
         return result.toArray(new MediaObject[result.size()]);
     }
 
+    @Deprecated
     public static JsonArrayIterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
             final InputStream inputStream = restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null);
