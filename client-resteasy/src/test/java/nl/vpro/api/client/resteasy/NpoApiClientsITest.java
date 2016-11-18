@@ -69,6 +69,12 @@ public class NpoApiClientsITest {
 
 
 
+    @Test
+    public void testGetVersion() {
+        String version = clients.getVersion();
+        System.out.println(version);
+        assertThat(clients.getVersion()).isNotEqualTo("unknown");
+    }
 
     @Test
 	public void testFound() throws Exception {
