@@ -255,7 +255,7 @@ public class NpoApiClients extends AbstractApiClient  {
 
 	@Override
 	public String toString() {
-		return super.toString() + " " + baseUrl;
+		return getApiKey() + "@" + baseUrl;
 	}
 
 
