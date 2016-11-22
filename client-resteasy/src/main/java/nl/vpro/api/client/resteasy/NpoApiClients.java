@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
@@ -103,27 +104,33 @@ public class NpoApiClients extends AbstractApiClient  {
 
 
     private static final Pattern VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
+    String version = null;
     public String getVersion() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonFactory factory = new JsonFactory();
-            URL url = new URL(baseUrl + "/swagger.json");
-            JsonParser jp = factory.createParser(url.openStream());
-            JsonNode swagger = mapper.readTree(jp);
-            String versionString = swagger.get("info").get("version").asText();
-            Matcher matcher = VERSION.matcher(versionString);
-            if (matcher.find()) {
-                return matcher.group(1);
-            } else {
-                return versionString;
+        if (version == null) {
+            version = "unknown";
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonFactory factory = new JsonFactory();
+                URL url = new URL(baseUrl + "/swagger.json");
+                JsonParser jp = factory.createParser(url.openStream());
+                JsonNode swagger = mapper.readTree(jp);
+                String versionString = swagger.get("info").get("version").asText();
+                Matcher matcher = VERSION.matcher(versionString);
+                if (matcher.find()) {
+                    version = matcher.group(1);
+                } else {
+                    version = versionString;
+                }
+            } catch (JsonParseException jpe) {
+                log.warn(jpe.getMessage());
+                version = "4.7.3";
+            } catch (ConnectException e) {
+                log.warn(e.getMessage());
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
             }
-        } catch (JsonParseException jpe) {
-            log.warn(jpe.getMessage());
-            return "4.7.3";
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            return "unknown";
         }
+        return version;
 
     }
     public Float getVersionNumber() {
@@ -247,6 +254,7 @@ public class NpoApiClients extends AbstractApiClient  {
         scheduleRestServiceProxy = null;
         pageRestServiceProxy = null;
         profileRestServiceProxy = null;
+        version = null;
     }
 
     public ApiAuthenticationRequestFilter getAuthentication() {
