@@ -38,6 +38,7 @@ public class MediaRestClientUtilsTest {
             any(Instant.class),
             eq("asc"),
             any(Integer.class),
+            any(Boolean.class),
             any(HttpServletRequest.class),
             any(HttpServletResponse.class)))
             .thenReturn(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream());
