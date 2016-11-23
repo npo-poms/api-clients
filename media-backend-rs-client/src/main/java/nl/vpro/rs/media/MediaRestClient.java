@@ -372,7 +372,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void createMember(String owner, String member, Integer number) {
         try {
-            getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors);
+            Response response = getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors);
+            response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -380,7 +381,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void removeMember(String owner, String member, Integer number) {
         try {
-            getBackendRestService().removeMemberOf("media", member, owner, number, followMerges, errors);
+            Response response = getBackendRestService().removeMemberOf("media", member, owner, number, followMerges, errors);
+            response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -389,7 +391,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void createEpisode(String owner, String member, Integer number) {
         try {
-            getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors);
+            Response response = getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors);
+            response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -398,7 +401,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void removeEpisode(String owner, String member, Integer number) {
         try {
-            getBackendRestService().removeEpisodeOf(member, owner, number, followMerges, errors);
+            Response response = getBackendRestService().removeEpisodeOf(member, owner, number, followMerges, errors);
+            response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
