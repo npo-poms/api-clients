@@ -295,13 +295,9 @@ public class MediaRestClientTest {
     public void addImage() {
         String program = sampleProgram("addImage").id;
 
-        client.getBackendRestService().addImage(
+        client.addImage(
             new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/bril.png")),
-            "media",
-            program,
-            client.isFollowMerges(),
-            null
-        );
+            program);
         System.out.println("Added image to " + program);
 
 
@@ -312,12 +308,9 @@ public class MediaRestClientTest {
     public void addImage404() {
         String program = sampleProgram("addImage").id;
 
-        client.getBackendRestService().addImage(
+        client.addImage(
             new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/BESTAATNIET.png")),
-            "media",
-            program,
-            client.isFollowMerges(),
-            null
+            program
         );
 
     }

@@ -318,11 +318,20 @@ public class MediaRestClient extends AbstractApiClient {
         try {
             Response response = getBackendRestService().deleteMedia(null, mid, followMerges, errors);
             String result = response.readEntity(String.class);
+            response.close();
             return result;
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String addImage(ImageUpdate update, String mid) {
+        Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors);
+        String result = response.readEntity(String.class);
+        response.close();
+        return result;
+
     }
 
     public SortedSet<LocationUpdate> cloneLocations(String id) {
@@ -345,7 +354,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     /** add a location to a Program, Segment or Group */
     protected void addLocation(final Type type, final LocationUpdate location, final String id) {
-        getBackendRestService().addLocation(type.toString(), location, id, followMerges, errors);
+        Response response = getBackendRestService().addLocation(type.toString(), location, id, followMerges, errors);
+        response.close();
     }
 
     public void  addLocationToProgram(LocationUpdate location, String programId) {
@@ -399,6 +409,7 @@ public class MediaRestClient extends AbstractApiClient {
         try {
             Response response = getBackendRestService().update(type.toString(), update, followMerges, errors, lookupCrids);
             String result = response.readEntity(String.class);
+            response.close();
             return result;
 
         } catch (IOException e) {
