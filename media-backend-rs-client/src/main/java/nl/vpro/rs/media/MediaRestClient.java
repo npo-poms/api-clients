@@ -313,6 +313,18 @@ public class MediaRestClient extends AbstractApiClient {
         return (T) get(MediaUpdate.class, id);
     }
 
+    public String delete(String mid) {
+
+        try {
+            Response response = getBackendRestService().deleteMedia(null, mid, followMerges, errors);
+            String result = response.readEntity(String.class);
+            return result;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public SortedSet<LocationUpdate> cloneLocations(String id) {
 
         SortedSet<LocationUpdate> result = new TreeSet<>();
