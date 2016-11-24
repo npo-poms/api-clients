@@ -250,10 +250,13 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     public String getVersion() {
-        return getBackendRestService().version();
+        try {
+            return getBackendRestService().version();
+        } catch(Exception io) {
+            log.warn(io.getMessage());
+            return "unknown";
+        }
     }
-
-    private static final Pattern VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
 
     public Float getVersionNumber() {
         Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(getVersion());
