@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
@@ -245,6 +247,18 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void setHeaders(Map<String, Object> headers) {
         this.headers = headers;
+    }
+
+    public String getVersion() {
+        return getBackendRestService().version();
+    }
+
+    private static final Pattern VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
+
+    public Float getVersionNumber() {
+        Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(getVersion());
+        matcher.find();
+        return Float.parseFloat(matcher.group(1));
     }
 
     @Override

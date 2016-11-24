@@ -83,29 +83,31 @@ class MediaRestClientAspect implements InvocationHandler {
 
     protected void fillErrorParameterIfEmpty(Method method, Object[] args) {
         Annotation[][] annotations = method.getParameterAnnotations();
-        for (int i = 0; i < args.length; i++) {
-            for (int j = 0; j < annotations[i].length; j++) {
-                if (annotations[i][j] instanceof QueryParam && args[i] == null) {
-                    QueryParam queryParam = (QueryParam) annotations[i][j];
-                    if ("errors".equals(queryParam.value())) {
-                        LOG.debug("Implicetely set errors parameter to {}", client.errors);
-                        args[i] = client.errors;
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                for (int j = 0; j < annotations[i].length; j++) {
+                    if (annotations[i][j] instanceof QueryParam && args[i] == null) {
+                        QueryParam queryParam = (QueryParam) annotations[i][j];
+                        if ("errors".equals(queryParam.value())) {
+                            LOG.debug("Implicetely set errors parameter to {}", client.errors);
+                            args[i] = client.errors;
+                        }
+                        if ("followMerges".equals(queryParam.value())) {
+                            LOG.debug("Implicetely set followMerges to {}", client.isFollowMerges());
+                            args[i] = client.isFollowMerges();
+                        }
                     }
-                    if ("followMerges".equals(queryParam.value())) {
-                        LOG.debug("Implicetely set followMerges to {}", client.isFollowMerges());
-                        args[i] = client.isFollowMerges();
-                    }
-                }
-                if (annotations[i][j] instanceof PathParam && args[i] == null) {
-                    PathParam pathParam  = (PathParam) annotations[i][j];
-                    if ("entity".equals(pathParam.value())) {
-                        LOG.debug("Implicetely set entity to media");
-                        args[i] = "media";
-                    }
+                    if (annotations[i][j] instanceof PathParam && args[i] == null) {
+                        PathParam pathParam = (PathParam) annotations[i][j];
+                        if ("entity".equals(pathParam.value())) {
+                            LOG.debug("Implicetely set entity to media");
+                            args[i] = "media";
+                        }
 
+                    }
                 }
+
             }
-
         }
 
     }
