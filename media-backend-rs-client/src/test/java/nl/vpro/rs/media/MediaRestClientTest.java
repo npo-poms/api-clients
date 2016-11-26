@@ -17,7 +17,7 @@ import nl.vpro.domain.image.ImageType;
 import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaListItem;
-import nl.vpro.domain.media.search.Pager;
+import nl.vpro.domain.media.search.MediaPager;
 import nl.vpro.domain.media.search.TitleForm;
 import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
@@ -75,7 +75,7 @@ public class MediaRestClientTest {
 
     @Test
     public void find()  {
-        MediaForm mediaForm = new MediaForm(new Pager(2));
+        MediaForm mediaForm = new MediaForm(new MediaPager(2));
         //mediaForm.setText("dino");
         TitleForm titleForm = new TitleForm("Odd Blood", TextualType.MAIN, OwnerType.BROADCASTER, false);
         mediaForm.addType(MediaType.ALBUM);
@@ -364,6 +364,11 @@ public class MediaRestClientTest {
         WithId<ProgramUpdate> sample = sampleProgram("createProgram");
 
         System.out.println(sample.id);
+    }
+
+    @Test
+    public void version() {
+        System.out.println(client.getVersionNumber());
     }
 
 

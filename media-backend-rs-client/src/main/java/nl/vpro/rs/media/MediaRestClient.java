@@ -259,9 +259,13 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     public Float getVersionNumber() {
-        Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(getVersion());
-        matcher.find();
-        return Float.parseFloat(matcher.group(1));
+        try {
+            Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(getVersion());
+            matcher.find();
+            return Float.parseFloat(matcher.group(1));
+        } catch (NumberFormatException nfe) {
+            return 4.8f;
+        }
     }
 
     @Override
