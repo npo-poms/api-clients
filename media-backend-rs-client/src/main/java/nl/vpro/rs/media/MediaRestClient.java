@@ -251,21 +251,28 @@ public class MediaRestClient extends AbstractApiClient {
 
     public String getVersion() {
         try {
-            return getBackendRestService().version();
+            String v = getBackendRestService().version();
+            if (v != null) {
+                return v;
+            }
         } catch(Exception io) {
             log.warn(io.getMessage());
-            return "unknown";
         }
+        return "unknown";
     }
 
     public Float getVersionNumber() {
         try {
-            Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(getVersion());
-            matcher.find();
-            return Float.parseFloat(matcher.group(1));
+            String version = getVersion();
+            Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(version);
+            if (matcher.matches()) {
+                matcher.find();
+                return Float.parseFloat(matcher.group(1));
+            }
         } catch (NumberFormatException nfe) {
-            return 4.8f;
         }
+        return 4.8f;
+
     }
 
     @Override
