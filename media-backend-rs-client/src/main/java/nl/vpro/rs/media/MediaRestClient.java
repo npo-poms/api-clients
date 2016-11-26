@@ -271,7 +271,6 @@ public class MediaRestClient extends AbstractApiClient {
             String version = getVersion();
             Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(version);
             if (matcher.matches()) {
-                matcher.find();
                 return Float.parseFloat(matcher.group(1));
             }
         } catch (NumberFormatException nfe) {
