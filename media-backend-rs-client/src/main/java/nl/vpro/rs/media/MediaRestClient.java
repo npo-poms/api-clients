@@ -27,6 +27,7 @@ import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaListItem;
 import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
+import nl.vpro.rs.VersionRestService;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
 
@@ -76,6 +77,8 @@ public class MediaRestClient extends AbstractApiClient {
 	private boolean followMerges = true;
 
     private MediaBackendRestService proxy;
+
+
     private Map<String, Object> headers;
 
     public MediaRestClient() {
@@ -251,7 +254,9 @@ public class MediaRestClient extends AbstractApiClient {
 
     public String getVersion() {
         try {
-            String v = getBackendRestService().version();
+            VersionRestService p = proxyErrorsAndCount(VersionRestService.class,
+                getTarget(getClientHttpEngine()).proxy(VersionRestService.class));
+            String v = p.version();
             if (v != null) {
                 return v;
             }
