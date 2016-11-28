@@ -53,7 +53,7 @@ class MediaRestClientAspect implements InvocationHandler {
                         if (response.getStatusInfo() == Response.Status.SERVICE_UNAVAILABLE) {
                             String message = response.readEntity(String.class);
                             // retry
-                            client.retryAfterWaitOrException(method.getName() + " " + message);
+                            client.retryAfterWaitOrException(method.getName() + " " + message, new ServiceUnavailableException(message));
                             continue;
                         }
                         if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
@@ -68,7 +68,7 @@ class MediaRestClientAspect implements InvocationHandler {
             } catch (NotFoundException nfe) {
                 return null;
             } catch (ServiceUnavailableException sue) {
-                client.retryAfterWaitOrException(method.getName() + ": Service unavailable");
+                client.retryAfterWaitOrException(method.getName() + ": Service unavailable", sue);
                 // retry
                 continue;
             } catch (RuntimeException re) {
