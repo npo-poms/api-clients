@@ -120,8 +120,8 @@ public class MediaRestClient extends AbstractApiClient {
         String errors,
         boolean waitForRetry,
         boolean lookupCrids,
-        double throttleRate,
-        double asynchronousThrottleRate
+        Double throttleRate,
+        Double asynchronousThrottleRate
     ) {
         super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow, acceptableLanguages, null, trustAll);
         this.defaultMax = defaultMax;
@@ -145,8 +145,12 @@ public class MediaRestClient extends AbstractApiClient {
         this.errors = errors;
         this.waitForRetry = waitForRetry;
         this.lookupCrids = lookupCrids;
-        this.setThrottleRate(throttleRate);
-        this.setAsynchronousThrottleRate(asynchronousThrottleRate);
+        if (throttleRate != null) {
+            this.setThrottleRate(throttleRate);
+        }
+        if (asynchronousThrottleRate != null) {
+            this.setAsynchronousThrottleRate(asynchronousThrottleRate);
+        }
     }
 
     enum Type {
@@ -549,6 +553,7 @@ public class MediaRestClient extends AbstractApiClient {
      */
     public void setThrottleRate(double rate) {
         this.throttle.setRate(rate);
+
     }
 
     public double getAsynchronousThrottleCount() {
