@@ -119,7 +119,10 @@ public class MediaRestClient extends AbstractApiClient {
         String user,
         String errors,
         boolean waitForRetry,
-        boolean lookupCrids) {
+        boolean lookupCrids,
+        double throttleRate,
+        double asynchronousThrottleRate
+    ) {
         super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow, acceptableLanguages, null, trustAll);
         this.defaultMax = defaultMax;
         this.followMerges = followMerges;
@@ -142,6 +145,8 @@ public class MediaRestClient extends AbstractApiClient {
         this.errors = errors;
         this.waitForRetry = waitForRetry;
         this.lookupCrids = lookupCrids;
+        this.setThrottleRate(throttleRate);
+        this.setAsynchronousThrottleRate(asynchronousThrottleRate);
     }
 
     enum Type {
