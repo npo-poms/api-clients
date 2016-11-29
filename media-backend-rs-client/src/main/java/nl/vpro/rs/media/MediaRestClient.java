@@ -272,8 +272,10 @@ public class MediaRestClient extends AbstractApiClient {
             if (v != null) {
                 return v;
             }
+        } catch (javax.ws.rs.NotFoundException nfe) {
+            return "4.8.6";
         } catch(Exception io) {
-            log.warn(io.getMessage());
+            log.warn(io.getClass().getName() + " " + io.getMessage());
         }
         return "unknown";
     }
@@ -281,9 +283,14 @@ public class MediaRestClient extends AbstractApiClient {
     public Float getVersionNumber() {
         try {
             String version = getVersion();
-            Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(version);
+            Matcher matcher = Pattern.compile("(\\d+\\.\\d+)\\.?(\\d+)?.*").matcher(version);
             if (matcher.matches()) {
-                return Float.parseFloat(matcher.group(1));
+                Double result = Double.parseDouble(matcher.group(1));
+                String minor = matcher.group(2);
+                if (minor != null) {
+                    result += (double) Integer.parseInt(minor) / 1000d;
+                }
+                return result.floatValue();
             }
         } catch (NumberFormatException nfe) {
         }
