@@ -280,6 +280,10 @@ public class MediaRestClient extends AbstractApiClient {
         return "unknown";
     }
 
+    /**
+     * The version of the rest-service we are talking too.
+     * @return a float representing the major/minor version. The patch level is added as thousands.
+     */
     public Float getVersionNumber() {
         try {
             String version = getVersion();
@@ -294,7 +298,7 @@ public class MediaRestClient extends AbstractApiClient {
             }
         } catch (NumberFormatException nfe) {
         }
-        return 4.8f;
+        return 0f;
 
     }
 

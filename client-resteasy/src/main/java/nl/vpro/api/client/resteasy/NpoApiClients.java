@@ -133,6 +133,11 @@ public class NpoApiClients extends AbstractApiClient  {
         return version;
 
     }
+
+    /**
+     * The version of the npo frontend api we are talking too.
+     * @return a float representing the major/minor version. The patch level is added as thousands.
+     */
     public Float getVersionNumber() {
         Matcher matcher = Pattern.compile("(\\d+\\.\\d+)\\.?(\\d+)?.*").matcher(getVersion());
         matcher.find();
