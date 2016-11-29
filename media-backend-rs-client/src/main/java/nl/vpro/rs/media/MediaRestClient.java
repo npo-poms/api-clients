@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,8 @@ import javax.ws.rs.core.Response;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
@@ -81,6 +84,8 @@ public class MediaRestClient extends AbstractApiClient {
 
 
     private Map<String, Object> headers;
+
+    Supplier<String> version;
 
     public MediaRestClient() {
         this(-1, 10, 2);
@@ -265,19 +270,24 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     public String getVersion() {
-        try {
-            VersionRestService p = proxyErrorsAndCount(VersionRestService.class,
-                getTarget(getClientHttpEngine()).proxy(VersionRestService.class));
-            String v = p.version();
-            if (v != null) {
-                return v;
-            }
-        } catch (javax.ws.rs.NotFoundException nfe) {
-            return "4.8.6";
-        } catch(Exception io) {
-            log.warn(io.getClass().getName() + " " + io.getMessage());
+        if (version == null) {
+             version = Suppliers.memoizeWithExpiration(() -> {
+                 try {
+                     VersionRestService p = proxyErrorsAndCount(VersionRestService.class,
+                         getTarget(getClientHttpEngine()).proxy(VersionRestService.class));
+                     String v = p.version();
+                     if (v != null) {
+                         return v;
+                     }
+                 } catch (javax.ws.rs.NotFoundException nfe) {
+                     return "4.8.6";
+                 } catch (Exception io) {
+                     log.warn(io.getClass().getName() + " " + io.getMessage());
+                 }
+                 return "unknown";
+             }, 30L, TimeUnit.MINUTES);
         }
-        return "unknown";
+        return version.get();
     }
 
     /**
