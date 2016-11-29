@@ -24,6 +24,7 @@ import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
 import nl.vpro.domain.media.Segment;
 import nl.vpro.domain.media.search.MediaForm;
+import nl.vpro.domain.media.search.MediaList;
 import nl.vpro.domain.media.search.MediaListItem;
 import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
@@ -488,7 +489,7 @@ public class MediaRestClient extends AbstractApiClient {
         return (T) getFull(MediaObject.class, id);
     }
 
-    public Iterable<MemberUpdate> getGroupMembers(final String id, final int max, final long offset) {
+    public MediaUpdateList<MemberUpdate> getGroupMembers(final String id, final int max, final long offset) {
         try {
             return getBackendRestService().getGroupMembers("media", id, offset, max, "ASC", followMerges);
         } catch (IOException e) {
@@ -496,11 +497,11 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
-    public Iterable<MemberUpdate> getGroupMembers(String id) {
+    public MediaUpdateList<MemberUpdate> getGroupMembers(String id) {
         return getGroupMembers(id, defaultMax, 0);
     }
 
-    public Iterable<MemberUpdate> getGroupEpisodes(final String id, final int max, final long offset) {
+    public MediaUpdateList<MemberUpdate> getGroupEpisodes(final String id, final int max, final long offset) {
         try {
             return getBackendRestService().getGroupEpisodes(id, offset, max, "ASC", followMerges);
         } catch (IOException e) {
@@ -508,7 +509,7 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
-    public Iterable<MemberUpdate> getGroupEpisodes(String id) {
+    public MediaUpdateList<MemberUpdate> getGroupEpisodes(String id) {
         return getGroupEpisodes(id, defaultMax, 0);
     }
 
@@ -524,7 +525,7 @@ public class MediaRestClient extends AbstractApiClient {
         return set(Type.MEDIA, mediaUpdate);
     }
 
-    public Iterable<MediaListItem> find(MediaForm form)  {
+    public MediaList<MediaListItem> find(MediaForm form)  {
         try {
             return getBackendRestService().find(form, false);
         } catch (IOException e) {
