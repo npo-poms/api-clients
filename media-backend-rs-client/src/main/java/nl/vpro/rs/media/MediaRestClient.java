@@ -112,7 +112,7 @@ public class MediaRestClient extends AbstractApiClient {
         Duration rateWindow,
         List<Locale> acceptableLanguages,
         Boolean trustAll,
-        int defaultMax,
+        Integer defaultMax,
         boolean followMerges,
         Map<String, Object> headers,
         String userName,
@@ -125,7 +125,9 @@ public class MediaRestClient extends AbstractApiClient {
         Double asynchronousThrottleRate
     ) {
         super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow, acceptableLanguages, null, trustAll);
-        this.defaultMax = defaultMax;
+        if (defaultMax != null) {
+            this.defaultMax = defaultMax;
+        }
         this.followMerges = followMerges;
         this.headers = headers;
         if (user != null) {
