@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
@@ -104,33 +107,36 @@ public class NpoApiClients extends AbstractApiClient  {
 
 
     private static final Pattern VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
-    String version = null;
+    private Supplier<String> version = null;
     public String getVersion() {
         if (version == null) {
-            version = "unknown";
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonFactory factory = new JsonFactory();
-                URL url = new URL(baseUrl + "/swagger.json");
-                JsonParser jp = factory.createParser(url.openStream());
-                JsonNode swagger = mapper.readTree(jp);
-                String versionString = swagger.get("info").get("version").asText();
-                Matcher matcher = VERSION.matcher(versionString);
-                if (matcher.find()) {
-                    version = matcher.group(1);
-                } else {
-                    version = versionString;
+            version = Suppliers.memoizeWithExpiration(() -> {
+                String result = "unknown";
+                try {
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonFactory factory = new JsonFactory();
+                    URL url = new URL(baseUrl + "/swagger.json");
+                    JsonParser jp = factory.createParser(url.openStream());
+                    JsonNode swagger = mapper.readTree(jp);
+                    String versionString = swagger.get("info").get("version").asText();
+                    Matcher matcher = VERSION.matcher(versionString);
+                    if (matcher.find()) {
+                        result = matcher.group(1);
+                    } else {
+                        result = versionString;
+                    }
+                } catch (JsonParseException jpe) {
+                    log.warn(jpe.getMessage());
+                    result = "4.7.3";
+                } catch (ConnectException e) {
+                    log.warn(e.getMessage());
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
                 }
-            } catch (JsonParseException jpe) {
-                log.warn(jpe.getMessage());
-                version = "4.7.3";
-            } catch (ConnectException e) {
-                log.warn(e.getMessage());
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
+                return result;
+            }, 30, TimeUnit.MINUTES);
         }
-        return version;
+        return version.get();
 
     }
 
