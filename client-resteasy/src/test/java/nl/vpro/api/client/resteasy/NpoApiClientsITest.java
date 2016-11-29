@@ -84,6 +84,7 @@ public class NpoApiClientsITest {
 
     @Test
     public void testGetVersionNumber() {
+        System.out.println(clients.getVersionNumber());
         assertThat(clients.getVersionNumber()).isGreaterThanOrEqualTo(4.7f);
     }
 

@@ -134,9 +134,14 @@ public class NpoApiClients extends AbstractApiClient  {
 
     }
     public Float getVersionNumber() {
-        Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(getVersion());
+        Matcher matcher = Pattern.compile("(\\d+\\.\\d+)\\.?(\\d+)?.*").matcher(getVersion());
         matcher.find();
-        return Float.parseFloat(matcher.group(1));
+        Double result = Double.parseDouble(matcher.group(1));
+        String minor = matcher.group(2);
+        if (minor != null) {
+            result += (double) Integer.parseInt(minor) / 1000d;
+        }
+        return result.floatValue();
     }
 
 
