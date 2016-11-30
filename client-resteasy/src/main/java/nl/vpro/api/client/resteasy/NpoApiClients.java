@@ -51,6 +51,8 @@ public class NpoApiClients extends AbstractApiClient  {
     private String apiKey;
     private String secret;
     private String origin;
+    
+    private String properties;
 
     @Inject
     public NpoApiClients(
@@ -92,7 +94,8 @@ public class NpoApiClients extends AbstractApiClient  {
         Boolean trustAll,
         String apiKey,
         String secret,
-        String origin
+        String origin,
+        String properties
 
 
     ) {
@@ -101,6 +104,7 @@ public class NpoApiClients extends AbstractApiClient  {
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
+        this.properties = properties;
 
 
     }
@@ -183,7 +187,13 @@ public class NpoApiClients extends AbstractApiClient  {
         this.invalidate();
     }
 
+    public String getProperties() {
+        return properties;
+    }
 
+    public void setProperties(String properties) {
+        this.properties = properties;
+    }
 
     public static NpoApiClientsBuilder configured(String... configFiles)  {
         NpoApiClientsBuilder builder = builder();
@@ -225,7 +235,9 @@ public class NpoApiClients extends AbstractApiClient  {
     public MediaRestService getMediaService() {
         if (mediaRestServiceProxy == null) {
             mediaRestServiceProxy =
-                buildWithErrorClass(getClientHttpEngine(), MediaRestService.class,  Error.class);
+                wrapClientAspect(
+                    buildWithErrorClass(getClientHttpEngine(), MediaRestService.class,  Error.class),
+                    MediaRestService.class);
         }
         return mediaRestServiceProxy;
     }
@@ -233,7 +245,9 @@ public class NpoApiClients extends AbstractApiClient  {
     public MediaRestService getMediaServiceNoTimeout() {
         if (mediaRestServiceProxyNoTimeout == null) {
             mediaRestServiceProxyNoTimeout =
-                buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class);
+                wrapClientAspect(
+                    buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class),
+                    MediaRestService.class);
         }
         return mediaRestServiceProxyNoTimeout;
     }
@@ -249,7 +263,10 @@ public class NpoApiClients extends AbstractApiClient  {
     public PageRestService getPageService() {
         if (pageRestServiceProxy == null) {
             pageRestServiceProxy =
-                build(getClientHttpEngine(), PageRestService.class);
+                wrapClientAspect(
+                    build(getClientHttpEngine(), PageRestService.class),
+                    PageRestService.class
+                );
         }
         return pageRestServiceProxy;
     }
@@ -260,6 +277,10 @@ public class NpoApiClients extends AbstractApiClient  {
                 build(getClientHttpEngine(), ProfileRestService.class);
         }
         return profileRestServiceProxy;
+    }
+    
+    protected <T> T wrapClientAspect(T proxy, Class<T> service) {
+        return NpoApiClientsAspect.proxy(this, proxy, service);
     }
 
     @Override

@@ -274,5 +274,7 @@ public class NpoApiClientsITest {
         assertThat(response.getStatus()).isEqualTo(200);
         System.out.println(response.readEntity(String.class));
     }
+    
+    
 
 }

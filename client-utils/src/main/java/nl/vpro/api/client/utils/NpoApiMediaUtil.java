@@ -125,13 +125,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     public MediaResult unPage(BiFunction<Integer, Long, MediaResult> supplier, Predicate<MediaObject> filter, int max) {
         limiter.acquire();
         if (filter == null) {
-            filter = new Predicate<MediaObject>() {
-                @Override
-                public boolean test(MediaObject mediaObject) {
-                    return true;
-
-                }
-            };
+            filter = mediaObject -> true;
         }
         try {
             List<MediaObject> result = new ArrayList<>();
@@ -194,12 +188,8 @@ public class NpoApiMediaUtil implements MediaProvider {
 
 
     public MediaResult listDescendants(String mid, Order order, Predicate<MediaObject> filter, int max) {
-        BiFunction<Integer, Long, MediaResult> descendants = new BiFunction<Integer, Long, MediaResult>() {
-            @Override
-            public MediaResult apply(Integer batch, Long offset) {
-                return clients.getMediaService().listDescendants(mid, null, order.toString(), offset, batch);
-            }
-        };
+        BiFunction<Integer, Long, MediaResult> descendants = (batch, offset) -> 
+            clients.getMediaService().listDescendants(mid, null, order.toString(), offset, batch);
         return unPage(descendants, filter, max);
     }
 
