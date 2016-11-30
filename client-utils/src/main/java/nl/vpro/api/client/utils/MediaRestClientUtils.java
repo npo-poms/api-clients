@@ -1,5 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,10 +29,9 @@ import nl.vpro.util.LazyIterator;
  * @author Michiel Meeuwissen
  * @since 1.1
  */
+@Slf4j
 public class MediaRestClientUtils {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MediaRestClientUtils.class);
-
+    
     /**
      * Similar to the v1 call for easier migration
      */
@@ -79,12 +80,12 @@ public class MediaRestClientUtils {
             return null;
         } catch (ProcessingException pe) {
             unwrapIO(pe);
-            LOG.warn(id + " " + pe.getMessage());
+            log.warn(id + " " + pe.getMessage());
             return null;
         } catch (RuntimeException ise) {
             throw ise;
         } catch (Exception e) {
-            LOG.error(id + " " + e.getClass().getName() + " " + e.getMessage());
+            log.error(id + " " + e.getClass().getName() + " " + e.getMessage());
             return null;
         }
     }
@@ -206,7 +207,7 @@ public class MediaRestClientUtils {
             }
         }
         if (propertiesFile.exists() && propertiesFile.lastModified() > timeStamp) {
-            LOG.info("Will reload {}", propertiesFile);
+            log.info("Will reload {}", propertiesFile);
             properties = null;
         }
         if (properties == null) {
@@ -220,7 +221,7 @@ public class MediaRestClientUtils {
                 }
 
             } catch (IOException e) {
-                LOG.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
                 properties = null;
                 return null;
             }
