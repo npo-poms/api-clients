@@ -53,6 +53,9 @@ public class NpoApiClients extends AbstractApiClient  {
     private String origin;
     
     private String properties;
+    private String profile;
+    private Integer max;
+
 
     @Inject
     public NpoApiClients(
@@ -95,7 +98,9 @@ public class NpoApiClients extends AbstractApiClient  {
         String apiKey,
         String secret,
         String origin,
-        String properties
+        String properties,
+        String profile,
+        Integer max
 
 
     ) {
@@ -105,7 +110,8 @@ public class NpoApiClients extends AbstractApiClient  {
         this.secret = secret;
         this.origin = origin;
         this.properties = properties;
-
+        this.profile = profile;
+        this.max = max;
 
     }
 
@@ -193,6 +199,25 @@ public class NpoApiClients extends AbstractApiClient  {
 
     public void setProperties(String properties) {
         this.properties = properties;
+    }
+    public boolean hasAllProperties() {
+        return properties == null || properties.equals("all");
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public Integer getMax() {
+        return max;
+    }
+
+    public void setMax(Integer max) {
+        this.max = max;
     }
 
     public static NpoApiClientsBuilder configured(String... configFiles)  {

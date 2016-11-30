@@ -2,16 +2,16 @@ package nl.vpro.api.client.resteasy;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.ServiceUnavailableException;
-import javax.ws.rs.core.Response;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+
+import static nl.vpro.domain.api.Constants.MAX;
+import static nl.vpro.domain.api.Constants.PROFILE;
+import static nl.vpro.domain.api.Constants.PROPERTIES;
 
 /**
  * This Proxy:
@@ -41,23 +41,31 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
-            fillPropertiesParameter(method, args);
+            fillImplicitParameters(method, args);
             return method.invoke(proxied, args);
         } catch (InvocationTargetException itc) {
             throw itc.getCause();
         }
     }
 
-    protected void fillPropertiesParameter(Method method, Object[] args) {
+    protected void fillImplicitParameters(Method method, Object[] args) {
         Annotation[][] annotations = method.getParameterAnnotations();
         if (args != null) {
             for (int i = 0; i < args.length; i++) {
                 for (int j = 0; j < annotations[i].length; j++) {
                     if (annotations[i][j] instanceof QueryParam && args[i] == null) {
                         QueryParam queryParam = (QueryParam) annotations[i][j];
-                        if ("properties".equals(queryParam.value())) {
-                            log.debug("Implicetely set errors parameter to {}", clients.getProperties());
-                            args[i] = clients.getProperties();
+                        if (args[i] == null) {
+                            if (PROPERTIES.equals(queryParam.value())) {
+                                log.debug("Implicitely set properties parameter to {}", clients.getProperties());
+                                args[i] = clients.getProperties();
+                            } else if (PROFILE.equals(queryParam.value())) {
+                                log.debug("Implicitely set profile parameter to {}", clients.getProfile());
+                                args[i] = clients.getProfile();
+                            } else if (MAX.equals(queryParam.value())) {
+                                log.debug("Implicitely set max parameter to {}", clients.getMax());
+                                args[i] = clients.getMax();
+                            }
                         }
                     }
                 }
