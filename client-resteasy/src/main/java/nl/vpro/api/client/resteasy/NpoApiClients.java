@@ -51,10 +51,10 @@ public class NpoApiClients extends AbstractApiClient  {
     private String apiKey;
     private String secret;
     private String origin;
-    
-    private String properties;
-    private String profile;
-    private Integer max;
+
+    private ThreadLocal<String> properties = ThreadLocal.withInitial(() -> null);
+    private ThreadLocal<String> profile = ThreadLocal.withInitial(() -> null);
+    private ThreadLocal<Integer> max =ThreadLocal.withInitial(()->null);
 
 
     @Inject
@@ -109,9 +109,9 @@ public class NpoApiClients extends AbstractApiClient  {
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
-        this.properties = properties;
-        this.profile = profile;
-        this.max = max;
+        this.properties = ThreadLocal.withInitial(() -> properties);
+        this.profile = ThreadLocal.withInitial(() -> profile);
+        this.max = ThreadLocal.withInitial(() -> max);
 
     }
 
@@ -194,30 +194,31 @@ public class NpoApiClients extends AbstractApiClient  {
     }
 
     public String getProperties() {
-        return properties;
+        return properties.get();
     }
 
     public void setProperties(String properties) {
-        this.properties = properties;
+        this.properties.set(properties);
     }
     public boolean hasAllProperties() {
-        return properties == null || properties.equals("all");
+        String p = properties.get();
+        return p == null || p .equals("all");
     }
 
     public String getProfile() {
-        return profile;
+        return profile.get();
     }
 
     public void setProfile(String profile) {
-        this.profile = profile;
+        this.profile.set(profile);
     }
 
     public Integer getMax() {
-        return max;
+        return max.get();
     }
 
     public void setMax(Integer max) {
-        this.max = max;
+        this.max.set(max);
     }
 
     public static NpoApiClientsBuilder configured(String... configFiles)  {
@@ -303,7 +304,7 @@ public class NpoApiClients extends AbstractApiClient  {
         }
         return profileRestServiceProxy;
     }
-    
+
     protected <T> T wrapClientAspect(T proxy, Class<T> service) {
         return NpoApiClientsAspect.proxy(this, proxy, service);
     }
