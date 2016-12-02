@@ -34,7 +34,7 @@ public class NpoApiClientsMediaITest {
 
     @BeforeClass
     public static void setUp() throws IOException {
-        clients = NpoApiClients.configured().build();
+        clients = NpoApiClients.configured().trustAll(true).build();
         System.out.println("Testing with " + clients);
     }
 
@@ -64,4 +64,20 @@ public class NpoApiClientsMediaITest {
         assertThat(result.asList()).hasSize(10);
 
     }
+
+
+    @Test
+    public void testDescendantsProperties() throws JsonProcessingException {
+        MediaForm form =
+            MediaFormBuilder.form().build();
+
+        LOG.info(Jackson2Mapper.getLenientInstance().writeValueAsString(form));
+        clients.setProperties("none");
+
+        MediaSearchResult result = clients.getMediaService().findDescendants(form, "POMS_S_EO_179639", null, null, 0L, 4);
+
+        assertThat(result.asList()).hasSize(4);
+
+    }
+
 }

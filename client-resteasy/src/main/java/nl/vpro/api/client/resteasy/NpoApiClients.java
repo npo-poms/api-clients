@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +26,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
@@ -47,6 +51,11 @@ public class NpoApiClients extends AbstractApiClient  {
     private String apiKey;
     private String secret;
     private String origin;
+
+    private ThreadLocal<String> properties = ThreadLocal.withInitial(() -> null);
+    private ThreadLocal<String> profile = ThreadLocal.withInitial(() -> null);
+    private ThreadLocal<Integer> max =ThreadLocal.withInitial(()->null);
+
 
     @Inject
     public NpoApiClients(
@@ -88,7 +97,10 @@ public class NpoApiClients extends AbstractApiClient  {
         Boolean trustAll,
         String apiKey,
         String secret,
-        String origin
+        String origin,
+        String properties,
+        String profile,
+        Integer max
 
 
     ) {
@@ -97,39 +109,60 @@ public class NpoApiClients extends AbstractApiClient  {
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
-
+        this.properties = ThreadLocal.withInitial(() -> properties);
+        this.profile = ThreadLocal.withInitial(() -> profile);
+        this.max = ThreadLocal.withInitial(() -> max);
 
     }
 
 
     private static final Pattern VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
+    private Supplier<String> version = null;
     public String getVersion() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonFactory factory = new JsonFactory();
-            URL url = new URL(baseUrl + "/swagger.json");
-            JsonParser jp = factory.createParser(url.openStream());
-            JsonNode swagger = mapper.readTree(jp);
-            String versionString = swagger.get("info").get("version").asText();
-            Matcher matcher = VERSION.matcher(versionString);
-            if (matcher.find()) {
-                return matcher.group(1);
-            } else {
-                return versionString;
-            }
-        } catch (JsonParseException jpe) {
-            log.warn(jpe.getMessage());
-            return "4.7.3";
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            return "unknown";
+        if (version == null) {
+            version = Suppliers.memoizeWithExpiration(() -> {
+                String result = "unknown";
+                try {
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonFactory factory = new JsonFactory();
+                    URL url = new URL(baseUrl + "/swagger.json");
+                    JsonParser jp = factory.createParser(url.openStream());
+                    JsonNode swagger = mapper.readTree(jp);
+                    String versionString = swagger.get("info").get("version").asText();
+                    Matcher matcher = VERSION.matcher(versionString);
+                    if (matcher.find()) {
+                        result = matcher.group(1);
+                    } else {
+                        result = versionString;
+                    }
+                } catch (JsonParseException jpe) {
+                    log.warn(jpe.getMessage());
+                    result = "4.7.3";
+                } catch (ConnectException e) {
+                    log.warn(e.getMessage());
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                }
+                return result;
+            }, 30, TimeUnit.MINUTES);
         }
+        return version.get();
 
     }
+
+    /**
+     * The version of the npo frontend api we are talking too.
+     * @return a float representing the major/minor version. The patch level is added as thousands.
+     */
     public Float getVersionNumber() {
-        Matcher matcher = Pattern.compile("(\\d+\\.\\d+).*").matcher(getVersion());
+        Matcher matcher = Pattern.compile("(\\d+\\.\\d+)\\.?(\\d+)?.*").matcher(getVersion());
         matcher.find();
-        return Float.parseFloat(matcher.group(1));
+        Double result = Double.parseDouble(matcher.group(1));
+        String minor = matcher.group(2);
+        if (minor != null) {
+            result += (double) Integer.parseInt(minor) / 1000d;
+        }
+        return result.floatValue();
     }
 
 
@@ -160,7 +193,33 @@ public class NpoApiClients extends AbstractApiClient  {
         this.invalidate();
     }
 
+    public String getProperties() {
+        return properties.get();
+    }
 
+    public void setProperties(String properties) {
+        this.properties.set(properties);
+    }
+    public boolean hasAllProperties() {
+        String p = properties.get();
+        return p == null || p .equals("all");
+    }
+
+    public String getProfile() {
+        return profile.get();
+    }
+
+    public void setProfile(String profile) {
+        this.profile.set(profile);
+    }
+
+    public Integer getMax() {
+        return max.get();
+    }
+
+    public void setMax(Integer max) {
+        this.max.set(max);
+    }
 
     public static NpoApiClientsBuilder configured(String... configFiles)  {
         NpoApiClientsBuilder builder = builder();
@@ -202,7 +261,9 @@ public class NpoApiClients extends AbstractApiClient  {
     public MediaRestService getMediaService() {
         if (mediaRestServiceProxy == null) {
             mediaRestServiceProxy =
-                buildWithErrorClass(getClientHttpEngine(), MediaRestService.class,  Error.class);
+                wrapClientAspect(
+                    buildWithErrorClass(getClientHttpEngine(), MediaRestService.class,  Error.class),
+                    MediaRestService.class);
         }
         return mediaRestServiceProxy;
     }
@@ -210,7 +271,9 @@ public class NpoApiClients extends AbstractApiClient  {
     public MediaRestService getMediaServiceNoTimeout() {
         if (mediaRestServiceProxyNoTimeout == null) {
             mediaRestServiceProxyNoTimeout =
-                buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class);
+                wrapClientAspect(
+                    buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class),
+                    MediaRestService.class);
         }
         return mediaRestServiceProxyNoTimeout;
     }
@@ -226,7 +289,10 @@ public class NpoApiClients extends AbstractApiClient  {
     public PageRestService getPageService() {
         if (pageRestServiceProxy == null) {
             pageRestServiceProxy =
-                build(getClientHttpEngine(), PageRestService.class);
+                wrapClientAspect(
+                    build(getClientHttpEngine(), PageRestService.class),
+                    PageRestService.class
+                );
         }
         return pageRestServiceProxy;
     }
@@ -239,6 +305,10 @@ public class NpoApiClients extends AbstractApiClient  {
         return profileRestServiceProxy;
     }
 
+    protected <T> T wrapClientAspect(T proxy, Class<T> service) {
+        return NpoApiClientsAspect.proxy(this, proxy, service);
+    }
+
     @Override
     public void invalidate() {
         super.invalidate();
@@ -247,6 +317,7 @@ public class NpoApiClients extends AbstractApiClient  {
         scheduleRestServiceProxy = null;
         pageRestServiceProxy = null;
         profileRestServiceProxy = null;
+        version = null;
     }
 
     public ApiAuthenticationRequestFilter getAuthentication() {

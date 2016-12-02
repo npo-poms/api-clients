@@ -26,8 +26,6 @@ public class MediaRestClientUtilsTest {
     @Test
     public void testChanges() throws Exception {
 
-        MediaRestClientUtils utils = new MediaRestClientUtils();
-
         MediaRestService mediaRestService = mock(MediaRestService.class);
 
         // michiel@baleno:~/github/npo-poms/api/bash/media$ ENV=prod ./changes.sh  1000000 vpro > /tmp/changes.json
@@ -41,7 +39,7 @@ public class MediaRestClientUtilsTest {
             any(HttpServletRequest.class),
             any(HttpServletResponse.class)))
             .thenReturn(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream());
-        Iterator<Change> i = utils.changes(mediaRestService, "vpro", 0, Order.ASC, Integer.MAX_VALUE);
+        Iterator<Change> i = MediaRestClientUtils.changes(mediaRestService, "vpro", Instant.ofEpochMilli(0), Order.ASC, Integer.MAX_VALUE);
         int count = 0;
         while(i.hasNext()) {
             Change next = i.next();

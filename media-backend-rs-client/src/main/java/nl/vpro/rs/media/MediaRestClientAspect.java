@@ -1,5 +1,7 @@
 package nl.vpro.rs.media;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -12,9 +14,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.ServiceUnavailableException;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This Proxy:
  * - throttles all calls
@@ -23,9 +22,8 @@ import org.slf4j.LoggerFactory;
  * @author Michiel Meeuwissen
  * @since 4.3
  */
+@Slf4j
 class MediaRestClientAspect implements InvocationHandler {
-
-    private static Logger LOG = LoggerFactory.getLogger(MediaRestClientAspect.class);
 
     private final MediaRestClient client;
     private final MediaBackendRestService proxied;
@@ -44,7 +42,7 @@ class MediaRestClientAspect implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         while (true) {
-            LOG.debug("Throttling {} (rate: {})", method, client.getThrottleRate());
+            log.debug("Throttling {} (rate: {})", method, client.getThrottleRate());
             client.throttle();
             try {
                 try {
@@ -55,7 +53,7 @@ class MediaRestClientAspect implements InvocationHandler {
                         if (response.getStatusInfo() == Response.Status.SERVICE_UNAVAILABLE) {
                             String message = response.readEntity(String.class);
                             // retry
-                            client.retryAfterWaitOrException(method.getName() + " " + message);
+                            client.retryAfterWaitOrException(method.getName() + " " + message, new ServiceUnavailableException(message));
                             continue;
                         }
                         if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
@@ -70,7 +68,7 @@ class MediaRestClientAspect implements InvocationHandler {
             } catch (NotFoundException nfe) {
                 return null;
             } catch (ServiceUnavailableException sue) {
-                client.retryAfterWaitOrException(method.getName() + ": Service unavailable");
+                client.retryAfterWaitOrException(method.getName() + ": Service unavailable", sue);
                 // retry
                 continue;
             } catch (RuntimeException re) {
@@ -83,29 +81,31 @@ class MediaRestClientAspect implements InvocationHandler {
 
     protected void fillErrorParameterIfEmpty(Method method, Object[] args) {
         Annotation[][] annotations = method.getParameterAnnotations();
-        for (int i = 0; i < args.length; i++) {
-            for (int j = 0; j < annotations[i].length; j++) {
-                if (annotations[i][j] instanceof QueryParam && args[i] == null) {
-                    QueryParam queryParam = (QueryParam) annotations[i][j];
-                    if ("errors".equals(queryParam.value())) {
-                        LOG.debug("Implicetely set errors parameter to {}", client.errors);
-                        args[i] = client.errors;
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                for (int j = 0; j < annotations[i].length; j++) {
+                    if (annotations[i][j] instanceof QueryParam && args[i] == null) {
+                        QueryParam queryParam = (QueryParam) annotations[i][j];
+                        if ("errors".equals(queryParam.value())) {
+                            log.debug("Implicetely set errors parameter to {}", client.errors);
+                            args[i] = client.errors;
+                        }
+                        if ("followMerges".equals(queryParam.value())) {
+                            log.debug("Implicetely set followMerges to {}", client.isFollowMerges());
+                            args[i] = client.isFollowMerges();
+                        }
                     }
-                    if ("followMerges".equals(queryParam.value())) {
-                        LOG.debug("Implicetely set followMerges to {}", client.isFollowMerges());
-                        args[i] = client.isFollowMerges();
-                    }
-                }
-                if (annotations[i][j] instanceof PathParam && args[i] == null) {
-                    PathParam pathParam  = (PathParam) annotations[i][j];
-                    if ("entity".equals(pathParam.value())) {
-                        LOG.debug("Implicetely set entity to media");
-                        args[i] = "media";
-                    }
+                    if (annotations[i][j] instanceof PathParam && args[i] == null) {
+                        PathParam pathParam = (PathParam) annotations[i][j];
+                        if ("entity".equals(pathParam.value())) {
+                            log.debug("Implicetely set entity to media");
+                            args[i] = "media";
+                        }
 
+                    }
                 }
+
             }
-
         }
 
     }

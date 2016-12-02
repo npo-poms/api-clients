@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
@@ -14,6 +17,8 @@ import javax.ws.rs.core.Response;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
@@ -22,9 +27,11 @@ import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
 import nl.vpro.domain.media.Segment;
 import nl.vpro.domain.media.search.MediaForm;
+import nl.vpro.domain.media.search.MediaList;
 import nl.vpro.domain.media.search.MediaListItem;
 import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
+import nl.vpro.rs.VersionRestService;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
 
@@ -74,7 +81,11 @@ public class MediaRestClient extends AbstractApiClient {
 	private boolean followMerges = true;
 
     private MediaBackendRestService proxy;
+
+
     private Map<String, Object> headers;
+
+    Supplier<String> version;
 
     public MediaRestClient() {
         this(-1, 10, 2);
@@ -104,7 +115,7 @@ public class MediaRestClient extends AbstractApiClient {
         Duration rateWindow,
         List<Locale> acceptableLanguages,
         Boolean trustAll,
-        int defaultMax,
+        Integer defaultMax,
         boolean followMerges,
         Map<String, Object> headers,
         String userName,
@@ -112,9 +123,14 @@ public class MediaRestClient extends AbstractApiClient {
         String user,
         String errors,
         boolean waitForRetry,
-        boolean lookupCrids) {
+        boolean lookupCrids,
+        Double throttleRate,
+        Double asynchronousThrottleRate
+    ) {
         super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow, acceptableLanguages, null, trustAll);
-        this.defaultMax = defaultMax;
+        if (defaultMax != null) {
+            this.defaultMax = defaultMax;
+        }
         this.followMerges = followMerges;
         this.headers = headers;
         if (user != null) {
@@ -135,6 +151,12 @@ public class MediaRestClient extends AbstractApiClient {
         this.errors = errors;
         this.waitForRetry = waitForRetry;
         this.lookupCrids = lookupCrids;
+        if (throttleRate != null) {
+            this.setThrottleRate(throttleRate);
+        }
+        if (asynchronousThrottleRate != null) {
+            this.setAsynchronousThrottleRate(asynchronousThrottleRate);
+        }
     }
 
     enum Type {
@@ -245,6 +267,49 @@ public class MediaRestClient extends AbstractApiClient {
         this.headers = headers;
     }
 
+    public String getVersion() {
+        if (version == null) {
+             version = Suppliers.memoizeWithExpiration(() -> {
+                 try {
+                     VersionRestService p = proxyErrorsAndCount(VersionRestService.class,
+                         getTarget(getClientHttpEngine()).proxy(VersionRestService.class));
+                     String v = p.version();
+                     if (v != null) {
+                         return v;
+                     }
+                 } catch (javax.ws.rs.NotFoundException nfe) {
+                     return "4.8.6";
+                 } catch (Exception io) {
+                     log.warn(io.getClass().getName() + " " + io.getMessage());
+                 }
+                 return "unknown";
+             }, 30L, TimeUnit.MINUTES);
+        }
+        return version.get();
+    }
+
+    /**
+     * The version of the rest-service we are talking too.
+     * @return a float representing the major/minor version. The patch level is added as thousands.
+     */
+    public Float getVersionNumber() {
+        try {
+            String version = getVersion();
+            Matcher matcher = Pattern.compile("(\\d+\\.\\d+)\\.?(\\d+)?.*").matcher(version);
+            if (matcher.matches()) {
+                Double result = Double.parseDouble(matcher.group(1));
+                String minor = matcher.group(2);
+                if (minor != null) {
+                    result += (double) Integer.parseInt(minor) / 1000d;
+                }
+                return result.floatValue();
+            }
+        } catch (NumberFormatException nfe) {
+        }
+        return 0f;
+
+    }
+
     @Override
     protected void buildResteasy(ResteasyClientBuilder builder) {
         if (userName == null || password == null) {
@@ -313,6 +378,27 @@ public class MediaRestClient extends AbstractApiClient {
         return (T) get(MediaUpdate.class, id);
     }
 
+    public String delete(String mid) {
+
+        try {
+            Response response = getBackendRestService().deleteMedia(null, mid, followMerges);
+            String result = response.readEntity(String.class);
+            response.close();
+            return result;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String addImage(ImageUpdate update, String mid) {
+        Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors);
+        String result = response.readEntity(String.class);
+        response.close();
+        return result;
+
+    }
+
     public SortedSet<LocationUpdate> cloneLocations(String id) {
 
         SortedSet<LocationUpdate> result = new TreeSet<>();
@@ -333,7 +419,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     /** add a location to a Program, Segment or Group */
     protected void addLocation(final Type type, final LocationUpdate location, final String id) {
-        getBackendRestService().addLocation(type.toString(), location, id, followMerges, errors);
+        Response response = getBackendRestService().addLocation(type.toString(), location, id, followMerges, errors);
+        response.close();
     }
 
     public void  addLocationToProgram(LocationUpdate location, String programId) {
@@ -350,7 +437,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void createMember(String owner, String member, Integer number) {
         try {
-            getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors);
+            Response response = getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors);
+            response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -358,7 +446,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void removeMember(String owner, String member, Integer number) {
         try {
-            getBackendRestService().removeMemberOf("media", member, owner, number, followMerges, errors);
+            Response response = getBackendRestService().removeMemberOf("media", member, owner, number, followMerges, errors);
+            response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -367,7 +456,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void createEpisode(String owner, String member, Integer number) {
         try {
-            getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors);
+            Response response = getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors);
+            response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -376,7 +466,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void removeEpisode(String owner, String member, Integer number) {
         try {
-            getBackendRestService().removeEpisodeOf(member, owner, number, followMerges, errors);
+            Response response = getBackendRestService().removeEpisodeOf(member, owner, number, followMerges, errors);
+            response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -387,6 +478,7 @@ public class MediaRestClient extends AbstractApiClient {
         try {
             Response response = getBackendRestService().update(type.toString(), update, followMerges, errors, lookupCrids);
             String result = response.readEntity(String.class);
+            response.close();
             return result;
 
         } catch (IOException e) {
@@ -420,7 +512,7 @@ public class MediaRestClient extends AbstractApiClient {
         return (T) getFull(MediaObject.class, id);
     }
 
-    public Iterable<MemberUpdate> getGroupMembers(final String id, final int max, final long offset) {
+    public MediaUpdateList<MemberUpdate> getGroupMembers(final String id, final int max, final long offset) {
         try {
             return getBackendRestService().getGroupMembers("media", id, offset, max, "ASC", followMerges);
         } catch (IOException e) {
@@ -428,11 +520,11 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
-    public Iterable<MemberUpdate> getGroupMembers(String id) {
+    public MediaUpdateList<MemberUpdate> getGroupMembers(String id) {
         return getGroupMembers(id, defaultMax, 0);
     }
 
-    public Iterable<MemberUpdate> getGroupEpisodes(final String id, final int max, final long offset) {
+    public MediaUpdateList<MemberUpdate> getGroupEpisodes(final String id, final int max, final long offset) {
         try {
             return getBackendRestService().getGroupEpisodes(id, offset, max, "ASC", followMerges);
         } catch (IOException e) {
@@ -440,7 +532,7 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
-    public Iterable<MemberUpdate> getGroupEpisodes(String id) {
+    public MediaUpdateList<MemberUpdate> getGroupEpisodes(String id) {
         return getGroupEpisodes(id, defaultMax, 0);
     }
 
@@ -456,7 +548,7 @@ public class MediaRestClient extends AbstractApiClient {
         return set(Type.MEDIA, mediaUpdate);
     }
 
-    public Iterable<MediaListItem> find(MediaForm form)  {
+    public MediaList<MediaListItem> find(MediaForm form)  {
         try {
             return getBackendRestService().find(form, false);
         } catch (IOException e) {
@@ -485,6 +577,7 @@ public class MediaRestClient extends AbstractApiClient {
      */
     public void setThrottleRate(double rate) {
         this.throttle.setRate(rate);
+
     }
 
     public double getAsynchronousThrottleCount() {

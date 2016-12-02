@@ -178,7 +178,8 @@ public class MediaRestClientTest {
                     JAXB.marshal(r, System.out);
                     //r.setMediaRef(null);
                     System.out.println("" + groupUpdate + "->" + r.getMediaRef());
-                    client.getBackendRestService().removeMemberOf(null, update.getMid(), groupUpdate.getMid(), null, true, null);
+                    Response response = client.getBackendRestService().removeMemberOf(null, update.getMid(), groupUpdate.getMid(), null, true, null);
+                    response.close();
                 }
             }
             //update.getMemberOf().removeIf(m -> m.getMediaRef().equals(groupUpdate.getMid()));
@@ -295,13 +296,9 @@ public class MediaRestClientTest {
     public void addImage() {
         String program = sampleProgram("addImage").id;
 
-        client.getBackendRestService().addImage(
+        client.addImage(
             new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/bril.png")),
-            "media",
-            program,
-            client.isFollowMerges(),
-            null
-        );
+            program);
         System.out.println("Added image to " + program);
 
 
@@ -312,12 +309,9 @@ public class MediaRestClientTest {
     public void addImage404() {
         String program = sampleProgram("addImage").id;
 
-        client.getBackendRestService().addImage(
+        client.addImage(
             new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/BESTAATNIET.png")),
-            "media",
-            program,
-            client.isFollowMerges(),
-            null
+            program
         );
 
     }
@@ -370,6 +364,11 @@ public class MediaRestClientTest {
         WithId<ProgramUpdate> sample = sampleProgram("createProgram");
 
         System.out.println(sample.id);
+    }
+
+    @Test
+    public void version() {
+        System.out.println(client.getVersionNumber());
     }
 
 
