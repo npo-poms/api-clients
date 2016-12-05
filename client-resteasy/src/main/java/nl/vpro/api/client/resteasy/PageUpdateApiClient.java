@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
@@ -23,6 +24,7 @@ import com.google.inject.Inject;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
+import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
 
 public class PageUpdateApiClient extends AbstractApiClient {
@@ -73,6 +75,19 @@ public class PageUpdateApiClient extends AbstractApiClient {
         ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
+
+    public static PageUpdateApiClientBuilder configured(Env env, String... configFiles) {
+        PageUpdateApiClientBuilder  builder = builder();
+        ReflectionUtils.configured(env, builder, configFiles);
+        return builder;
+    }
+
+    public static PageUpdateApiClientBuilder configured(Env env, Map<String, String> settings) {
+        PageUpdateApiClientBuilder  builder = builder();
+        ReflectionUtils.configured(env, builder, settings);
+        return builder;
+    }
+
 
     public static PageUpdateApiClientBuilder configured() throws IOException {
         return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "pageupdateapiclient.properties");
