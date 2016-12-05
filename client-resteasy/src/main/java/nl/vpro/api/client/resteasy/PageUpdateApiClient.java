@@ -64,7 +64,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
         String user,
         String password
         ) {
-        super(baseUrl + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, null,  trustAll);
+        super(baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, null,  trustAll);
+        if (user == null){
+            throw new IllegalArgumentException("No user given");
+        }
+        if (password == null) {
+            throw new IllegalArgumentException("No  password given");
+        }
         authentication = new BasicAuthentication(user, password);
         description = user + "@" + baseUrl + "api";
     }

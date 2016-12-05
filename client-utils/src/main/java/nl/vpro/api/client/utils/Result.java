@@ -81,7 +81,7 @@ public class Result {
         private final boolean needsRetry;
         private final boolean ok;
 
-        private Status(boolean needsRetry, boolean s) {
+        Status(boolean needsRetry, boolean s) {
             this.needsRetry = needsRetry;
             this.ok = s;
         }
