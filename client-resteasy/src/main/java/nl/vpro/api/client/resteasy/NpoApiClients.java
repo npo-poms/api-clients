@@ -34,6 +34,7 @@ import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
+import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
@@ -47,6 +48,8 @@ public class NpoApiClients extends AbstractApiClient  {
     private PageRestService pageRestServiceProxy;
     private ScheduleRestServiceWithDefaults scheduleRestServiceProxy;
     private ProfileRestService profileRestServiceProxy;
+    private TVVodRestService tvVodRestServiceProxy;
+
 
     private String apiKey;
     private String secret;
@@ -303,6 +306,15 @@ public class NpoApiClients extends AbstractApiClient  {
                 build(getClientHttpEngine(), ProfileRestService.class);
         }
         return profileRestServiceProxy;
+    }
+
+
+    public TVVodRestService getTVVodService() {
+        if (tvVodRestServiceProxy== null) {
+            tvVodRestServiceProxy =
+                build(getClientHttpEngine(), TVVodRestService.class);
+        }
+        return tvVodRestServiceProxy;
     }
 
     protected <T> T wrapClientAspect(T proxy, Class<T> service) {
