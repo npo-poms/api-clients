@@ -7,8 +7,9 @@
     <artifactId>api-client-parent</artifactId>
     <version>5.0-SNAPSHOT</version>
   </parent>
+  <artifactId>api-client-scripts</artifactId>
+  <name>api-client-scripts</name>
 
-  <artifactId>scripts</artifactId>
 
   <dependencies>
     <dependency>
