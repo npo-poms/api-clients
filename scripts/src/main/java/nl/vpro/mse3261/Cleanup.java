@@ -1,5 +1,7 @@
 package nl.vpro.mse3261;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.*;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -9,9 +11,6 @@ import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import nl.vpro.domain.media.update.GroupUpdate;
 import nl.vpro.domain.media.update.MediaUpdate;
@@ -23,21 +22,20 @@ import nl.vpro.util.Env;
 /**
  * @author Michiel Meeuwissen
  */
+@Slf4j
 public class Cleanup {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Cleanup.class);
 
     private static Unmarshaller UNMARSHAL;
     static {
         try {
             UNMARSHAL = JAXBContext.newInstance(SegmentUpdate.class, ProgramUpdate.class, GroupUpdate.class).createUnmarshaller();
         } catch (JAXBException e) {
-            LOG.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
     public static void main(String[] args) throws IOException {
-        MediaRestClient client = new MediaRestClient().configured(Env.PROD);
+        MediaRestClient client = MediaRestClient.configured(Env.PROD).build();
 
         List<String> midsToFix = new ArrayList<>();
         File errorneous = new File("/tmp/segmentswithoutitle.txt");
@@ -87,12 +85,12 @@ public class Cleanup {
                     try {
                         media = (MediaUpdate) UNMARSHAL.unmarshal(new StringReader(xml));
                     } catch (Exception ue) {
-                        LOG.error(xml + "\n" + ue.getMessage());
+                        Cleanup.log.error(xml + "\n" + ue.getMessage());
                         xml = "";
                         continue;
                     }
                     xml = "";
-                    LOG.debug("{}", media);
+                    Cleanup.log.debug("{}", media);
                     if (! (media instanceof SegmentUpdate)) {
                         continue;
 
@@ -110,12 +108,12 @@ public class Cleanup {
                             }
                         }
                         if (!matched) {
-                            LOG.info("Not found {}", segment);
+                            Cleanup.log.info("Not found {}", segment);
                             continue;
                         }
                     }
 
-                    LOG.info(segment.getMidRef() + " " + Duration.ofMillis(segment.getStart().getTime()) + " " + segment.getTitles());
+                    Cleanup.log.info(segment.getMidRef() + " " + Duration.ofMillis(segment.getStart().getTime()) + " " + segment.getTitles());
 
                     File baseDir = new File("/tmp/mse3162");
                     File dir;
@@ -127,7 +125,7 @@ public class Cleanup {
                     dir.mkdirs();
                     File create = new File(dir, segment.getMid() + ".xml");
                     JAXB.marshal(segment, create);
-                    LOG.info("Created {}", create);
+                    Cleanup.log.info("Created {}", create);
                 } finally {
                     line = buffered.readLine();
                 }
@@ -138,8 +136,8 @@ public class Cleanup {
 
 
         }
-        LOG.info("Unhandled mids " + midsToFix + " " + midsToFix.size());
-        LOG.info("READY");
+        Cleanup.log.info("Unhandled mids " + midsToFix + " " + midsToFix.size());
+        Cleanup.log.info("READY");
         client.shutdown();
 
     }
