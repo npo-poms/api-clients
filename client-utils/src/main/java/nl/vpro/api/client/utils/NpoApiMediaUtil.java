@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.Response;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -24,6 +25,7 @@ import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.MediaResult;
 import nl.vpro.domain.api.media.ProgramResult;
+import nl.vpro.domain.api.media.RedirectList;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
@@ -188,7 +190,7 @@ public class NpoApiMediaUtil implements MediaProvider {
 
 
     public MediaResult listDescendants(String mid, Order order, Predicate<MediaObject> filter, int max) {
-        BiFunction<Integer, Long, MediaResult> descendants = (batch, offset) -> 
+        BiFunction<Integer, Long, MediaResult> descendants = (batch, offset) ->
             clients.getMediaService().listDescendants(mid, null, order.toString(), offset, batch);
         return unPage(descendants, filter, max);
     }
@@ -247,6 +249,20 @@ public class NpoApiMediaUtil implements MediaProvider {
         return changes(profile, null, since, order, max);
     }
 
+
+    public RedirectList redirects() {
+        Response response= null;
+        try {
+            response = clients.getMediaService().redirects(null);
+            return response.readEntity(RedirectList.class);
+
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
+
+    }
 
     protected  JsonArrayIterator<Change> changes(String profile, Long sinceSequence, Instant since, Order order, Integer max) {
         limiter.acquire();
