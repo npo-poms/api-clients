@@ -5,11 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Instant;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.api.client.utils.NpoApiMediaUtil;
 import nl.vpro.domain.api.media.RedirectList;
+import nl.vpro.domain.media.DescendantRef;
 import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.support.Workflow;
 import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.util.Env;
 
@@ -32,10 +35,37 @@ public class Search {
             new FileInputStream(es),
             MediaObject.class);
 
+        MediaObject newestMediaObject = null;
+        Instant newest = Instant.EPOCH;
+        long count = 0;
+        long totalCount = 0;
         while(objects.hasNext()) {
             MediaObject o = objects.next();
-            System.out.println(" " + o);
+            if (o.getWorkflow() != Workflow.PUBLISHED) {
+                continue;
+            }
+            totalCount++;
+            boolean found = false;
+            for (DescendantRef ref : o.getDescendantOf()) {
+                if (redirects.getMap().containsKey(ref.getMidRef())) {
+                    found = true;
+                }
+            }
+            if (found) {
+                Instant publisheddate = o.getLastPublishedInstant();
+                if (publisheddate == null){
+                    publisheddate = o.getLastModifiedInstant();
+                }
+                count++;
+                if (publisheddate.isAfter(newest)) {
+                    newestMediaObject = o;
+                    newest = newestMediaObject.getLastModifiedInstant();
+                    //System.out.print(".");
+                }
+                System.out.println(o.getMediaType() + "\t" + o.getMid() + "\t" + o.getMainTitle() + "\t" + o.getLastPublishedInstant());
+            }
         }
+        log.info("{}/{} Found errorneous descendant ref ", count, totalCount, newestMediaObject);
 
 
     }
