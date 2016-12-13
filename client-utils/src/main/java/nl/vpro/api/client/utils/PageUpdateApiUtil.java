@@ -62,6 +62,11 @@ public class PageUpdateApiUtil {
         }
     }
 
+    public PageUpdate get(@NotNull String url) {
+        limiter.acquire();
+        return pageUpdateApiClient.getPageUpdateRestService().load(url);
+    }
+
     public Result delete(@NotNull String id) {
         limiter.acquire();
         try {
