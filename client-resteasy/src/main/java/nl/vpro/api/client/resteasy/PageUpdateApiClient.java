@@ -72,7 +72,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
             throw new IllegalArgumentException("No  password given");
         }
         authentication = new BasicAuthentication(user, password);
-        description = user + "@" + baseUrl + "api";
+        description = user + "@" + this.getBaseUrl();
     }
 
     public static PageUpdateApiClientBuilder configured(String... configFiles) throws IOException {
