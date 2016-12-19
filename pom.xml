@@ -30,6 +30,7 @@
 
   <properties>
     <api.version>5.0-SNAPSHOT</api.version>
+    <poms.shared.version>5.0.1-SNAPSHOT</poms.shared.version>
   </properties>
 
   <dependencyManagement>

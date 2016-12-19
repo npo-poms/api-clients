@@ -486,6 +486,20 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
+
+    public String removeSegment(String program, String segment) {
+
+        try {
+            Response response = getBackendRestService().removeSegment(program, segment, followMerges,  errors);
+            String result = response.readEntity(String.class);
+            response.close();
+            return result;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected boolean success(int statusCode) {
         return statusCode >= 200 && statusCode <= 299;
     }
