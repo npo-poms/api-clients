@@ -1,12 +1,12 @@
 package nl.vpro.rs.media;
 
+import nl.vpro.domain.media.update.MediaUpdate;
+
+
 /**
  * @author Michiel Meeuwissen
  * @since 4.3
  */
-
-import nl.vpro.domain.media.update.MediaUpdate;
-
 public class WithId<T extends MediaUpdate> {
 
     final T update;
