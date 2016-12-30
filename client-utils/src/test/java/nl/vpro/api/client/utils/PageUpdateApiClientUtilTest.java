@@ -16,7 +16,7 @@ import nl.vpro.domain.page.update.PageUpdate;
 import static org.fest.assertions.Assertions.assertThat;
 
 @Ignore("This required running server at publish-dev")
-public class PageUpdateApiClientUtilTest  {
+public class PageUpdateApiClientUtilTest {
 
     private PageUpdateApiUtil util;
 
@@ -29,7 +29,9 @@ public class PageUpdateApiClientUtilTest  {
             target,
             "vpro-cms",
             "***REMOVED***",
-            10000);
+            10000,
+            20,
+            2);
         util = new PageUpdateApiUtil(clients, new PageUpdateRateLimiter());
     }
 
@@ -40,7 +42,6 @@ public class PageUpdateApiClientUtilTest  {
         assertThat(result.getStatus()).isEqualTo(Result.Status.INVALID);
         assertThat(result.getErrors()).contains("may not be null");
     }
-
 
     @Test
     public void testDelete() throws Exception {
@@ -76,7 +77,5 @@ public class PageUpdateApiClientUtilTest  {
         Result result = util.save(update);
         assertThat(result.getStatus()).isEqualTo(Result.Status.DENIED);
         assertThat(result.getErrors()).contains("Access is denied");
-
-
     }
 }

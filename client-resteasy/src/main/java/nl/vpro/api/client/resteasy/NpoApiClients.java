@@ -50,15 +50,13 @@ public class NpoApiClients extends AbstractApiClient  {
     private ProfileRestService profileRestServiceProxy;
     private TVVodRestService tvVodRestServiceProxy;
 
-
     private String apiKey;
     private String secret;
     private String origin;
 
     private ThreadLocal<String> properties = ThreadLocal.withInitial(() -> null);
     private ThreadLocal<String> profile = ThreadLocal.withInitial(() -> null);
-    private ThreadLocal<Integer> max =ThreadLocal.withInitial(()->null);
-
+    private ThreadLocal<Integer> max = ThreadLocal.withInitial(() -> null);
 
     @Inject
     public NpoApiClients(
@@ -67,9 +65,11 @@ public class NpoApiClients extends AbstractApiClient  {
         @Named("npo-api.secret") String secret,
         @Named("npo-api.origin") String origin,
         @Named("npo-api.connectionTimeout") Integer connectionTimeout,
+        @Named("npo-api.maxConnections") Integer maxConnections,
+        @Named("npo-api.maxConnectionsPerRoute") Integer maxConnectionsPerRoute,
         @Named("npo-api.trustAll") Boolean trustAll
         ) {
-		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl)  + "/api", connectionTimeout, 16, 3);
+		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl)  + "/api", connectionTimeout, maxConnections, maxConnectionsPerRoute, 3);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
@@ -77,13 +77,14 @@ public class NpoApiClients extends AbstractApiClient  {
             super.setTrustAll(trustAll);
         }
     }
+
     public NpoApiClients(
         String apiBaseUrl,
         String apiKey,
         String secret,
         String origin
     ) {
-        this(apiBaseUrl, apiKey, secret, origin, 10, false);
+        this(apiBaseUrl, apiKey, secret, origin, 10, 20, 2, false);
     }
 
     @Builder
@@ -93,6 +94,7 @@ public class NpoApiClients extends AbstractApiClient  {
         Duration connectTimeout,
         Duration socketTimeout,
         int maxConnections,
+        int maxConnectionsPerRoute,
         Duration connectionInPoolTTL,
         Duration countWindow,
         List<Locale> acceptableLanguages,
@@ -104,20 +106,16 @@ public class NpoApiClients extends AbstractApiClient  {
         String properties,
         String profile,
         Integer max
-
-
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
-            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, mediaType, trustAll);
+            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, maxConnectionsPerRoute, connectionInPoolTTL, countWindow, acceptableLanguages, mediaType, trustAll);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
         this.properties = ThreadLocal.withInitial(() -> properties);
         this.profile = ThreadLocal.withInitial(() -> profile);
         this.max = ThreadLocal.withInitial(() -> max);
-
     }
-
 
     private static final Pattern VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
     private Supplier<String> version = null;
@@ -150,7 +148,6 @@ public class NpoApiClients extends AbstractApiClient  {
             }, 30, TimeUnit.MINUTES);
         }
         return version.get();
-
     }
 
     /**
@@ -167,7 +164,6 @@ public class NpoApiClients extends AbstractApiClient  {
         }
         return result.floatValue();
     }
-
 
     public String getApiKey() {
         return apiKey;
@@ -236,13 +232,11 @@ public class NpoApiClients extends AbstractApiClient  {
         return builder;
     }
 
-
     public static NpoApiClientsBuilder configured(Map<String, String> settings) {
         NpoApiClientsBuilder builder = builder();
         ReflectionUtils.configured(builder, settings);
         return builder;
     }
-
 
     public static NpoApiClientsBuilder configured(Env env, Map<String, String> settings) {
         NpoApiClientsBuilder builder = builder();
@@ -259,7 +253,6 @@ public class NpoApiClients extends AbstractApiClient  {
         ReflectionUtils.configuredInHome(env, builder, "apiclient.properties");
         return builder;
     }
-
 
     public MediaRestService getMediaService() {
         if (mediaRestServiceProxy == null) {
@@ -308,7 +301,6 @@ public class NpoApiClients extends AbstractApiClient  {
         return profileRestServiceProxy;
     }
 
-
     public TVVodRestService getTVVodService() {
         if (tvVodRestServiceProxy== null) {
             tvVodRestServiceProxy =
@@ -341,11 +333,8 @@ public class NpoApiClients extends AbstractApiClient  {
 		return getApiKey() + "@" + baseUrl;
 	}
 
-
 	@Override
     protected void buildResteasy(ResteasyClientBuilder builder) {
         builder.register(getAuthentication());
     }
-
-
 }

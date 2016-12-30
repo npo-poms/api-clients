@@ -44,7 +44,7 @@ import nl.vpro.util.ReflectionUtils;
  * If in these 'raw' calls leave arguments <code>null</code> which are also set in the client (like 'errors'), then they will be automaticly filled
  * (the MediaBackendInterface is proxied (with {@link MediaRestClientAspect}) to make this possible)
  *
- * Also this client can implicitely trottle itself. Calls like this are rated on the POMS side, and like this you can aovoid using it up too quickly.
+ * Also this client can implicitely throttle itself. Calls like this are rated on the POMS side, and like this you can avoid using it up too quickly.
  *
  * <p/>
  * Use it like this:
@@ -64,7 +64,7 @@ import nl.vpro.util.ReflectionUtils;
  * }
  **
  * </pre>
- * You can also configured it implicetely:
+ * You can also configured it implicitly:
  * MediaRestClient client = new MediaRestClient().configured();
  *
  * @author Michiel Meeuwissen
@@ -82,22 +82,21 @@ public class MediaRestClient extends AbstractApiClient {
 
     private MediaBackendRestService proxy;
 
-
     private Map<String, Object> headers;
 
     Supplier<String> version;
 
     public MediaRestClient() {
-        this(-1, 10, 2);
+        this(-1, 30, 10, 2);
     }
 
-
-    public MediaRestClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
+    public MediaRestClient(int connectionTimeoutMillis, int maxConnections, int maxConnectionsPerRoute, int connectionInPoolTTL) {
         super(null,
             Duration.ofMillis(connectionTimeoutMillis),
             Duration.ofMillis(connectionTimeoutMillis),
             Duration.ofMillis(connectionTimeoutMillis),
             maxConnections,
+            maxConnectionsPerRoute,
             Duration.ofMillis(connectionInPoolTTL),
             Duration.ofMinutes(60),
             null,
@@ -113,6 +112,7 @@ public class MediaRestClient extends AbstractApiClient {
         Duration connectTimeout,
         Duration socketTimeout,
         int maxConnections,
+        int maxConnectionsPerRoute,
         Duration connectionInPoolTTL,
         Duration rateWindow,
         List<Locale> acceptableLanguages,
@@ -129,7 +129,7 @@ public class MediaRestClient extends AbstractApiClient {
         Double throttleRate,
         Double asynchronousThrottleRate
     ) {
-        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow, acceptableLanguages, null, trustAll);
+        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, maxConnectionsPerRoute, connectionInPoolTTL, rateWindow, acceptableLanguages, null, trustAll);
         if (defaultMax != null) {
             this.defaultMax = defaultMax;
         }
@@ -189,7 +189,6 @@ public class MediaRestClient extends AbstractApiClient {
     protected String errors;
     protected boolean waitForRetry = false;
 	protected boolean lookupCrids = true;
-
 
     public static MediaRestClientBuilder configured(Env env, String... configFiles) {
         MediaRestClientBuilder builder = builder();
@@ -264,7 +263,6 @@ public class MediaRestClient extends AbstractApiClient {
         this.waitForRetry = waitForRetry;
     }
 
-
     public void setHeaders(Map<String, Object> headers) {
         this.headers = headers;
     }
@@ -306,10 +304,9 @@ public class MediaRestClient extends AbstractApiClient {
                 }
                 return result.floatValue();
             }
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException ignored) {
         }
         return 0f;
-
     }
 
     @Override
@@ -321,9 +318,7 @@ public class MediaRestClient extends AbstractApiClient {
         builder.httpEngine(getClientHttpEngine())
             .register(new BasicAuthentication(userName, password))
             .register(new AddRequestHeadersFilter());
-
     }
-
 
     /**
      * returns the proxied interface as is actually used on the POMS backend.
@@ -337,7 +332,6 @@ public class MediaRestClient extends AbstractApiClient {
                 proxyErrorsAndCount(MediaBackendRestService.class,
                     getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class))
             );
-
         }
         return proxy;
     }
@@ -360,7 +354,6 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
-
     /**
      * Returns the program (as an 'update' object'), with the given id. Or <code>null</code> if not found.
      * @param id This can be an URN, MID, or crid.
@@ -379,7 +372,6 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     public String delete(String mid) {
-
         try {
             Response response = getBackendRestService().deleteMedia(null, mid, followMerges, errors);
             String result = response.readEntity(String.class);
@@ -396,7 +388,6 @@ public class MediaRestClient extends AbstractApiClient {
         String result = response.readEntity(String.class);
         response.close();
         return result;
-
     }
 
     public SortedSet<LocationUpdate> cloneLocations(String id) {
@@ -415,7 +406,6 @@ public class MediaRestClient extends AbstractApiClient {
         }
         return result;
     }
-
 
     /** add a location to a Program, Segment or Group */
     protected void addLocation(final Type type, final LocationUpdate location, final String id) {
@@ -453,7 +443,6 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
-
     public void createEpisode(String owner, String member, Integer number) {
         try {
             Response response = getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors);
@@ -462,7 +451,6 @@ public class MediaRestClient extends AbstractApiClient {
             throw new RuntimeException(e);
         }
     }
-
 
     public void removeEpisode(String owner, String member, Integer number) {
         try {
@@ -474,27 +462,22 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     protected String set(final Type type, final MediaUpdate update) {
-
         try {
             Response response = getBackendRestService().update(type.toString(), update, followMerges, errors, lookupCrids);
             String result = response.readEntity(String.class);
             response.close();
             return result;
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-
     public String removeSegment(String program, String segment) {
-
         try {
             Response response = getBackendRestService().removeSegment(program, segment, followMerges,  errors);
             String result = response.readEntity(String.class);
             response.close();
             return result;
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -515,7 +498,6 @@ public class MediaRestClient extends AbstractApiClient {
     public GroupUpdate getGroup(String id) {
         return get(GroupUpdate.class, id);
     }
-
 
     public Group getFullGroup(String id) {
         return getFull(Group.class, id);
@@ -591,7 +573,6 @@ public class MediaRestClient extends AbstractApiClient {
      */
     public void setThrottleRate(double rate) {
         this.throttle.setRate(rate);
-
     }
 
     public double getAsynchronousThrottleCount() {
@@ -601,7 +582,6 @@ public class MediaRestClient extends AbstractApiClient {
     public void setAsynchronousThrottleRate(double rate) {
         this.asynchronousThrottle.setRate(rate);
     }
-
 
     @Override
     public synchronized void invalidate() {
@@ -614,15 +594,13 @@ public class MediaRestClient extends AbstractApiClient {
         return userName + "@" + baseUrl;
     }
 
-
-
     void retryAfterWaitOrException(String action, RuntimeException e) {
         if (!waitForRetry) {
             throw e;
         }
         retryAfterWaitOrException(action + ":" + e.getMessage());
-
     }
+
     void retryAfterWaitOrException(String cause) {
         if (!waitForRetry) {
             throw new RuntimeException(cause);
@@ -637,7 +615,6 @@ public class MediaRestClient extends AbstractApiClient {
     void throttle() {
         throttle.acquire();
     }
-
 
     private void throttleAsynchronous() {
         asynchronousThrottle.acquire();
@@ -657,5 +634,4 @@ public class MediaRestClient extends AbstractApiClient {
             }
         }
     }
-
 }
