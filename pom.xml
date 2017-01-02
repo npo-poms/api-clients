@@ -15,11 +15,11 @@
   <description>Clients for NPO API's</description>
 
   <modules>
+    <module>api-client-scripts</module>
     <module>client-core</module>
     <module>client-resteasy</module>
     <module>client-utils</module>
     <module>media-backend-rs-client</module>
-    <module>scripts</module>
   </modules>
 
   <scm>
