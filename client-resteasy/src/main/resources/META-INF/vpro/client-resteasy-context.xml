@@ -25,6 +25,15 @@
     <constructor-arg value="${npo-api.connectionTimeout}"/>
   </bean>
 
+   <bean class="java.lang.Integer" factory-method="valueOf" id="npo-api.maxConnections">
+    <constructor-arg value="${npo-api.maxConnections}"/>
+  </bean>
+
+  <bean class="java.lang.Integer" factory-method="valueOf" id="npo-api.maxConnectionsPerRoute">
+    <constructor-arg value="${npo-api.maxConnectionsPerRoute}"/>
+  </bean>
+
+
   <bean class="java.lang.Boolean" factory-method="valueOf" id="npo-api.trustAll">
     <constructor-arg value="${npo-api.trustAll}"/>
   </bean>
