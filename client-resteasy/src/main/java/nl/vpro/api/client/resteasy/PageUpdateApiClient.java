@@ -45,9 +45,11 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Named("pageupdate-api.baseUrl") String baseUrl,
         @Named("pageupdate-api.user") String user,
         @Named("pageupdate-api.password") String password,
-        @Named("pageupdate-api.connectionTimeout") int connectionTimeout
+        @Named("pageupdate-api.connectionTimeout") int connectionTimeout,
+        @Named("pageupdate-api.maxConnections") int maxConnections,
+        @Named("pageupdate-api.maxConnectionsPerRoute") int maxConnectionsPerRoute
     ) {
-        this(baseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), 16, Duration.ofMillis(10000), Duration.ofMinutes(15), null, null, user, password);
+        this(baseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), maxConnections, maxConnectionsPerRoute, Duration.ofMillis(10000), Duration.ofMinutes(15), null, null, user, password);
     }
 
     @Builder
@@ -57,15 +59,16 @@ public class PageUpdateApiClient extends AbstractApiClient {
         Duration connectTimeout,
         Duration socketTimeout,
         int maxConnections,
+        int maxConnectionsPerRoute,
         Duration connectionInPoolTTL,
         Duration countWindow,
         List<Locale> acceptableLanguages,
         Boolean trustAll,
         String user,
         String password
-        ) {
-        super(baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, null,  trustAll);
-        if (user == null){
+    ) {
+        super(baseUrl + (baseUrl.endsWith("/") ? "" : "/") + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, maxConnectionsPerRoute, connectionInPoolTTL, countWindow, acceptableLanguages, null, trustAll);
+        if (user == null) {
             throw new IllegalArgumentException("No user given");
         }
         if (password == null) {
