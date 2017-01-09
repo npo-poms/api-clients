@@ -1,7 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import java.io.IOException;
 import java.io.StringReader;
-import java.net.MalformedURLException;
 
 import javax.xml.bind.JAXB;
 
@@ -24,14 +24,10 @@ public class PageUpdateApiClientUtilTest {
     //private String target = "http://localhost:8060/";
 
     @Before
-    public void setUp() throws MalformedURLException {
-        PageUpdateApiClient clients = new PageUpdateApiClient(
-            target,
-            "vpro-cms",
-            "***REMOVED***",
-            10000,
-            20,
-            2);
+    public void setUp() throws IOException {
+        PageUpdateApiClient clients = PageUpdateApiClient
+            .configured()
+            .build();
         util = new PageUpdateApiUtil(clients, new PageUpdateRateLimiter());
     }
 
