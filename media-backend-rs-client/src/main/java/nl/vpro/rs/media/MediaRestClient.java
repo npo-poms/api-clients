@@ -88,16 +88,16 @@ public class MediaRestClient extends AbstractApiClient {
     Supplier<String> version;
 
     public MediaRestClient() {
-        this(-1, 10, 2);
+        this(-1, 30, 10, 2);
     }
 
-
-    public MediaRestClient(int connectionTimeoutMillis, int maxConnections, int connectionInPoolTTL) {
+    public MediaRestClient(int connectionTimeoutMillis, int maxConnections, int maxConnectionsPerRoute, int connectionInPoolTTL) {
         super(null,
             Duration.ofMillis(connectionTimeoutMillis),
             Duration.ofMillis(connectionTimeoutMillis),
             Duration.ofMillis(connectionTimeoutMillis),
             maxConnections,
+            maxConnectionsPerRoute,
             Duration.ofMillis(connectionInPoolTTL),
             Duration.ofMinutes(60),
             null,
@@ -113,6 +113,7 @@ public class MediaRestClient extends AbstractApiClient {
         Duration connectTimeout,
         Duration socketTimeout,
         int maxConnections,
+        int maxConnectionsPerRoute,
         Duration connectionInPoolTTL,
         Duration rateWindow,
         List<Locale> acceptableLanguages,
@@ -129,7 +130,7 @@ public class MediaRestClient extends AbstractApiClient {
         Double throttleRate,
         Double asynchronousThrottleRate
     ) {
-        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, rateWindow, acceptableLanguages, null, trustAll);
+        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, maxConnectionsPerRoute, connectionInPoolTTL, rateWindow, acceptableLanguages, null, trustAll);
         if (defaultMax != null) {
             this.defaultMax = defaultMax;
         }
