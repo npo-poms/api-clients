@@ -67,9 +67,11 @@ public class NpoApiClients extends AbstractApiClient  {
         @Named("npo-api.secret") String secret,
         @Named("npo-api.origin") String origin,
         @Named("npo-api.connectionTimeout") Integer connectionTimeout,
+        @Named("npo-api.maxConnections") Integer maxConnections,
+        @Named("npo-api.maxConnectionsPerRoute") Integer maxConnectionsPerRoute,
         @Named("npo-api.trustAll") Boolean trustAll
         ) {
-		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl)  + "/api", connectionTimeout, 16, 3);
+        super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api", connectionTimeout, maxConnections, maxConnectionsPerRoute, 3);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
@@ -83,7 +85,7 @@ public class NpoApiClients extends AbstractApiClient  {
         String secret,
         String origin
     ) {
-        this(apiBaseUrl, apiKey, secret, origin, 10, false);
+        this(apiBaseUrl, apiKey, secret, origin, 10, 20, 2, false);
     }
 
     @Builder
@@ -93,6 +95,7 @@ public class NpoApiClients extends AbstractApiClient  {
         Duration connectTimeout,
         Duration socketTimeout,
         int maxConnections,
+        int maxConnectionsPerRoute,
         Duration connectionInPoolTTL,
         Duration countWindow,
         List<Locale> acceptableLanguages,
@@ -104,18 +107,15 @@ public class NpoApiClients extends AbstractApiClient  {
         String properties,
         String profile,
         Integer max
-
-
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
-            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, connectionInPoolTTL, countWindow, acceptableLanguages, mediaType, trustAll);
+            connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, maxConnectionsPerRoute, connectionInPoolTTL, countWindow, acceptableLanguages, mediaType, trustAll);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
         this.properties = ThreadLocal.withInitial(() -> properties);
         this.profile = ThreadLocal.withInitial(() -> profile);
         this.max = ThreadLocal.withInitial(() -> max);
-
     }
 
 
