@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,6 @@ import javax.ws.rs.core.Response;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
-import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 
@@ -38,7 +38,7 @@ import nl.vpro.util.ReflectionUtils;
 /**
  * A client for RESTful calls to a running MediaBackendRestService.
  *
- * Several utilities are provided (like {@link #get(String)} ${@link #set(MediaUpdate}). All raw calls can be done via {@link #getBackendRestService()}
+ * Several utilities are provided (like {@link #get(String)} ${@link #set(MediaUpdate)}). All raw calls can be done via {@link #getBackendRestService()}
  *
  * The raw calls have more arguments which you may not always want to set. In future version arguments can be added.
  * If in these 'raw' calls leave arguments <code>null</code> which are also set in the client (like 'errors'), then they will be automaticly filled
@@ -269,7 +269,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public String getVersion() {
         if (version == null) {
-             version = Suppliers.memoizeWithExpiration(() -> {
+             version = () -> Suppliers.memoizeWithExpiration(() -> {
                  try {
                      VersionRestService p = proxyErrorsAndCount(VersionRestService.class,
                          getTarget(getClientHttpEngine()).proxy(VersionRestService.class));
@@ -283,7 +283,7 @@ public class MediaRestClient extends AbstractApiClient {
                      log.warn(io.getClass().getName() + " " + io.getMessage());
                  }
                  return "unknown";
-             }, 30L, TimeUnit.MINUTES);
+             }, 30L, TimeUnit.MINUTES).get();
         }
         return version.get();
     }
