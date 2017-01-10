@@ -4,13 +4,13 @@
  */
 package nl.vpro.api.client.resteasy;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -26,9 +26,8 @@ import static org.fest.assertions.Assertions.assertThat;
  * @since 4.3
  */
 @Ignore
+@Slf4j
 public class NpoApiClientsMediaITest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(NpoApiClientsMediaITest.class);
 
     private static NpoApiClients clients;
 
@@ -43,7 +42,7 @@ public class NpoApiClientsMediaITest {
         MediaForm form =
             MediaFormBuilder.form().build();
 
-        LOG.info(Jackson2Mapper.getLenientInstance().writeValueAsString(form));
+        log.info(Jackson2Mapper.getLenientInstance().writeValueAsString(form));
 
         MediaSearchResult result = clients.getMediaService().findDescendants(form, "POMS_S_NTR_3779230", null, null, 0L, 4);
 
@@ -57,7 +56,7 @@ public class NpoApiClientsMediaITest {
         MediaForm form =
             MediaFormBuilder.form().build();
 
-        LOG.info(Jackson2Mapper.getLenientInstance().writeValueAsString(form));
+        log.info(Jackson2Mapper.getLenientInstance().writeValueAsString(form));
 
         MediaSearchResult result = clients.getMediaService().find(form, "netinnl", null, 0L, 10);
 
@@ -71,7 +70,7 @@ public class NpoApiClientsMediaITest {
         MediaForm form =
             MediaFormBuilder.form().build();
 
-        LOG.info(Jackson2Mapper.getLenientInstance().writeValueAsString(form));
+        log.info(Jackson2Mapper.getLenientInstance().writeValueAsString(form));
         clients.setProperties("none");
 
         MediaSearchResult result = clients.getMediaService().findDescendants(form, "POMS_S_EO_179639", null, null, 0L, 4);

@@ -15,7 +15,7 @@ import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,7 +25,7 @@ public class MediaRestClientUtilsTest {
 
     @Test
     public void testChanges() throws Exception {
-        
+
         MediaRestService mediaRestService = mock(MediaRestService.class);
 
         // michiel@baleno:~/github/npo-poms/api/bash/media$ ENV=prod ./changes.sh  1000000 vpro > /tmp/changes.json

@@ -10,16 +10,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.BadRequestException;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
+import org.jboss.resteasy.client.jaxrs.internal.ClientConfiguration;
+import org.jboss.resteasy.client.jaxrs.internal.ClientInvocation;
+import org.jboss.resteasy.client.jaxrs.internal.ClientRequestHeaders;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -163,17 +168,24 @@ public class NpoApiClientUtilTest {
 
 
     @Test(expected = IOException.class)
+    //@Test
     @Ignore("This doesn't test the api, but httpclient")
     // this does indeed timeout
     public void timeout() throws IOException, URISyntaxException {
+        HttpClient client;
+        {
+            ApacheHttpClient4Engine engine = (ApacheHttpClient4Engine) utilShortTimeout.getClients().getClientHttpEngine();
+            client = engine.getHttpClient();
+        }
 
-        ApacheHttpClient4Engine engine = (ApacheHttpClient4Engine) utilShortTimeout.getClients().getClientHttpEngine();
-        HttpRequestBase get = getAuthenticatedRequest();
+        String host = utilShortTimeout.getClients().getBaseUrl() + "/media/AVRO_1656037";
+        URI uri = new URI(host);
+        HttpGet get = getAuthenticatedRequest(uri);
 
         StopWatch sw = new StopWatch();
         try {
             sw.start();
-            HttpResponse response = engine.getHttpClient().execute(get, (org.apache.http.protocol.HttpContext) null);
+            HttpResponse response = client.execute(get, (org.apache.http.protocol.HttpContext) null);
 
             System.out.println("Didn't time out!");
             System.out.println(response.getProtocolVersion());
@@ -190,14 +202,16 @@ public class NpoApiClientUtilTest {
 
     }
 
-    @Test(expected = IOException.class)
+    //@Test(expected = IOException.class)
+    @Test
     @Ignore("Doesn't test api, but httpclient")
     public void timeoutWithInvoke() throws URISyntaxException, IOException {
-        /*ApacheHttpClient4Engine engine = (ApacheHttpClient4Engine) utilShortTimeout.getClients().getClientHttpEngine();
-        String host = target + "api/media/AVRO_1656037";
+        ApacheHttpClient4Engine engine = (ApacheHttpClient4Engine) utilShortTimeout.getClients().getClientHttpEngine();
+        String host = utilShortTimeout.getClients().getBaseUrl() + "/media/AVRO_1656037";
         URI uri = new URI(host);
-
-        HttpResponse response = engine.getHttpClient().execute(getAuthenticatedRequest(), (org.apache.http.protocol.HttpContext) null);
+        System.out.println("Testing " + uri);
+        //HttpGet get = getAuthenticatedRequest(uri);
+        //HttpResponse response = engine.getHttpClient().execute(get, (org.apache.http.protocol.HttpContext) null);
 
         //engine.getHttpClient().execute(getAuthenticatedRequest(), null);
 
@@ -206,11 +220,11 @@ public class NpoApiClientUtilTest {
         ClientRequestHeaders headers = new ClientRequestHeaders(config);
         Client client = ResteasyClientBuilder.newClient(config);
         ClientInvocation invocation = new ClientInvocation((org.jboss.resteasy.client.jaxrs.ResteasyClient) client, uri, headers, config);
+        invocation.setMethod("GET");
         //ClientInvocation invocation = new ClientInvocation(, uri, new ClientRequestHeaders(configuration), null);
 
 
         engine.invoke(invocation);
-*/
     }
 
 
@@ -220,7 +234,7 @@ public class NpoApiClientUtilTest {
         System.out.println(profile.getMediaProfile());
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test(expected = javax.ws.rs.NotFoundException.class)
     public void badRequest() throws IOException {
         //MediaForm form = Jackson2Mapper.getInstance().readValue("{\"searches\":{\"mediaIds\":[{\"value\":\"VPWON_1181924\",\"match\":\"not\"}],\"types\":[{\"value\":\"BROADCAST\",\"match\":\"should\"},{\"value\":\"CLIP\",\"match\":\"should\"},{\"value\":\"SEGMENT\",\"match\":\"should\"},{\"value\":\"TRACK\",\"match\":\"should\"}]}}", MediaForm.class);
         /*String seriesRef = getSeriesRef(util.getClients().getMediaService().load("VPWON_1229797", null));
@@ -244,16 +258,11 @@ public class NpoApiClientUtilTest {
         return seriesRef;
     }
 
-    private HttpRequestBase getAuthenticatedRequest() throws URISyntaxException {
-        //String host = "http://fake-response.appspot.com/?sleep=7";
-        String host = utilShortTimeout.getClients().getBaseUrl() + "api/media/AVRO_1656037";
-        URI uri = new URI(host);
+    private HttpGet getAuthenticatedRequest(URI uri) throws URISyntaxException {
         ApiAuthenticationRequestFilter authentication = utilShortTimeout.getClients().getAuthentication();
-
-
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         authentication.authenticate(uri, headers);
-        HttpRequestBase httpget = new HttpGet(host);
+        HttpGet httpget = new HttpGet(uri);
         for (Map.Entry<String, List<Object>> e : headers.entrySet()) {
             for (Object o : e.getValue()) {
                 httpget.addHeader(e.getKey(), String.valueOf(o));
