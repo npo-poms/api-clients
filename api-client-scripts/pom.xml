@@ -9,6 +9,10 @@
   </parent>
   <artifactId>api-client-scripts</artifactId>
   <name>api-client-scripts</name>
+  <packaging>pom</packaging>
+  <description>
+    Just collecting some tools which we used to solve issues.
+  </description>
 
 
   <dependencies>

@@ -69,7 +69,10 @@ public class NpoApiClients extends AbstractApiClient  {
         @Named("npo-api.maxConnectionsPerRoute") Integer maxConnectionsPerRoute,
         @Named("npo-api.trustAll") Boolean trustAll
         ) {
-		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl)  + "/api", connectionTimeout, maxConnections, maxConnectionsPerRoute, 3);
+		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl)  + "/api",
+            connectionTimeout,
+            maxConnections,
+            maxConnectionsPerRoute, 3);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
