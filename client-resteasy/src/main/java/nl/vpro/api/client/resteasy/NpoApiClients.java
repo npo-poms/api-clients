@@ -64,7 +64,7 @@ public class NpoApiClients extends AbstractApiClient  {
         @Named("npo-api.apiKey") String apiKey,
         @Named("npo-api.secret") String secret,
         @Named("npo-api.origin") String origin,
-        @Named("npo-api.connectionTimeout") Integer connectionTimeout,
+        @Named("npo-api.connectionTimeout") Integer connectionTimeout, // used for socket, connection and connection request timeouts
         @Named("npo-api.maxConnections") Integer maxConnections,
         @Named("npo-api.maxConnectionsPerRoute") Integer maxConnectionsPerRoute,
         @Named("npo-api.trustAll") Boolean trustAll

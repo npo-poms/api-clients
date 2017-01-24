@@ -37,12 +37,19 @@ public class NpoApiClientsPagesITest {
 
     private static NpoApiClients clients;
 
+    private static NpoApiClients clientsShortTimeouts;
+
+
     @BeforeClass
     public static void setUp() throws IOException {
         clients = NpoApiClients
             .configured()
-            .socketTimeout(Duration.ofMillis(1))
-            .connectTimeout(Duration.ofMillis(1))
+            .build();
+
+        clientsShortTimeouts = NpoApiClients
+            .configured()
+            .socketTimeout(Duration.ofMillis(100))
+            .connectTimeout(Duration.ofMillis(1000))
             .build();
         System.out.println("Testing with " + clients);
     }
@@ -281,7 +288,7 @@ public class NpoApiClientsPagesITest {
 
         PageForm form = Jackson2Mapper.getLenientInstance().readerFor(PageForm.class).readValue(new StringReader(largeForm));
 
-        PageSearchResult resultItems = clients.getPageService().find(form, "vpro-predictions", null, 0L, 240);
+        PageSearchResult resultItems = clientsShortTimeouts.getPageService().find(form, "vpro-predictions", null, 0L, 240);
 
         System.out.println(resultItems);
     }
