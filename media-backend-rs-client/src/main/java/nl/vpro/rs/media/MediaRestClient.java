@@ -273,7 +273,7 @@ public class MediaRestClient extends AbstractApiClient {
                  try {
                      VersionRestService p = proxyErrorsAndCount(VersionRestService.class,
                          getTarget(getClientHttpEngine()).proxy(VersionRestService.class));
-                     String v = p.version();
+                     String v = p.getVersion();
                      if (v != null) {
                          return v;
                      }
