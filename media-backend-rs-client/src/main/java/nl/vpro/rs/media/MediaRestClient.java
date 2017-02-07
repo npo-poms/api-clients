@@ -568,7 +568,7 @@ public class MediaRestClient extends AbstractApiClient {
     public void setSubtitles(Subtitles subtitles) {
         SubtitlesId id = subtitles.getId();
         getBackendRestService().setSubtitles(id.getMid(), id.getLanguage(), id.getType(), Duration.ZERO, true, null,
-            SubtitlesUtil.parse(subtitles).iterator());
+            SubtitlesUtil.iterator(subtitles));
 
     }
 
