@@ -34,6 +34,7 @@ import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
+import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
 import nl.vpro.util.Env;
@@ -49,6 +50,8 @@ public class NpoApiClients extends AbstractApiClient  {
     private ScheduleRestServiceWithDefaults scheduleRestServiceProxy;
     private ProfileRestService profileRestServiceProxy;
     private TVVodRestService tvVodRestServiceProxy;
+    private SubtitlesRestService subtitlesRestServiceProxy;
+
 
     private String apiKey;
     private String secret;
@@ -310,6 +313,14 @@ public class NpoApiClients extends AbstractApiClient  {
                 build(getClientHttpEngine(), TVVodRestService.class);
         }
         return tvVodRestServiceProxy;
+    }
+
+    public SubtitlesRestService getSubtitlesRestService() {
+        if (subtitlesRestServiceProxy == null) {
+            subtitlesRestServiceProxy =
+                build(getClientHttpEngine(), SubtitlesRestService.class);
+        }
+        return subtitlesRestServiceProxy;
     }
 
     protected <T> T wrapClientAspect(T proxy, Class<T> service) {
