@@ -572,6 +572,8 @@ public class MediaRestClient extends AbstractApiClient {
 
     }
 
+
+
     public void setDefaultMax(int max) {
         this.defaultMax = max;
     }
