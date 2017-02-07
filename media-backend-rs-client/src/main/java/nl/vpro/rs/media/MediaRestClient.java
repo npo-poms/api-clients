@@ -22,6 +22,10 @@ import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
+import nl.vpro.api.rs.subtitles.EBUReader;
+import nl.vpro.api.rs.subtitles.SRTReader;
+import nl.vpro.api.rs.subtitles.VTTReader;
+import nl.vpro.api.rs.subtitles.VTTWriter;
 import nl.vpro.domain.media.Group;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
@@ -31,6 +35,9 @@ import nl.vpro.domain.media.search.MediaList;
 import nl.vpro.domain.media.search.MediaListItem;
 import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
+import nl.vpro.domain.subtitles.Subtitles;
+import nl.vpro.domain.subtitles.SubtitlesId;
+import nl.vpro.domain.subtitles.SubtitlesUtil;
 import nl.vpro.rs.VersionRestService;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
@@ -317,7 +324,12 @@ public class MediaRestClient extends AbstractApiClient {
 
         builder.httpEngine(getClientHttpEngine())
             .register(new BasicAuthentication(userName, password))
-            .register(new AddRequestHeadersFilter());
+            .register(new AddRequestHeadersFilter())
+            .register(VTTReader.class)
+            .register(EBUReader.class)
+            .register(SRTReader.class)
+            .register(VTTWriter.class)
+        ;
     }
 
     /**
@@ -552,6 +564,14 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
+
+    public void setSubtitles(Subtitles subtitles) {
+        SubtitlesId id = subtitles.getId();
+        getBackendRestService().setSubtitles(id.getMid(), id.getLanguage(), id.getType(), Duration.ZERO, true, null,
+            SubtitlesUtil.parse(subtitles).iterator());
+
+    }
+
     public void setDefaultMax(int max) {
         this.defaultMax = max;
     }
@@ -582,6 +602,7 @@ public class MediaRestClient extends AbstractApiClient {
     public void setAsynchronousThrottleRate(double rate) {
         this.asynchronousThrottle.setRate(rate);
     }
+
 
     @Override
     public synchronized void invalidate() {
