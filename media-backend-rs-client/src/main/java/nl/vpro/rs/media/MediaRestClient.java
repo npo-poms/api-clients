@@ -22,10 +22,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
-import nl.vpro.api.rs.subtitles.EBUReader;
-import nl.vpro.api.rs.subtitles.SRTReader;
-import nl.vpro.api.rs.subtitles.VTTReader;
-import nl.vpro.api.rs.subtitles.VTTWriter;
+import nl.vpro.api.rs.subtitles.*;
 import nl.vpro.domain.media.Group;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
@@ -325,9 +322,9 @@ public class MediaRestClient extends AbstractApiClient {
         builder.httpEngine(getClientHttpEngine())
             .register(new BasicAuthentication(userName, password))
             .register(new AddRequestHeadersFilter())
-            .register(VTTReader.class)
-            .register(EBUReader.class)
-            .register(SRTReader.class)
+            .register(VTTSubtitlesReader.class)
+            .register(EBUSubtitlesReader.class)
+            .register(SRTSubtitlesReader.class)
             .register(VTTWriter.class)
         ;
     }
