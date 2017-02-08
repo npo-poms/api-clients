@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 
+import nl.vpro.api.rs.subtitles.VTTSubtitlesReader;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
@@ -349,6 +350,8 @@ public class NpoApiClients extends AbstractApiClient  {
 
 	@Override
     protected void buildResteasy(ResteasyClientBuilder builder) {
-        builder.register(getAuthentication());
+        builder.register(getAuthentication())
+            .register(VTTSubtitlesReader.class)
+        ;
     }
 }
