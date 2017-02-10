@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
  * - throttles all calls
  * - automaticly fills some common arguments (recognized by @QueryParam annotations)
  * - if the return type is Response, it also checks the status code
+ * - NotFoundException is wrapped to <code>null</code>
  * @author Michiel Meeuwissen
  * @since 4.3
  */

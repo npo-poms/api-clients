@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Date;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
@@ -221,7 +220,7 @@ public class NpoApiClientsITest {
 
     @Test
     public void testScheduleWithDefaults() {
-        ScheduleResult result = clients.getScheduleService().list(new Date(), null, null, ASC, null, 0L, 100);
+        ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, ASC, null, 0L, 100);
         for (ApiScheduleEvent event : result.getItems()) {
             System.out.println(event);
         }
@@ -274,7 +273,7 @@ public class NpoApiClientsITest {
         assertThat(response.getStatus()).isEqualTo(200);
         System.out.println(response.readEntity(String.class));
     }
-    
-    
+
+
 
 }

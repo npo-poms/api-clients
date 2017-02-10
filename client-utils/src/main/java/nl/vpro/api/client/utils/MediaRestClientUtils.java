@@ -8,20 +8,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Supplier;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
+import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.media.*;
+import nl.vpro.domain.subtitles.Subtitles;
+import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.util.LazyIterator;
 
@@ -31,7 +33,7 @@ import nl.vpro.util.LazyIterator;
  */
 @Slf4j
 public class MediaRestClientUtils {
-    
+
     /**
      * Similar to the v1 call for easier migration
      */
@@ -74,18 +76,27 @@ public class MediaRestClientUtils {
     }
 
     public static MediaObject loadOrNull(MediaRestService restService, String id) throws IOException {
+        return wrap(() -> restService.load(id, null, null), () -> id);
+    }
+
+    public static Subtitles loadOrNull(SubtitlesRestService restService, String mid, Locale language) throws IOException {
+        return wrap(() -> restService.get(mid, language), () -> SubtitlesId.builder().mid(mid).language(language).build().toString());
+
+    }
+
+    private static <T> T  wrap(Supplier<T> supplier, Supplier<String> id) throws IOException {
         try {
-            return restService.load(id, null, null);
+            return supplier.get();
         } catch (NotFoundException nfe) {
             return null;
         } catch (ProcessingException pe) {
             unwrapIO(pe);
-            log.warn(id + " " + pe.getMessage());
+            log.warn(id.get() + " " + pe.getMessage());
             return null;
         } catch (RuntimeException ise) {
             throw ise;
         } catch (Exception e) {
-            log.error(id + " " + e.getClass().getName() + " " + e.getMessage());
+            log.error(id.get() + " " + e.getClass().getName() + " " + e.getMessage());
             return null;
         }
     }
