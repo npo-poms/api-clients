@@ -49,7 +49,14 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Named("pageupdate-api.maxConnections") int maxConnections,
         @Named("pageupdate-api.maxConnectionsPerRoute") int maxConnectionsPerRoute
     ) {
-        this(baseUrl, Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), Duration.ofMillis(connectionTimeout), maxConnections, maxConnectionsPerRoute, Duration.ofMillis(10000), Duration.ofMinutes(15), null, null, user, password);
+        this(baseUrl,
+            Duration.ofMillis(connectionTimeout),
+            Duration.ofMillis(connectionTimeout),
+            Duration.ofMillis(connectionTimeout),
+            maxConnections,
+            maxConnectionsPerRoute,
+            Duration.ofMillis(10000),
+            Duration.ofMinutes(15), null, null, user, password);
     }
 
     @Builder
