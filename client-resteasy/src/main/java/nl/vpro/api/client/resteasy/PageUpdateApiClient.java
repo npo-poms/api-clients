@@ -1,23 +1,19 @@
 package nl.vpro.api.client.resteasy;
 
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
@@ -26,10 +22,10 @@ import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
+import nl.vpro.util.TimeUtils;
 
+@Slf4j
 public class PageUpdateApiClient extends AbstractApiClient {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiClient.class);
 
     private PageUpdateRestService pageUpdateRestService;
 
@@ -45,18 +41,22 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Named("pageupdate-api.baseUrl") String baseUrl,
         @Named("pageupdate-api.user") String user,
         @Named("pageupdate-api.password") String password,
-        @Named("pageupdate-api.connectionTimeout") int connectionTimeout,
+        @Named("pageupdate-api.connectionRequestTimeout") String connectionRequestTimeout,
+        @Named("pageupdate-api.connectTimeout") String connectTimeout,
+        @Named("pageupdate-api.socketTimeout") String socketTimeout,
         @Named("pageupdate-api.maxConnections") int maxConnections,
-        @Named("pageupdate-api.maxConnectionsPerRoute") int maxConnectionsPerRoute
-    ) {
+        @Named("pageupdate-api.maxConnectionsPerRoute") int maxConnectionsPerRoute) {
         this(baseUrl,
-            Duration.ofMillis(connectionTimeout),
-            Duration.ofMillis(connectionTimeout),
-            Duration.ofMillis(connectionTimeout),
+            TimeUtils.parseDuration(connectionRequestTimeout).orElseThrow(IllegalArgumentException::new),
+            TimeUtils.parseDuration(connectTimeout).orElseThrow(IllegalArgumentException::new),
+            TimeUtils.parseDuration(socketTimeout).orElseThrow(IllegalArgumentException::new),
             maxConnections,
             maxConnectionsPerRoute,
-            Duration.ofMillis(10000),
-            Duration.ofMinutes(15), null, null, user, password);
+            Duration.ofSeconds(10),
+            Duration.ofMinutes(15),
+            null,
+            null,
+            user, password);
     }
 
     @Builder
@@ -87,7 +87,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     public static PageUpdateApiClientBuilder configured(String... configFiles) throws IOException {
         PageUpdateApiClientBuilder builder = builder();
-        LOG.info("Reading configuration from {}", Arrays.asList(configFiles));
+        log.info("Reading configuration from {}", Arrays.asList(configFiles));
         ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
@@ -127,7 +127,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         if (classificationService == null) {
             try {
                 this.classificationService = new CachedURLClassificationServiceImpl(this.baseUrl);
-                LOG.info("No classification service wired. Created {}", this.classificationService);
+                log.info("No classification service wired. Created {}", this.classificationService);
 
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
