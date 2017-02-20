@@ -110,7 +110,7 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     @Builder
-    public MediaRestClient(
+    protected MediaRestClient(
         String baseUrl,
         Duration connectionRequestTimeout,
         Duration connectTimeout,
