@@ -21,11 +21,19 @@
     <constructor-arg value="${npo-api.origin}"/>
   </bean>
 
-  <bean  class="java.lang.Integer" factory-method="valueOf" id="npo-api.connectionTimeout">
-    <constructor-arg value="${npo-api.connectionTimeout}"/>
+  <bean  class="java.lang.String" id="npo-api.connectionRequestTimeout">
+    <constructor-arg value="${npo-api.connectionRequestTimeout}"/>
   </bean>
 
-  <bean  class="java.lang.Integer" factory-method="valueOf" id="npo-api.maxConnections">
+  <bean class="java.lang.String" id="npo-api.connectTimeout">
+    <constructor-arg value="${npo-api.connectTimeout}"/>
+  </bean>
+
+  <bean class="java.lang.String" id="npo-api.socketTimeout">
+    <constructor-arg value="${npo-api.socketTimeout}"/>
+  </bean>
+
+  <bean  class="java.lang.String" factory-method="valueOf" id="npo-api.maxConnections">
     <constructor-arg value="${npo-api.maxConnections}"/>
   </bean>
 

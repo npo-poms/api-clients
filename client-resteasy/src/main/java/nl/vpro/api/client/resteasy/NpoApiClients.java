@@ -40,6 +40,7 @@ import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
+import nl.vpro.util.TimeUtils;
 
 @Named
 @Slf4j
@@ -68,21 +69,31 @@ public class NpoApiClients extends AbstractApiClient  {
         @Named("npo-api.apiKey") String apiKey,
         @Named("npo-api.secret") String secret,
         @Named("npo-api.origin") String origin,
-        @Named("npo-api.connectionTimeout") Integer connectionTimeout, // used for socket, connection and connection request timeouts
+        @Named("npo-api.connectionRequestTimeout") String connectionRequestTimeout,
+        @Named("npo-api.connectTimeout") String connectTimeout,
+        @Named("npo-api.socketTimeout") String socketTimeout,
         @Named("npo-api.maxConnections") Integer maxConnections,
         @Named("npo-api.maxConnectionsPerRoute") Integer maxConnectionsPerRoute,
         @Named("npo-api.trustAll") Boolean trustAll
         ) {
-		super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl)  + "/api",
-            connectionTimeout,
+        this(baseUrl,
+            TimeUtils.parseDuration(connectionRequestTimeout).orElseThrow(IllegalArgumentException::new),
+            TimeUtils.parseDuration(connectTimeout).orElseThrow(IllegalArgumentException::new),
+            TimeUtils.parseDuration(socketTimeout).orElseThrow(IllegalArgumentException::new),
             maxConnections,
-            maxConnectionsPerRoute, 3);
-        this.apiKey = apiKey;
-        this.secret = secret;
-        this.origin = origin;
-        if (trustAll != null) {
-            super.setTrustAll(trustAll);
-        }
+            maxConnectionsPerRoute,
+            null,
+            null,
+            null,
+            null,
+            trustAll,
+            apiKey,
+            secret,
+            origin,
+            null,
+            null,
+            null
+            );
     }
 
     public NpoApiClients(
@@ -91,11 +102,11 @@ public class NpoApiClients extends AbstractApiClient  {
         String secret,
         String origin
     ) {
-        this(apiBaseUrl, apiKey, secret, origin, 10, 20, 2, false);
+        this(apiBaseUrl, apiKey, secret, origin, "50", "1s", "50",  20, 2, false);
     }
 
     @Builder
-    public NpoApiClients(
+    protected NpoApiClients(
         String baseUrl,
         Duration connectionRequestTimeout,
         Duration connectTimeout,
