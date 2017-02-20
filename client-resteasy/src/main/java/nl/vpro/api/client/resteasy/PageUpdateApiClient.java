@@ -60,7 +60,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
     @Builder
-    public PageUpdateApiClient(
+    protected PageUpdateApiClient(
         String baseUrl,
         Duration connectionRequestTimeout,
         Duration connectTimeout,
