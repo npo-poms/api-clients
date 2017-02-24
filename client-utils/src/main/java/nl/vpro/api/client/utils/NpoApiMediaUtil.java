@@ -1,6 +1,7 @@
 package nl.vpro.api.client.utils;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -31,6 +32,7 @@ import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
 import nl.vpro.domain.media.Program;
 import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.TimeUtils;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 
@@ -46,7 +48,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     // TODO arrange caching via ehcache (ehcache4guice or something)
 
     private int cacheSize = 500;
-    private int ttlInMinutes = 5;
+    private Duration cacheTTL = Duration.ofMinutes(5);
 
     LoadingCache<String, Optional<MediaObject>> cache = buildCache();
 
@@ -69,9 +71,9 @@ public class NpoApiMediaUtil implements MediaProvider {
         cache = buildCache();
     }
 
-    @Named("npo-api-mediautil.cacheExpiryInMinutes")
-    public void setCacheExpiry(int ttlInMinutes) {
-        this.ttlInMinutes = ttlInMinutes;
+    @Named("npo-api-mediautil.cacheExpiry")
+    public void setCacheExpiry(String ttl) {
+        this.cacheTTL = TimeUtils.parseDuration(ttl).orElse(Duration.ofMinutes(5));
         cache = buildCache();
     }
 
@@ -79,7 +81,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         return CacheBuilder.newBuilder()
             .concurrencyLevel(4)
             .maximumSize(cacheSize)
-            .expireAfterWrite(ttlInMinutes, TimeUnit.MINUTES)
+            .expireAfterWrite(cacheTTL.toMillis(), TimeUnit.MILLISECONDS)
             .build(
                 new CacheLoader<String, Optional<MediaObject>>() {
                     @Override
@@ -110,6 +112,10 @@ public class NpoApiMediaUtil implements MediaProvider {
             }
             throw new RuntimeException(e);
         }
+    }
+
+    public void invalidateCache() {
+        cache.invalidateAll();
     }
 
     public MediaResult listDescendants(String mid, Order order) {
