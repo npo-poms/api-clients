@@ -167,7 +167,7 @@ public class NpoApiClientsITest {
 
         Page page = result.getItems().get(0).getResult();
         System.out.println(page.getSortDate());
-        System.out.println(page.getPublishStart());
+        System.out.println(page.getPublishStartInstant());
         System.out.println(page.getCreationDate());
 
     }
