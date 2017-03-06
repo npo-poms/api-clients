@@ -33,7 +33,7 @@
     <constructor-arg value="${npo-api.socketTimeout}"/>
   </bean>
 
-  <bean  class="java.lang.String" factory-method="valueOf" id="npo-api.maxConnections">
+  <bean  class="java.lang.Integer" factory-method="valueOf" id="npo-api.maxConnections">
     <constructor-arg value="${npo-api.maxConnections}"/>
   </bean>
 
