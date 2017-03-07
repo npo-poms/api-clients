@@ -105,6 +105,7 @@ public class MediaRestClient extends AbstractApiClient {
             Duration.ofMinutes(60),
             null,
             null,
+            null,
             null
         );
     }
@@ -118,7 +119,8 @@ public class MediaRestClient extends AbstractApiClient {
         int maxConnections,
         int maxConnectionsPerRoute,
         Duration connectionInPoolTTL,
-        Duration rateWindow,
+        Duration countWindow,
+        Duration warnTreshold,
         List<Locale> acceptableLanguages,
         Boolean trustAll,
         Integer defaultMax,
@@ -133,7 +135,18 @@ public class MediaRestClient extends AbstractApiClient {
         Double throttleRate,
         Double asynchronousThrottleRate
     ) {
-        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, maxConnectionsPerRoute, connectionInPoolTTL, rateWindow, acceptableLanguages, null, trustAll);
+        super(baseUrl,
+            connectionRequestTimeout,
+            connectTimeout,
+            socketTimeout,
+            maxConnections,
+            maxConnectionsPerRoute,
+            connectionInPoolTTL,
+            countWindow,
+            warnTreshold,
+            acceptableLanguages,
+            null,
+            trustAll);
         if (defaultMax != null) {
             this.defaultMax = defaultMax;
         }
