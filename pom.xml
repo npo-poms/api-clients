@@ -29,7 +29,7 @@
   </scm>
 
   <properties>
-
+    <vpro.shared.version>1.65-SNAPSHOT</vpro.shared.version>
   </properties>
 
   <dependencyManagement>

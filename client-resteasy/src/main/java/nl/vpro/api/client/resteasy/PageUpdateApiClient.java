@@ -54,6 +54,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
             maxConnectionsPerRoute,
             Duration.ofSeconds(10),
             Duration.ofMinutes(15),
+            Duration.ofMillis(100),
             null,
             null,
             user, password);
@@ -69,12 +70,24 @@ public class PageUpdateApiClient extends AbstractApiClient {
         int maxConnectionsPerRoute,
         Duration connectionInPoolTTL,
         Duration countWindow,
+        Duration warnTreshold,
         List<Locale> acceptableLanguages,
         Boolean trustAll,
         String user,
         String password
         ) {
-        super(baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api", connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, maxConnectionsPerRoute, connectionInPoolTTL, countWindow, acceptableLanguages, null,  trustAll);
+        super(baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api",
+            connectionRequestTimeout,
+            connectTimeout,
+            socketTimeout,
+            maxConnections,
+            maxConnectionsPerRoute,
+            connectionInPoolTTL,
+            countWindow,
+            warnTreshold,
+            acceptableLanguages,
+            null,
+            trustAll);
         if (user == null){
             throw new IllegalArgumentException("No user given");
         }
