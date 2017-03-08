@@ -125,7 +125,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
     public PageUpdateRestService getPageUpdateRestService() {
         if (pageUpdateRestService == null) {
             pageUpdateRestService =
-                proxyErrorsAndCount(
+                proxyErrors(
                     PageUpdateRestService.class,
                     getTarget(getClientHttpEngine())
                         .proxyBuilder(PageUpdateRestService.class)

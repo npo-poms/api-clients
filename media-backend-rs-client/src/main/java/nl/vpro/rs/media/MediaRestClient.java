@@ -351,7 +351,7 @@ public class MediaRestClient extends AbstractApiClient {
             log.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, baseUrl);
             proxy = MediaRestClientAspect.proxy(
                 this,
-                proxyErrorsAndCount(MediaBackendRestService.class,
+                proxyErrors(MediaBackendRestService.class,
                     getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class))
             );
         }
