@@ -64,7 +64,9 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     public void clearCache() {
         cache.invalidateAll();
-        clients.getBrowserCache().clear();
+        if (clients.getBrowserCache() != null) {
+            clients.getBrowserCache().clear();
+        }
     }
     @Named("npo-api-mediautil.cachesize")
     public void setCacheSize(int size) {
