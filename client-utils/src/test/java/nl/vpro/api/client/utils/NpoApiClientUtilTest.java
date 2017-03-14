@@ -5,10 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -241,6 +238,12 @@ public class NpoApiClientUtilTest {
         System.out.println("" + seriesRef);*/
         System.out.println(util.getClients().getMediaService().findDescendants(new MediaForm(), "POMS_S_VPRO_522965", "vpro", "title,description,image", 0L, 1000).asList());
 
+    }
+
+    @Test
+    public void loadSubtiles() {
+
+        System.out.println(util.getClients().getSubtitlesRestService().get("WO_VPRO_025700", Locale.JAPAN));
     }
 
 
