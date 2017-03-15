@@ -1,7 +1,6 @@
 package nl.vpro.api.client.resteasy;
 
 
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -42,7 +41,7 @@ import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
 import nl.vpro.util.TimeUtils;
 
-@Named
+
 @Slf4j
 public class NpoApiClients extends AbstractApiClient  {
 
@@ -63,40 +62,30 @@ public class NpoApiClients extends AbstractApiClient  {
     private ThreadLocal<String> profile = ThreadLocal.withInitial(() -> null);
     private ThreadLocal<Integer> max = ThreadLocal.withInitial(() -> null);
 
-    @Inject
-    public NpoApiClients(
-        @Named("npo-api.baseUrl") String baseUrl,
-        @Named("npo-api.apiKey") String apiKey,
-        @Named("npo-api.secret") String secret,
-        @Named("npo-api.origin") String origin,
-        @Named("npo-api.connectionRequestTimeout") String connectionRequestTimeout,
-        @Named("npo-api.connectTimeout") String connectTimeout,
-        @Named("npo-api.socketTimeout") String socketTimeout,
-        @Named("npo-api.maxConnections") Integer maxConnections,
-        @Named("npo-api.maxConnectionsPerRoute") Integer maxConnectionsPerRoute,
-        @Named("npo-api.trustAll") Boolean trustAll
-        ) {
-        this(baseUrl,
-            TimeUtils.parseDuration(connectionRequestTimeout).orElseThrow(IllegalArgumentException::new),
-            TimeUtils.parseDuration(connectTimeout).orElseThrow(IllegalArgumentException::new),
-            TimeUtils.parseDuration(socketTimeout).orElseThrow(IllegalArgumentException::new),
-            maxConnections,
-            maxConnectionsPerRoute,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            trustAll,
-            apiKey,
-            secret,
-            origin,
-            null,
-            null,
-            null
-            );
+
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @Named
+    public static class Builder implements javax.inject.Provider<NpoApiClients> {
+        @Inject @Named("npo-api.baseUrl") String baseUrl;
+        @Inject @Named("npo-api.apiKey") String apiKey;
+        @Inject @Named("npo-api.secret") String secret;
+        @Inject @Named("npo-api.origin") String origin;
+        @Inject @Named("npo-api.connectionRequestTimeout") String _connectionRequestTimeout;
+        @Inject @Named("npo-api.connectTimeout") String _connectTimeout;
+        @Inject @Named("npo-api.socketTimeout") String _socketTimeout;
+        @Inject @Named("npo-api.maxConnections") Integer maxConnections;
+        @Inject @Named("npo-api.maxConnectionsPerRoute") Integer maxConnectionsPerRoute;
+        @Inject @Named("npo-api.trustAll") Boolean trustAll;
+
+        @Override
+        public NpoApiClients get() {
+            connectionRequestTimeout(TimeUtils.parseDuration(_connectionRequestTimeout).orElseThrow(IllegalArgumentException::new));
+            connectTimeout(TimeUtils.parseDuration(_connectTimeout).orElseThrow(IllegalArgumentException::new));
+            socketTimeout(TimeUtils.parseDuration(_socketTimeout).orElseThrow(IllegalArgumentException::new));
+            return build();
+        }
     }
+/*
 
     public NpoApiClients(
         String apiBaseUrl,
@@ -106,15 +95,17 @@ public class NpoApiClients extends AbstractApiClient  {
     ) {
         this(apiBaseUrl, apiKey, secret, origin, "50", "1s", "50",  20, 2, false);
     }
+*/
 
-    @Builder
+
+    @lombok.Builder(builderClassName = "Builder")
     protected NpoApiClients(
         String baseUrl,
         Duration connectionRequestTimeout,
         Duration connectTimeout,
         Duration socketTimeout,
-        int maxConnections,
-        int maxConnectionsPerRoute,
+        Integer maxConnections,
+        Integer maxConnectionsPerRoute,
         Duration connectionInPoolTTL,
         Duration countWindow,
         Integer bucketCount,
@@ -133,8 +124,8 @@ public class NpoApiClients extends AbstractApiClient  {
             connectionRequestTimeout,
             connectTimeout,
             socketTimeout,
-            maxConnections,
-            maxConnectionsPerRoute,
+            maxConnections == null ? 100 : maxConnections,
+            maxConnectionsPerRoute == null ? 100 : maxConnectionsPerRoute,
             connectionInPoolTTL,
             countWindow,
             bucketCount,
@@ -253,36 +244,36 @@ public class NpoApiClients extends AbstractApiClient  {
         this.max.set(max);
     }
 
-    public static NpoApiClientsBuilder configured(String... configFiles)  {
-        NpoApiClientsBuilder builder = builder();
+    public static NpoApiClients.Builder configured(String... configFiles)  {
+        NpoApiClients.Builder builder = builder();
         ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
 
-    public static NpoApiClientsBuilder configured(Env env, String... configFiles) {
-        NpoApiClientsBuilder builder = builder();
+    public static NpoApiClients.Builder configured(Env env, String... configFiles) {
+        NpoApiClients.Builder builder = builder();
         ReflectionUtils.configured(env, builder, configFiles);
         return builder;
     }
 
-    public static NpoApiClientsBuilder configured(Map<String, String> settings) {
-        NpoApiClientsBuilder builder = builder();
+    public static NpoApiClients.Builder configured(Map<String, String> settings) {
+        NpoApiClients.Builder builder = builder();
         ReflectionUtils.configured(builder, settings);
         return builder;
     }
 
-    public static NpoApiClientsBuilder configured(Env env, Map<String, String> settings) {
-        NpoApiClientsBuilder builder = builder();
+    public static NpoApiClients.Builder configured(Env env, Map<String, String> settings) {
+        NpoApiClients.Builder builder = builder();
         ReflectionUtils.configured(env, builder, settings);
         return builder;
     }
 
-    public static NpoApiClientsBuilder configured() {
+    public static NpoApiClients.Builder configured() {
         return configured((Env) null);
     }
 
-    public static NpoApiClientsBuilder configured(Env env) {
-        NpoApiClientsBuilder builder = builder();
+    public static NpoApiClients.Builder configured(Env env) {
+        NpoApiClients.Builder builder = builder();
         ReflectionUtils.configuredInHome(env, builder, "apiclient.properties");
         return builder;
     }
