@@ -108,11 +108,11 @@ public class NpoApiClientsITest {
         assertThat(filtered).isNotNull();
         assertThat(filtered.getTitles()).hasSize(1);
 
-        assertThat(mediaService.listEpisodes(mid, null, null, null, null)).isNotNull();
+        assertThat(mediaService.listEpisodes(mid, null, null,null, null, null)).isNotNull();
 
-        assertThat(mediaService.listMembers(mid, null, null, null, null)).isNotNull();
+        assertThat(mediaService.listMembers(mid, null, null, null, null, null)).isNotNull();
 
-        assertThat(mediaService.listDescendants(mid, null, null, null, null)).isNotNull();
+        assertThat(mediaService.listDescendants(mid, null, null, null, null, null)).isNotNull();
     }
 
     @Test
