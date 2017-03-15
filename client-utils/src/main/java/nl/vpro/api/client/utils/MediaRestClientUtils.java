@@ -76,24 +76,42 @@ public class MediaRestClientUtils {
     }
 
     public static MediaObject loadOrNull(MediaRestService restService, String id) throws IOException {
-        return wrap(() -> restService.load(id, null, null), () -> id);
+        return wrapForOrNull(
+            () -> restService.load(id, null, null),
+            () -> id
+        );
     }
 
     public static Subtitles loadOrNull(SubtitlesRestService restService, String mid, Locale language) throws IOException {
-        return wrap(() -> restService.get(mid, language), () -> SubtitlesId.builder().mid(mid).language(language).build().toString());
+        return wrapForOrNull(
+            () -> restService.get(mid, language),
+            () -> SubtitlesId.builder().mid(mid).language(language).build().toString()
+        );
 
     }
 
-    private static <T> T  wrap(Supplier<T> supplier, Supplier<String> id) throws IOException {
+    /**
+     * Converts some exceptions to 'null', most noticably {@link NotFoundException}
+     *
+     * @param supplier The action to perform
+     * @param id Id to use for logging if exceptions happen
+     * @throws IOException
+     */
+    private static <T> T wrapForOrNull(
+        Supplier<T> supplier,
+        Supplier<String> id
+    ) throws IOException {
         try {
             return supplier.get();
         } catch (NotFoundException nfe) {
+            // not even log, this is not errorneous
             return null;
         } catch (ProcessingException pe) {
             unwrapIO(pe);
             log.warn(id.get() + " " + pe.getMessage());
             return null;
         } catch (RuntimeException ise) {
+            // Completely unexpected, this should remain to be an exception!
             throw ise;
         } catch (Exception e) {
             log.error(id.get() + " " + e.getClass().getName() + " " + e.getMessage());
