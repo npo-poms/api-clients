@@ -60,16 +60,16 @@ public class AbstractApiClientMediaRepository {
     }
 
     public MediaResult listDescendants(MediaObject media, Order order, long offset, Integer max) {
-        return clients.getMediaService().listDescendants(media.getMid(), null, order.toString(), offset, max);
+        return clients.getMediaService().listDescendants(media.getMid(), null, null, order.toString(), offset, max);
 
     }
 
     public ProgramResult listEpisodes(MediaObject media, Order order, long offset, Integer max) {
-        return clients.getMediaService().listEpisodes(media.getMid(), null, order.toString(), offset, max);
+        return clients.getMediaService().listEpisodes(media.getMid(), null,  null, order.toString(), offset, max);
     }
 
     public MediaResult listMembers(MediaObject media, Order order, long offset, Integer max) {
-        return clients.getMediaService().listMembers(media.getMid(), null, order.toString(), offset, max);
+        return clients.getMediaService().listMembers(media.getMid(), null, null, order.toString(), offset, max);
 
     }
 

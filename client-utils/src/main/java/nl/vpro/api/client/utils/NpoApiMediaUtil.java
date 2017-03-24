@@ -124,7 +124,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     public MediaResult listDescendants(String mid, Order order) {
         limiter.acquire();
         try {
-            MediaResult result = clients.getMediaService().listDescendants(mid, null, order.toString(), 0L, 200);
+            MediaResult result = clients.getMediaService().listDescendants(mid, null, null, order.toString(), 0L, 200);
             limiter.upRate();
             return result;
         } catch (Exception e) {
@@ -200,17 +200,17 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     public MediaResult listDescendants(String mid, Order order, Predicate<MediaObject> filter, int max) {
         BiFunction<Integer, Long, MediaResult> descendants = (batch, offset) ->
-            clients.getMediaService().listDescendants(mid, null, order.toString(), offset, batch);
+            clients.getMediaService().listDescendants(mid, null, null, order.toString(), offset, batch);
         return unPage(descendants, filter, max);
     }
 
     public MediaResult listMembers(String mid, Order order, Predicate<MediaObject> filter, int max) {
-        BiFunction<Integer, Long, MediaResult> members = (batch, offset) -> clients.getMediaService().listMembers(mid, null, order.toString(), offset, batch);
+        BiFunction<Integer, Long, MediaResult> members = (batch, offset) -> clients.getMediaService().listMembers(mid, null, null, order.toString(), offset, batch);
         return unPage(members, filter, max);
     }
 
     public ProgramResult listEpisodes(String mid, Order order, Predicate<MediaObject> filter, int max) {
-        BiFunction<Integer, Long, ProgramResult> members = (batch, offset) -> clients.getMediaService().listEpisodes(mid, null, order.toString(), offset, batch);
+        BiFunction<Integer, Long, ProgramResult> members = (batch, offset) -> clients.getMediaService().listEpisodes(mid, null,null, order.toString(), offset, batch);
         return unPageProgramResult(members, filter, max);
     }
 
