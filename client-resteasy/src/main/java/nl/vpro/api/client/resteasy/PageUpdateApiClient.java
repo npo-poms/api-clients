@@ -58,7 +58,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Inject@Named("pageupdate-api.maxConnectionsPerRoute")
         Integer maxConnectionsPerRoute;
         @Inject@Named("pageupdate-api.warnTreshold")
-        String warnTreshold;
+        String _warnTreshold;
 
 
         @Override
@@ -66,6 +66,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
             connectionRequestTimeout(TimeUtils.parseDuration(_connectionRequestTimeout).orElseThrow(IllegalArgumentException::new));
             connectTimeout(TimeUtils.parseDuration(_connectTimeout).orElseThrow(IllegalArgumentException::new));
             socketTimeout(TimeUtils.parseDuration(_socketTimeout).orElseThrow(IllegalArgumentException::new));
+            warnTreshold(TimeUtils.parseDuration(_warnTreshold).orElseThrow(IllegalAccessError::new));
             return build();
         }
     }
