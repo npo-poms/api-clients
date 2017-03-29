@@ -1,6 +1,5 @@
 package nl.vpro.rs.media;
 
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -11,6 +10,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Named;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
@@ -22,7 +22,10 @@ import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
-import nl.vpro.api.rs.subtitles.*;
+import nl.vpro.api.rs.subtitles.EBUSubtitlesReader;
+import nl.vpro.api.rs.subtitles.SRTSubtitlesReader;
+import nl.vpro.api.rs.subtitles.VTTSubtitlesReader;
+import nl.vpro.api.rs.subtitles.VTTWriter;
 import nl.vpro.domain.media.Group;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
@@ -38,6 +41,7 @@ import nl.vpro.domain.subtitles.SubtitlesUtil;
 import nl.vpro.rs.VersionRestService;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
+import nl.vpro.util.TimeUtils;
 
 /**
  * A client for RESTful calls to a running MediaBackendRestService.
@@ -111,7 +115,17 @@ public class MediaRestClient extends AbstractApiClient {
         );
     }
 
-    @Builder
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @Named
+    public static class Builder implements javax.inject.Provider<MediaRestClient> {
+
+        @Override
+        public MediaRestClient get() {
+            return build();
+        }
+    }
+
+    @lombok.Builder(builderClassName = "Builder")
     public MediaRestClient(
         String baseUrl,
         Duration connectionRequestTimeout,
@@ -210,8 +224,8 @@ public class MediaRestClient extends AbstractApiClient {
     protected boolean waitForRetry = false;
 	protected boolean lookupCrids = true;
 
-    public static MediaRestClientBuilder configured(Env env, String... configFiles) {
-        MediaRestClientBuilder builder = builder();
+    public static Builder configured(Env env, String... configFiles) {
+        Builder builder = builder();
         ReflectionUtils.configured(env, builder, configFiles);
         return builder;
     }
@@ -219,19 +233,19 @@ public class MediaRestClient extends AbstractApiClient {
     /**
      * Read configuration from a config file in ${user.home}/conf/mediarestclient.properties
      */
-    public static MediaRestClientBuilder configured(Env env) {
-        MediaRestClientBuilder builder = builder();
+    public static Builder configured(Env env) {
+        Builder builder = builder();
         ReflectionUtils.configuredInHome(env, builder, "mediarestclient.properties", "creds.properties");
         return builder;
     }
 
-    public static MediaRestClientBuilder configured(Env env, Map<String, String> settings) {
-        MediaRestClientBuilder builder = builder();
+    public static Builder configured(Env env, Map<String, String> settings) {
+        Builder builder = builder();
         ReflectionUtils.configured(env, builder, settings);
         return builder;
     }
 
-    public static MediaRestClientBuilder configured()  {
+    public static Builder configured()  {
         return configured(null);
     }
 

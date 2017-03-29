@@ -76,6 +76,7 @@ public class NpoApiClients extends AbstractApiClient  {
         @Inject @Named("npo-api.maxConnections") Integer maxConnections;
         @Inject @Named("npo-api.maxConnectionsPerRoute") Integer maxConnectionsPerRoute;
         @Inject @Named("npo-api.trustAll") Boolean trustAll;
+        @Inject @Named("npo-api.warnTreshold") String warnTreshold;
 
         @Override
         public NpoApiClients get() {

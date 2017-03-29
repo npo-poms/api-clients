@@ -1,13 +1,15 @@
 package nl.vpro.api.client.resteasy;
 
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.Duration;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
@@ -36,39 +38,46 @@ public class PageUpdateApiClient extends AbstractApiClient {
     @Inject(optional = true)
     private ClassificationService classificationService;
 
-    @Inject
-    public PageUpdateApiClient(
-        @Named("pageupdate-api.baseUrl") String baseUrl,
-        @Named("pageupdate-api.user") String user,
-        @Named("pageupdate-api.password") String password,
-        @Named("pageupdate-api.connectionRequestTimeout") String connectionRequestTimeout,
-        @Named("pageupdate-api.connectTimeout") String connectTimeout,
-        @Named("pageupdate-api.socketTimeout") String socketTimeout,
-        @Named("pageupdate-api.maxConnections") int maxConnections,
-        @Named("pageupdate-api.maxConnectionsPerRoute") int maxConnectionsPerRoute) {
-        this(baseUrl,
-            TimeUtils.parseDuration(connectionRequestTimeout).orElseThrow(IllegalArgumentException::new),
-            TimeUtils.parseDuration(connectTimeout).orElseThrow(IllegalArgumentException::new),
-            TimeUtils.parseDuration(socketTimeout).orElseThrow(IllegalArgumentException::new),
-            maxConnections,
-            maxConnectionsPerRoute,
-            Duration.ofSeconds(10),
-            Duration.ofHours(24),
-            24,
-            Duration.ofMillis(100),
-            null,
-            null,
-            user, password);
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @Named
+    public static class Builder implements javax.inject.Provider<PageUpdateApiClient> {
+
+        @Inject@Named("pageupdate-api.baseUrl")
+        String baseUrl;
+        @Inject@Named("pageupdate-api.user")
+        String user;
+        @Inject@Named("pageupdate-api.password")
+        String password;
+        @Inject@Named("pageupdate-api.connectionRequestTimeout")
+        String _connectionRequestTimeout;
+        @Inject@Named("pageupdate-api.connectTimeout") String _connectTimeout;
+        @Inject@Named("pageupdate-api.socketTimeout")
+        String _socketTimeout;
+        @Inject@Named("pageupdate-api.maxConnections")
+        Integer maxConnections;
+        @Inject@Named("pageupdate-api.maxConnectionsPerRoute")
+        Integer maxConnectionsPerRoute;
+        @Inject@Named("pageupdate-api.warnTreshold")
+        String warnTreshold;
+
+
+        @Override
+        public PageUpdateApiClient get() {
+            connectionRequestTimeout(TimeUtils.parseDuration(_connectionRequestTimeout).orElseThrow(IllegalArgumentException::new));
+            connectTimeout(TimeUtils.parseDuration(_connectTimeout).orElseThrow(IllegalArgumentException::new));
+            socketTimeout(TimeUtils.parseDuration(_socketTimeout).orElseThrow(IllegalArgumentException::new));
+            return build();
+        }
     }
 
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     protected PageUpdateApiClient(
         String baseUrl,
         Duration connectionRequestTimeout,
         Duration connectTimeout,
         Duration socketTimeout,
-        int maxConnections,
-        int maxConnectionsPerRoute,
+        Integer maxConnections,
+        Integer maxConnectionsPerRoute,
         Duration connectionInPoolTTL,
         Duration countWindow,
         Integer bucketCount,
@@ -101,27 +110,27 @@ public class PageUpdateApiClient extends AbstractApiClient {
         description = user + "@" + this.getBaseUrl();
     }
 
-    public static PageUpdateApiClientBuilder configured(String... configFiles) throws IOException {
-        PageUpdateApiClientBuilder builder = builder();
+    public static Builder configured(String... configFiles) throws IOException {
+        Builder builder = builder();
         log.info("Reading configuration from {}", Arrays.asList(configFiles));
         ReflectionUtils.configured(builder, configFiles);
         return builder;
     }
 
-    public static PageUpdateApiClientBuilder configured(Env env, String... configFiles) {
-        PageUpdateApiClientBuilder  builder = builder();
+    public static Builder configured(Env env, String... configFiles) {
+        Builder  builder = builder();
         ReflectionUtils.configured(env, builder, configFiles);
         return builder;
     }
 
-    public static PageUpdateApiClientBuilder configured(Env env, Map<String, String> settings) {
-        PageUpdateApiClientBuilder  builder = builder();
+    public static Builder configured(Env env, Map<String, String> settings) {
+        Builder  builder = builder();
         ReflectionUtils.configured(env, builder, settings);
         return builder;
     }
 
 
-    public static PageUpdateApiClientBuilder configured() throws IOException {
+    public static Builder configured() throws IOException {
         return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "pageupdateapiclient.properties");
     }
 
