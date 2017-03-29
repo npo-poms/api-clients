@@ -41,7 +41,6 @@ import nl.vpro.domain.subtitles.SubtitlesUtil;
 import nl.vpro.rs.VersionRestService;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
-import nl.vpro.util.TimeUtils;
 
 /**
  * A client for RESTful calls to a running MediaBackendRestService.
@@ -131,11 +130,11 @@ public class MediaRestClient extends AbstractApiClient {
         Duration connectionRequestTimeout,
         Duration connectTimeout,
         Duration socketTimeout,
-        int maxConnections,
-        int maxConnectionsPerRoute,
+        Integer maxConnections,
+        Integer maxConnectionsPerRoute,
         Duration connectionInPoolTTL,
         Duration countWindow,
-        int bucketCount,
+        Integer bucketCount,
         Duration warnTreshold,
         List<Locale> acceptableLanguages,
         Boolean trustAll,
