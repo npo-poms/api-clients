@@ -1,5 +1,7 @@
 package nl.vpro.rs.media;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -85,6 +87,8 @@ public class MediaRestClient extends AbstractApiClient {
     private final RateLimiter throttle = RateLimiter.create(1.0);
     private final RateLimiter asynchronousThrottle = RateLimiter.create(0.4);
 
+    @Getter
+    @Setter
 	private boolean followMerges = true;
 
     private MediaBackendRestService proxy;
@@ -92,6 +96,22 @@ public class MediaRestClient extends AbstractApiClient {
     private Map<String, Object> headers;
 
     Supplier<String> version;
+
+    protected String userName;
+    protected String password;
+    @Setter
+    @Getter
+    protected String errors;
+    @lombok.Builder.Default
+    protected boolean waitForRetry = false;
+
+    @lombok.Builder.Default
+    protected boolean lookupCrids = true;
+
+    @lombok.Builder.Default
+    @Getter
+    @Setter
+    private boolean validateInput = false;
 
     public MediaRestClient() {
         this(-1, 30, 10, 2);
@@ -148,7 +168,8 @@ public class MediaRestClient extends AbstractApiClient {
         boolean waitForRetry,
         boolean lookupCrids,
         Double throttleRate,
-        Double asynchronousThrottleRate
+        Double asynchronousThrottleRate,
+        boolean validateInput
     ) {
         super(baseUrl,
             connectionRequestTimeout,
@@ -192,6 +213,7 @@ public class MediaRestClient extends AbstractApiClient {
         if (asynchronousThrottleRate != null) {
             this.setAsynchronousThrottleRate(asynchronousThrottleRate);
         }
+        this.validateInput = validateInput;
     }
 
     enum Type {
@@ -217,11 +239,7 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
-    protected String userName;
-    protected String password;
-    protected String errors;
-    protected boolean waitForRetry = false;
-	protected boolean lookupCrids = true;
+
 
     public static Builder configured(Env env, String... configFiles) {
         Builder builder = builder();
@@ -254,6 +272,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void setUserName(String userName) {
         this.userName = userName;
+        invalidate();
     }
 
     public String getPassword() {
@@ -262,6 +281,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void setPassword(String password) {
         this.password = password;
+        invalidate();
     }
 
     public void setUserNamePassword(String semicolonSeperated) {
@@ -272,21 +292,6 @@ public class MediaRestClient extends AbstractApiClient {
         }
     }
 
-    public void setErrors(String errors) {
-        this.errors = errors;
-    }
-
-    public String getErrors() {
-        return errors;
-    }
-
-    public boolean isFollowMerges() {
-        return followMerges;
-    }
-
-    public void setFollowMerges(boolean followMerges) {
-        this.followMerges = followMerges;
-    }
 
     public boolean isWaitForRetry() {
         return waitForRetry;
@@ -422,7 +427,7 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     public String addImage(ImageUpdate update, String mid) {
-        Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors);
+        Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors, validateInput);
         String result = response.readEntity(String.class);
         response.close();
         return result;
@@ -447,7 +452,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     /** add a location to a Program, Segment or Group */
     protected void addLocation(final Type type, final LocationUpdate location, final String id) {
-        Response response = getBackendRestService().addLocation(type.toString(), location, id, followMerges, errors);
+        Response response = getBackendRestService().addLocation(type.toString(), location, id, followMerges, errors, validateInput);
         response.close();
     }
 
@@ -465,7 +470,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void createMember(String owner, String member, Integer number) {
         try {
-            Response response = getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors);
+            Response response = getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors, validateInput);
             response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -483,7 +488,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public void createEpisode(String owner, String member, Integer number) {
         try {
-            Response response = getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors);
+            Response response = getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors, validateInput);
             response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -501,7 +506,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     protected String set(final Type type, final MediaUpdate update) {
         try {
-            Response response = getBackendRestService().update(type.toString(), update, followMerges, errors, lookupCrids);
+            Response response = getBackendRestService().update(type.toString(), update, followMerges, errors, lookupCrids, validateInput);
             String result = response.readEntity(String.class);
             response.close();
             return result;
@@ -584,7 +589,7 @@ public class MediaRestClient extends AbstractApiClient {
 
     public MediaList<MediaListItem> find(MediaForm form)  {
         try {
-            return getBackendRestService().find(form, false);
+            return getBackendRestService().find(form, false, validateInput);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
