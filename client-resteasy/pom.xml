@@ -82,10 +82,6 @@
       <artifactId>resteasy-validator-provider-11</artifactId>
     </dependency>
     <dependency>
-      <groupId>nl.publiekeomroep</groupId>
-      <artifactId>poms-shared</artifactId>
-    </dependency>
-    <dependency>
       <groupId>nl.vpro.shared</groupId>
       <artifactId>vpro-shared-util</artifactId>
     </dependency>
