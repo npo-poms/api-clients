@@ -137,7 +137,8 @@ public class MediaRestClientTest {
         System.out.println(group.id);
         ProgramUpdate update = client.get("EO_101205912");
         update.getMemberOf().add(new MemberRefUpdate(1, group.id));
-        Response response = client.getBackendRestService().addMemberOf(new MemberRefUpdate(1, "POMS_S_VPRO_1421920"/*owner*/), null,  update.getMid()/*member*/, true, null);
+        Response response = client.getBackendRestService().addMemberOf(
+            new MemberRefUpdate(1, "POMS_S_VPRO_1421920"/*owner*/), null,  update.getMid()/*member*/, true, null, null);
         System.out.println("Created " + response.getEntity());
     }
 

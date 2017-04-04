@@ -47,7 +47,7 @@ class MediaRestClientAspect implements InvocationHandler {
             client.throttle();
             try {
                 try {
-                    fillErrorParameterIfEmpty(method, args);
+                    fillParametersIfEmpty(method, args);
                     Object result = method.invoke(proxied, args);
                     if (result instanceof Response) {
                         Response response = (Response) result;
@@ -89,20 +89,22 @@ class MediaRestClientAspect implements InvocationHandler {
         }
     }
 
-    protected void fillErrorParameterIfEmpty(Method method, Object[] args) {
+    protected void fillParametersIfEmpty(Method method, Object[] args) {
         Annotation[][] annotations = method.getParameterAnnotations();
         if (args != null) {
             for (int i = 0; i < args.length; i++) {
                 for (int j = 0; j < annotations[i].length; j++) {
                     if (annotations[i][j] instanceof QueryParam && args[i] == null) {
                         QueryParam queryParam = (QueryParam) annotations[i][j];
-                        if ("errors".equals(queryParam.value())) {
+                        if (MediaBackendRestService.ERRORS.equals(queryParam.value())) {
                             log.debug("Implicetely set errors parameter to {}", client.errors);
                             args[i] = client.errors;
-                        }
-                        if ("followMerges".equals(queryParam.value())) {
+                        } else if (MediaBackendRestService.FOLLOW.equals(queryParam.value())) {
                             log.debug("Implicetely set followMerges to {}", client.isFollowMerges());
                             args[i] = client.isFollowMerges();
+                        } else if (MediaBackendRestService.VALIDATE_INPUT.equals(queryParam.value())) {
+                            log.debug("Implicetely set validateInput to {}", client.isValidateInput());
+                            args[i] = client.isValidateInput();
                         }
                     }
                     if (annotations[i][j] instanceof PathParam && args[i] == null) {
