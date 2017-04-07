@@ -29,7 +29,6 @@
   </scm>
 
   <properties>
-    <poms.shared.version>5.2.4-SNAPSHOT</poms.shared.version>
   </properties>
 
   <dependencyManagement>
