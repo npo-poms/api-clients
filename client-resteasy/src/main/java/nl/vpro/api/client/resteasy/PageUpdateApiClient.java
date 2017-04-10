@@ -100,7 +100,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
             warnTreshold,
             acceptableLanguages,
             null,
-            trustAll);
+            trustAll,
+            null);
         if (user == null){
             throw new IllegalArgumentException("No user given");
         }

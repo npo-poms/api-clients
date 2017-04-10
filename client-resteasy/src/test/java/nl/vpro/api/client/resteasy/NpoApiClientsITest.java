@@ -14,6 +14,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
@@ -38,6 +39,7 @@ import nl.vpro.domain.api.page.PageSearchResult;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.page.Page;
+import nl.vpro.util.Env;
 
 import static nl.vpro.domain.api.Constants.ASC;
 import static org.fest.assertions.Assertions.assertThat;
@@ -54,7 +56,8 @@ public class NpoApiClientsITest {
 
     @Before
     public void setUp() throws IOException {
-        clients = NpoApiClients.configured()
+        clients = NpoApiClients.configured(Env.LOCALHOST)
+            .mediaType(MediaType.APPLICATION_XML_TYPE)
             .build();
         System.out.println(clients);
     }
@@ -71,7 +74,10 @@ public class NpoApiClientsITest {
         clients.getMediaService().load("DOES_NOT_EXIST", null, null);
     }
 
-
+    @Test
+    public void testPOW_01105929() {
+        clients.getMediaService().load("POW_01105929", null, null);
+    }
 
     @Test
     public void testGetVersion() {
@@ -145,6 +151,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
+    @Ignore("Takes very long")
     public void testIterate() throws IOException {
         InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro", null, 0L, Integer.MAX_VALUE, null, null);
         IOUtils.copy(response, ByteStreams.nullOutputStream());
@@ -212,7 +219,7 @@ public class NpoApiClientsITest {
 
     @Test
     public void testSchedule() {
-        ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, ASC, null, 0L, 100);
+        ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, null, ASC, 0L, 100);
         for (ApiScheduleEvent event : result.getItems()) {
             System.out.println(event);
         }
@@ -220,7 +227,7 @@ public class NpoApiClientsITest {
 
     @Test
     public void testScheduleWithDefaults() {
-        ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, ASC, null, 0L, 100);
+        ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, null, ASC, 0L, 100);
         for (ApiScheduleEvent event : result.getItems()) {
             System.out.println(event);
         }

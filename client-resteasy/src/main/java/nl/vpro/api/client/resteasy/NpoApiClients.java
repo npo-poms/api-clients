@@ -37,6 +37,7 @@ import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
 import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
+import nl.vpro.jackson2.Jackson2Mapper;
 import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
 import nl.vpro.util.TimeUtils;
@@ -44,6 +45,8 @@ import nl.vpro.util.TimeUtils;
 
 @Slf4j
 public class NpoApiClients extends AbstractApiClient  {
+
+    private static String CONFIG_FILE = "apiclient.properties";
 
     private MediaRestService mediaRestServiceProxy;
     private MediaRestService mediaRestServiceProxyNoTimeout;
@@ -63,6 +66,7 @@ public class NpoApiClients extends AbstractApiClient  {
     private ThreadLocal<Integer> max = ThreadLocal.withInitial(() -> null);
 
 
+
     @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
     @Named
     public static class Builder implements javax.inject.Provider<NpoApiClients> {
@@ -77,6 +81,22 @@ public class NpoApiClients extends AbstractApiClient  {
         @Inject @Named("npo-api.maxConnectionsPerRoute") Integer maxConnectionsPerRoute;
         @Inject @Named("npo-api.trustAll") Boolean trustAll;
         @Inject @Named("npo-api.warnTreshold") String warnTreshold;
+
+
+        public Builder env(Env env) {
+            try {
+                Map<String, String> properties = ReflectionUtils.filtered(env,
+                    ReflectionUtils.getProperties(ReflectionUtils.getConfigFilesInHome(CONFIG_FILE)));
+
+                return
+                    baseUrl(properties.get("baseUrl"))
+                    .apiKey(properties.get("apiKey"))
+                    .secret(properties.get("secret"))
+                    .origin(properties.get("origin"));
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+        }
 
         @Override
         public NpoApiClients get() {
@@ -119,7 +139,8 @@ public class NpoApiClients extends AbstractApiClient  {
         String origin,
         String properties,
         String profile,
-        Integer max
+        Integer max,
+        Jackson2Mapper objectMapper
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
             connectionRequestTimeout,
@@ -133,7 +154,8 @@ public class NpoApiClients extends AbstractApiClient  {
             warnThreshold,
             acceptableLanguages,
             mediaType,
-            trustAll);
+            trustAll,
+            objectMapper);
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
@@ -275,7 +297,7 @@ public class NpoApiClients extends AbstractApiClient  {
 
     public static NpoApiClients.Builder configured(Env env) {
         NpoApiClients.Builder builder = builder();
-        ReflectionUtils.configuredInHome(env, builder, "apiclient.properties");
+        ReflectionUtils.configuredInHome(env, builder, CONFIG_FILE);
         return builder;
     }
 
