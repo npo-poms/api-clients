@@ -1,6 +1,7 @@
 package nl.vpro.api.client.resteasy;
 
 
+import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -131,7 +132,7 @@ public class NpoApiClients extends AbstractApiClient  {
         Duration countWindow,
         Integer bucketCount,
         Duration warnThreshold,
-        List<Locale> acceptableLanguages,
+        @Singular List<Locale> acceptableLanguages,
         MediaType mediaType,
         Boolean trustAll,
         String apiKey,

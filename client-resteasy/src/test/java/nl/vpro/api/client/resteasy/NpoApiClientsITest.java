@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Locale;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
@@ -39,6 +40,7 @@ import nl.vpro.domain.api.page.PageSearchResult;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.page.Page;
+import nl.vpro.i18n.Locales;
 import nl.vpro.util.Env;
 
 import static nl.vpro.domain.api.Constants.ASC;
@@ -58,6 +60,9 @@ public class NpoApiClientsITest {
     public void setUp() throws IOException {
         clients = NpoApiClients.configured(Env.LOCALHOST)
             .mediaType(MediaType.APPLICATION_XML_TYPE)
+            .clearAcceptableLanguages()
+            .acceptableLanguage(Locale.ENGLISH)
+            .acceptableLanguage(Locales.DUTCH)
             .build();
         System.out.println(clients);
     }
