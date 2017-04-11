@@ -145,7 +145,7 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     @lombok.Builder(builderClassName = "Builder")
-    public MediaRestClient(
+    protected MediaRestClient(
         String baseUrl,
         Duration connectionRequestTimeout,
         Duration connectTimeout,
@@ -183,7 +183,9 @@ public class MediaRestClient extends AbstractApiClient {
             warnTreshold,
             acceptableLanguages,
             null,
-            trustAll);
+            trustAll,
+            null // only xml is relevant
+            );
         if (defaultMax != null) {
             this.defaultMax = defaultMax;
         }
