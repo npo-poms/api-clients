@@ -1,5 +1,6 @@
 package nl.vpro.rs.media;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -370,6 +371,11 @@ public class MediaRestClientTest {
     @Test
     public void version() {
         System.out.println(client.getVersionNumber());
+    }
+
+    @Test
+    public void addFrame() {
+        client.getFrameCreatorRestService().createFrame("bla", Duration.ofMillis(1000), null, new ByteArrayInputStream("bla bla".getBytes()));
     }
 
 

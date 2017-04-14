@@ -93,6 +93,9 @@ public class MediaRestClient extends AbstractApiClient {
 
     private MediaBackendRestService proxy;
 
+    private FrameCreatorRestService frameCreatorRestService;
+
+
     private Map<String, Object> headers;
 
     Supplier<String> version;
@@ -380,9 +383,24 @@ public class MediaRestClient extends AbstractApiClient {
                 this,
                 proxyErrorsAndCount(MediaBackendRestService.class,
                     getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class))
+                ,
+                MediaBackendRestService.class
             );
         }
         return proxy;
+    }
+
+    public FrameCreatorRestService getFrameCreatorRestService() {
+        if (frameCreatorRestService == null) {
+            frameCreatorRestService = MediaRestClientAspect.proxy(
+                this,
+                proxyErrorsAndCount(FrameCreatorRestService.class,
+                    getTarget(getClientHttpEngine()).proxy(FrameCreatorRestService.class)
+                ),
+                FrameCreatorRestService.class
+            );
+        }
+        return frameCreatorRestService;
     }
 
     @SuppressWarnings("unchecked")

@@ -24,19 +24,19 @@ import javax.ws.rs.core.Response;
  * @since 4.3
  */
 @Slf4j
-class MediaRestClientAspect implements InvocationHandler {
+class MediaRestClientAspect<T> implements InvocationHandler {
 
     private final MediaRestClient client;
-    private final MediaBackendRestService proxied;
+    private final T proxied;
 
-    MediaRestClientAspect(MediaRestClient client, MediaBackendRestService proxied) {
+    MediaRestClientAspect(MediaRestClient client, T proxied) {
         this.client = client;
         this.proxied = proxied;
     }
 
-    public static MediaBackendRestService proxy(MediaRestClient client, MediaBackendRestService restController) {
-        return (MediaBackendRestService) Proxy.newProxyInstance(MediaRestClient.class.getClassLoader(),
-            new Class[]{MediaBackendRestService.class}, new MediaRestClientAspect(client, restController));
+    public static <T> T proxy(MediaRestClient client, T restController, Class<T> service) {
+        return (T) Proxy.newProxyInstance(MediaRestClient.class.getClassLoader(),
+            new Class[]{service}, new MediaRestClientAspect(client, restController));
     }
 
 
