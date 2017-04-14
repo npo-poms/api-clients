@@ -374,6 +374,7 @@ public class MediaRestClientTest {
     }
 
     @Test
+    //MSE-3604
     public void addFrame() {
         client.getFrameCreatorRestService().createFrame("bla", Duration.ofMillis(1000), null, new ByteArrayInputStream("bla bla".getBytes()));
     }
