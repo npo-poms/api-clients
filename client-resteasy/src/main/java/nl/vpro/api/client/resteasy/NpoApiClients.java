@@ -133,7 +133,8 @@ public class NpoApiClients extends AbstractApiClient  {
         Integer bucketCount,
         Duration warnThreshold,
         @Singular List<Locale> acceptableLanguages,
-        MediaType mediaType,
+        MediaType accept,
+        MediaType contentType,
         Boolean trustAll,
         String apiKey,
         String secret,
@@ -154,7 +155,8 @@ public class NpoApiClients extends AbstractApiClient  {
             bucketCount,
             warnThreshold,
             acceptableLanguages,
-            mediaType,
+            accept,
+            contentType,
             trustAll,
             objectMapper);
         this.apiKey = apiKey;

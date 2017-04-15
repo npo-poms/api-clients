@@ -59,7 +59,7 @@ public class NpoApiClientsITest {
     @Before
     public void setUp() throws IOException {
         clients = NpoApiClients.configured(Env.LOCALHOST)
-            .mediaType(MediaType.APPLICATION_XML_TYPE)
+            .accept(MediaType.APPLICATION_XML_TYPE)
             .clearAcceptableLanguages()
             .acceptableLanguage(Locale.ENGLISH)
             .acceptableLanguage(Locales.DUTCH)

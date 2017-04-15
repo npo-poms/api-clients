@@ -100,6 +100,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
             warnTreshold,
             acceptableLanguages,
             null,
+            null,
             trustAll,
             null);
         if (user == null){

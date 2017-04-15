@@ -190,6 +190,7 @@ public class MediaRestClient extends AbstractApiClient {
             warnTreshold,
             acceptableLanguages,
             null,
+            null,
             trustAll,
             null // only xml is relevant
             );
