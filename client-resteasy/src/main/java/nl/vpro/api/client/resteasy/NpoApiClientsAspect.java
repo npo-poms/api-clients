@@ -2,16 +2,15 @@ package nl.vpro.api.client.resteasy;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.QueryParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import static nl.vpro.domain.api.Constants.MAX;
-import static nl.vpro.domain.api.Constants.PROFILE;
-import static nl.vpro.domain.api.Constants.PROPERTIES;
+import javax.ws.rs.QueryParam;
+
+import static nl.vpro.domain.api.Constants.*;
 
 /**
  * This Proxy:
@@ -42,6 +41,9 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
             fillImplicitParameters(method, args);
+            if (method.getName().equals("changes")) {
+
+            }
             return method.invoke(proxied, args);
         } catch (InvocationTargetException itc) {
             throw itc.getCause();

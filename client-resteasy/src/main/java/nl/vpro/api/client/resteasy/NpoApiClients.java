@@ -395,6 +395,7 @@ public class NpoApiClients extends AbstractApiClient  {
     protected void buildResteasy(ResteasyClientBuilder builder) {
         builder.register(getAuthentication())
             .register(VTTSubtitlesReader.class)
+            .register(NpoApiClientsFilter.class)
         ;
     }
 }
