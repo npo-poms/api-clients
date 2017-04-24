@@ -116,7 +116,7 @@ public class NpoApiClientUtilTest {
     @Test
     @Ignore("Takes long!!")
     public void testChanges() throws Exception {
-        CloseableIterator<Change> result = util.changes("woord", 14703333L, Order.ASC, Integer.MAX_VALUE);
+        CloseableIterator<Change> result = util.changes("woord", 1433329965809L, Order.ASC, Integer.MAX_VALUE);
         long i = 0;
         while (result.hasNext()) {
             Change next = result.next();
