@@ -35,7 +35,7 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
     @Override
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
         CountAspect.Local local = CountAspect.currentThreadLocal.get();
-        if (nocachingMethod.contains(local.getMethod())) {
+        if (nocachingMethod.contains(local.method)) {
             log.debug("explicitely not caching call to {}", local);
             responseContext.getHeaders().putSingle(HttpHeaders.CACHE_CONTROL, "no-cache");
         }
