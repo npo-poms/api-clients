@@ -56,7 +56,8 @@ public class NpoApiClientUtilTest {
     @Before
     public void setUp() throws IOException {
 
-        util = new NpoApiMediaUtil(NpoApiClients.configured().build(), new NpoApiRateLimiter());
+        util = new NpoApiMediaUtil(NpoApiClients.configured().warnThreshold(Duration.ofMillis(1)).build(), new NpoApiRateLimiter());
+
         utilShortTimeout = new NpoApiMediaUtil(
             NpoApiClients.configured()
                 .connectTimeout(Duration.ofMillis(1)).build(), new NpoApiRateLimiter());
