@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
@@ -40,8 +41,8 @@ import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
 import nl.vpro.jackson2.Jackson2Mapper;
 import nl.vpro.util.Env;
+import nl.vpro.util.ProviderAndBuilder;
 import nl.vpro.util.ReflectionUtils;
-import nl.vpro.util.TimeUtils;
 
 
 @Slf4j
@@ -67,22 +68,77 @@ public class NpoApiClients extends AbstractApiClient  {
     private ThreadLocal<Integer> max = ThreadLocal.withInitial(() -> null);
 
 
-
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "unused"})
     @Named
-    public static class Builder implements javax.inject.Provider<NpoApiClients> {
-        @Inject @Named("npo-api.baseUrl") String baseUrl;
-        @Inject @Named("npo-api.apiKey") String apiKey;
-        @Inject @Named("npo-api.secret") String secret;
-        @Inject @Named("npo-api.origin") String origin;
-        @Inject @Named("npo-api.connectionRequestTimeout") String _connectionRequestTimeout;
-        @Inject @Named("npo-api.connectTimeout") String _connectTimeout;
-        @Inject @Named("npo-api.socketTimeout") String _socketTimeout;
-        @Inject @Named("npo-api.maxConnections") Integer maxConnections;
-        @Inject @Named("npo-api.maxConnectionsPerRoute") Integer maxConnectionsPerRoute;
-        @Inject @Named("npo-api.trustAll") Boolean trustAll;
-        @Inject @Named("npo-api.warnTreshold") String warnTreshold;
+    public static class Provider implements javax.inject.Provider<NpoApiClients> {
+        @Inject
+        @Named("npo-api.baseUrl")
+        String baseUrl;
+        @Inject
+        @Named("npo-api.apiKey")
+        String apiKey;
+        @Inject
+        @Named("npo-api.secret")
+        String secret;
+        @Inject
+        @Named("npo-api.origin")
+        String origin;
+        @Inject
+        @Named("npo-api.connectionRequestTimeout")
+        @Nullable
+        String connectionRequestTimeout;
+        @Inject
+        @Named("npo-api.connectTimeout")
+        @Nullable
+        String connectTimeout;
+        @Inject
+        @Named("npo-api.socketTimeout")
+        @Nullable
+        String socketTimeout;
+        @Inject
+        @Named("npo-api.maxConnections")
+        @Nullable
+        Integer maxConnections;
+        @Inject
+        @Named("npo-api.maxConnectionsPerRoute")
+        @Nullable
+        Integer maxConnectionsPerRoute;
+        @Inject
+        @Named("npo-api.trustAll")
+        @Nullable
+        Boolean trustAll;
+        @Inject
+        @Named("npo-api.warnTreshold")
+        @Nullable
+        String warnTreshold;
 
+
+        public Builder builder = new Builder();
+
+        public Builder env(Env env) {
+            try {
+                Map<String, String> properties = ReflectionUtils.filtered(env,
+                    ReflectionUtils.getProperties(ReflectionUtils.getConfigFilesInHome(CONFIG_FILE)));
+
+                return
+                    builder.baseUrl(properties.get("baseUrl"))
+                        .apiKey(properties.get("apiKey"))
+                        .secret(properties.get("secret"))
+                        .origin(properties.get("origin"));
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+        }
+
+        @Override
+        public NpoApiClients get() {
+            return ProviderAndBuilder.fillAndCatch(this, builder).build();
+        }
+    }
+
+
+    @Named
+    public static class Builder {
 
         public Builder env(Env env) {
             try {
@@ -91,33 +147,14 @@ public class NpoApiClients extends AbstractApiClient  {
 
                 return
                     baseUrl(properties.get("baseUrl"))
-                    .apiKey(properties.get("apiKey"))
-                    .secret(properties.get("secret"))
-                    .origin(properties.get("origin"));
+                        .apiKey(properties.get("apiKey"))
+                        .secret(properties.get("secret"))
+                        .origin(properties.get("origin"));
             } catch (IOException e) {
                 throw new RuntimeException();
             }
         }
-
-        @Override
-        public NpoApiClients get() {
-            connectionRequestTimeout(TimeUtils.parseDuration(_connectionRequestTimeout).orElseThrow(IllegalArgumentException::new));
-            connectTimeout(TimeUtils.parseDuration(_connectTimeout).orElseThrow(IllegalArgumentException::new));
-            socketTimeout(TimeUtils.parseDuration(_socketTimeout).orElseThrow(IllegalArgumentException::new));
-            return build();
-        }
     }
-/*
-
-    public NpoApiClients(
-        String apiBaseUrl,
-        String apiKey,
-        String secret,
-        String origin
-    ) {
-        this(apiBaseUrl, apiKey, secret, origin, "50", "1s", "50",  20, 2, false);
-    }
-*/
 
 
     @lombok.Builder(builderClassName = "Builder")
