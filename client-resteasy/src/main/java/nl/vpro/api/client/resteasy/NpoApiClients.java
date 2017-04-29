@@ -11,11 +11,11 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
@@ -68,7 +68,7 @@ public class NpoApiClients extends AbstractApiClient  {
     private ThreadLocal<Integer> max = ThreadLocal.withInitial(() -> null);
 
 
-    @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "unused"})
+    @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "unused", "OptionalUsedAsFieldOrParameterType"})
     @Named
     public static class Provider implements javax.inject.Provider<NpoApiClients> {
         @Inject
@@ -85,32 +85,25 @@ public class NpoApiClients extends AbstractApiClient  {
         String origin;
         @Inject
         @Named("npo-api.connectionRequestTimeout")
-        @Nullable
-        String connectionRequestTimeout;
+        Optional<String> connectionRequestTimeout;
         @Inject
         @Named("npo-api.connectTimeout")
-        @Nullable
-        String connectTimeout;
+        Optional<String> connectTimeout;
         @Inject
         @Named("npo-api.socketTimeout")
-        @Nullable
-        String socketTimeout;
+        Optional<String> socketTimeout;
         @Inject
         @Named("npo-api.maxConnections")
-        @Nullable
-        Integer maxConnections;
+        Optional<Integer> maxConnections;
         @Inject
         @Named("npo-api.maxConnectionsPerRoute")
-        @Nullable
-        Integer maxConnectionsPerRoute;
+        Optional<Integer> maxConnectionsPerRoute;
         @Inject
         @Named("npo-api.trustAll")
-        @Nullable
-        Boolean trustAll;
+        Optional<Boolean> trustAll;
         @Inject
         @Named("npo-api.warnTreshold")
-        @Nullable
-        String warnTreshold;
+        Optional<String> warnTreshold;
 
 
         public Builder builder = new Builder();
