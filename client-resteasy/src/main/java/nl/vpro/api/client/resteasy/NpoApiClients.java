@@ -101,12 +101,22 @@ public class NpoApiClients extends AbstractApiClient  {
         @Inject
         @Named("npo-api.trustAll")
         Optional<Boolean> trustAll;
+
         @Inject
         @Named("npo-api.warnThreshold")
         Optional<Duration> warnThreshold;
 
+        @Inject
+        @Named("npo-api.countWindow")
+        Optional<Duration> countWindow;
 
-        public Builder builder = new Builder();
+        @Inject
+        @Named("npo-api.bucketCount")
+        Optional<Integer> bucketCount;
+
+
+
+        public Builder builder = builder();
 
         public Builder env(Env env) {
             try {
@@ -172,7 +182,8 @@ public class NpoApiClients extends AbstractApiClient  {
         String properties,
         String profile,
         Integer max,
-        Jackson2Mapper objectMapper
+        Jackson2Mapper objectMapper,
+        String mbeanName
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
             connectionRequestTimeout,
@@ -188,7 +199,9 @@ public class NpoApiClients extends AbstractApiClient  {
             accept,
             contentType,
             trustAll,
-            objectMapper);
+            objectMapper,
+            mbeanName
+            );
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;

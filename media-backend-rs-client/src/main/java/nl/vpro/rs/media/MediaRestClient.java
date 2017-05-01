@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
@@ -42,6 +43,7 @@ import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.domain.subtitles.SubtitlesUtil;
 import nl.vpro.rs.VersionRestService;
 import nl.vpro.util.Env;
+import nl.vpro.util.ProviderAndBuilder;
 import nl.vpro.util.ReflectionUtils;
 
 /**
@@ -140,14 +142,34 @@ public class MediaRestClient extends AbstractApiClient {
             null
         );
     }
+    public static class Builder {
 
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+
+    }
+
+    @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType"})
     @Named
-    public static class Builder implements javax.inject.Provider<MediaRestClient> {
+    public static class Provider implements javax.inject.Provider<MediaRestClient> {
+
+        @Inject
+        @Named("backend-api.baseUrl")
+        String baseUrl;
+        @Inject
+        @Named("backend-api.user")
+        String user;
+        @Inject
+        @Named("backend-api.password")
+        String password;
+        @Inject
+        @Named("backend-api.errors")
+        Optional<String> errors;
+        @Inject
+        @Named("backend-api.trustAll")
+        Optional<Boolean> truastAll;
 
         @Override
         public MediaRestClient get() {
-            return build();
+            return ProviderAndBuilder.fillAndCatch(this, builder()).build();
         }
     }
 
@@ -176,7 +198,8 @@ public class MediaRestClient extends AbstractApiClient {
         boolean lookupCrids,
         Double throttleRate,
         Double asynchronousThrottleRate,
-        boolean validateInput
+        boolean validateInput,
+        String mbeanName
     ) {
         super(baseUrl,
             connectionRequestTimeout,
@@ -192,7 +215,8 @@ public class MediaRestClient extends AbstractApiClient {
             null,
             null,
             trustAll,
-            null // only xml is relevant
+            null, // only xml is relevant
+            mbeanName
             );
         if (defaultMax != null) {
             this.defaultMax = defaultMax;

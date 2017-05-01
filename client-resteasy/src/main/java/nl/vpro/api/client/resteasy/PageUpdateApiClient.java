@@ -6,10 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
@@ -23,8 +20,8 @@ import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.util.Env;
+import nl.vpro.util.ProviderAndBuilder;
 import nl.vpro.util.ReflectionUtils;
-import nl.vpro.util.TimeUtils;
 
 @Slf4j
 public class PageUpdateApiClient extends AbstractApiClient {
@@ -38,9 +35,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
     @Inject(optional = true)
     private ClassificationService classificationService;
 
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType"})
     @Named
-    public static class Builder implements javax.inject.Provider<PageUpdateApiClient> {
+    public static class Provider implements javax.inject.Provider<PageUpdateApiClient> {
 
         @Inject@Named("pageupdate-api.baseUrl")
         String baseUrl;
@@ -49,26 +46,27 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Inject@Named("pageupdate-api.password")
         String password;
         @Inject@Named("pageupdate-api.connectionRequestTimeout")
-        String _connectionRequestTimeout;
-        @Inject@Named("pageupdate-api.connectTimeout") String _connectTimeout;
+        Optional<Duration> connectionRequestTimeout;
+        @Inject@Named("pageupdate-api.connectTimeout")
+        Optional<Duration> connectTimeout;
         @Inject@Named("pageupdate-api.socketTimeout")
-        String _socketTimeout;
+        Optional<Duration> socketTimeout;
         @Inject@Named("pageupdate-api.maxConnections")
-        Integer maxConnections;
+        Optional<Integer> maxConnections;
         @Inject@Named("pageupdate-api.maxConnectionsPerRoute")
-        Integer maxConnectionsPerRoute;
-        @Inject@Named("pageupdate-api.warnTreshold")
-        String _warnTreshold;
+        Optional<Integer> maxConnectionsPerRoute;
+        @Inject@Named("pageupdate-api.warnThreshold")
+        Optional<Duration>  warnThreshold;
 
 
         @Override
         public PageUpdateApiClient get() {
-            connectionRequestTimeout(TimeUtils.parseDuration(_connectionRequestTimeout).orElseThrow(IllegalArgumentException::new));
-            connectTimeout(TimeUtils.parseDuration(_connectTimeout).orElseThrow(IllegalArgumentException::new));
-            socketTimeout(TimeUtils.parseDuration(_socketTimeout).orElseThrow(IllegalArgumentException::new));
-            warnTreshold(TimeUtils.parseDuration(_warnTreshold).orElseThrow(IllegalAccessError::new));
-            return build();
+            return ProviderAndBuilder.fillAndCatch(this, builder()).build();
         }
+    }
+
+    public static class Builder {
+
     }
 
     @lombok.Builder(builderClassName = "Builder")
@@ -82,11 +80,12 @@ public class PageUpdateApiClient extends AbstractApiClient {
         Duration connectionInPoolTTL,
         Duration countWindow,
         Integer bucketCount,
-        Duration warnTreshold,
+        Duration warnThreshold,
         List<Locale> acceptableLanguages,
         Boolean trustAll,
         String user,
-        String password
+        String password,
+        String mbeanName
         ) {
         super(baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api",
             connectionRequestTimeout,
@@ -97,12 +96,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
             connectionInPoolTTL,
             countWindow,
             bucketCount,
-            warnTreshold,
+            warnThreshold,
             acceptableLanguages,
             null,
             null,
             trustAll,
-            null);
+            null,
+            mbeanName);
         if (user == null){
             throw new IllegalArgumentException("No user given");
         }
