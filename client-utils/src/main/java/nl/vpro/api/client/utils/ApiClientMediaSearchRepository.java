@@ -3,8 +3,6 @@ package nl.vpro.api.client.utils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.springframework.context.annotation.Primary;
-
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
@@ -14,7 +12,6 @@ import nl.vpro.domain.media.MediaObject;
  * @since 1.1
  */
 @Named("npoApiMediaSearchRepository")
-@Primary
 public class ApiClientMediaSearchRepository extends AbstractApiClientMediaRepository implements MediaSearchRepository {
 
     @Inject
