@@ -152,20 +152,20 @@ public class MediaRestClient extends AbstractApiClient {
     public static class Provider implements javax.inject.Provider<MediaRestClient> {
 
         @Inject
-        @Named("backend-api.baseUrl")
+        @Named("npo-mediabackend-api.baseUrl")
         String baseUrl;
         @Inject
-        @Named("backend-api.user")
+        @Named("npo-mediabackend-api.user")
         String user;
         @Inject
-        @Named("backend-api.password")
+        @Named("npo-mediabackend-api.password")
         String password;
         @Inject
-        @Named("backend-api.errors")
+        @Named("npo-mediabackend-api.errors")
         Optional<String> errors;
         @Inject
-        @Named("backend-api.trustAll")
-        Optional<Boolean> truastAll;
+        @Named("npo-mediabackend-api.trustAll")
+        Optional<Boolean> trustAll;
 
         @Override
         public MediaRestClient get() {

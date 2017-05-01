@@ -39,23 +39,23 @@ public class PageUpdateApiClient extends AbstractApiClient {
     @Named
     public static class Provider implements javax.inject.Provider<PageUpdateApiClient> {
 
-        @Inject@Named("pageupdate-api.baseUrl")
+        @Inject@Named("npo-pageupdate-api.baseUrl")
         String baseUrl;
-        @Inject@Named("pageupdate-api.user")
+        @Inject@Named("npo-pageupdate-api.user")
         String user;
-        @Inject@Named("pageupdate-api.password")
+        @Inject@Named("npo-pageupdate-api.password")
         String password;
-        @Inject@Named("pageupdate-api.connectionRequestTimeout")
+        @Inject@Named("npo-pageupdate-api.connectionRequestTimeout")
         Optional<Duration> connectionRequestTimeout;
-        @Inject@Named("pageupdate-api.connectTimeout")
+        @Inject@Named("npo-pageupdate-api.connectTimeout")
         Optional<Duration> connectTimeout;
-        @Inject@Named("pageupdate-api.socketTimeout")
+        @Inject@Named("npo-pageupdate-api.socketTimeout")
         Optional<Duration> socketTimeout;
-        @Inject@Named("pageupdate-api.maxConnections")
+        @Inject@Named("npo-pageupdate-api.maxConnections")
         Optional<Integer> maxConnections;
-        @Inject@Named("pageupdate-api.maxConnectionsPerRoute")
+        @Inject@Named("npo-pageupdate-api.maxConnectionsPerRoute")
         Optional<Integer> maxConnectionsPerRoute;
-        @Inject@Named("pageupdate-api.warnThreshold")
+        @Inject@Named("npo-pageupdate-api.warnThreshold")
         Optional<Duration>  warnThreshold;
 
 
