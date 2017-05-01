@@ -33,11 +33,11 @@
     <constructor-arg value="${npo-api.socketTimeout}"/>
   </bean>
 
-  <bean  class="java.lang.Integer" factory-method="valueOf" id="npo-api.maxConnections">
+  <bean class="org.apache.commons.lang3.math.NumberUtils" factory-method="createInteger" id="npo-api.maxConnections">
     <constructor-arg value="${npo-api.maxConnections}"/>
   </bean>
 
-  <bean  class="java.lang.Integer" factory-method="valueOf" id="npo-api.maxConnectionsPerRoute">
+  <bean  class="org.apache.commons.lang3.math.NumberUtils" factory-method="createInteger" id="npo-api.maxConnectionsPerRoute">
     <constructor-arg value="${npo-api.maxConnectionsPerRoute}"/>
   </bean>
 
@@ -45,6 +45,7 @@
     <constructor-arg value="${npo-api.trustAll}"/>
   </bean>
 
-  <context:component-scan base-package="nl.vpro.api.client.resteasy"/>
+  <bean  id="api.clients.provider" class="nl.vpro.api.client.resteasy.NpoApiClients.Provider"  />
+  <bean class="nl.vpro.api.client.resteasy.NpoApiClients" factory-bean="api.clients.provider" factory-method="get" />
 
 </beans>

@@ -85,13 +85,13 @@ public class NpoApiClients extends AbstractApiClient  {
         String origin;
         @Inject
         @Named("npo-api.connectionRequestTimeout")
-        Optional<String> connectionRequestTimeout;
+        Optional<Duration> connectionRequestTimeout;
         @Inject
         @Named("npo-api.connectTimeout")
-        Optional<String> connectTimeout;
+        Optional<Duration> connectTimeout;
         @Inject
         @Named("npo-api.socketTimeout")
-        Optional<String> socketTimeout;
+        Optional<Duration> socketTimeout;
         @Inject
         @Named("npo-api.maxConnections")
         Optional<Integer> maxConnections;
@@ -102,8 +102,8 @@ public class NpoApiClients extends AbstractApiClient  {
         @Named("npo-api.trustAll")
         Optional<Boolean> trustAll;
         @Inject
-        @Named("npo-api.warnTreshold")
-        Optional<String> warnTreshold;
+        @Named("npo-api.warnThreshold")
+        Optional<Duration> warnThreshold;
 
 
         public Builder builder = new Builder();
