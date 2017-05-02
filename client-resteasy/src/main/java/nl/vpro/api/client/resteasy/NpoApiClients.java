@@ -359,8 +359,8 @@ public class NpoApiClients extends AbstractApiClient  {
         return mediaRestServiceProxyNoTimeout = produceIfNull(
             () -> mediaRestServiceProxyNoTimeout,
             () -> wrapClientAspect(
-                            buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class),
-                            MediaRestService.class));
+                buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class),
+                MediaRestService.class));
     }
 
     public ScheduleRestServiceWithDefaults getScheduleService() {

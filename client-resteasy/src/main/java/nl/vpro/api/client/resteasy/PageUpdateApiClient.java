@@ -8,13 +8,12 @@ import java.net.MalformedURLException;
 import java.time.Duration;
 import java.util.*;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-
-import com.google.inject.Inject;
 
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
@@ -32,31 +31,42 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     private final BasicAuthentication authentication;
 
-    @Inject(optional = true)
     private ClassificationService classificationService;
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType"})
     @Named
     public static class Provider implements javax.inject.Provider<PageUpdateApiClient> {
 
-        @Inject@Named("npo-pageupdate-api.baseUrl")
+        @Inject
+        @Named("npo-pageupdate-api.baseUrl")
         String baseUrl;
-        @Inject@Named("npo-pageupdate-api.user")
+        @Inject
+        @Named("npo-pageupdate-api.user")
         String user;
-        @Inject@Named("npo-pageupdate-api.password")
+        @Inject
+        @Named("npo-pageupdate-api.password")
         String password;
-        @Inject@Named("npo-pageupdate-api.connectionRequestTimeout")
+        @Inject
+        @Named("npo-pageupdate-api.connectionRequestTimeout")
         Optional<Duration> connectionRequestTimeout;
-        @Inject@Named("npo-pageupdate-api.connectTimeout")
+        @Inject
+        @Named("npo-pageupdate-api.connectTimeout")
         Optional<Duration> connectTimeout;
-        @Inject@Named("npo-pageupdate-api.socketTimeout")
+        @Inject
+        @Named("npo-pageupdate-api.socketTimeout")
         Optional<Duration> socketTimeout;
-        @Inject@Named("npo-pageupdate-api.maxConnections")
+        @Inject
+        @Named("npo-pageupdate-api.maxConnections")
         Optional<Integer> maxConnections;
-        @Inject@Named("npo-pageupdate-api.maxConnectionsPerRoute")
+        @Inject
+        @Named("npo-pageupdate-api.maxConnectionsPerRoute")
         Optional<Integer> maxConnectionsPerRoute;
-        @Inject@Named("npo-pageupdate-api.warnThreshold")
-        Optional<Duration>  warnThreshold;
+        @Inject
+        @Named("npo-pageupdate-api.warnThreshold")
+        Optional<String>  warnThreshold;
+
+        @Inject
+        private Optional<ClassificationService> classificationService;
 
 
         @Override
@@ -85,7 +95,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
         Boolean trustAll,
         String user,
         String password,
-        String mbeanName
+        String mbeanName,
+        ClassificationService classificationService
         ) {
         super(baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api",
             connectionRequestTimeout,
@@ -111,6 +122,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         }
         authentication = new BasicAuthentication(user, password);
         description = user + "@" + this.getBaseUrl();
+        this.classificationService = classificationService;
     }
 
     public static Builder configured(String... configFiles) throws IOException {
@@ -138,31 +150,29 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
     public PageUpdateRestService getPageUpdateRestService() {
-        if (pageUpdateRestService == null) {
-            pageUpdateRestService =
-                proxyErrorsAndCount(
-                    PageUpdateRestService.class,
+        return pageUpdateRestService = produceIfNull(
+            () -> pageUpdateRestService,
+            () -> proxyErrorsAndCount(
+                PageUpdateRestService.class,
                     getTarget(getClientHttpEngine())
                         .proxyBuilder(PageUpdateRestService.class)
                         .defaultConsumes(MediaType.APPLICATION_XML).build(),
-                    Error.class
-                );
-        }
-        return pageUpdateRestService;
+                Error.class
+            ));
     }
 
     public ClassificationService getClassificationService() {
-        if (classificationService == null) {
-            try {
-                this.classificationService = new CachedURLClassificationServiceImpl(this.baseUrl);
-                log.info("No classification service wired. Created {}", this.classificationService);
+        return classificationService = produceIfNull(
+            () -> classificationService,
+            () -> {
+                try {
 
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-        return classificationService;
+                    log.info("No classification service wired. Created {}", this.classificationService);
+                    return new CachedURLClassificationServiceImpl(this.baseUrl);
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
     }
 
     public String getDescription() {
