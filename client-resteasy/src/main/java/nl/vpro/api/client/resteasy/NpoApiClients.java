@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +28,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 
 import nl.vpro.api.rs.subtitles.VTTSubtitlesReader;
@@ -348,95 +348,54 @@ public class NpoApiClients extends AbstractApiClient  {
     }
 
     public MediaRestService getMediaService() {
-        if (mediaRestServiceProxy == null) {
-            synchronized (this) {
-                if (mediaRestServiceProxy == null) {
-                    mediaRestServiceProxy =
-                        wrapClientAspect(
-                            buildWithErrorClass(getClientHttpEngine(), MediaRestService.class, Error.class),
-                            MediaRestService.class);
-                }
-            }
-        }
-        return mediaRestServiceProxy;
+        return mediaRestServiceProxy = produceIfNull(
+            () -> mediaRestServiceProxy,
+            () -> wrapClientAspect(
+                buildWithErrorClass(getClientHttpEngine(), MediaRestService.class, Error.class),
+                MediaRestService.class));
     }
 
     public MediaRestService getMediaServiceNoTimeout() {
-        if (mediaRestServiceProxyNoTimeout == null) {
-            synchronized (this) {
-                if (mediaRestServiceProxy == null) {
-                    mediaRestServiceProxyNoTimeout =
-                        wrapClientAspect(
+        return mediaRestServiceProxyNoTimeout = produceIfNull(
+            () -> mediaRestServiceProxyNoTimeout,
+            () -> wrapClientAspect(
                             buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class),
-                            MediaRestService.class);
-                }
-            }
-        }
-        return mediaRestServiceProxyNoTimeout;
+                            MediaRestService.class));
     }
 
     public ScheduleRestServiceWithDefaults getScheduleService() {
-        if (scheduleRestServiceProxy == null) {
-            synchronized (this) {
-                if (scheduleRestServiceProxy ==null) {
-                    scheduleRestServiceProxy =
-                        buildWithErrorClass(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class, Error.class);
-                }
-            }
-        }
-        return scheduleRestServiceProxy;
+        return scheduleRestServiceProxy = produceIfNull(
+            () -> scheduleRestServiceProxy,
+            () -> buildWithErrorClass(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class, Error.class));
+
     }
 
     public PageRestService getPageService() {
-        if (pageRestServiceProxy == null) {
-            synchronized (this) {
-                if (pageRestServiceProxy == null) {
-                    pageRestServiceProxy =
-                        wrapClientAspect(
-                            build(getClientHttpEngine(), PageRestService.class),
-                            PageRestService.class
-                        );
-                }
-            }
-        }
-        return pageRestServiceProxy;
+        return pageRestServiceProxy = produceIfNull(
+            () -> pageRestServiceProxy,
+            () -> wrapClientAspect(
+                build(getClientHttpEngine(), PageRestService.class),
+                PageRestService.class));
     }
 
     public ProfileRestService getProfileService() {
-        if (profileRestServiceProxy == null) {
-            synchronized (this) {
-                if (profileRestServiceProxy == null) {
-                    profileRestServiceProxy =
-                        build(getClientHttpEngine(), ProfileRestService.class);
-                }
-            }
-        }
-        return profileRestServiceProxy;
+        return profileRestServiceProxy = produceIfNull(
+            () -> profileRestServiceProxy,
+            () -> build(getClientHttpEngine(), ProfileRestService.class));
     }
 
     public TVVodRestService getTVVodService() {
-        if (tvVodRestServiceProxy== null) {
-            synchronized (this) {
-                if (tvVodRestServiceProxy == null) {
-                    tvVodRestServiceProxy =
-                        build(getClientHttpEngine(), TVVodRestService.class);
-                }
-            }
-        }
-        return tvVodRestServiceProxy;
+        return tvVodRestServiceProxy = produceIfNull(
+            () -> tvVodRestServiceProxy,
+            () -> build(getClientHttpEngine(), TVVodRestService.class));
     }
 
     public SubtitlesRestService getSubtitlesRestService() {
-        if (subtitlesRestServiceProxy == null) {
-            synchronized (this) {
-                if (subtitlesRestServiceProxy == null) {
-                    subtitlesRestServiceProxy =
-                        build(getClientHttpEngine(), SubtitlesRestService.class);
-                }
-            }
-        }
-        return subtitlesRestServiceProxy;
+        return subtitlesRestServiceProxy = produceIfNull(
+            () -> subtitlesRestServiceProxy,
+            () -> build(getClientHttpEngine(), SubtitlesRestService.class));
     }
+
 
     protected <T> T wrapClientAspect(T proxy, Class<T> service) {
         return NpoApiClientsAspect.proxy(this, proxy, service);

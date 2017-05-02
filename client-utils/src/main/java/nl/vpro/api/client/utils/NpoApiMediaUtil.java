@@ -53,7 +53,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     LoadingCache<String, Optional<MediaObject>> cache = buildCache();
 
     @Inject
-    public NpoApiMediaUtil(NpoApiClients clients, NpoApiRateLimiter limiter) {
+    public NpoApiMediaUtil(@NotNull NpoApiClients clients, @NotNull NpoApiRateLimiter limiter) {
         this.clients = clients;
         this.limiter = limiter;
     }
