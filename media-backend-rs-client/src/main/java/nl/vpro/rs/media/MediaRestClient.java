@@ -82,7 +82,7 @@ import nl.vpro.util.ReflectionUtils;
  */
 
 @Slf4j
-public class MediaRestClient extends AbstractApiClient {
+public class MediaRestClient extends AbstractApiClient implements MediaRestClientMXBean{
 
     private int defaultMax = 50;
 
@@ -300,19 +300,23 @@ public class MediaRestClient extends AbstractApiClient {
         return configured(null);
     }
 
+    @Override
     public String getUserName() {
         return userName;
     }
 
+    @Override
     public void setUserName(String userName) {
         this.userName = userName;
         invalidate();
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
         invalidate();
