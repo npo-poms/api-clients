@@ -349,63 +349,91 @@ public class NpoApiClients extends AbstractApiClient  {
 
     public MediaRestService getMediaService() {
         if (mediaRestServiceProxy == null) {
-            mediaRestServiceProxy =
-                wrapClientAspect(
-                    buildWithErrorClass(getClientHttpEngine(), MediaRestService.class,  Error.class),
-                    MediaRestService.class);
+            synchronized (this) {
+                if (mediaRestServiceProxy == null) {
+                    mediaRestServiceProxy =
+                        wrapClientAspect(
+                            buildWithErrorClass(getClientHttpEngine(), MediaRestService.class, Error.class),
+                            MediaRestService.class);
+                }
+            }
         }
         return mediaRestServiceProxy;
     }
 
     public MediaRestService getMediaServiceNoTimeout() {
         if (mediaRestServiceProxyNoTimeout == null) {
-            mediaRestServiceProxyNoTimeout =
-                wrapClientAspect(
-                    buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class),
-                    MediaRestService.class);
+            synchronized (this) {
+                if (mediaRestServiceProxy == null) {
+                    mediaRestServiceProxyNoTimeout =
+                        wrapClientAspect(
+                            buildWithErrorClass(getClientHttpEngineNoTimeout(), MediaRestService.class, Error.class),
+                            MediaRestService.class);
+                }
+            }
         }
         return mediaRestServiceProxyNoTimeout;
     }
 
     public ScheduleRestServiceWithDefaults getScheduleService() {
         if (scheduleRestServiceProxy == null) {
-            scheduleRestServiceProxy =
-                buildWithErrorClass(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class, Error.class);
+            synchronized (this) {
+                if (scheduleRestServiceProxy ==null) {
+                    scheduleRestServiceProxy =
+                        buildWithErrorClass(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class, Error.class);
+                }
+            }
         }
         return scheduleRestServiceProxy;
     }
 
     public PageRestService getPageService() {
         if (pageRestServiceProxy == null) {
-            pageRestServiceProxy =
-                wrapClientAspect(
-                    build(getClientHttpEngine(), PageRestService.class),
-                    PageRestService.class
-                );
+            synchronized (this) {
+                if (pageRestServiceProxy == null) {
+                    pageRestServiceProxy =
+                        wrapClientAspect(
+                            build(getClientHttpEngine(), PageRestService.class),
+                            PageRestService.class
+                        );
+                }
+            }
         }
         return pageRestServiceProxy;
     }
 
     public ProfileRestService getProfileService() {
         if (profileRestServiceProxy == null) {
-            profileRestServiceProxy =
-                build(getClientHttpEngine(), ProfileRestService.class);
+            synchronized (this) {
+                if (profileRestServiceProxy == null) {
+                    profileRestServiceProxy =
+                        build(getClientHttpEngine(), ProfileRestService.class);
+                }
+            }
         }
         return profileRestServiceProxy;
     }
 
     public TVVodRestService getTVVodService() {
         if (tvVodRestServiceProxy== null) {
-            tvVodRestServiceProxy =
-                build(getClientHttpEngine(), TVVodRestService.class);
+            synchronized (this) {
+                if (tvVodRestServiceProxy == null) {
+                    tvVodRestServiceProxy =
+                        build(getClientHttpEngine(), TVVodRestService.class);
+                }
+            }
         }
         return tvVodRestServiceProxy;
     }
 
     public SubtitlesRestService getSubtitlesRestService() {
         if (subtitlesRestServiceProxy == null) {
-            subtitlesRestServiceProxy =
-                build(getClientHttpEngine(), SubtitlesRestService.class);
+            synchronized (this) {
+                if (subtitlesRestServiceProxy == null) {
+                    subtitlesRestServiceProxy =
+                        build(getClientHttpEngine(), SubtitlesRestService.class);
+                }
+            }
         }
         return subtitlesRestServiceProxy;
     }
