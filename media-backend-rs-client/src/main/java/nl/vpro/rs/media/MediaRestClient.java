@@ -554,6 +554,13 @@ public class MediaRestClient extends AbstractApiClient {
     }
 
     protected String set(final Type type, final MediaUpdate update) {
+        return set(type, update, null);
+    }
+
+    protected String set(final Type type, final MediaUpdate update, String errors) {
+        if (errors == null) {
+            errors = this.errors;
+        }
         try {
             Response response = getBackendRestService().update(type.toString(), update, followMerges, errors, lookupCrids, validateInput);
             String result = response.readEntity(String.class);
@@ -634,6 +641,9 @@ public class MediaRestClient extends AbstractApiClient {
 
     public String set(MediaUpdate mediaUpdate) {
         return set(Type.MEDIA, mediaUpdate);
+    }
+    public String set(MediaUpdate mediaUpdate, String errors) {
+        return set(Type.MEDIA, mediaUpdate, errors);
     }
 
     public MediaList<MediaListItem> find(MediaForm form)  {
