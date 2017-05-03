@@ -2,7 +2,6 @@ package nl.vpro.api.client.resteasy;
 
 
 import lombok.Singular;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -22,6 +21,8 @@ import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -45,8 +46,9 @@ import nl.vpro.util.ProviderAndBuilder;
 import nl.vpro.util.ReflectionUtils;
 
 
-@Slf4j
 public class NpoApiClients extends AbstractApiClient  {
+
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     private static String CONFIG_FILE = "apiclient.properties";
 
@@ -85,13 +87,13 @@ public class NpoApiClients extends AbstractApiClient  {
         String origin;
         @Inject
         @Named("npo-api.connectionRequestTimeout")
-        Optional<Duration> connectionRequestTimeout;
+        Optional<String> connectionRequestTimeout;
         @Inject
         @Named("npo-api.connectTimeout")
-        Optional<Duration> connectTimeout;
+        Optional<String> connectTimeout;
         @Inject
         @Named("npo-api.socketTimeout")
-        Optional<Duration> socketTimeout;
+        Optional<String> socketTimeout;
         @Inject
         @Named("npo-api.maxConnections")
         Optional<Integer> maxConnections;
@@ -104,11 +106,11 @@ public class NpoApiClients extends AbstractApiClient  {
 
         @Inject
         @Named("npo-api.warnThreshold")
-        Optional<Duration> warnThreshold;
+        Optional<String> warnThreshold;
 
         @Inject
         @Named("npo-api.countWindow")
-        Optional<Duration> countWindow;
+        Optional<String> countWindow;
 
         @Inject
         @Named("npo-api.bucketCount")

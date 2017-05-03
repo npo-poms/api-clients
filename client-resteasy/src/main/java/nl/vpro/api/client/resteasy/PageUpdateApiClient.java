@@ -48,13 +48,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
         String password;
         @Inject
         @Named("npo-pageupdate-api.connectionRequestTimeout")
-        Optional<Duration> connectionRequestTimeout;
+        Optional<String> connectionRequestTimeout;
         @Inject
         @Named("npo-pageupdate-api.connectTimeout")
-        Optional<Duration> connectTimeout;
+        Optional<String> connectTimeout;
         @Inject
         @Named("npo-pageupdate-api.socketTimeout")
-        Optional<Duration> socketTimeout;
+        Optional<String> socketTimeout;
         @Inject
         @Named("npo-pageupdate-api.maxConnections")
         Optional<Integer> maxConnections;
@@ -63,7 +63,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
         Optional<Integer> maxConnectionsPerRoute;
         @Inject
         @Named("npo-pageupdate-api.warnThreshold")
-        Optional<String>  warnThreshold;
+        Optional<String> warnThreshold;
+        // should have worked, but at least I couldn't get it working in magnolia. I made a duration convertor in ProviderAndBuilder now.
+        // Optional<Duration> warnThreshold;
 
         @Inject
         private Optional<ClassificationService> classificationService;
