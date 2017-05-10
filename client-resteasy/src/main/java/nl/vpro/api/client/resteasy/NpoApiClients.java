@@ -21,8 +21,6 @@ import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -47,8 +45,6 @@ import nl.vpro.util.ReflectionUtils;
 
 
 public class NpoApiClients extends AbstractApiClient  {
-
-    private Logger log = LoggerFactory.getLogger(getClass());
 
     private static String CONFIG_FILE = "apiclient.properties";
 

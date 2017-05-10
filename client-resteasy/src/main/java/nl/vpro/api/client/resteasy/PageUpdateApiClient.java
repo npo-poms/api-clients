@@ -25,6 +25,7 @@ import nl.vpro.util.ReflectionUtils;
 @Slf4j
 public class PageUpdateApiClient extends AbstractApiClient {
 
+
     private PageUpdateRestService pageUpdateRestService;
 
     private final String description;
