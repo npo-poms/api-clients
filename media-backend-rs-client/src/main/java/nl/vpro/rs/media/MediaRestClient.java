@@ -2,7 +2,6 @@ package nl.vpro.rs.media;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -81,7 +80,6 @@ import nl.vpro.util.ReflectionUtils;
  * @author Michiel Meeuwissen
  */
 
-@Slf4j
 public class MediaRestClient extends AbstractApiClient implements MediaRestClientMXBean{
 
     private int defaultMax = 50;
@@ -184,7 +182,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         Duration connectionInPoolTTL,
         Duration countWindow,
         Integer bucketCount,
-        Duration warnTreshold,
+        Duration warnThreshold,
         List<Locale> acceptableLanguages,
         Boolean trustAll,
         Integer defaultMax,
@@ -210,7 +208,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             connectionInPoolTTL,
             countWindow,
             bucketCount,
-            warnTreshold,
+            warnThreshold,
             acceptableLanguages,
             null,
             null,
