@@ -29,9 +29,16 @@
     <constructor-arg value="${npo-api.connectTimeout}"/>
   </bean>
 
-  <bean class="java.lang.String" id="npo-api.socketTimeout">
-    <constructor-arg value="${npo-api.socketTimeout}"/>
+  <bean class="java.lang.String" id="npo-pageupdate-api.baseUrl">
+    <constructor-arg value="${npo-pageupdate-api.baseUrl}"/>
   </bean>
+  <bean class="java.lang.String" id="npo-pageupdate-api.user">
+    <constructor-arg value="${npo-pageupdate-api.user}"/>
+  </bean>
+  <bean class="java.lang.String" id="npo-pageupdate-api.password">
+    <constructor-arg value="${npo-pageupdate-api.password}"/>
+  </bean>
+
 
   <bean class="org.apache.commons.lang3.math.NumberUtils" factory-method="createInteger" id="npo-api.maxConnections">
     <constructor-arg value="${npo-api.maxConnections}"/>
@@ -43,6 +50,11 @@
 
   <bean class="java.lang.Boolean" factory-method="valueOf" id="npo-api.trustAll">
     <constructor-arg value="${npo-api.trustAll}"/>
+  </bean>
+
+
+  <bean class="java.lang.String" id="npo-api.socketTimeout">
+    <constructor-arg value="${npo-api.socketTimeout}"/>
   </bean>
 
   <bean  id="api.clients.provider" class="nl.vpro.api.client.resteasy.NpoApiClients.Provider"  />
