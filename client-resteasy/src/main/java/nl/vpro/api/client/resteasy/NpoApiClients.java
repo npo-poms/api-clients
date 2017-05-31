@@ -225,7 +225,7 @@ public class NpoApiClients extends AbstractApiClient  {
                     if (matcher.find()) {
                         result = matcher.group(1);
                     } else {
-                        result = versionString;
+                        result = "5.3";
                     }
                 } catch (JsonParseException jpe) {
                     log.warn(jpe.getMessage());
