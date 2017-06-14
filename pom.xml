@@ -31,6 +31,10 @@
   </scm>
 
   <properties>
+    <poms.shared.version>5.4-SNAPSHOT</poms.shared.version>
+
+    <!-- TODO: dependency should be dropped -->
+    <pages.version>5.4-SNAPSHOT</pages.version>
   </properties>
 
   <dependencyManagement>
