@@ -163,7 +163,7 @@ public class MediaRestClientUtils {
     @Deprecated
     public static JsonArrayIterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
-            final InputStream inputStream = restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null, null);
+            final InputStream inputStream = restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null, null, null);
             return new JsonArrayIterator<>(inputStream, Change.class, () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
@@ -174,7 +174,7 @@ public class MediaRestClientUtils {
 
     public static JsonArrayIterator<Change> changes(MediaRestService restService, String profile, Instant since, Order order, Integer max) throws IOException {
         try {
-            final InputStream inputStream = restService.changes(profile, null, null, since, order.name().toLowerCase(), max, null, null, null);
+            final InputStream inputStream = restService.changes(profile, null, null, since, order.name().toLowerCase(), max, null, null, null, null);
             return new JsonArrayIterator<>(inputStream, Change.class, () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
