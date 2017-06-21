@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -115,6 +116,24 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Getter
     @Setter
     private boolean validateInput = false;
+
+    public <T> T doValidated(Callable<T> callable) throws Exception {
+        boolean was = validateInput;
+        try {
+            validateInput = true;
+            return callable.call();
+        } finally {
+            validateInput = was;
+        }
+
+    }
+
+    public void doValidated(Runnable runnable) throws Exception {
+        doValidated(() -> {
+            runnable.run();
+            return null;
+        });
+    }
 
     public MediaRestClient() {
         this(-1, 30, 10, 2);
