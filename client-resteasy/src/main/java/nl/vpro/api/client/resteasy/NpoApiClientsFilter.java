@@ -29,7 +29,18 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
     private final Set<Method> nocachingMethod = new HashSet<>();
 
     public NpoApiClientsFilter() throws NoSuchMethodException {
-        nocachingMethod.add(MediaRestService.class.getMethod("changes", String.class, String.class, Long.class, Instant.class, String.class, Integer.class, Boolean.class, HttpServletRequest.class, HttpServletResponse.class));
+        nocachingMethod.add(
+            MediaRestService.class.getMethod("changes",
+                String.class,
+                String.class,
+                Long.class,
+                Instant.class,
+                String.class,
+                Integer.class,
+                Boolean.class,
+                Boolean.class,
+                HttpServletRequest.class,
+                HttpServletResponse.class));
     }
 
     @Override
