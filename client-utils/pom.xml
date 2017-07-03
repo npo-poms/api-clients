@@ -40,7 +40,6 @@
     <dependency>
       <groupId>nl.vpro.api-client</groupId>
       <artifactId>client-resteasy</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
     <groupId>org.jboss.resteasy</groupId>
