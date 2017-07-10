@@ -1,13 +1,12 @@
 package nl.vpro.api.client.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 
 import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
@@ -24,8 +23,8 @@ import nl.vpro.util.FilteringIterator;
  * @author Michiel Meeuwissen
  * @since 1.1
  */
+@Slf4j
 public class AbstractApiClientMediaRepository {
-    private final static Logger LOG = LoggerFactory.getLogger(AbstractApiClientMediaRepository.class);
 
     final NpoApiClients clients;
     final NpoApiMediaUtil util;
@@ -41,7 +40,7 @@ public class AbstractApiClientMediaRepository {
         try {
             return util.loadOrNull(id);
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -50,7 +49,7 @@ public class AbstractApiClientMediaRepository {
         try {
             return Arrays.asList(util.load(ids.toArray(new String[ids.size()])));
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage());
             return Collections.nCopies(ids.size(), null);
         }
     }
@@ -99,7 +98,7 @@ public class AbstractApiClientMediaRepository {
     }
 
 
-    public Iterator<Change> changes(Instant since, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive) {
+    public Iterator<Change> changes(Instant since, String mid, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive) {
         //clients.getMediaService().changes(current.getName(), null, since)
         throw new UnsupportedOperationException();
 

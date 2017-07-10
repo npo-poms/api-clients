@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import nl.vpro.api.rs.v3.media.Deletes;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Order;
@@ -33,15 +34,15 @@ public class MediaRestClientUtilsTest {
             anyString(),
             anyString(),
             any(Long.class),
-            any(Instant.class),
+            anyString(),
             eq("asc"),
             any(Integer.class),
             any(Boolean.class),
-            any(Boolean.class),
+            any(Deletes.class),
             any(HttpServletRequest.class),
             any(HttpServletResponse.class)))
             .thenReturn(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream());
-        Iterator<Change> i = MediaRestClientUtils.changes(mediaRestService, "vpro", Instant.ofEpochMilli(0), Order.ASC, Integer.MAX_VALUE);
+        Iterator<Change> i = MediaRestClientUtils.changes(mediaRestService, "vpro", Instant.ofEpochMilli(0), null, Order.ASC, Integer.MAX_VALUE);
         int count = 0;
         while(i.hasNext()) {
             Change next = i.next();

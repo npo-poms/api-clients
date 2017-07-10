@@ -255,7 +255,10 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public JsonArrayIterator<Change> changes(String profile, Instant since, Order order, Integer max) {
-        return changes(profile, null, since, order, max);
+        return changes(profile, since, null, order, max);
+    }
+    public JsonArrayIterator<Change> changes(String profile, Instant since, String mid, Order order, Integer max) {
+        return changes(profile, null, since, mid, order, max);
     }
 
 
@@ -273,13 +276,13 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     }
 
-    protected  JsonArrayIterator<Change> changes(String profile, Long sinceSequence, Instant since, Order order, Integer max) {
+    protected  JsonArrayIterator<Change> changes(String profile, Long sinceSequence, Instant since,  String mid, Order order, Integer max) {
         limiter.acquire();
         try {
 
             JsonArrayIterator<Change> result;
             if (sinceSequence == null) {
-                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, since, order, max);
+                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, since, mid, order, max);
             } else {
                 result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, sinceSequence, order, max);
             }

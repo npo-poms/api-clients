@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +15,7 @@ import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.core.HttpHeaders;
 
+import nl.vpro.api.rs.v3.media.Deletes;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 
 /**
@@ -34,11 +34,11 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
                 String.class,
                 String.class,
                 Long.class,
-                Instant.class,
+                String.class,
                 String.class,
                 Integer.class,
                 Boolean.class,
-                Boolean.class,
+                Deletes.class,
                 HttpServletRequest.class,
                 HttpServletResponse.class));
     }
