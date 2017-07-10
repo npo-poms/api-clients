@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
+import nl.vpro.domain.api.Deletes;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.MediaResult;
@@ -98,7 +99,7 @@ public class AbstractApiClientMediaRepository {
     }
 
 
-    public Iterator<Change> changes(Instant since, String mid, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive) {
+    public Iterator<Change> changes(Instant since, String mid, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive, Deletes deletes) {
         //clients.getMediaService().changes(current.getName(), null, since)
         throw new UnsupportedOperationException();
 

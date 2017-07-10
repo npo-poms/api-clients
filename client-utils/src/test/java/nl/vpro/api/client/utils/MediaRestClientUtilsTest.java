@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import nl.vpro.api.rs.v3.media.Deletes;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.Change;
+import nl.vpro.domain.api.Deletes;
 import nl.vpro.domain.api.Order;
 
 import static org.fest.assertions.Assertions.assertThat;
