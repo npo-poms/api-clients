@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,7 +34,7 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
                 String.class,
                 String.class,
                 Long.class,
-                Instant.class,
+                String.class,
                 String.class,
                 Integer.class,
                 Boolean.class,

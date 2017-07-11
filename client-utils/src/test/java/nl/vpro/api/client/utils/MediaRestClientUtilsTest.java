@@ -42,7 +42,7 @@ public class MediaRestClientUtilsTest {
             any(HttpServletRequest.class),
             any(HttpServletResponse.class)))
             .thenReturn(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream());
-        Iterator<Change> i = MediaRestClientUtils.changes(mediaRestService, "vpro", Instant.ofEpochMilli(0), null, Order.ASC, Integer.MAX_VALUE);
+        Iterator<Change> i = MediaRestClientUtils.changes(mediaRestService, "vpro", true, Instant.ofEpochMilli(0), null, Order.ASC, Integer.MAX_VALUE, Deletes.ID_ONLY);
         int count = 0;
         while(i.hasNext()) {
             Change next = i.next();

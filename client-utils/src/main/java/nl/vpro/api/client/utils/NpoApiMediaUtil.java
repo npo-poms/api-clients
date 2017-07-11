@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 
 import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
+import nl.vpro.domain.api.Deletes;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.MediaResult;
@@ -258,7 +259,11 @@ public class NpoApiMediaUtil implements MediaProvider {
         return changes(profile, since, null, order, max);
     }
     public JsonArrayIterator<Change> changes(String profile, Instant since, String mid, Order order, Integer max) {
-        return changes(profile, null, since, mid, order, max);
+        return changes(profile, true, null, since, mid, order, max, Deletes.ID_ONLY);
+    }
+
+    public JsonArrayIterator<Change> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
+        return changes(profile, profileCheck, null, since, mid, order, max, deletes);
     }
 
 
@@ -276,13 +281,13 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     }
 
-    protected  JsonArrayIterator<Change> changes(String profile, Long sinceSequence, Instant since,  String mid, Order order, Integer max) {
+    protected  JsonArrayIterator<Change> changes(String profile, boolean profileCheck, Long sinceSequence, Instant since,  String mid, Order order, Integer max, Deletes deletes) {
         limiter.acquire();
         try {
 
             JsonArrayIterator<Change> result;
             if (sinceSequence == null) {
-                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, since, mid, order, max);
+                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, profileCheck, since, mid, order, max, deletes);
             } else {
                 result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, sinceSequence, order, max);
             }
