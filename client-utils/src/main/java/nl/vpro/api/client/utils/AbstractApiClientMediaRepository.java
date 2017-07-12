@@ -22,7 +22,7 @@ import nl.vpro.util.FilteringIterator;
  * @since 1.1
  */
 @Slf4j
-public abstract class AbstractApiClientMediaRepository implements MediaSearchRepository  {
+public abstract class AbstractApiClientMediaRepository implements MediaRepository {
 
     final NpoApiClients clients;
     final NpoApiMediaUtil util;
@@ -61,18 +61,18 @@ public abstract class AbstractApiClientMediaRepository implements MediaSearchRep
 
     @Override
     public MediaResult listDescendants(MediaObject media, ProfileDefinition<MediaObject> profile, Order order, long offset, Integer max) {
-        return clients.getMediaService().listDescendants(media.getMid(), profile.getName(), null, order.toString(), offset, max);
+        return clients.getMediaService().listDescendants(media.getMid(), name(profile), null, order.toString(), offset, max);
 
     }
 
     @Override
     public ProgramResult listEpisodes(MediaObject media, ProfileDefinition<MediaObject> profile, Order order, long offset, Integer max) {
-        return clients.getMediaService().listEpisodes(media.getMid(), profile.getName(),  null, order.toString(), offset, max);
+        return clients.getMediaService().listEpisodes(media.getMid(), name(profile),  null, order.toString(), offset, max);
     }
 
     @Override
     public MediaResult listMembers(MediaObject media, ProfileDefinition<MediaObject> profile, Order order, long offset, Integer max) {
-        return clients.getMediaService().listMembers(media.getMid(), profile.getName(), null, order.toString(), offset, max);
+        return clients.getMediaService().listMembers(media.getMid(), name(profile), null, order.toString(), offset, max);
 
     }
 
@@ -121,6 +121,10 @@ public abstract class AbstractApiClientMediaRepository implements MediaSearchRep
         //InputStream i = clients.getMediaService().iterate(form, profile.getName(), null, offset, max, keepAlive, null, null);
         throw new UnsupportedOperationException();
 
+    }
+
+    protected String name(ProfileDefinition<MediaObject> profile) {
+        return profile == null ? null : profile.getName();
     }
 
 }
