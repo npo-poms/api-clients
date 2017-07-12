@@ -10,7 +10,7 @@
 
   <groupId>nl.vpro.api-client</groupId>
   <artifactId>api-client-parent</artifactId>
-  <version>5.4.0</version>
+  <version>5.4.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Clients for NPO API's</description>
 
@@ -25,9 +25,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/tags/REL-5.4.0</connection>
-    <developerConnection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/tags/REL-5.4.0</developerConnection>
-    <url>https://subversion.vpro.nl/viewvc/nl/vpro/api-clients/tags/REL-5.4.0</url>
+    <connection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/branches/REL-5.4-SNAPSHOT</connection>
+    <developerConnection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/branches/REL-5.4-SNAPSHOT</developerConnection>
+    <url>https://subversion.vpro.nl/viewvc/nl/vpro/api-clients/branches/REL-5.4-SNAPSHOT</url>
   </scm>
 
   <properties>
