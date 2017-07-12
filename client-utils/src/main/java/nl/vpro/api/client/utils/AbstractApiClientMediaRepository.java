@@ -12,10 +12,7 @@ import nl.vpro.api.client.resteasy.NpoApiClients;
 import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Deletes;
 import nl.vpro.domain.api.Order;
-import nl.vpro.domain.api.media.MediaForm;
-import nl.vpro.domain.api.media.MediaResult;
-import nl.vpro.domain.api.media.ProgramResult;
-import nl.vpro.domain.api.media.RedirectList;
+import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.util.FilteringIterator;
@@ -25,7 +22,7 @@ import nl.vpro.util.FilteringIterator;
  * @since 1.1
  */
 @Slf4j
-public class AbstractApiClientMediaRepository {
+public abstract class AbstractApiClientMediaRepository implements MediaSearchRepository  {
 
     final NpoApiClients clients;
     final NpoApiMediaUtil util;
@@ -37,6 +34,7 @@ public class AbstractApiClientMediaRepository {
 
     }
 
+    @Override
     public MediaObject load(String id)  {
         try {
             return util.loadOrNull(id);
@@ -46,6 +44,7 @@ public class AbstractApiClientMediaRepository {
         }
     }
 
+    @Override
     public List<MediaObject> loadAll(List<String> ids) {
         try {
             return Arrays.asList(util.load(ids.toArray(new String[ids.size()])));
@@ -55,25 +54,30 @@ public class AbstractApiClientMediaRepository {
         }
     }
 
+    @Override
     public Iterator<Change> changes(Long since, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive) {
         throw new UnsupportedOperationException();
     }
 
-    public MediaResult listDescendants(MediaObject media, Order order, long offset, Integer max) {
-        return clients.getMediaService().listDescendants(media.getMid(), null, null, order.toString(), offset, max);
+    @Override
+    public MediaResult listDescendants(MediaObject media, ProfileDefinition<MediaObject> profile, Order order, long offset, Integer max) {
+        return clients.getMediaService().listDescendants(media.getMid(), profile.getName(), null, order.toString(), offset, max);
 
     }
 
-    public ProgramResult listEpisodes(MediaObject media, Order order, long offset, Integer max) {
-        return clients.getMediaService().listEpisodes(media.getMid(), null,  null, order.toString(), offset, max);
+    @Override
+    public ProgramResult listEpisodes(MediaObject media, ProfileDefinition<MediaObject> profile, Order order, long offset, Integer max) {
+        return clients.getMediaService().listEpisodes(media.getMid(), profile.getName(),  null, order.toString(), offset, max);
     }
 
-    public MediaResult listMembers(MediaObject media, Order order, long offset, Integer max) {
-        return clients.getMediaService().listMembers(media.getMid(), null, null, order.toString(), offset, max);
+    @Override
+    public MediaResult listMembers(MediaObject media, ProfileDefinition<MediaObject> profile, Order order, long offset, Integer max) {
+        return clients.getMediaService().listMembers(media.getMid(), profile.getName(), null, order.toString(), offset, max);
 
     }
 
 
+    @Override
     public MediaResult list(Order order, long offset, Integer max) {
         return clients.getMediaService().list(null, order.toString(), offset, max);
     }
@@ -82,7 +86,8 @@ public class AbstractApiClientMediaRepository {
         throw new UnsupportedOperationException();
     }
 
-	public Optional<String> redirect(String s) {
+	@Override
+    public Optional<String> redirect(String s) {
 		MediaObject got = clients.getMediaService().load(s, "", null);
 		if (got == null) {
 		    return Optional.empty();
@@ -93,12 +98,14 @@ public class AbstractApiClientMediaRepository {
 		return Optional.of(got.getMid());
 	}
 
+    @Override
     public RedirectList redirects() {
         return new RedirectList();
 
     }
 
 
+    @Override
     public Iterator<Change> changes(Instant since, String mid, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive, Deletes deletes) {
         //clients.getMediaService().changes(current.getName(), null, since)
         throw new UnsupportedOperationException();
@@ -109,6 +116,7 @@ public class AbstractApiClientMediaRepository {
         return Instant.now().toEpochMilli();
 
     }
+    @Override
     public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, long offset, Integer max, FilteringIterator.KeepAlive keepAlive) {
         //InputStream i = clients.getMediaService().iterate(form, profile.getName(), null, offset, max, keepAlive, null, null);
         throw new UnsupportedOperationException();
