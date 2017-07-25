@@ -79,6 +79,11 @@
         <artifactId>media-rs-services</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>nl.vpro.subtitles</groupId>
+        <artifactId>subtitles-domain</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
