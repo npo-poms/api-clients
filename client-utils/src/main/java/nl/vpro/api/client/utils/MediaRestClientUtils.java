@@ -203,21 +203,18 @@ public class MediaRestClientUtils {
      * @deprecated We'll make a sitemap feature on page rest service.
      */
     @Deprecated
-    public static Iterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) throws IOException {
-		return new LazyIterator<>(
-				() -> {
-					try {
-						final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE, null, null);
-						return JsonArrayIterator.<MediaObject>builder()
-                            .inputStream(inputStream)
-                            .valueClass(MediaObject.class)
-                            .callback(() -> IOUtils.closeQuietly(inputStream))
-                            .logger(log)
-                            .build();
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-				});
+    public static Iterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile)
+            throws IOException {
+        return new LazyIterator<>(() -> {
+            try {
+                final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE, null,
+                        null);
+                return JsonArrayIterator.<MediaObject>builder().inputStream(inputStream).valueClass(MediaObject.class)
+                        .callback(() -> IOUtils.closeQuietly(inputStream)).logger(log).build();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 

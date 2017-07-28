@@ -99,12 +99,12 @@ public class NpoApiClientsITest {
     }
 
     @Test
-	public void testFound() throws Exception {
+    public void testFound() throws Exception {
         for (int i = 0; i < 100; i++) {
             MediaObject program = clients.getMediaService().load("POMS_S_VPRO_827832", null, null);
             System.out.println(i + ":" + program.getMainTitle());
         }
-	}
+    }
 
     @Test
     public void testMediaServiceLists() throws Exception {

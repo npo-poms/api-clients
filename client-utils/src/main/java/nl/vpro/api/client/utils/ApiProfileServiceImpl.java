@@ -64,8 +64,8 @@ public class ApiProfileServiceImpl implements ProfileService {
         }
     }
 
-	@Override
-	public Profile getProfile(String name, Instant on) {
+    @Override
+    public Profile getProfile(String name, Instant on) {
         return getClient().load(name, on);
     }
 

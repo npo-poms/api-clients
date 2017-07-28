@@ -335,7 +335,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public MediaType getType(String mid) throws IOException {
-		MediaObject object = load(mid)[0];
+        MediaObject object = load(mid)[0];
         return object == null ? MediaType.MEDIA : object.getMediaType();
     }
 

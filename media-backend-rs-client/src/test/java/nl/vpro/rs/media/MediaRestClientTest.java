@@ -91,14 +91,15 @@ public class MediaRestClientTest {
 
     }
 
-	@Test
-	public void post() {
-		ProgramUpdate update = JAXB.unmarshal(getClass().getResourceAsStream("/POMS_VPRO_216532.xml"), ProgramUpdate.class);
+    @Test
+    public void post() {
+        ProgramUpdate update = JAXB.unmarshal(getClass().getResourceAsStream("/POMS_VPRO_216532.xml"),
+                ProgramUpdate.class);
         client.setLookupCrid(false);
-		String result = client.set(update);
+        String result = client.set(update);
 
         assertThat(result).isEqualTo("POMS_VPRO_216532");
-	}
+    }
 
 
     @Test(expected = nl.vpro.rs.media.ResponseError.class)

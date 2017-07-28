@@ -49,16 +49,22 @@ import nl.vpro.util.ReflectionUtils;
 /**
  * A client for RESTful calls to a running MediaBackendRestService.
  *
- * Several utilities are provided (like {@link #get(String)} ${@link #set(MediaUpdate)}). All raw calls can be done via {@link #getBackendRestService()}
+ * Several utilities are provided (like {@link #get(String)}
+ * ${@link #set(MediaUpdate)}). All raw calls can be done via
+ * {@link #getBackendRestService()}
  *
- * The raw calls have more arguments which you may not always want to set. In future version arguments can be added.
- * If in these 'raw' calls leave arguments <code>null</code> which are also set in the client (like 'errors'), then they will be automaticly filled
- * (the MediaBackendInterface is proxied (with {@link MediaRestClientAspect}) to make this possible)
+ * The raw calls have more arguments which you may not always want to set. In
+ * future version arguments can be added. If in these 'raw' calls leave
+ * arguments <code>null</code> which are also set in the client (like 'errors'),
+ * then they will be automaticly filled (the MediaBackendInterface is proxied
+ * (with {@link MediaRestClientAspect}) to make this possible)
  *
- * Also this client can implicitely throttle itself. Calls like this are rated on the POMS side, and like this you can avoid using it up too quickly.
+ * Also this client can implicitely throttle itself. Calls like this are rated
+ * on the POMS side, and like this you can avoid using it up too quickly.
  *
  * <p/>
  * Use it like this:
+ * 
  * <pre>
  * protected MediaRestClient getClient(Map<String, Object> headers) {
  * MeidaRestClient client = new MediaRestClient();
@@ -75,13 +81,14 @@ import nl.vpro.util.ReflectionUtils;
  * }
  **
  * </pre>
- * You can also configured it implicitly:
- * MediaRestClient client = new MediaRestClient().configured();
+ * 
+ * You can also configured it implicitly: MediaRestClient client = new
+ * MediaRestClient().configured();
  *
  * @author Michiel Meeuwissen
  */
 
-public class MediaRestClient extends AbstractApiClient implements MediaRestClientMXBean{
+public class MediaRestClient extends AbstractApiClient implements MediaRestClientMXBean {
 
     private int defaultMax = 50;
 
@@ -90,12 +97,11 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     @Getter
     @Setter
-	private boolean followMerges = true;
+    private boolean followMerges = true;
 
     private MediaBackendRestService proxy;
 
     private FrameCreatorRestService frameCreatorRestService;
-
 
     private Map<String, Object> headers;
 
@@ -139,32 +145,18 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         this(-1, 30, 10, 2);
     }
 
-    public MediaRestClient(
-        int connectionTimeoutMillis,
-        int maxConnections,
-        int maxConnectionsPerRoute,
-        int connectionInPoolTTL) {
-        super(null,
-            Duration.ofMillis(connectionTimeoutMillis),
-            Duration.ofMillis(connectionTimeoutMillis),
-            Duration.ofMillis(connectionTimeoutMillis),
-            maxConnections,
-            maxConnectionsPerRoute,
-            Duration.ofMillis(connectionInPoolTTL),
-            Duration.ofHours(24),
-            24,
-            null,
-            null,
-            null,
-            null
-        );
+    public MediaRestClient(int connectionTimeoutMillis, int maxConnections, int maxConnectionsPerRoute,
+            int connectionInPoolTTL) {
+        super(null, Duration.ofMillis(connectionTimeoutMillis), Duration.ofMillis(connectionTimeoutMillis),
+                Duration.ofMillis(connectionTimeoutMillis), maxConnections, maxConnectionsPerRoute,
+                Duration.ofMillis(connectionInPoolTTL), Duration.ofHours(24), 24, null, null, null, null);
     }
+
     public static class Builder {
 
-
     }
 
-    @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType"})
+    @SuppressWarnings({ "SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType" })
     @Named
     public static class Provider implements javax.inject.Provider<MediaRestClient> {
 
@@ -191,50 +183,17 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     @lombok.Builder(builderClassName = "Builder")
-    protected MediaRestClient(
-        String baseUrl,
-        Duration connectionRequestTimeout,
-        Duration connectTimeout,
-        Duration socketTimeout,
-        Integer maxConnections,
-        Integer maxConnectionsPerRoute,
-        Duration connectionInPoolTTL,
-        Duration countWindow,
-        Integer bucketCount,
-        Duration warnThreshold,
-        List<Locale> acceptableLanguages,
-        Boolean trustAll,
-        Integer defaultMax,
-        boolean followMerges,
-        Map<String, Object> headers,
-        String userName,
-        String password,
-        String user,
-        String errors,
-        boolean waitForRetry,
-        boolean lookupCrids,
-        Double throttleRate,
-        Double asynchronousThrottleRate,
-        boolean validateInput,
-        String mbeanName
-    ) {
-        super(baseUrl,
-            connectionRequestTimeout,
-            connectTimeout,
-            socketTimeout,
-            maxConnections,
-            maxConnectionsPerRoute,
-            connectionInPoolTTL,
-            countWindow,
-            bucketCount,
-            warnThreshold,
-            acceptableLanguages,
-            null,
-            null,
-            trustAll,
-            null, // only xml is relevant
-            mbeanName
-            );
+    protected MediaRestClient(String baseUrl, Duration connectionRequestTimeout, Duration connectTimeout,
+            Duration socketTimeout, Integer maxConnections, Integer maxConnectionsPerRoute,
+            Duration connectionInPoolTTL, Duration countWindow, Integer bucketCount, Duration warnThreshold,
+            List<Locale> acceptableLanguages, Boolean trustAll, Integer defaultMax, boolean followMerges,
+            Map<String, Object> headers, String userName, String password, String user, String errors,
+            boolean waitForRetry, boolean lookupCrids, Double throttleRate, Double asynchronousThrottleRate,
+            boolean validateInput, String mbeanName) {
+        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, maxConnectionsPerRoute,
+                connectionInPoolTTL, countWindow, bucketCount, warnThreshold, acceptableLanguages, null, null, trustAll,
+                null, // only xml is relevant
+                mbeanName);
         if (defaultMax != null) {
             this.defaultMax = defaultMax;
         }
@@ -268,20 +227,25 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     enum Type {
-        SEGMENT,
-        PROGRAM,
-        GROUP,
-        MEDIA;
+        SEGMENT, PROGRAM, GROUP, MEDIA;
 
         private static Type valueOf(Class type) {
-            if (Program.class.isAssignableFrom(type)) return PROGRAM;
-            if (ProgramUpdate.class.isAssignableFrom(type)) return PROGRAM;
-            if (Group.class.isAssignableFrom(type)) return GROUP;
-            if (GroupUpdate.class.isAssignableFrom(type)) return GROUP;
-            if (Segment.class.isAssignableFrom(type)) return SEGMENT;
-            if (SegmentUpdate.class.isAssignableFrom(type)) return SEGMENT;
-            if (MediaObject.class.isAssignableFrom(type)) return MEDIA;
-            if (MediaUpdate.class.isAssignableFrom(type)) return MEDIA;
+            if (Program.class.isAssignableFrom(type))
+                return PROGRAM;
+            if (ProgramUpdate.class.isAssignableFrom(type))
+                return PROGRAM;
+            if (Group.class.isAssignableFrom(type))
+                return GROUP;
+            if (GroupUpdate.class.isAssignableFrom(type))
+                return GROUP;
+            if (Segment.class.isAssignableFrom(type))
+                return SEGMENT;
+            if (SegmentUpdate.class.isAssignableFrom(type))
+                return SEGMENT;
+            if (MediaObject.class.isAssignableFrom(type))
+                return MEDIA;
+            if (MediaUpdate.class.isAssignableFrom(type))
+                return MEDIA;
             throw new IllegalArgumentException();
         }
 
@@ -290,8 +254,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
-
-
     public static Builder configured(Env env, String... configFiles) {
         Builder builder = builder();
         ReflectionUtils.configured(env, builder, configFiles);
@@ -299,7 +261,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     /**
-     * Read configuration from a config file in ${user.home}/conf/mediarestclient.properties
+     * Read configuration from a config file in
+     * ${user.home}/conf/mediarestclient.properties
      */
     public static Builder configured(Env env) {
         Builder builder = builder();
@@ -313,7 +276,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return builder;
     }
 
-    public static Builder configured()  {
+    public static Builder configured() {
         return configured(null);
     }
 
@@ -347,7 +310,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
-
     public boolean isWaitForRetry() {
         return waitForRetry;
     }
@@ -362,28 +324,30 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public String getVersion() {
         if (version == null) {
-             version = () -> Suppliers.memoizeWithExpiration(() -> {
-                 try {
-                     VersionRestService p = proxyErrorsAndCount(VersionRestService.class,
-                         getTarget(getClientHttpEngine()).proxy(VersionRestService.class));
-                     String v = p.getVersion();
-                     if (v != null) {
-                         return v;
-                     }
-                 } catch (javax.ws.rs.NotFoundException nfe) {
-                     return "4.8.6";
-                 } catch (Exception io) {
-                     log.warn(io.getClass().getName() + " " + io.getMessage());
-                 }
-                 return "unknown";
-             }, 30L, TimeUnit.MINUTES).get();
+            version = () -> Suppliers.memoizeWithExpiration(() -> {
+                try {
+                    VersionRestService p = proxyErrorsAndCount(VersionRestService.class,
+                            getTarget(getClientHttpEngine()).proxy(VersionRestService.class));
+                    String v = p.getVersion();
+                    if (v != null) {
+                        return v;
+                    }
+                } catch (javax.ws.rs.NotFoundException nfe) {
+                    return "4.8.6";
+                } catch (Exception io) {
+                    log.warn(io.getClass().getName() + " " + io.getMessage());
+                }
+                return "unknown";
+            }, 30L, TimeUnit.MINUTES).get();
         }
         return version.get();
     }
 
     /**
      * The version of the rest-service we are talking too.
-     * @return a float representing the major/minor version. The patch level is added as thousands.
+     * 
+     * @return a float representing the major/minor version. The patch level is
+     *         added as thousands.
      */
     public Float getVersionNumber() {
         try {
@@ -405,46 +369,37 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Override
     protected void buildResteasy(ResteasyClientBuilder builder) {
         if (userName == null || password == null) {
-            throw new IllegalStateException("User name (" + userName + ") and password (" + password + ") should both be non null");
+            throw new IllegalStateException(
+                    "User name (" + userName + ") and password (" + password + ") should both be non null");
         }
 
-        builder.httpEngine(getClientHttpEngine())
-            .register(new BasicAuthentication(userName, password))
-            .register(new AddRequestHeadersFilter())
-            .register(VTTSubtitlesReader.class)
-            .register(EBUSubtitlesReader.class)
-            .register(SRTSubtitlesReader.class)
-            .register(VTTWriter.class)
-        ;
+        builder.httpEngine(getClientHttpEngine()).register(new BasicAuthentication(userName, password))
+                .register(new AddRequestHeadersFilter()).register(VTTSubtitlesReader.class)
+                .register(EBUSubtitlesReader.class).register(SRTSubtitlesReader.class).register(VTTWriter.class);
     }
 
     /**
-     * returns the proxied interface as is actually used on the POMS backend.
-     * This is (as long as your client's version corresponds) garantueed to be complete and correct.
+     * returns the proxied interface as is actually used on the POMS backend. This
+     * is (as long as your client's version corresponds) garantueed to be complete
+     * and correct.
      */
     public MediaBackendRestService getBackendRestService() {
         if (proxy == null) {
             log.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, baseUrl);
-            proxy = MediaRestClientAspect.proxy(
-                this,
-                proxyErrorsAndCount(MediaBackendRestService.class,
-                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class))
-                ,
-                MediaBackendRestService.class
-            );
+            proxy = MediaRestClientAspect.proxy(this,
+                    proxyErrorsAndCount(MediaBackendRestService.class,
+                            getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class)),
+                    MediaBackendRestService.class);
         }
         return proxy;
     }
 
     public FrameCreatorRestService getFrameCreatorRestService() {
         if (frameCreatorRestService == null) {
-            frameCreatorRestService = MediaRestClientAspect.proxy(
-                this,
-                proxyErrorsAndCount(FrameCreatorRestService.class,
-                    getTarget(getClientHttpEngine()).proxy(FrameCreatorRestService.class)
-                ),
-                FrameCreatorRestService.class
-            );
+            frameCreatorRestService = MediaRestClientAspect.proxy(this,
+                    proxyErrorsAndCount(FrameCreatorRestService.class,
+                            getTarget(getClientHttpEngine()).proxy(FrameCreatorRestService.class)),
+                    FrameCreatorRestService.class);
         }
         return frameCreatorRestService;
     }
@@ -468,8 +423,11 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     /**
-     * Returns the program (as an 'update' object'), with the given id. Or <code>null</code> if not found.
-     * @param id This can be an URN, MID, or crid.
+     * Returns the program (as an 'update' object'), with the given id. Or
+     * <code>null</code> if not found.
+     * 
+     * @param id
+     *            This can be an URN, MID, or crid.
      */
     public ProgramUpdate getProgram(String id) {
         return get(ProgramUpdate.class, id);
@@ -512,7 +470,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
                 lu.setUrn(null);
                 result.add(lu);
             }
-        } catch(NullPointerException npe) {
+        } catch (NullPointerException npe) {
             // dammit
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -522,25 +480,27 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     /** add a location to a Program, Segment or Group */
     protected void addLocation(final Type type, final LocationUpdate location, final String id) {
-        Response response = getBackendRestService().addLocation(type.toString(), location, id, followMerges, errors, validateInput);
+        Response response = getBackendRestService().addLocation(type.toString(), location, id, followMerges, errors,
+                validateInput);
         response.close();
     }
 
-    public void  addLocationToProgram(LocationUpdate location, String programId) {
+    public void addLocationToProgram(LocationUpdate location, String programId) {
         addLocation(Type.PROGRAM, location, programId);
     }
 
-    public void  addLocationToSegment(LocationUpdate location, String segmentId) {
+    public void addLocationToSegment(LocationUpdate location, String segmentId) {
         addLocation(Type.SEGMENT, location, segmentId);
     }
 
-    public void  addLocationToGroup(LocationUpdate location, String groupId) {
+    public void addLocationToGroup(LocationUpdate location, String groupId) {
         addLocation(Type.GROUP, location, groupId);
     }
 
     public void createMember(String owner, String member, Integer number) {
         try {
-            Response response = getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member, followMerges, errors, validateInput);
+            Response response = getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member,
+                    followMerges, errors, validateInput);
             response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -549,7 +509,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public void removeMember(String owner, String member, Integer number) {
         try {
-            Response response = getBackendRestService().removeMemberOf("media", member, owner, number, followMerges, errors);
+            Response response = getBackendRestService().removeMemberOf("media", member, owner, number, followMerges,
+                    errors);
             response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -558,7 +519,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public void createEpisode(String owner, String member, Integer number) {
         try {
-            Response response = getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors, validateInput);
+            Response response = getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member,
+                    followMerges, errors, validateInput);
             response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -583,7 +545,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             errors = this.errors;
         }
         try {
-            Response response = getBackendRestService().update(type.toString(), update, followMerges, errors, lookupCrids, validateInput);
+            Response response = getBackendRestService().update(type.toString(), update, followMerges, errors,
+                    lookupCrids, validateInput);
             String result = response.readEntity(String.class);
             response.close();
             return result;
@@ -594,7 +557,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public String removeSegment(String program, String segment) {
         try {
-            Response response = getBackendRestService().removeSegment(program, segment, followMerges,  errors);
+            Response response = getBackendRestService().removeSegment(program, segment, followMerges, errors);
             String result = response.readEntity(String.class);
             response.close();
             return result;
@@ -663,11 +626,12 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     public String set(MediaUpdate mediaUpdate) {
         return set(Type.MEDIA, mediaUpdate);
     }
+
     public String set(MediaUpdate mediaUpdate, String errors) {
         return set(Type.MEDIA, mediaUpdate, errors);
     }
 
-    public MediaList<MediaListItem> find(MediaForm form)  {
+    public MediaList<MediaListItem> find(MediaForm form) {
         try {
             return getBackendRestService().find(form, false, validateInput);
         } catch (IOException e) {
@@ -675,27 +639,24 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
-
     public void setSubtitles(Subtitles subtitles) {
         SubtitlesId id = subtitles.getId();
         getBackendRestService().setSubtitles(id.getMid(), id.getLanguage(), id.getType(), Duration.ZERO, true, errors,
-            SubtitlesUtil.iterator(subtitles));
+                SubtitlesUtil.iterator(subtitles));
 
     }
-
-
 
     public void setDefaultMax(int max) {
         this.defaultMax = max;
     }
 
-	public boolean isLookupCrid() {
-		return lookupCrids;
-	}
+    public boolean isLookupCrid() {
+        return lookupCrids;
+    }
 
-	public void setLookupCrid(boolean lookupCrids) {
-		this.lookupCrids = lookupCrids;
-	}
+    public void setLookupCrid(boolean lookupCrids) {
+        this.lookupCrids = lookupCrids;
+    }
 
     public double getThrottleRate() {
         return this.throttle.getRate();
@@ -715,7 +676,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     public void setAsynchronousThrottleRate(double rate) {
         this.asynchronousThrottle.setRate(rate);
     }
-
 
     @Override
     public synchronized void invalidate() {
@@ -746,6 +706,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             throw new RuntimeException(e);
         }
     }
+
     void throttle() {
         throttle.acquire();
     }

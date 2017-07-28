@@ -86,17 +86,17 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
         throw new UnsupportedOperationException();
     }
 
-	@Override
+    @Override
     public Optional<String> redirect(String s) {
-		MediaObject got = clients.getMediaService().load(s, "", null);
-		if (got == null) {
-		    return Optional.empty();
+        MediaObject got = clients.getMediaService().load(s, "", null);
+        if (got == null) {
+            return Optional.empty();
         }
-		if (got.getMid().equals(s)) {
-			return Optional.empty();
-		}
-		return Optional.of(got.getMid());
-	}
+        if (got.getMid().equals(s)) {
+            return Optional.empty();
+        }
+        return Optional.of(got.getMid());
+    }
 
     @Override
     public RedirectList redirects() {

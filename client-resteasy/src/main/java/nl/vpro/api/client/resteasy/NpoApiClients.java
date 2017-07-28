@@ -415,12 +415,12 @@ public class NpoApiClients extends AbstractApiClient  {
         return new ApiAuthenticationRequestFilter(apiKey, secret, origin);
     }
 
-	@Override
-	public String toString() {
-		return getApiKey() + "@" + baseUrl;
-	}
+    @Override
+    public String toString() {
+        return getApiKey() + "@" + baseUrl;
+    }
 
-	@Override
+    @Override
     protected void buildResteasy(ResteasyClientBuilder builder) {
         builder.register(getAuthentication())
             .register(VTTSubtitlesReader.class)

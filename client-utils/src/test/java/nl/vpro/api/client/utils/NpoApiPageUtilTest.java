@@ -26,7 +26,7 @@ public class NpoApiPageUtilTest {
     @Test
     public void testLoadMultiple() throws Exception {
         Page[] result = util.loadByMid(Arrays.asList("vpro", null), null, TEST_MIDS);
-		System.out.println(Arrays.asList(result));
+        System.out.println(Arrays.asList(result));
         System.out.println(util.getClients().getCounts());
         assertThat(util.getClients().getCount("PageRestService.find")).isEqualTo(2);
 
