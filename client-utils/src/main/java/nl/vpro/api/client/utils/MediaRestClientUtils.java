@@ -222,7 +222,7 @@ public class MediaRestClientUtils {
 						return JsonArrayIterator.<MediaObject>builder()
                             .inputStream(cacheToFile)
                             .valueClass(MediaObject.class)
-                            .callback(() -> IOUtils.closeQuietly(inputStream))
+                            .callback(() -> IOUtils.closeQuietly(cacheToFile, inputStream))
                             .logger(log)
                             .build();
 					} catch (IOException e) {
