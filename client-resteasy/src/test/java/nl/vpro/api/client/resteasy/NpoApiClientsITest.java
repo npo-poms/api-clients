@@ -79,6 +79,11 @@ public class NpoApiClientsITest {
         clients.getMediaService().load("DOES_NOT_EXIST", null, null);
     }
 
+
+    @Test(expected = NotFoundException.class)
+    public void testYoutubeNotFound() throws Exception {
+        clients.getMediaService().load("https://www.youtube.com/watch?v=YWX2PSpy1TU", null, null);
+    }
     @Test
     public void testPOW_01105929() {
         clients.getMediaService().load("POW_01105929", null, null);
