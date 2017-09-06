@@ -35,6 +35,7 @@
 
     <!-- TODO: dependency should be dropped -->
     <pages.version>5.4.0</pages.version>
+    <vpro.shared.version>1.72-SNAPSHOT</vpro.shared.version>
   </properties>
 
   <dependencyManagement>
