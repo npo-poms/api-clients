@@ -85,6 +85,11 @@ public class NpoApiClientsITest {
     }
 
     @Test
+    public void testVPRO_537355_SER() {
+        clients.getMediaService().load("VPRO_537355/SER", null, null);
+    }
+
+    @Test
     public void testGetVersion() {
         String version = clients.getVersion();
         System.out.println(version);
