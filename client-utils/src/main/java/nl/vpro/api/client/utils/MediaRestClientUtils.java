@@ -25,6 +25,7 @@ import nl.vpro.domain.media.*;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.FileCachingInputStream;
 import nl.vpro.util.LazyIterator;
 
 /**
@@ -208,8 +209,18 @@ public class MediaRestClientUtils {
 				() -> {
 					try {
 						final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE, null, null);
+
+                        // Cache the stream to a file first.
+                        // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
+                        FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
+                            .filePrefix("iterate-" + profile + "-")
+                            .batchSize(1000000L)
+                            .logger(log)
+                            .input(inputStream)
+                            .build();
+
 						return JsonArrayIterator.<MediaObject>builder()
-                            .inputStream(inputStream)
+                            .inputStream(cacheToFile)
                             .valueClass(MediaObject.class)
                             .callback(() -> IOUtils.closeQuietly(inputStream))
                             .logger(log)
