@@ -20,5 +20,6 @@ public interface MediaRestClientMXBean extends AbstractApiClientMXBean {
     void setUserName(String user);
 
     String getPassword();
+
     void setPassword(String password);
 }
