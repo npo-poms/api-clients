@@ -95,7 +95,6 @@ public class MediaRestClientUtils {
      *
      * @param supplier The action to perform
      * @param id Id to use for logging if exceptions happen
-     * @throws IOException
      */
     private static <T> T wrapForOrNull(
         Supplier<T> supplier,
@@ -161,10 +160,10 @@ public class MediaRestClientUtils {
     }
 
     @Deprecated
-    public static JsonArrayIterator<Change> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
+    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
             final InputStream inputStream = restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null, null, null);
-            return new JsonArrayIterator<>(inputStream, Change.class, () -> IOUtils.closeQuietly(inputStream));
+            return new JsonArrayIterator<>(inputStream, MediaChange.class, () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
             throw new RuntimeException(t.getMessage(), t);
@@ -172,11 +171,11 @@ public class MediaRestClientUtils {
 
     }
 
-    public static JsonArrayIterator<Change> changes(MediaRestService restService, String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
+    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
         try {
 
             final InputStream inputStream = restService.changes(profile, null, null, sinceString(since, mid), order.name().toLowerCase(), max, profileCheck, deletes, null, null);
-            return new JsonArrayIterator<>(inputStream, Change.class, () -> IOUtils.closeQuietly(inputStream));
+            return new JsonArrayIterator<>(inputStream, MediaChange.class, () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
             if (t instanceof RuntimeException) {
