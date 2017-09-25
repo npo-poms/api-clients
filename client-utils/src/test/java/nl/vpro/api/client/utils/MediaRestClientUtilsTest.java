@@ -11,8 +11,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
-import nl.vpro.domain.api.Change;
 import nl.vpro.domain.api.Deletes;
+import nl.vpro.domain.api.MediaChange;
 import nl.vpro.domain.api.Order;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -42,10 +42,10 @@ public class MediaRestClientUtilsTest {
             any(HttpServletRequest.class),
             any(HttpServletResponse.class)))
             .thenReturn(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream());
-        Iterator<Change> i = MediaRestClientUtils.changes(mediaRestService, "vpro", true, Instant.ofEpochMilli(0), null, Order.ASC, Integer.MAX_VALUE, Deletes.ID_ONLY);
+        Iterator<MediaChange> i = MediaRestClientUtils.changes(mediaRestService, "vpro", true, Instant.ofEpochMilli(0), null, Order.ASC, Integer.MAX_VALUE, Deletes.ID_ONLY);
         int count = 0;
         while(i.hasNext()) {
-            Change next = i.next();
+            MediaChange next = i.next();
             if (! next.isDeleted()) {
                 assertThat(next.getMedia()).isNotNull();
             }

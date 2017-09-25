@@ -29,7 +29,7 @@ import org.junit.Test;
 
 import nl.vpro.api.client.resteasy.ApiAuthenticationRequestFilter;
 import nl.vpro.api.client.resteasy.NpoApiClients;
-import nl.vpro.domain.api.Change;
+import nl.vpro.domain.api.MediaChange;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.media.MediaFormBuilder;
@@ -117,10 +117,10 @@ public class NpoApiClientUtilTest {
     @Test
     @Ignore("Takes long!!")
     public void testChanges() throws Exception {
-        CloseableIterator<Change> result = util.changes("woord", 1433329965809L, Order.ASC, Integer.MAX_VALUE);
+        CloseableIterator<MediaChange> result = util.changes("woord", 1433329965809L, Order.ASC, Integer.MAX_VALUE);
         long i = 0;
         while (result.hasNext()) {
-            Change next = result.next();
+            MediaChange next = result.next();
             if (i++ % 10 == 0) {
                 System.out.println(next);
                 //Thread.sleep(10000);
