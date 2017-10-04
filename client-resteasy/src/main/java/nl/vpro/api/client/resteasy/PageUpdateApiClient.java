@@ -107,6 +107,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
             socketTimeout,
             maxConnections,
             maxConnectionsPerRoute,
+            null,
+            null,
             connectionInPoolTTL,
             countWindow,
             bucketCount,
