@@ -64,7 +64,7 @@ import nl.vpro.util.ReflectionUtils;
  *
  * <p/>
  * Use it like this:
- * 
+ *
  * <pre>
  * protected MediaRestClient getClient(Map<String, Object> headers) {
  * MeidaRestClient client = new MediaRestClient();
@@ -81,9 +81,8 @@ import nl.vpro.util.ReflectionUtils;
  * }
  **
  * </pre>
- * 
- * You can also configured it implicitly: MediaRestClient client = new
- * MediaRestClient().configured();
+ *
+ * You can also configured it implicitly: MediaRestClient client = new MediaRestClient().configured();
  *
  * @author Michiel Meeuwissen
  */
@@ -141,16 +140,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         });
     }
 
-    public MediaRestClient() {
-        this(-1, 30, 10, 2);
-    }
-
-    public MediaRestClient(int connectionTimeoutMillis, int maxConnections, int maxConnectionsPerRoute,
-            int connectionInPoolTTL) {
-        super(null, Duration.ofMillis(connectionTimeoutMillis), Duration.ofMillis(connectionTimeoutMillis),
-                Duration.ofMillis(connectionTimeoutMillis), maxConnections, maxConnectionsPerRoute,
-                Duration.ofMillis(connectionInPoolTTL), Duration.ofHours(24), 24, null, null, null, null);
-    }
 
     public static class Builder {
 
@@ -183,17 +172,52 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     @lombok.Builder(builderClassName = "Builder")
-    protected MediaRestClient(String baseUrl, Duration connectionRequestTimeout, Duration connectTimeout,
-            Duration socketTimeout, Integer maxConnections, Integer maxConnectionsPerRoute,
-            Duration connectionInPoolTTL, Duration countWindow, Integer bucketCount, Duration warnThreshold,
-            List<Locale> acceptableLanguages, Boolean trustAll, Integer defaultMax, boolean followMerges,
-            Map<String, Object> headers, String userName, String password, String user, String errors,
-            boolean waitForRetry, boolean lookupCrids, Double throttleRate, Double asynchronousThrottleRate,
-            boolean validateInput, String mbeanName) {
-        super(baseUrl, connectionRequestTimeout, connectTimeout, socketTimeout, maxConnections, maxConnectionsPerRoute,
-                connectionInPoolTTL, countWindow, bucketCount, warnThreshold, acceptableLanguages, null, null, trustAll,
-                null, // only xml is relevant
-                mbeanName);
+    protected MediaRestClient(
+        String baseUrl,
+        Duration connectionRequestTimeout,
+        Duration connectTimeout,
+        Duration socketTimeout,
+        Integer maxConnections,
+        Integer maxConnectionsPerRoute,
+        Integer maxConnectionsNoTimeout,
+        Integer maxConnectionsPerRouteNoTimeout,
+        Duration connectionInPoolTTL,
+        Duration countWindow,
+        Integer bucketCount,
+        Duration warnThreshold,
+        List<Locale> acceptableLanguages,
+        Boolean trustAll,
+        Integer defaultMax,
+        boolean followMerges,
+        Map<String, Object> headers,
+        String userName,
+        String password,
+        String user,
+        String errors,
+        boolean waitForRetry,
+        boolean lookupCrids,
+        Double throttleRate,
+        Double asynchronousThrottleRate,
+        boolean validateInput,
+        String mbeanName) {
+        super(baseUrl,
+            connectionRequestTimeout,
+            connectTimeout,
+            socketTimeout,
+            maxConnections,
+            maxConnectionsPerRoute,
+            maxConnectionsNoTimeout,
+            maxConnectionsPerRouteNoTimeout,
+            connectionInPoolTTL,
+            countWindow,
+            bucketCount,
+            warnThreshold,
+            acceptableLanguages,
+            null,
+            null,
+            trustAll,
+            null, // only xml is relevant
+            mbeanName);
         if (defaultMax != null) {
             this.defaultMax = defaultMax;
         }
@@ -227,25 +251,21 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     enum Type {
-        SEGMENT, PROGRAM, GROUP, MEDIA;
+        SEGMENT,
+        PROGRAM,
+        GROUP,
+        MEDIA
+        ;
 
         private static Type valueOf(Class type) {
-            if (Program.class.isAssignableFrom(type))
-                return PROGRAM;
-            if (ProgramUpdate.class.isAssignableFrom(type))
-                return PROGRAM;
-            if (Group.class.isAssignableFrom(type))
-                return GROUP;
-            if (GroupUpdate.class.isAssignableFrom(type))
-                return GROUP;
-            if (Segment.class.isAssignableFrom(type))
-                return SEGMENT;
-            if (SegmentUpdate.class.isAssignableFrom(type))
-                return SEGMENT;
-            if (MediaObject.class.isAssignableFrom(type))
-                return MEDIA;
-            if (MediaUpdate.class.isAssignableFrom(type))
-                return MEDIA;
+            if (Program.class.isAssignableFrom(type)) return PROGRAM;
+            if (ProgramUpdate.class.isAssignableFrom(type)) return PROGRAM;
+            if (Group.class.isAssignableFrom(type)) return GROUP;
+            if (GroupUpdate.class.isAssignableFrom(type)) return GROUP;
+            if (Segment.class.isAssignableFrom(type)) return SEGMENT;
+            if (SegmentUpdate.class.isAssignableFrom(type)) return SEGMENT;
+            if (MediaObject.class.isAssignableFrom(type)) return MEDIA;
+            if (MediaUpdate.class.isAssignableFrom(type)) return MEDIA;
             throw new IllegalArgumentException();
         }
 
@@ -261,8 +281,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     /**
-     * Read configuration from a config file in
-     * ${user.home}/conf/mediarestclient.properties
+     * Read configuration from a config file in ${user.home}/conf/mediarestclient.properties
      */
     public static Builder configured(Env env) {
         Builder builder = builder();
@@ -345,7 +364,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     /**
      * The version of the rest-service we are talking too.
-     * 
+     *
      * @return a float representing the major/minor version. The patch level is
      *         added as thousands.
      */
@@ -425,9 +444,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     /**
      * Returns the program (as an 'update' object'), with the given id. Or
      * <code>null</code> if not found.
-     * 
-     * @param id
-     *            This can be an URN, MID, or crid.
+     *
+     * @param id This can be an URN, MID, or crid.
      */
     public ProgramUpdate getProgram(String id) {
         return get(ProgramUpdate.class, id);
@@ -480,8 +498,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     /** add a location to a Program, Segment or Group */
     protected void addLocation(final Type type, final LocationUpdate location, final String id) {
-        Response response = getBackendRestService().addLocation(type.toString(), location, id, followMerges, errors,
-                validateInput);
+        Response response = getBackendRestService()
+            .addLocation(type.toString(), location, id, followMerges, errors, validateInput);
         response.close();
     }
 
@@ -499,8 +517,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public void createMember(String owner, String member, Integer number) {
         try {
-            Response response = getBackendRestService().addMemberOf(new MemberRefUpdate(number, owner), "media", member,
-                    followMerges, errors, validateInput);
+            Response response = getBackendRestService().addMemberOf(
+                new MemberRefUpdate(number, owner), "media", member, followMerges, errors, validateInput);
             response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -509,8 +527,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public void removeMember(String owner, String member, Integer number) {
         try {
-            Response response = getBackendRestService().removeMemberOf("media", member, owner, number, followMerges,
-                    errors);
+            Response response = getBackendRestService()
+                .removeMemberOf("media", member, owner, number, followMerges, errors);
             response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -519,8 +537,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public void createEpisode(String owner, String member, Integer number) {
         try {
-            Response response = getBackendRestService().addEpisodeOf(new MemberRefUpdate(number, owner), member,
-                    followMerges, errors, validateInput);
+            Response response = getBackendRestService()
+                .addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors, validateInput);
             response.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
