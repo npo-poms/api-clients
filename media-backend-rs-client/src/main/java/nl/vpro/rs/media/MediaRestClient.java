@@ -62,7 +62,6 @@ import nl.vpro.util.ReflectionUtils;
  * Also this client can implicitely throttle itself. Calls like this are rated
  * on the POMS side, and like this you can avoid using it up too quickly.
  *
- * <p/>
  * Use it like this:
  *
  * <pre>
@@ -121,6 +120,11 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Getter
     @Setter
     private boolean validateInput = false;
+
+    @lombok.Builder.Default
+    @Getter
+    @Setter
+    private boolean imageMetaData = false;
 
     public <T> T doValidated(Callable<T> callable) throws Exception {
         boolean was = validateInput;
@@ -473,7 +477,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     public String addImage(ImageUpdate update, String mid) {
-        Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors, validateInput);
+        Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors, validateInput, imageMetaData);
         String result = response.readEntity(String.class);
         response.close();
         return result;
@@ -564,7 +568,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
         try {
             Response response = getBackendRestService().update(type.toString(), update, followMerges, errors,
-                    lookupCrids, validateInput);
+                    lookupCrids, validateInput, imageMetaData);
             String result = response.readEntity(String.class);
             response.close();
             return result;
