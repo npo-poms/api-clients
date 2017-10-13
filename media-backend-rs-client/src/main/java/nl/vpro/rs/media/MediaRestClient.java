@@ -668,6 +668,13 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     }
 
+
+    public void deleteSubtitles(SubtitlesId id) {
+        getBackendRestService().deleteSubtitles(id.getMid(), id.getLanguage(), id.getType(), true, errors);
+
+
+    }
+
     public void setDefaultMax(int max) {
         this.defaultMax = max;
     }
