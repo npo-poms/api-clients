@@ -20,7 +20,6 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 
@@ -40,7 +39,6 @@ import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
-import nl.vpro.domain.subtitles.SubtitlesUtil;
 import nl.vpro.rs.VersionRestService;
 import nl.vpro.util.Env;
 import nl.vpro.util.ProviderAndBuilder;
@@ -663,9 +661,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public void setSubtitles(Subtitles subtitles) {
         SubtitlesId id = subtitles.getId();
-        getBackendRestService().setSubtitles(id.getMid(), id.getLanguage(), id.getType(), Duration.ZERO, true, errors,
-                SubtitlesUtil.iterator(subtitles));
-
+        getBackendRestService().setSubtitles(id.getMid(), id.getLanguage(), id.getType(), Duration.ZERO, true, errors, subtitles);
     }
 
 
