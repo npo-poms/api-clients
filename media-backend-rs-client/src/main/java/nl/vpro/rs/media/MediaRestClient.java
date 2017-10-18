@@ -24,10 +24,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
-import nl.vpro.api.rs.subtitles.EBUSubtitlesReader;
-import nl.vpro.api.rs.subtitles.SRTSubtitlesReader;
-import nl.vpro.api.rs.subtitles.VTTSubtitlesReader;
-import nl.vpro.api.rs.subtitles.VTTWriter;
+import nl.vpro.api.rs.subtitles.*;
 import nl.vpro.domain.media.Group;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Program;
@@ -394,9 +391,15 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
                     "User name (" + userName + ") and password (" + password + ") should both be non null");
         }
 
-        builder.httpEngine(getClientHttpEngine()).register(new BasicAuthentication(userName, password))
-                .register(new AddRequestHeadersFilter()).register(VTTSubtitlesReader.class)
-                .register(EBUSubtitlesReader.class).register(SRTSubtitlesReader.class).register(VTTWriter.class);
+        builder.httpEngine(getClientHttpEngine())
+            .register(new BasicAuthentication(userName, password))
+            .register(new AddRequestHeadersFilter())
+            .register(VTTSubtitlesReader.class)
+            .register(EBUSubtitlesReader.class)
+            .register(SRTSubtitlesReader.class)
+            .register(VTTWriter.class)
+            .register(VTTSubtitlesWriter.class)
+        ;
     }
 
     /**
@@ -408,9 +411,9 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         if (proxy == null) {
             log.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, baseUrl);
             proxy = MediaRestClientAspect.proxy(this,
-                    proxyErrorsAndCount(MediaBackendRestService.class,
-                            getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class)),
-                    MediaBackendRestService.class);
+                proxyErrorsAndCount(MediaBackendRestService.class,
+                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class)),
+                MediaBackendRestService.class);
         }
         return proxy;
     }
@@ -418,9 +421,9 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     public FrameCreatorRestService getFrameCreatorRestService() {
         if (frameCreatorRestService == null) {
             frameCreatorRestService = MediaRestClientAspect.proxy(this,
-                    proxyErrorsAndCount(FrameCreatorRestService.class,
-                            getTarget(getClientHttpEngine()).proxy(FrameCreatorRestService.class)),
-                    FrameCreatorRestService.class);
+                proxyErrorsAndCount(FrameCreatorRestService.class,
+                    getTarget(getClientHttpEngine()).proxy(FrameCreatorRestService.class)),
+                FrameCreatorRestService.class);
         }
         return frameCreatorRestService;
     }
