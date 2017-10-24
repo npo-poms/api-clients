@@ -230,7 +230,7 @@ public class NpoApiClients extends AbstractApiClient  {
                     if (matcher.find()) {
                         result = matcher.group(1);
                     } else {
-                        result = "5.4";
+                        result = "5.5";
                         log.info("No version found in " + versionString + " supposing " + result);
                     }
                 } catch (JsonParseException jpe) {

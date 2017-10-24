@@ -1,5 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.SocketException;
@@ -12,9 +14,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.impl.execchain.RequestAbortedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Function;
 import com.google.inject.Inject;
 
@@ -29,9 +28,8 @@ import nl.vpro.jackson2.Jackson2Mapper;
  * @author Michiel Meeuwissen
  * @since 1.0
  */
+@Slf4j
 public class PageUpdateApiUtil {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PageUpdateApiUtil.class);
 
     private static final Function<Object, String> STRING = String::valueOf;
     private static final Function<Object, String> JACKSON = input -> {
@@ -39,7 +37,7 @@ public class PageUpdateApiUtil {
         try {
             Jackson2Mapper.getInstance().writer().writeValue(writer, input);
         } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return writer.toString();
     };
@@ -105,7 +103,7 @@ public class PageUpdateApiUtil {
             switch (response.getStatus()) {
                 case 200:
                 case 202:
-                    LOG.debug(pageUpdateApiClient + " " + response.getStatus());
+                    log.debug(pageUpdateApiClient + " " + response.getStatus());
                     return returnResult(Result.success());
                 case 400: {
                     String error = response.readEntity(String.class);
@@ -159,7 +157,7 @@ public class PageUpdateApiUtil {
         if (result.isOk()) {
             limiter.upRate();
         } else {
-            LOG.debug(result.getErrors());
+            log.debug(result.getErrors());
         }
         return result;
     }

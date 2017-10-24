@@ -1,10 +1,15 @@
 package nl.vpro.api.client.resteasy;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.time.Duration;
 import java.util.*;
@@ -19,6 +24,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
+import nl.vpro.rs.thesaurus.update.NewPersonRequest;
 import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
 import nl.vpro.util.Env;
 import nl.vpro.util.ProviderAndBuilder;
@@ -32,9 +38,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     private ThesaurusUpdateRestService thesaurusUpdateRestService;
 
-
     @Getter
     private final String description;
+
+    private final String jwsIssuer;
+    private final byte[] jwsKey;
+    private final String jwsUser;
+
 
     private final BasicAuthentication authentication;
 
@@ -53,6 +63,17 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Inject
         @Named("npo-pageupdate-api.password")
         String password;
+
+        @Inject
+        @Named("npo-pageupdate-api.jwsIssuer")
+        String jwsIssuer;
+        @Inject
+        @Named("npo-pageupdate-api.jwsKey")
+        String jwsKey;
+        @Inject
+        @Named("npo-pageupdate-api.jwsUser")
+        String jwsUser;
+
         @Inject
         @Named("npo-pageupdate-api.connectionRequestTimeout")
         Optional<String> connectionRequestTimeout;
@@ -105,7 +126,10 @@ public class PageUpdateApiClient extends AbstractApiClient {
         String user,
         String password,
         String mbeanName,
-        ClassificationService classificationService
+        ClassificationService classificationService,
+        String jwsIssuer,
+        String jwsKey,
+        String jwsUser
         ) {
         super(baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api",
             connectionRequestTimeout,
@@ -134,6 +158,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
         authentication = new BasicAuthentication(user, password);
         description = user + "@" + this.getBaseUrl();
         this.classificationService = classificationService;
+        this.jwsIssuer = jwsIssuer;
+        this.jwsKey = jwsKey.getBytes();
+        this.jwsUser = jwsUser;
     }
 
     public static Builder configured(String... configFiles) throws IOException {
@@ -176,14 +203,20 @@ public class PageUpdateApiClient extends AbstractApiClient {
     public ThesaurusUpdateRestService getThesaurusUpdateRestService() {
         return thesaurusUpdateRestService = produceIfNull(
             () -> thesaurusUpdateRestService,
-            () -> proxyErrorsAndCount(
-                ThesaurusUpdateRestService.class,
-                getTarget(getClientHttpEngine())
+            () -> proxyErrorsAndCount(ThesaurusUpdateRestService.class,
+                proxyForJws(getTarget(getClientHttpEngine())
                     .proxyBuilder(ThesaurusUpdateRestService.class)
-                    .defaultConsumes(MediaType.APPLICATION_XML).build(),
+                    .defaultConsumes(MediaType.APPLICATION_XML).build()),
                 Error.class
             ));
     }
+
+
+    public ThesaurusUpdateRestService proxyForJws(ThesaurusUpdateRestService clean) {
+        return (ThesaurusUpdateRestService) Proxy.newProxyInstance(ThesaurusUpdateRestService.class.getClassLoader(), new Class[]{ThesaurusUpdateRestService.class}, new JwsAspect(clean));
+    }
+
+
 
     public ClassificationService getClassificationService() {
         return classificationService = produceIfNull(
@@ -214,6 +247,39 @@ public class PageUpdateApiClient extends AbstractApiClient {
     public synchronized void invalidate() {
         super.invalidate();
         pageUpdateRestService = null;
+    }
+
+    protected String jws() {
+        String compactJws = Jwts.builder()
+            .setSubject("GTAAPerson")
+            .setHeaderParam("iss", jwsIssuer)
+            .setHeaderParam("usr", jwsUser)
+            .signWith(SignatureAlgorithm.HS512, jwsKey)
+            .compact();
+        log.debug(compactJws);
+        return compactJws;
+    }
+
+    protected class JwsAspect implements InvocationHandler  {
+
+        private final ThesaurusUpdateRestService proxied;
+
+        public JwsAspect(ThesaurusUpdateRestService proxied) {
+            this.proxied = proxied;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            if (args[0] instanceof NewPersonRequest) {
+                NewPersonRequest newPerson = (NewPersonRequest) args[0];
+                if (newPerson.getJws() == null) {
+                    newPerson.setJws(jws());
+                }
+            }
+            return method.invoke(proxied, args);
+        }
+
+
     }
 
 
