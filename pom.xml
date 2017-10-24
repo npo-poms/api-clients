@@ -32,8 +32,6 @@
 
   <properties>
     <poms.shared.version>5.5-SNAPSHOT</poms.shared.version>
-    <!-- TODO: dependency should be dropped -->
-    <pages.version>5.4.0</pages.version>
   </properties>
 
   <dependencyManagement>

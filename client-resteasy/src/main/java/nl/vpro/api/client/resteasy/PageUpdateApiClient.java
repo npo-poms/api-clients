@@ -1,5 +1,6 @@
 package nl.vpro.api.client.resteasy;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -18,6 +19,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
+import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
 import nl.vpro.util.Env;
 import nl.vpro.util.ProviderAndBuilder;
 import nl.vpro.util.ReflectionUtils;
@@ -28,6 +30,10 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     private PageUpdateRestService pageUpdateRestService;
 
+    private ThesaurusUpdateRestService thesaurusUpdateRestService;
+
+
+    @Getter
     private final String description;
 
     private final BasicAuthentication authentication;
@@ -166,6 +172,19 @@ public class PageUpdateApiClient extends AbstractApiClient {
             ));
     }
 
+
+    public ThesaurusUpdateRestService getThesaurusUpdateRestService() {
+        return thesaurusUpdateRestService = produceIfNull(
+            () -> thesaurusUpdateRestService,
+            () -> proxyErrorsAndCount(
+                ThesaurusUpdateRestService.class,
+                getTarget(getClientHttpEngine())
+                    .proxyBuilder(ThesaurusUpdateRestService.class)
+                    .defaultConsumes(MediaType.APPLICATION_XML).build(),
+                Error.class
+            ));
+    }
+
     public ClassificationService getClassificationService() {
         return classificationService = produceIfNull(
             () -> classificationService,
@@ -178,10 +197,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
                     throw new RuntimeException(e);
                 }
             });
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     @Override
