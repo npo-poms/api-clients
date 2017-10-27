@@ -31,7 +31,7 @@
   </scm>
 
   <properties>
-    <poms.shared.version>5.5-SNAPSHOT</poms.shared.version>
+    <poms.shared.version>5.5.0</poms.shared.version>
   </properties>
 
   <dependencyManagement>
