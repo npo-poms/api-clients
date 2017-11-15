@@ -664,12 +664,15 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public void setSubtitles(Subtitles subtitles) {
         SubtitlesId id = subtitles.getId();
-        getBackendRestService().setSubtitles(id.getMid(), id.getLanguage(), id.getType(), Duration.ZERO, true, errors, subtitles);
+        Response response = getBackendRestService().setSubtitles(id.getMid(), id.getLanguage(), id.getType(), Duration.ZERO, true, errors, subtitles);
+        response.close();
     }
 
 
     public void deleteSubtitles(SubtitlesId id) {
-        getBackendRestService().deleteSubtitles(id.getMid(), id.getLanguage(), id.getType(), true, errors);
+        Response response = getBackendRestService()
+            .deleteSubtitles(id.getMid(), id.getLanguage(), id.getType(), true, errors);
+        response.close();
 
 
     }
