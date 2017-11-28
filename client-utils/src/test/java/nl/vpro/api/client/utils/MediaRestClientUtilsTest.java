@@ -15,7 +15,7 @@ import nl.vpro.domain.api.Deletes;
 import nl.vpro.domain.api.MediaChange;
 import nl.vpro.domain.api.Order;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
