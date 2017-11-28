@@ -28,11 +28,35 @@ public class Config {
 
 
     public enum Prefix {
-        npoapi,
-        backendapi,
+
+        npoapi("npo-api"),
+        backendapi("backend-api"),
         parkpost,
-        pageupdateapi,
-        poms
+        pageupdateapi("npo-pageupdate-api"),
+        poms;
+        private final String alt;
+        Prefix(String alt) {
+            this.alt = alt;
+        }
+        Prefix() {
+            this(null);
+        }
+        public String getAlt() {
+            return alt == null ? name() : alt;
+        }
+
+        public static Prefix altValueOf(String value) {
+            for (Prefix p : values()) {
+                if (value.equals(p.name())) {
+                    return p;
+                }
+                if (p.alt != null && p.alt.equals(value)) {
+                    return p;
+                }
+            }
+            throw new IllegalArgumentException();
+
+        }
     }
 
     public Config (String... configFiles) {
@@ -89,6 +113,14 @@ public class Config {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    public Map<String, String> getPrefixedProperties(Prefix prefix) {
+        return getProperties(prefix)
+            .entrySet()
+            .stream()
+            .map(e -> new AbstractMap.SimpleEntry<>(prefix.getAlt() + "." + e.getKey(), e.getValue()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
     public  Supplier<RuntimeException> notSet(String prop) {
         return () -> new RuntimeException(prop + " is not set in " + Arrays.asList(configFiles));
     }
@@ -130,7 +162,7 @@ public class Config {
 
                 } else if (split.length == 2) {
                     try {
-                        prefix = Prefix.valueOf(split[0]);
+                        prefix = Prefix.altValueOf(split[0]);
                         key = split[1];
                         env = null;
                     } catch (IllegalArgumentException iae) {
@@ -139,7 +171,7 @@ public class Config {
                         env = Env.valueOf(split[1].toUpperCase());
                     }
                 } else {
-                    prefix = Prefix.valueOf(split[0]);
+                    prefix = Prefix.altValueOf(split[0]);
                     key = split[1];
                     env = Env.valueOf(split[2].toUpperCase());
                 }
