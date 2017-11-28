@@ -25,6 +25,7 @@ public class Config {
     private final Map<Key, String> properties;
     private final String[] configFiles;
     private Env env = null;
+    private final Map<Prefix, Map<String, String>> mappedProperties = new HashMap<>();
 
 
     public enum Prefix {
@@ -32,7 +33,7 @@ public class Config {
         npoapi("npo-api"),
         backendapi("backend-api"),
         parkpost,
-        pageupdateapi("npo-pageupdate-api"),
+        pageupdateapi("pageupdate-api"),
         poms;
         private final String alt;
         Prefix(String alt) {
@@ -67,14 +68,12 @@ public class Config {
         try {
             Map<String, String> initial = new HashMap<>();
             initial.put("localhost", InetAddress.getLocalHost().getHostName());
-            properties.putAll(
-                ReflectionUtils.getProperties(initial,
-                    ReflectionUtils.getConfigFilesInHome(configFiles)
-                ).entrySet()
-                    .stream()
-                    .map(e -> new AbstractMap.SimpleEntry<>(Key.of(e.getKey()), e.getValue()))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-            );
+            ReflectionUtils.getProperties(initial,
+                ReflectionUtils.getConfigFilesInHome(configFiles)
+            ).forEach((key1, value) -> {
+                Key key = Key.of(key1);
+                properties.put(key, value);
+            });
             log.debug("{}", properties);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -105,12 +104,21 @@ public class Config {
     }
 
     public  Map<String, String> getProperties(Prefix prefix) {
-        return properties.entrySet()
-            .stream()
-            .filter(e -> prefix == null || e.getKey().getPrefix() == null || e.getKey().getPrefix().equals(prefix))
-            .filter(e -> e.getKey().getEnv() == null || env() == e.getKey().getEnv())
-            .map(e -> new AbstractMap.SimpleEntry<>(e.getKey().getKey(), e.getValue()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        Map<String, String> result = mappedProperties.get(prefix);
+        if (result == null) {
+            final Map<String, String> r = new HashMap<>();
+            result = r;
+            mappedProperties.put(prefix, result);
+            properties.forEach((key, value) -> {
+                if (key.getPrefix() == null || prefix.equals(key.getPrefix())) {
+                    if (key.getEnv() == null || env().equals(key.getEnv())) {
+                        r.put(key.getKey(), value);
+                    }
+                }
+            });
+            log.info("Read for {}.{} {}", prefix, env(), r.keySet());
+        }
+        return result;
     }
 
     public Map<String, String> getPrefixedProperties(Prefix prefix) {
@@ -126,7 +134,10 @@ public class Config {
     }
 
     public void setEnv(Env env) {
-        this.env = env;
+        if (this.env != env) {
+            mappedProperties.clear();
+            this.env = env;
+        }
     }
     public Env env() {
         if (env == null) {
@@ -177,7 +188,7 @@ public class Config {
                 }
                 return new Key(prefix, key, env, split.length);
             } catch (IllegalArgumentException iae) {
-                throw new IllegalArgumentException("Could not parse " + joinedKey, iae);
+                return new Key(null, joinedKey, null, 0);
             }
         }
 
