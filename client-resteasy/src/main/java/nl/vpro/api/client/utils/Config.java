@@ -14,6 +14,9 @@ import nl.vpro.util.Env;
 import nl.vpro.util.ReflectionUtils;
 
 /**
+ * Represents configuration for an api client.
+ *
+ * Arranges reading config files from classpath and ~/conf, and have a switcher with {@link Env}.
  * @author Michiel Meeuwissen
  */
 @Slf4j
