@@ -25,7 +25,8 @@ import nl.vpro.domain.media.Schedule;
 import nl.vpro.domain.page.*;
 import nl.vpro.jackson2.Jackson2Mapper;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Michiel Meeuwissen

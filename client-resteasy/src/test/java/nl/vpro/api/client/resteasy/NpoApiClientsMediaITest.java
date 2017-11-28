@@ -19,7 +19,8 @@ import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.media.MediaSearchResult;
 import nl.vpro.jackson2.Jackson2Mapper;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Michiel Meeuwissen

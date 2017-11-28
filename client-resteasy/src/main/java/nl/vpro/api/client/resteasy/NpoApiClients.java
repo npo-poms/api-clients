@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Suppliers;
 
+import nl.vpro.api.client.utils.Config;
 import nl.vpro.api.rs.subtitles.VTTSubtitlesReader;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
@@ -347,7 +348,10 @@ public class NpoApiClients extends AbstractApiClient  {
 
     public static NpoApiClients.Builder configured(Env env) {
         NpoApiClients.Builder builder = builder();
-        ReflectionUtils.configuredInHome(env, builder, CONFIG_FILE);
+        Config config = new Config(CONFIG_FILE);
+        config.getProperties(Config.Prefix.npoapi);
+        ReflectionUtils.configured(env, builder,
+            config.getProperties(Config.Prefix.npoapi));
         return builder;
     }
 

@@ -44,7 +44,7 @@ import nl.vpro.i18n.Locales;
 import nl.vpro.util.Env;
 
 import static nl.vpro.domain.api.Constants.ASC;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
