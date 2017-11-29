@@ -352,9 +352,9 @@ public class NpoApiClients extends AbstractApiClient  {
     public static NpoApiClients.Builder configured(Env env) {
         NpoApiClients.Builder builder = builder();
         Config config = new Config(CONFIG_FILE);
-        config.getProperties(Config.Prefix.npoapi);
+        config.getProperties(Config.Prefix.npo_api);
         ReflectionUtils.configured(env, builder,
-            config.getProperties(Config.Prefix.npoapi));
+            config.getProperties(Config.Prefix.npo_api));
         return builder;
     }
 

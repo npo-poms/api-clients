@@ -32,7 +32,7 @@ public class NpoApiClientsGuiceTest {
             new AbstractModule() {
                 @Override
                 protected void configure() {
-                    Names.bindProperties(binder(), new Config("npoapiclients.properties").getPrefixedProperties(Config.Prefix.npoapi));
+                    Names.bindProperties(binder(), new Config("npoapiclients.properties").getPrefixedProperties(Config.Prefix.npo_api));
                     binder().bind(NpoApiClients.class).toProvider(NpoApiClients.Provider.class);
                 }
             },

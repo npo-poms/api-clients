@@ -33,28 +33,20 @@ public class Config {
 
     public enum Prefix {
 
-        npoapi("npo-api"),
-        backendapi("backend-api"),
+        npo_api,
+        backend_api,
         parkpost,
-        pageupdateapi("pageupdate-api"),
+        pageupdate_api,
         poms;
-        private final String alt;
-        Prefix(String alt) {
-            this.alt = alt;
-        }
-        Prefix() {
-            this(null);
-        }
-        public String getAlt() {
-            return alt == null ? name() : alt;
+
+        public String getKey() {
+            return name().replace('_', '-');
         }
 
-        public static Prefix altValueOf(String value) {
+        public static Prefix ofKey(String value) {
+            value = value.replaceAll("[-_]", "");
             for (Prefix p : values()) {
-                if (value.equals(p.name())) {
-                    return p;
-                }
-                if (p.alt != null && p.alt.equals(value)) {
+                if (value.equals(p.name().replaceAll("_", ""))) {
                     return p;
                 }
             }
@@ -70,20 +62,23 @@ public class Config {
 
 
         try {
-            Map<String, String> initial = new HashMap<>();
-            initial.put("localhost", InetAddress.getLocalHost().getHostName());
+            Map<Key, String> initial = new HashMap<>();
+            initial.put(Key.of("localhost"), InetAddress.getLocalHost().getHostName());
             ConfigUtils.getProperties(
                 initial,
+                Key::of,
                 ConfigUtils.getConfigFilesInHome(configFiles)
-            ).forEach((key1, value) -> {
-                Key key = Key.of(key1);
-                properties.put(key, value);
+            ).forEach((key, value) -> {
+                String previous = properties.put(key, value);
+                if (previous != null) {
+                    log.info("replaced {}: {} -> {}", key, previous, value);
+                }
             });
             log.debug("{}", properties);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
-        log.info("Reading {} configuration from {}", env(), configFiles);
+        log.info("Read configuration from {}",  Arrays.asList(configFiles));
     }
 
     public  Optional<String> configOption(Prefix pref, String prop) {
@@ -112,16 +107,28 @@ public class Config {
         Map<String, String> result = mappedProperties.get(prefix);
         if (result == null) {
             final Map<String, String> r = new HashMap<>();
+            final Map<String, Integer> strenghts = new HashMap<>();
             result = r;
             mappedProperties.put(prefix, result);
+            Env env = env();
             properties.forEach((key, value) -> {
                 if (key.getPrefix() == null || prefix.equals(key.getPrefix())) {
-                    if (key.getEnv() == null || env().equals(key.getEnv())) {
-                        r.put(key.getKey(), value);
+                    if (key.getEnv() == null || env.equals(key.getEnv())) {
+                        Integer existing = strenghts.get(key.getKey());
+                        if (existing != null && existing == key.getStrength()) {
+                            log.warn("Found the same property twice");
+                        }
+                        if (existing == null || existing < key.getStrength()) {
+                            r.put(key.getKey(), value);
+                            strenghts.put(key.getKey(), key.getStrength());
+                            log.debug("Put {} -> {}", key, value);
+                        } else {
+                            log.debug("ignored {}", key);
+                        }
                     }
                 }
             });
-            log.info("Read for {}.{} {}", prefix, env(), r.keySet());
+            log.info("Read for {}.{} {}", prefix, env, r.keySet());
         }
         return result;
     }
@@ -130,7 +137,7 @@ public class Config {
         return getProperties(prefix)
             .entrySet()
             .stream()
-            .map(e -> new AbstractMap.SimpleEntry<>(prefix.getAlt() + "." + e.getKey(), e.getValue()))
+            .map(e -> new AbstractMap.SimpleEntry<>(prefix.getKey() + "." + e.getKey(), e.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -180,7 +187,7 @@ public class Config {
 
                 } else if (split.length == 2) {
                     try {
-                        prefix = Prefix.altValueOf(split[0]);
+                        prefix = Prefix.ofKey(split[0]);
                         key = split[1];
                         env = null;
                     } catch (IllegalArgumentException iae) {
@@ -189,7 +196,7 @@ public class Config {
                         env = Env.valueOf(split[1].toUpperCase());
                     }
                 } else {
-                    prefix = Prefix.altValueOf(split[0]);
+                    prefix = Prefix.ofKey(split[0]);
                     key = split[1];
                     env = Env.valueOf(split[2].toUpperCase());
                 }
@@ -198,7 +205,21 @@ public class Config {
                 return new Key(null, joinedKey, null, 0);
             }
         }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            if (prefix != null) {
+                builder.append(prefix.getKey()).append('.');
+            }
+            builder.append(key);
+            if (env != null) {
+                builder.append('.').append(env.name().toLowerCase());
+            }
+            return builder.toString();
+        }
     }
+
 
 
 }
