@@ -41,14 +41,16 @@ import nl.vpro.api.rs.v3.thesaurus.ThesaurusRestService;
 import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
 import nl.vpro.jackson2.Jackson2Mapper;
+import nl.vpro.util.ConfigUtils;
 import nl.vpro.util.Env;
 import nl.vpro.util.ProviderAndBuilder;
 import nl.vpro.util.ReflectionUtils;
 
+import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
+
 
 public class NpoApiClients extends AbstractApiClient  {
 
-    private static String CONFIG_FILE = "apiclient.properties";
 
     private MediaRestService mediaRestServiceProxy;
     private MediaRestService mediaRestServiceProxyNoTimeout;
@@ -121,7 +123,7 @@ public class NpoApiClients extends AbstractApiClient  {
         public Builder env(Env env) {
             try {
                 Map<String, String> properties = ReflectionUtils.filtered(env,
-                    ReflectionUtils.getProperties(ReflectionUtils.getConfigFilesInHome(CONFIG_FILE)));
+                    ConfigUtils.getPropertiesInHome(CONFIG_FILE));
 
                 return
                     builder.baseUrl(properties.get("baseUrl"))
@@ -146,7 +148,8 @@ public class NpoApiClients extends AbstractApiClient  {
         public Builder env(Env env) {
             try {
                 Map<String, String> properties = ReflectionUtils.filtered(env,
-                    ReflectionUtils.getProperties(ReflectionUtils.getConfigFilesInHome(CONFIG_FILE)));
+                    ConfigUtils.getPropertiesInHome(CONFIG_FILE)
+                );
 
                 return
                     baseUrl(properties.get("baseUrl"))

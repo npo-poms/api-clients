@@ -22,6 +22,8 @@ import nl.vpro.util.ReflectionUtils;
 @Slf4j
 public class Config {
 
+    public static String CONFIG_FILE = "apiclient.properties";
+
     private final Map<Key, String> properties;
     private final String[] configFiles;
     private Env env = null;
@@ -65,10 +67,12 @@ public class Config {
         this.configFiles = configFiles;
 
 
+
         try {
             Map<String, String> initial = new HashMap<>();
             initial.put("localhost", InetAddress.getLocalHost().getHostName());
-            ReflectionUtils.getProperties(initial,
+            ReflectionUtils.getProperties(
+                initial,
                 ReflectionUtils.getConfigFilesInHome(configFiles)
             ).forEach((key1, value) -> {
                 Key key = Key.of(key1);
