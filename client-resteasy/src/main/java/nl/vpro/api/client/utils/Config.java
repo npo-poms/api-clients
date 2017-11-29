@@ -2,6 +2,7 @@ package nl.vpro.api.client.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -10,8 +11,8 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import nl.vpro.util.ConfigUtils;
 import nl.vpro.util.Env;
-import nl.vpro.util.ReflectionUtils;
 
 /**
  * Represents configuration for an api client.
@@ -71,9 +72,9 @@ public class Config {
         try {
             Map<String, String> initial = new HashMap<>();
             initial.put("localhost", InetAddress.getLocalHost().getHostName());
-            ReflectionUtils.getProperties(
+            ConfigUtils.getProperties(
                 initial,
-                ReflectionUtils.getConfigFilesInHome(configFiles)
+                ConfigUtils.getConfigFilesInHome(configFiles)
             ).forEach((key1, value) -> {
                 Key key = Key.of(key1);
                 properties.put(key, value);
@@ -147,7 +148,7 @@ public class Config {
         if (env == null) {
             String pref = System.getProperty("env");
             if (pref == null) {
-                return Env.valueOf(properties.getOrDefault("env", "test").toUpperCase());
+                return Env.valueOf(properties.getOrDefault(ENV, "test").toUpperCase());
             } else {
                 return Env.valueOf(pref.toUpperCase());
             }
@@ -155,9 +156,11 @@ public class Config {
             return env;
         }
     }
+    private static Key ENV = new Key(null, "env", null, 1);
 
     @AllArgsConstructor
     @Data
+    @EqualsAndHashCode
     public static class Key {
         private final Prefix prefix;
         private final String key;
@@ -195,8 +198,7 @@ public class Config {
                 return new Key(null, joinedKey, null, 0);
             }
         }
-
-
     }
+
 
 }
