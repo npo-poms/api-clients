@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 public class ConfigTest {
 
-    Config config = new Config("apiclients-test.properties", "apiclients-test2.properties");
+    Config config = new Config("apiclient-test.properties", "apiclient-test2.properties");
 
     @Test
     public void env() throws Exception {

@@ -121,18 +121,14 @@ public class NpoApiClients extends AbstractApiClient  {
         public Builder builder = builder();
 
         public Builder env(Env env) {
-            try {
-                Map<String, String> properties = ReflectionUtils.filtered(env,
-                    ConfigUtils.getPropertiesInHome(CONFIG_FILE));
+            Map<String, String> properties = ConfigUtils.filtered(env,
+                ConfigUtils.getPropertiesInHome(CONFIG_FILE));
 
-                return
-                    builder.baseUrl(properties.get("baseUrl"))
-                        .apiKey(properties.get("apiKey"))
-                        .secret(properties.get("secret"))
-                        .origin(properties.get("origin"));
-            } catch (IOException e) {
-                throw new RuntimeException();
-            }
+            return
+                builder.baseUrl(properties.get("baseUrl"))
+                    .apiKey(properties.get("apiKey"))
+                    .secret(properties.get("secret"))
+                    .origin(properties.get("origin"));
         }
 
         @Override
@@ -146,19 +142,16 @@ public class NpoApiClients extends AbstractApiClient  {
     public static class Builder {
 
         public Builder env(Env env) {
-            try {
-                Map<String, String> properties = ReflectionUtils.filtered(env,
-                    ConfigUtils.getPropertiesInHome(CONFIG_FILE)
-                );
+            Map<String, String> properties = ConfigUtils.filtered(env,
+                ConfigUtils.getPropertiesInHome(CONFIG_FILE)
+            );
 
-                return
-                    baseUrl(properties.get("baseUrl"))
-                        .apiKey(properties.get("apiKey"))
-                        .secret(properties.get("secret"))
-                        .origin(properties.get("origin"));
-            } catch (IOException e) {
-                throw new RuntimeException();
-            }
+            return
+                baseUrl(properties.get("baseUrl"))
+                    .apiKey(properties.get("apiKey"))
+                    .secret(properties.get("secret"))
+                    .origin(properties.get("origin"));
+
         }
     }
 
@@ -257,13 +250,17 @@ public class NpoApiClients extends AbstractApiClient  {
      */
     public Float getVersionNumber() {
         Matcher matcher = Pattern.compile("(\\d+\\.\\d+)\\.?(\\d+)?.*").matcher(getVersion());
-        matcher.find();
-        Double result = Double.parseDouble(matcher.group(1));
-        String minor = matcher.group(2);
-        if (minor != null) {
-            result += (double) Integer.parseInt(minor) / 1000d;
+        if (matcher.find()) {
+            Double result = Double.parseDouble(matcher.group(1));
+            String minor = matcher.group(2);
+            if (minor != null) {
+                result += (double) Integer.parseInt(minor) / 1000d;
+            }
+            return result.floatValue();
+        } else {
+            log.info("Version {} could not be parsed", getVersion());
+            return 0f;
         }
-        return result.floatValue();
     }
 
     public String getApiKey() {
@@ -323,13 +320,13 @@ public class NpoApiClients extends AbstractApiClient  {
 
     public static NpoApiClients.Builder configured(String... configFiles)  {
         NpoApiClients.Builder builder = builder();
-        ReflectionUtils.configured(builder, configFiles);
+        ConfigUtils.configured(builder, configFiles);
         return builder;
     }
 
     public static NpoApiClients.Builder configured(Env env, String... configFiles) {
         NpoApiClients.Builder builder = builder();
-        ReflectionUtils.configured(env, builder, configFiles);
+        ConfigUtils.configured(env, builder, configFiles);
         return builder;
     }
 
@@ -341,7 +338,7 @@ public class NpoApiClients extends AbstractApiClient  {
 
     public static NpoApiClients.Builder configured(Env env, Map<String, String> settings) {
         NpoApiClients.Builder builder = builder();
-        ReflectionUtils.configured(env, builder, settings);
+        ConfigUtils.configured(env, builder, settings);
         return builder;
     }
 
@@ -352,9 +349,8 @@ public class NpoApiClients extends AbstractApiClient  {
     public static NpoApiClients.Builder configured(Env env) {
         NpoApiClients.Builder builder = builder();
         Config config = new Config(CONFIG_FILE);
-        config.getProperties(Config.Prefix.npo_api);
-        ReflectionUtils.configured(env, builder,
-            config.getProperties(Config.Prefix.npo_api));
+        config.setEnv(env);
+        ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.npo_api));
         return builder;
     }
 

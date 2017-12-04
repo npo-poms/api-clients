@@ -55,9 +55,14 @@ public class Config {
         }
     }
 
-    public Config (String... configFiles) {
+    public Config(String... configFiles) {
+        this(null, configFiles);
+    }
+
+    public Config (Env env, String... configFiles) {
         properties = new HashMap<>();
         this.configFiles = configFiles;
+        this.env = env;
 
 
 
@@ -107,20 +112,20 @@ public class Config {
         Map<String, String> result = mappedProperties.get(prefix);
         if (result == null) {
             final Map<String, String> r = new HashMap<>();
-            final Map<String, Integer> strenghts = new HashMap<>();
+            final Map<String, Integer> strengths = new HashMap<>();
             result = r;
             mappedProperties.put(prefix, result);
             Env env = env();
             properties.forEach((key, value) -> {
                 if (key.getPrefix() == null || prefix.equals(key.getPrefix())) {
                     if (key.getEnv() == null || env.equals(key.getEnv())) {
-                        Integer existing = strenghts.get(key.getKey());
+                        Integer existing = strengths.get(key.getKey());
                         if (existing != null && existing == key.getStrength()) {
                             log.warn("Found the same property twice");
                         }
                         if (existing == null || existing < key.getStrength()) {
                             r.put(key.getKey(), value);
-                            strenghts.put(key.getKey(), key.getStrength());
+                            strengths.put(key.getKey(), key.getStrength());
                             log.debug("Put {} -> {}", key, value);
                         } else {
                             log.debug("ignored {}", key);

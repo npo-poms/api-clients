@@ -23,6 +23,6 @@ public class NpoApiClientsSpringTest {
 
     @Test
     public void test() {
-        assertThat(clients.getOrigin()).isEqualTo("http://www.vpro.nl");
+        assertThat(clients.getOrigin()).isEqualTo("https://www.vpro.nl");
     }
 }

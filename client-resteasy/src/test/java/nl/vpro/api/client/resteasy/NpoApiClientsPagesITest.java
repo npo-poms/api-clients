@@ -12,7 +12,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Michiel Meeuwissen
  * @since 4.3
  */
-@Ignore
 @Slf4j
 public class NpoApiClientsPagesITest {
 

@@ -34,10 +34,7 @@ import nl.vpro.domain.media.update.collections.XmlCollection;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.rs.VersionRestService;
-import nl.vpro.util.BatchedReceiver;
-import nl.vpro.util.Env;
-import nl.vpro.util.ProviderAndBuilder;
-import nl.vpro.util.ReflectionUtils;
+import nl.vpro.util.*;
 
 /**
  * A client for RESTful calls to a running MediaBackendRestService.
@@ -273,7 +270,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public static Builder configured(Env env, String... configFiles) {
         Builder builder = builder();
-        ReflectionUtils.configured(env, builder, configFiles);
+        ConfigUtils.configured(env, builder, configFiles);
         return builder;
     }
 
@@ -282,13 +279,13 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
      */
     public static Builder configured(Env env) {
         Builder builder = builder();
-        ReflectionUtils.configuredInHome(env, builder, "mediarestclient.properties", "creds.properties");
+        ConfigUtils.configuredInHome(env, builder, "mediarestclient.properties", "creds.properties");
         return builder;
     }
 
     public static Builder configured(Env env, Map<String, String> settings) {
         Builder builder = builder();
-        ReflectionUtils.configured(env, builder, settings);
+        ConfigUtils.configured(env, builder, settings);
         return builder;
     }
 

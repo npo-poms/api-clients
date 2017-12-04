@@ -4,6 +4,8 @@
  */
 package nl.vpro.api.client.resteasy;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -41,6 +43,7 @@ import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.page.Page;
 import nl.vpro.i18n.Locales;
+import nl.vpro.logging.LoggerOutputStream;
 import nl.vpro.util.Env;
 
 import static nl.vpro.domain.api.Constants.ASC;
@@ -51,25 +54,27 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Roelof Jan Koekoek
  * @since 3.0
  */
-@Ignore
+@Slf4j
 public class NpoApiClientsITest {
 
+    private static Env env = Env.DEV;
     private NpoApiClients clients;
 
     @Before
     public void setUp() throws IOException {
-        clients = NpoApiClients.configured(Env.LOCALHOST)
+        clients = NpoApiClients.configured(env)
             .accept(MediaType.APPLICATION_XML_TYPE)
             .clearAcceptableLanguages()
             .acceptableLanguage(Locale.ENGLISH)
             .acceptableLanguage(Locales.DUTCH)
             .build();
-        System.out.println(clients);
+        log.info("{}", clients);
     }
 
     @Test(expected = NotAuthorizedException.class)
     public void testAccessForbidden() throws Exception {
-        NpoApiClients wrongPassword = NpoApiClients.configured().secret("WRONG PASSWORD").build();
+        NpoApiClients wrongPassword = NpoApiClients
+            .configured(env).secret("WRONG PASSWORD").build();
 
         wrongPassword.getMediaService().list(null, null, null, null);
     }
@@ -92,14 +97,14 @@ public class NpoApiClientsITest {
     @Test
     public void testGetVersion() {
         String version = clients.getVersion();
-        System.out.println(version);
+        log.info(version);
         assertThat(clients.getVersion()).isNotEqualTo("unknown");
     }
 
 
     @Test
     public void testGetVersionNumber() {
-        System.out.println(clients.getVersionNumber());
+        log.info("version: {}", clients.getVersionNumber());
         assertThat(clients.getVersionNumber()).isGreaterThanOrEqualTo(4.7f);
     }
 
@@ -107,7 +112,7 @@ public class NpoApiClientsITest {
     public void testFound() throws Exception {
         for (int i = 0; i < 100; i++) {
             MediaObject program = clients.getMediaService().load("POMS_S_VPRO_827832", null, null);
-            System.out.println(i + ":" + program.getMainTitle());
+            log.info(i + ":" + program.getMainTitle());
         }
     }
 
@@ -149,7 +154,7 @@ public class NpoApiClientsITest {
 
             assertThat(mediaService.findDescendants(form, mid, null, null, null, null)).isNotNull();
         } catch (InternalServerErrorException iae) {
-            System.out.print(iae.getCause());
+            log.error("{}", iae.getCause());
         }
         // TODO enable        assertThat(mediaService.findRelated(form, mid, null, null, null)).isNotNull();
     }
@@ -157,7 +162,7 @@ public class NpoApiClientsITest {
     @Test
     public void testChanges() throws IOException {
         InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null, null, null);
-        IOUtils.copy(response, System.out);
+        IOUtils.copy(response, LoggerOutputStream.info(log));
     }
 
     @Test
@@ -183,9 +188,9 @@ public class NpoApiClientsITest {
         assertThat(result).isNotEmpty();
 
         Page page = result.getItems().get(0).getResult();
-        System.out.println(page.getSortDate());
-        System.out.println(page.getPublishStartInstant());
-        System.out.println(page.getCreationDate());
+        log.info("sortdate: {}", page.getSortDate());
+        log.info("publishstart: {}", page.getPublishStartInstant());
+        log.info("creation date: {}", page.getCreationDate());
 
     }
 
@@ -194,8 +199,7 @@ public class NpoApiClientsITest {
     public void testGetProfile() throws Exception {
         ProfileRestService profileService = clients.getProfileService();
         Profile p = profileService.load("cultura", null);
-
-        System.out.println(p);
+        log.info("cultura: {}", p);
 
     }
 
@@ -208,7 +212,7 @@ public class NpoApiClientsITest {
 
     @Test
     public void testGetDescendants() {
-        System.out.println("" + clients.getMediaService().findDescendants(
+        log.info("" + clients.getMediaService().findDescendants(
             new MediaForm(),
             "POMS_S_VPRO_216762",
             "vpro",
@@ -264,7 +268,7 @@ public class NpoApiClientsITest {
         ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
         Response response = builder.build().target(url).request().get();
         assertThat(response.getStatus()).isEqualTo(200);
-        System.out.println(response.readEntity(String.class));
+        log.info(response.readEntity(String.class));
         Duration duration = Duration.between(start, Instant.now());
         assertThat(duration.getSeconds()).isGreaterThanOrEqualTo(10);
 
@@ -288,7 +292,7 @@ public class NpoApiClientsITest {
         ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
         Response response = builder.build().target(url).request().get();
         assertThat(response.getStatus()).isEqualTo(200);
-        System.out.println(response.readEntity(String.class));
+        log.info(response.readEntity(String.class));
     }
 
 

@@ -32,7 +32,7 @@ public class NpoApiClientsGuiceTest {
             new AbstractModule() {
                 @Override
                 protected void configure() {
-                    Names.bindProperties(binder(), new Config("npoapiclients.properties").getPrefixedProperties(Config.Prefix.npo_api));
+                    Names.bindProperties(binder(), new Config("apiclient-test.properties").getPrefixedProperties(Config.Prefix.npo_api));
                     binder().bind(NpoApiClients.class).toProvider(NpoApiClients.Provider.class);
                 }
             },
@@ -46,6 +46,6 @@ public class NpoApiClientsGuiceTest {
     @Test
     public void test() {
         NpoApiClients clients  = injector.getInstance(NpoApiClients.class);
-        assertThat(clients.getOrigin()).isEqualTo("http://www.vpro.nl");
+        assertThat(clients.getOrigin()).isEqualTo("https://www.vpro.nl");
     }
 }
