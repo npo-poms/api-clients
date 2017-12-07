@@ -108,6 +108,11 @@ public class Config {
 
     }
 
+    public Map<String, String> getProperties() {
+        return properties.entrySet().stream()
+            .collect(Collectors.toMap((e) -> e.getKey().toString(), Map.Entry::getValue));
+    }
+
     public  Map<String, String> getProperties(Prefix prefix) {
         Map<String, String> result = mappedProperties.get(prefix);
         if (result == null) {
@@ -123,7 +128,7 @@ public class Config {
                         if (existing != null && existing == key.getStrength()) {
                             log.warn("Found the same property twice");
                         }
-                        if (existing == null || existing < key.getStrength()) {
+                        if (existing == null || existing <= key.getStrength()) {
                             r.put(key.getKey(), value);
                             strengths.put(key.getKey(), key.getStrength());
                             log.debug("Put {} -> {}", key, value);
@@ -137,6 +142,8 @@ public class Config {
         }
         return result;
     }
+
+
 
     public Map<String, String> getPrefixedProperties(Prefix prefix) {
         return getProperties(prefix)

@@ -57,7 +57,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 public class NpoApiClientsITest {
 
-    private static Env env = Env.DEV;
+    private static Env env = Env.TEST;
     private NpoApiClients clients;
 
     @Before

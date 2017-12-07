@@ -25,6 +25,8 @@ public class ConfigTest {
         log.info("{}", props);
         assertThat(config.env()).isEqualTo(Env.TEST);
         assertThat(props.get("baseUrl")).isEqualTo("https://rs-test.poms.omroep.nl/v1");
+        assertThat(props.get("apiKey")).isEqualTo("KEY2");
+
     }
 
 

@@ -2,6 +2,7 @@ package nl.vpro.api.client.resteasy;
 
 
 import lombok.Singular;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -121,14 +122,8 @@ public class NpoApiClients extends AbstractApiClient  {
         public Builder builder = builder();
 
         public Builder env(Env env) {
-            Map<String, String> properties = ConfigUtils.filtered(env,
-                ConfigUtils.getPropertiesInHome(CONFIG_FILE));
-
-            return
-                builder.baseUrl(properties.get("baseUrl"))
-                    .apiKey(properties.get("apiKey"))
-                    .secret(properties.get("secret"))
-                    .origin(properties.get("origin"));
+            builder.env(env);
+            return builder;
         }
 
         @Override
@@ -139,24 +134,28 @@ public class NpoApiClients extends AbstractApiClient  {
 
 
     @Named
+    @Slf4j
     public static class Builder {
 
         public Builder env(Env env) {
-            Map<String, String> properties = ConfigUtils.filtered(env,
-                ConfigUtils.getPropertiesInHome(CONFIG_FILE)
-            );
-
-            return
-                baseUrl(properties.get("baseUrl"))
-                    .apiKey(properties.get("apiKey"))
-                    .secret(properties.get("secret"))
-                    .origin(properties.get("origin"));
-
+            if(env != null) {
+                Map<String, String> defaultProperties = ConfigUtils.filtered(env, Config.Prefix.npo_api.getKey(),
+                    ConfigUtils.getPropertiesInHome(CONFIG_FILE)
+                );
+                ReflectionUtils.configureIfNull(this, defaultProperties);
+            }
+            return this;
         }
+
+        public NpoApiClients build() {
+            log.info("potver");
+            return _build();
+        }
+
     }
 
 
-    @lombok.Builder(builderClassName = "Builder")
+    @lombok.Builder(builderClassName = "Builder", buildMethodName = "_build")
     protected NpoApiClients(
         String baseUrl,
         Duration connectionRequestTimeout,
@@ -181,7 +180,8 @@ public class NpoApiClients extends AbstractApiClient  {
         String profile,
         Integer max,
         Jackson2Mapper objectMapper,
-        String mbeanName
+        String mbeanName,
+        Env env
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
             connectionRequestTimeout,
@@ -208,6 +208,8 @@ public class NpoApiClients extends AbstractApiClient  {
         this.properties = ThreadLocal.withInitial(() -> properties);
         this.profile = ThreadLocal.withInitial(() -> profile);
         this.max = ThreadLocal.withInitial(() -> max);
+
+
     }
 
     private static final Pattern VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
