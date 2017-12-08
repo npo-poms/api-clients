@@ -114,6 +114,18 @@ public class NpoApiPageUtil  {
         return result;
     }
 
+
+    public Iterator<Page> iterate(PageForm form, String profile) {
+        limiter.acquire();
+        try {
+            Iterator<Page> result = PageRestClientUtils.iterate(clients.getPageServiceNoTimeout(), form, profile);
+            limiter.upRate();
+            return result;
+        } catch (Throwable e) {
+            limiter.downRate();
+            throw new RuntimeException(clients + ":" + e.getMessage(), e);
+        }
+    }
     @Override
     public String toString() {
         return String.valueOf(clients);

@@ -56,6 +56,7 @@ public class NpoApiClients extends AbstractApiClient  {
     private MediaRestService mediaRestServiceProxy;
     private MediaRestService mediaRestServiceProxyNoTimeout;
     private PageRestService pageRestServiceProxy;
+    private PageRestService pageRestServiceProxyNoTimeout;
     private ScheduleRestServiceWithDefaults scheduleRestServiceProxy;
     private ProfileRestService profileRestServiceProxy;
     private TVVodRestService tvVodRestServiceProxy;
@@ -384,6 +385,15 @@ public class NpoApiClients extends AbstractApiClient  {
             () -> pageRestServiceProxy,
             () -> wrapClientAspect(
                 build(getClientHttpEngine(), PageRestService.class),
+                PageRestService.class));
+    }
+
+
+    public PageRestService getPageServiceNoTimeout() {
+        return pageRestServiceProxyNoTimeout = produceIfNull(
+            () -> pageRestServiceProxyNoTimeout,
+            () -> wrapClientAspect(
+                build(getClientHttpEngineNoTimeout(), PageRestService.class),
                 PageRestService.class));
     }
 

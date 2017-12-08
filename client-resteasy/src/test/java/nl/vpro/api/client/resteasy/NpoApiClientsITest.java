@@ -26,7 +26,6 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import com.google.common.io.ByteStreams;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
@@ -168,9 +167,10 @@ public class NpoApiClientsITest {
     @Test
     @Ignore("Takes very long")
     public void testIterate() throws IOException {
-        InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro", null, 0L, Integer.MAX_VALUE, null, null);
+        InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predcitions", null, 0L, Integer.MAX_VALUE, null, null);
         IOUtils.copy(response, ByteStreams.nullOutputStream());
     }
+
 
     @Test(expected = NotFoundException.class)
     public void testChangesError() throws IOException {
@@ -294,6 +294,7 @@ public class NpoApiClientsITest {
         assertThat(response.getStatus()).isEqualTo(200);
         log.info(response.readEntity(String.class));
     }
+
 
 
 

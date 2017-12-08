@@ -202,8 +202,7 @@ public class MediaRestClientUtils {
      * @deprecated We'll make a sitemap feature on page rest service.
      */
     @Deprecated
-    public static Iterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile)
-            throws IOException {
+    public static Iterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) {
         return new LazyIterator<>(() -> {
             try {
                 final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE, null,
@@ -227,6 +226,7 @@ public class MediaRestClientUtils {
             }
         });
     }
+
 
 
     static Properties properties = null;
