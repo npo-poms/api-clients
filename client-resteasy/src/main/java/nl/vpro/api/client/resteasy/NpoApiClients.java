@@ -137,19 +137,19 @@ public class NpoApiClients extends AbstractApiClient  {
     @Named
     @Slf4j
     public static class Builder {
-
+        private Env env = null;
         public Builder env(Env env) {
-            if(env != null) {
+            this.env = env;
+            return this;
+        }
+
+        public NpoApiClients build() {
+            if (env != null) {
                 Map<String, String> defaultProperties = ConfigUtils.filtered(env, Config.Prefix.npo_api.getKey(),
                     ConfigUtils.getPropertiesInHome(CONFIG_FILE)
                 );
                 ReflectionUtils.configureIfNull(this, defaultProperties);
             }
-            return this;
-        }
-
-        public NpoApiClients build() {
-            log.info("potver");
             return _build();
         }
 
@@ -181,8 +181,7 @@ public class NpoApiClients extends AbstractApiClient  {
         String profile,
         Integer max,
         Jackson2Mapper objectMapper,
-        String mbeanName,
-        Env env
+        String mbeanName
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
             connectionRequestTimeout,
