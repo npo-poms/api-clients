@@ -203,12 +203,21 @@ public class NpoApiClients extends AbstractApiClient  {
             mbeanName
             );
         this.apiKey = apiKey;
+
         this.secret = secret;
         this.origin = origin;
         this.properties = ThreadLocal.withInitial(() -> properties);
         this.profile = ThreadLocal.withInitial(() -> profile);
         this.max = ThreadLocal.withInitial(() -> max);
-
+        if (this.apiKey == null) {
+            log.warn("No api key configured for {}",  this);
+        }
+        if (this.secret == null) {
+            log.warn("No api secret configured for {}", this);
+        }
+        if (this.origin == null) {
+            log.warn("No api origin configured for {}", this);
+        }
 
     }
 
