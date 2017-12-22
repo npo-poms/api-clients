@@ -39,6 +39,7 @@ public class ConfigTest {
         assertThat(config.requiredOption(Config.Prefix.npo_api, "baseUrl")).isEqualTo("https://rs-dev.poms.omroep.nl/v1");
         //assertThat(config.requiredOption(Config.Prefix.npoapi, "secret")).isEqualTo("bla");
         assertThat(config.getProperties(Config.Prefix.npo_api).get("secret")).isEqualTo("devsecret2");
+        assertThat(config.getProperties(Config.Prefix.npo_api).get("apiKey")).isEqualTo("KEY2");
 
 
     }
