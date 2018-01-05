@@ -41,7 +41,7 @@ import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaType;
 import nl.vpro.util.CloseableIterator;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Ignore("This is an integration test")
 public class NpoApiClientUtilTest {

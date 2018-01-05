@@ -13,7 +13,7 @@ import nl.vpro.api.client.resteasy.PageUpdateApiClient;
 import nl.vpro.domain.page.PageType;
 import nl.vpro.domain.page.update.PageUpdate;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Ignore("This required running server at publish-dev")
 public class PageUpdateApiClientUtilTest {

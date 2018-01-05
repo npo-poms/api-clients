@@ -8,7 +8,6 @@ import javax.xml.bind.JAXB;
 
 import org.jboss.resteasy.api.validation.ViolationReport;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.vpro.domain.classification.ClassificationService;
@@ -21,8 +20,8 @@ import nl.vpro.rs.pages.update.PageUpdateRestService;
 import static org.junit.Assert.assertEquals;
 
 
-@Ignore("This required running server at publish-dev")
-public class PageUpdateApiClientTest {
+//@Ignore("This required running server at publish-dev")
+public class PageUpdateApiClientITest {
 
     private static PageUpdateApiClient clients;
 

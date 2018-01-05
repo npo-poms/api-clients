@@ -25,10 +25,7 @@ import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
 import nl.vpro.api.rs.subtitles.*;
-import nl.vpro.domain.media.Group;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.media.Program;
-import nl.vpro.domain.media.Segment;
+import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaList;
 import nl.vpro.domain.media.search.MediaListItem;
@@ -37,9 +34,7 @@ import nl.vpro.domain.media.update.collections.XmlCollection;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.rs.VersionRestService;
-import nl.vpro.util.Env;
-import nl.vpro.util.ProviderAndBuilder;
-import nl.vpro.util.ReflectionUtils;
+import nl.vpro.util.*;
 
 /**
  * A client for RESTful calls to a running MediaBackendRestService.
@@ -275,7 +270,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public static Builder configured(Env env, String... configFiles) {
         Builder builder = builder();
-        ReflectionUtils.configured(env, builder, configFiles);
+        ConfigUtils.configured(env, builder, configFiles);
         return builder;
     }
 
@@ -284,13 +279,13 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
      */
     public static Builder configured(Env env) {
         Builder builder = builder();
-        ReflectionUtils.configuredInHome(env, builder, "mediarestclient.properties", "creds.properties");
+        ConfigUtils.configuredInHome(env, builder, "mediarestclient.properties", "creds.properties");
         return builder;
     }
 
     public static Builder configured(Env env, Map<String, String> settings) {
         Builder builder = builder();
-        ReflectionUtils.configured(env, builder, settings);
+        ConfigUtils.configured(env, builder, settings);
         return builder;
     }
 
@@ -652,6 +647,63 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public String set(MediaUpdate mediaUpdate, String errors) {
         return set(Type.MEDIA, mediaUpdate, errors);
+    }
+
+    public Iterator<MemberUpdate> getAllMembers(String mid) throws IOException {
+        return BatchedReceiver.<MemberUpdate>builder()
+            .batchSize(240)
+            .batchGetter((offset, max) -> {
+                try {
+                    return getBackendRestService().getGroupMembers("media", mid, offset, max, "ASC", followMerges).iterator();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+            })
+            .build();
+    }
+
+    public Iterator<MemberUpdate> getAllEpisodes(String mid) throws IOException {
+        return BatchedReceiver.<MemberUpdate>builder()
+            .batchSize(defaultMax)
+            .batchGetter((offset, max) -> {
+                try {
+                    return getBackendRestService().getGroupEpisodes(mid, offset, max, "ASC", followMerges).iterator();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+            })
+            .build();
+    }
+
+
+    public Iterator<Member> getAllFullMembers(String mid) throws IOException {
+        return BatchedReceiver.<Member>builder()
+            .batchSize(defaultMax)
+            .batchGetter((offset, max) -> {
+                try {
+                    return getBackendRestService().getFullGroupMembers("media", mid, offset, max, "ASC", followMerges).iterator();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+            })
+            .build();
+    }
+
+    public Iterator<Member> getAllFullEpisodes(String mid) throws IOException {
+        return BatchedReceiver.<Member>builder()
+            .batchSize(defaultMax)
+            .batchGetter((offset, max) -> {
+                try {
+                    return getBackendRestService().getFullGroupEpisodes(mid, offset, max, "ASC", followMerges).iterator();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+            })
+            .build();
     }
 
     public MediaList<MediaListItem> find(MediaForm form) {

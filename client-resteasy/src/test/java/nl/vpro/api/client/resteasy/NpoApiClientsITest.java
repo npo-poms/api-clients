@@ -4,6 +4,8 @@
  */
 package nl.vpro.api.client.resteasy;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -24,7 +26,6 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import com.google.common.io.ByteStreams;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
@@ -41,47 +42,50 @@ import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.page.Page;
 import nl.vpro.i18n.Locales;
+import nl.vpro.logging.LoggerOutputStream;
 import nl.vpro.util.Env;
 
 import static nl.vpro.domain.api.Constants.ASC;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
  * @author Roelof Jan Koekoek
  * @since 3.0
  */
-@Ignore
+@Slf4j
 public class NpoApiClientsITest {
 
+    private static Env env = Env.TEST;
     private NpoApiClients clients;
 
     @Before
-    public void setUp() throws IOException {
-        clients = NpoApiClients.configured(Env.LOCALHOST)
+    public void setUp() {
+        clients = NpoApiClients.configured(env)
             .accept(MediaType.APPLICATION_XML_TYPE)
             .clearAcceptableLanguages()
             .acceptableLanguage(Locale.ENGLISH)
             .acceptableLanguage(Locales.DUTCH)
             .build();
-        System.out.println(clients);
+        log.info("{}", clients);
     }
 
     @Test(expected = NotAuthorizedException.class)
-    public void testAccessForbidden() throws Exception {
-        NpoApiClients wrongPassword = NpoApiClients.configured().secret("WRONG PASSWORD").build();
+    public void testAccessForbidden() {
+        NpoApiClients wrongPassword = NpoApiClients
+            .configured(env).secret("WRONG PASSWORD").build();
 
         wrongPassword.getMediaService().list(null, null, null, null);
     }
 
     @Test(expected = NotFoundException.class)
-    public void testNotFound() throws Exception {
+    public void testNotFound() {
         clients.getMediaService().load("DOES_NOT_EXIST", null, null);
     }
 
 
     @Test(expected = NotFoundException.class)
-    public void testYoutubeNotFound() throws Exception {
+    public void testYoutubeNotFound() {
         clients.getMediaService().load("https://www.youtube.com/watch?v=YWX2PSpy1TU", null, null);
     }
     @Test
@@ -92,27 +96,27 @@ public class NpoApiClientsITest {
     @Test
     public void testGetVersion() {
         String version = clients.getVersion();
-        System.out.println(version);
+        log.info(version);
         assertThat(clients.getVersion()).isNotEqualTo("unknown");
     }
 
 
     @Test
     public void testGetVersionNumber() {
-        System.out.println(clients.getVersionNumber());
+        log.info("version: {}", clients.getVersionNumber());
         assertThat(clients.getVersionNumber()).isGreaterThanOrEqualTo(4.7f);
     }
 
     @Test
-    public void testFound() throws Exception {
+    public void testFound() {
         for (int i = 0; i < 100; i++) {
             MediaObject program = clients.getMediaService().load("POMS_S_VPRO_827832", null, null);
-            System.out.println(i + ":" + program.getMainTitle());
+            log.info(i + ":" + program.getMainTitle());
         }
     }
 
     @Test
-    public void testMediaServiceLists() throws Exception {
+    public void testMediaServiceLists() {
         MediaRestService mediaService = clients.getMediaService();
 
         MediaResult list = mediaService.list(null, null, null, null);
@@ -132,7 +136,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testMediaServiceFinds() throws Exception {
+    public void testMediaServiceFinds() {
         try {
             MediaRestService mediaService = clients.getMediaService();
             MediaForm form = MediaFormBuilder.form().broadcasters("VPRO").broadcasterFacet().build();
@@ -149,7 +153,7 @@ public class NpoApiClientsITest {
 
             assertThat(mediaService.findDescendants(form, mid, null, null, null, null)).isNotNull();
         } catch (InternalServerErrorException iae) {
-            System.out.print(iae.getCause());
+            log.error("{}", iae.getCause());
         }
         // TODO enable        assertThat(mediaService.findRelated(form, mid, null, null, null)).isNotNull();
     }
@@ -157,15 +161,16 @@ public class NpoApiClientsITest {
     @Test
     public void testChanges() throws IOException {
         InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null, null, null);
-        IOUtils.copy(response, System.out);
+        IOUtils.copy(response, LoggerOutputStream.info(log));
     }
 
     @Test
     @Ignore("Takes very long")
     public void testIterate() throws IOException {
-        InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro", null, 0L, Integer.MAX_VALUE, null, null);
+        InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predcitions", null, 0L, Integer.MAX_VALUE, null, null);
         IOUtils.copy(response, ByteStreams.nullOutputStream());
     }
+
 
     @Test(expected = NotFoundException.class)
     public void testChangesError() throws IOException {
@@ -174,7 +179,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testGetPageService() throws Exception {
+    public void testGetPageService() {
         PageRestService pageService = clients.getPageService();
         PageForm form = PageFormBuilder.form().broadcasters("VPRO").broadcasterFacet().build();
 
@@ -183,32 +188,31 @@ public class NpoApiClientsITest {
         assertThat(result).isNotEmpty();
 
         Page page = result.getItems().get(0).getResult();
-        System.out.println(page.getSortDate());
-        System.out.println(page.getPublishStartInstant());
-        System.out.println(page.getCreationDate());
+        log.info("sortdate: {}", page.getSortDate());
+        log.info("publishstart: {}", page.getPublishStartInstant());
+        log.info("creation date: {}", page.getCreationDate());
 
     }
 
 
     @Test
-    public void testGetProfile() throws Exception {
+    public void testGetProfile() {
         ProfileRestService profileService = clients.getProfileService();
         Profile p = profileService.load("cultura", null);
-
-        System.out.println(p);
+        log.info("cultura: {}", p);
 
     }
 
 
     @Test(expected = BadRequestException.class)
-    public void testBadRequest() throws Exception {
+    public void testBadRequest() {
         PageRestService pageService = clients.getPageService();
         pageService.find(new PageForm(), null, "none", -1L, 1000);
     }
 
     @Test
     public void testGetDescendants() {
-        System.out.println("" + clients.getMediaService().findDescendants(
+        log.info("" + clients.getMediaService().findDescendants(
             new MediaForm(),
             "POMS_S_VPRO_216762",
             "vpro",
@@ -264,7 +268,7 @@ public class NpoApiClientsITest {
         ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
         Response response = builder.build().target(url).request().get();
         assertThat(response.getStatus()).isEqualTo(200);
-        System.out.println(response.readEntity(String.class));
+        log.info(response.readEntity(String.class));
         Duration duration = Duration.between(start, Instant.now());
         assertThat(duration.getSeconds()).isGreaterThanOrEqualTo(10);
 
@@ -288,8 +292,9 @@ public class NpoApiClientsITest {
         ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
         Response response = builder.build().target(url).request().get();
         assertThat(response.getStatus()).isEqualTo(200);
-        System.out.println(response.readEntity(String.class));
+        log.info(response.readEntity(String.class));
     }
+
 
 
 

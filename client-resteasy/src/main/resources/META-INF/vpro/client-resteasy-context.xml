@@ -6,7 +6,7 @@
           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
   <bean class="java.lang.String" id="npo-api.baseUrl">
-    <constructor-arg value="${npo-api.baseUrl}" />
+    <constructor-arg value="${npoapi.baseUrl}" />
   </bean>
 
   <bean class="java.lang.String" id="npo-api.apiKey">

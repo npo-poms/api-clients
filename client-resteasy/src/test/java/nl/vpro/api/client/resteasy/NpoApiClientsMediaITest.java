@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,13 +18,13 @@ import nl.vpro.domain.api.media.MediaFormBuilder;
 import nl.vpro.domain.api.media.MediaSearchResult;
 import nl.vpro.jackson2.Jackson2Mapper;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Michiel Meeuwissen
  * @since 4.3
  */
-@Ignore
 @Slf4j
 public class NpoApiClientsMediaITest {
 
