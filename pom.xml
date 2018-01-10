@@ -31,7 +31,7 @@
   </scm>
 
   <properties>
-    <poms.shared.version>5.5.8</poms.shared.version>
+    <poms.shared.version>5.5.9</poms.shared.version>
   </properties>
 
   <dependencyManagement>
