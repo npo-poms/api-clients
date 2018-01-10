@@ -32,8 +32,7 @@
 
   <properties>
     <poms.shared.version>5.6-SNAPSHOT</poms.shared.version>
-    <vpro.shared.version>1.76-SNAPSHOT</vpro.shared.version>
-  </properties>
+   </properties>
 
   <dependencyManagement>
     <dependencies>
