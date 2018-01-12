@@ -18,11 +18,10 @@ import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
+import nl.vpro.api.client.resteasy.Utils;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.jackson2.Jackson2Mapper;
-
-//import org.apache.http.impl.execchain.RequestAbortedException;
 
 /**
  * @author Michiel Meeuwissen
@@ -60,9 +59,10 @@ public class PageUpdateApiUtil {
         }
     }
 
+
     public PageUpdate get(@NotNull String url) {
         limiter.acquire();
-        return pageUpdateApiClient.getPageUpdateRestService().load(url);
+        return Utils.wrapNotFound(() -> pageUpdateApiClient.getPageUpdateRestService().load(url)).orElse(null);
     }
 
     public Result delete(@NotNull String id) {
