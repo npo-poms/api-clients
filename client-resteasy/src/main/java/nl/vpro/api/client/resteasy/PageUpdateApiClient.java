@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -19,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
@@ -27,9 +27,9 @@ import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.rs.thesaurus.update.NewPersonRequest;
 import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
+import nl.vpro.util.ConfigUtils;
 import nl.vpro.util.Env;
 import nl.vpro.util.ProviderAndBuilder;
-import nl.vpro.util.ReflectionUtils;
 
 @Slf4j
 public class PageUpdateApiClient extends AbstractApiClient {
@@ -164,27 +164,27 @@ public class PageUpdateApiClient extends AbstractApiClient {
         this.jwsUser = jwsUser;
     }
 
-    public static Builder configured(String... configFiles) throws IOException {
+    public static Builder configured(String... configFiles) {
         Builder builder = builder();
         log.info("Reading configuration from {}", Arrays.asList(configFiles));
-        ReflectionUtils.configured(builder, configFiles);
+        ConfigUtils.configured(builder, configFiles);
         return builder;
     }
 
     public static Builder configured(Env env, String... configFiles) {
         Builder  builder = builder();
-        ReflectionUtils.configured(env, builder, configFiles);
+        ConfigUtils.configured(env, builder, configFiles);
         return builder;
     }
 
     public static Builder configured(Env env, Map<String, String> settings) {
         Builder  builder = builder();
-        ReflectionUtils.configured(env, builder, settings);
+        ConfigUtils.configured(env, builder, settings);
         return builder;
     }
 
 
-    public static Builder configured() throws IOException {
+    public static Builder configured() {
         return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "pageupdateapiclient.properties");
     }
 
@@ -277,7 +277,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (args[0] instanceof NewPersonRequest) {
                 NewPersonRequest newPerson = (NewPersonRequest) args[0];
-                if (newPerson.getJws() == null) {
+                if (StringUtils.isEmpty(newPerson.getJws())) {
                     newPerson.setJws(jws());
                 }
             }
