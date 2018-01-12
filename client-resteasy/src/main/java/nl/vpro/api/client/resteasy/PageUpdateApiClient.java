@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 import javax.inject.Inject;
@@ -250,11 +251,15 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
     protected String jws() {
+        Instant now = Instant.now();
+        Instant expires = now.plus(Duration.ofHours(12));
         String compactJws = Jwts.builder()
             .setSubject("GTAAPerson")
-            .setHeaderParam("iss", jwsIssuer)
-            .setHeaderParam("usr", jwsUser)
-            .signWith(SignatureAlgorithm.HS512, jwsKey)
+            .claim("usr", jwsUser)
+            .setIssuedAt(Date.from(now))
+            .setIssuer(jwsIssuer)
+            .setExpiration(Date.from(expires))
+            .signWith(SignatureAlgorithm.HS256, jwsKey)
             .compact();
         log.debug(compactJws);
         return compactJws;
