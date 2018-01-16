@@ -13,6 +13,8 @@ import java.net.MalformedURLException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,6 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
+import com.google.common.base.Suppliers;
+
+import nl.vpro.api.client.utils.Swagger;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
@@ -249,6 +254,20 @@ public class PageUpdateApiClient extends AbstractApiClient {
         super.invalidate();
         pageUpdateRestService = null;
     }
+
+    private Supplier<String> version = null;
+
+    public String getVersion() {
+        if (version == null) {
+            version = Suppliers.memoizeWithExpiration(() -> Swagger.getVersionFromSwagger(baseUrl, "4.5"), 30, TimeUnit.MINUTES);
+        }
+        return version.get();
+    }
+
+    public Float getVersionNumber() {
+        return Swagger.getVersionNumber(getVersion());
+    }
+
 
     protected String jws() {
         Instant now = Instant.now();

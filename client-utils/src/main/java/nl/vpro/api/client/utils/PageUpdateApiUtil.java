@@ -87,6 +87,10 @@ public class PageUpdateApiUtil {
         return pageUpdateApiClient.getClassificationService();
     }
 
+    public PageUpdateApiClient getPageUpdateApiClient() {
+        return pageUpdateApiClient;
+    }
+
     protected Result exceptionToResult(Exception e) {
         Throwable cause = e.getCause();
         if (cause instanceof RequestAbortedException) {
