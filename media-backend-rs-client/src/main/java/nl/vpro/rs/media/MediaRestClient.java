@@ -104,6 +104,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     protected boolean waitForRetry = false;
 
     @lombok.Builder.Default
+    @Getter
+    @Setter
     protected boolean lookupCrids = true;
 
     @lombok.Builder.Default
@@ -733,13 +735,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         this.defaultMax = max;
     }
 
-    public boolean isLookupCrid() {
-        return lookupCrids;
-    }
-
-    public void setLookupCrid(boolean lookupCrids) {
-        this.lookupCrids = lookupCrids;
-    }
 
     public double getThrottleRate() {
         return this.throttle.getRate();

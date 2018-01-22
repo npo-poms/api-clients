@@ -95,7 +95,7 @@ public class MediaRestClientTest {
     public void post() {
         ProgramUpdate update = JAXB.unmarshal(getClass().getResourceAsStream("/POMS_VPRO_216532.xml"),
                 ProgramUpdate.class);
-        client.setLookupCrid(false);
+        client.setLookupCrids(false);
         String result = client.set(update);
 
         assertThat(result).isEqualTo("POMS_VPRO_216532");
@@ -106,7 +106,7 @@ public class MediaRestClientTest {
     public void postInvalid() {
         ProgramUpdate update = JAXB.unmarshal(getClass().getResourceAsStream("/POMS_VPRO_216532.xml"), ProgramUpdate.class);
         update.getTitles().clear();
-        client.setLookupCrid(false);
+        client.setLookupCrids(false);
         String result = client.set(update);
 
         assertThat(result).isEqualTo("POMS_VPRO_216532");
