@@ -94,7 +94,6 @@ public class NpoApiMediaUtil implements MediaProvider {
                         try {
                             MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
                             limiter.upRate();
-                            //return Optional.ofNullable(object);
                             return Optional.ofNullable(object);
                         } catch (IOException | RuntimeException se) {
                             limiter.downRate();
