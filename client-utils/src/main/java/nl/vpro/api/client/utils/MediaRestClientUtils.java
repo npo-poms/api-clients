@@ -76,11 +76,14 @@ public class MediaRestClientUtils {
     }
 
     public static MediaObject loadOrNull(MediaRestService restService, String id) throws IOException {
-        return wrapForOrNull(
+        /*return wrapForOrNull(
             () -> restService.load(id, null, null),
             () -> id
-        );
+        );*/
+        return restService.loadMultiple(new IdList(id), null, null).getItems().get(0).getResult();
     }
+
+
 
     public static Subtitles loadOrNull(SubtitlesRestService restService, String mid, Locale language) throws IOException {
         return wrapForOrNull(
