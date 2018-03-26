@@ -5,7 +5,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -23,9 +22,9 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-
 import com.google.common.base.Suppliers;
 
+import nl.vpro.api.client.utils.Config;
 import nl.vpro.api.client.utils.Swagger;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
@@ -35,6 +34,9 @@ import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
 import nl.vpro.util.ConfigUtils;
 import nl.vpro.util.Env;
 import nl.vpro.util.ProviderAndBuilder;
+import nl.vpro.util.ReflectionUtils;
+
+import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 
 @Slf4j
 public class PageUpdateApiClient extends AbstractApiClient {
@@ -165,7 +167,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         description = user + "@" + this.getBaseUrl();
         this.classificationService = classificationService;
         this.jwsIssuer = jwsIssuer;
-        this.jwsKey = jwsKey.getBytes();
+        this.jwsKey = jwsKey == null ? null : jwsKey.getBytes();
         this.jwsUser = jwsUser;
     }
 
@@ -189,9 +191,18 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
 
-    public static Builder configured() {
-        return configured(System.getProperty("user.home") + File.separator + "conf" + File.separator + "pageupdateapiclient.properties");
+    public static Builder configured(Env env) {
+        Builder builder = builder();
+        Config config = new Config(CONFIG_FILE);
+        config.setEnv(env);
+        ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.pageupdate_api));
+        return builder;
     }
+
+    public static Builder configured() {
+        return configured((Env) null);
+    }
+
 
     public PageUpdateRestService getPageUpdateRestService() {
         return pageUpdateRestService = produceIfNull(
