@@ -34,9 +34,9 @@ public class Config {
     public enum Prefix {
 
         npo_api,
-        backend_api,
+        npo_backend_api,
         parkpost,
-        pageupdate_api,
+        npo_pageupdate_api,
         poms;
 
         public String getKey() {
