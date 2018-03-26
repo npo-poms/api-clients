@@ -200,6 +200,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
                 PageUpdateRestService.class,
                     getTarget(getClientHttpEngine())
                         .proxyBuilder(PageUpdateRestService.class)
+                        .classloader(PageUpdateRestService.class.getClassLoader())
                         .defaultConsumes(MediaType.APPLICATION_XML).build(),
                 Error.class
             ));
@@ -212,6 +213,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
             () -> proxyErrorsAndCount(ThesaurusUpdateRestService.class,
                 proxyForJws(getTarget(getClientHttpEngine())
                     .proxyBuilder(ThesaurusUpdateRestService.class)
+                    .classloader(ThesaurusUpdateRestService.class.getClassLoader())
                     .defaultConsumes(MediaType.APPLICATION_XML).build()),
                 Error.class
             ));
