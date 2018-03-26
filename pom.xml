@@ -32,6 +32,7 @@
 
   <properties>
     <poms.shared.version>5.6.0</poms.shared.version>
+    <vpro.shared.version>1.76.1</vpro.shared.version>
    </properties>
 
   <dependencyManagement>

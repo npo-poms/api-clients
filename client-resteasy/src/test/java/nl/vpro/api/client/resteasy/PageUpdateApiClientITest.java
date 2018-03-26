@@ -1,6 +1,5 @@
 package nl.vpro.api.client.resteasy;
 
-import java.io.IOException;
 import java.time.Instant;
 
 import javax.ws.rs.core.Response;
@@ -16,6 +15,7 @@ import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.domain.page.update.PageUpdateBuilder;
 import nl.vpro.domain.page.update.ParagraphUpdate;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
+import nl.vpro.util.Env;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,12 +28,12 @@ public class PageUpdateApiClientITest {
 
 
     @BeforeClass
-    public static void setUp() throws IOException {
-        clients = PageUpdateApiClient.configured().build();
+    public static void setUp() {
+        clients = PageUpdateApiClient.configured(Env.DEV).build();
     }
 
     @Test
-    public void testSave() throws Exception {
+    public void testSave() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
         PageUpdate instance = PageUpdateBuilder.article("http://www.meeuw.org/test/1234")
             .title("my title " + Instant.now())
@@ -50,7 +50,7 @@ public class PageUpdateApiClientITest {
 
 
     @Test
-    public void testSaveTopStory() throws Exception {
+    public void testSaveTopStory() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
         PageUpdate page = PageUpdateBuilder.article("http://www.meeuw.org/test/topstory")
             .title("supergoed, dit! (" + Instant.now() + ")")
@@ -71,7 +71,7 @@ public class PageUpdateApiClientITest {
 
 
     @Test
-    public void testSaveWithTopStory() throws Exception {
+    public void testSaveWithTopStory() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
         PageUpdate page = PageUpdateBuilder.article("http://www.meeuw.org/test/page_with_topstory")
             .broadcasters("VPRO")
@@ -93,7 +93,7 @@ public class PageUpdateApiClientITest {
 
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
         Response response = client.delete("http://www.meeuw.org/test/1234", false, 1);
         if (response.getStatus() == 400) {
@@ -107,7 +107,7 @@ public class PageUpdateApiClientITest {
 
 
     @Test
-    public void testDeleteMultiple() throws Exception {
+    public void testDeleteMultiple() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
         Response response = client.delete("http://www.meeuw.org/", true, 100);
         if (response.getStatus() == 400) {
@@ -120,7 +120,7 @@ public class PageUpdateApiClientITest {
     }
 
     @Test
-    public void testGetClassificationService() throws Exception {
+    public void testGetClassificationService() {
         ClassificationService classificationService = clients.getClassificationService();
         assertEquals("Jeugd", classificationService.getTerm("3.0.1.1").getName());
         classificationService = clients.getClassificationService();

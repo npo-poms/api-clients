@@ -2,9 +2,11 @@ package nl.vpro.api.client.resteasy;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -32,12 +34,20 @@ public class NpoApiClientsGuiceTest {
             new AbstractModule() {
                 @Override
                 protected void configure() {
-                    Names.bindProperties(binder(), new Config("apiclient-test.properties").getPrefixedProperties(Config.Prefix.npo_api));
+                    Map<String, String> config = new HashMap<>();
+                    config.putAll(new Config("apiclient-test.properties").getPrefixedProperties(Config.Prefix.npo_api));
+                    config.putAll(new Config("apiclient-test.properties").getPrefixedProperties(Config.Prefix.pageupdate_api));
+                    Names.bindProperties(binder(), config);
+
                     binder().bind(NpoApiClients.class).toProvider(NpoApiClients.Provider.class);
+
+                    binder().bind(PageUpdateApiClient.class).toProvider(PageUpdateApiClient.Provider.class);
+
                 }
+
             },
             new Convertors(),
-            new OptionalModule(NpoApiClients.Provider.class)
+            new OptionalModule(NpoApiClients.Provider.class,PageUpdateApiClient.Provider.class)
         );
 
 
@@ -47,5 +57,8 @@ public class NpoApiClientsGuiceTest {
     public void test() {
         NpoApiClients clients  = injector.getInstance(NpoApiClients.class);
         assertThat(clients.getOrigin()).isEqualTo("https://www.vpro.nl");
+
+        PageUpdateApiClient pageUpdateApiClient = injector.getInstance(PageUpdateApiClient.class);
+        //pageUpdateApiClient.getPageUpdateRestService().save(new PageUpdate());
     }
 }
