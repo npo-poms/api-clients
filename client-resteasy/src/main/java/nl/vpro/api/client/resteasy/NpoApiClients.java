@@ -77,6 +77,7 @@ public class NpoApiClients extends AbstractApiClient  {
         @Inject
         @Named("npo-api.origin")
         String origin;
+
         @Inject
         @Named("npo-api.connectionRequestTimeout")
         Optional<String> connectionRequestTimeout;

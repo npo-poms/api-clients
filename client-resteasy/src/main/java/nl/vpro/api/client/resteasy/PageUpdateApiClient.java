@@ -63,42 +63,42 @@ public class PageUpdateApiClient extends AbstractApiClient {
     public static class Provider implements javax.inject.Provider<PageUpdateApiClient> {
 
         @Inject
-        @Named("npo-pageupdate-api.baseUrl")
+        @Named("pageupdate-api.baseUrl")
         String baseUrl;
         @Inject
-        @Named("npo-pageupdate-api.user")
+        @Named("pageupdate-api.user")
         String user;
         @Inject
-        @Named("npo-pageupdate-api.password")
+        @Named("pageupdate-api.password")
         String password;
 
         @Inject
-        @Named("npo-pageupdate-api.jwsIssuer")
-        String jwsIssuer;
+        @Named("pageupdate-api.jwsIssuer")
+        Optional<String> jwsIssuer;
         @Inject
-        @Named("npo-pageupdate-api.jwsKey")
-        String jwsKey;
+        @Named("pageupdate-api.jwsKey")
+        Optional<String> jwsKey;
         @Inject
-        @Named("npo-pageupdate-api.jwsUser")
-        String jwsUser;
+        @Named("pageupdate-api.jwsUser")
+        Optional<String> jwsUser;
 
         @Inject
-        @Named("npo-pageupdate-api.connectionRequestTimeout")
+        @Named("pageupdate-api.connectionRequestTimeout")
         Optional<String> connectionRequestTimeout;
         @Inject
-        @Named("npo-pageupdate-api.connectTimeout")
+        @Named("pageupdate-api.connectTimeout")
         Optional<String> connectTimeout;
         @Inject
-        @Named("npo-pageupdate-api.socketTimeout")
+        @Named("pageupdate-api.socketTimeout")
         Optional<String> socketTimeout;
         @Inject
-        @Named("npo-pageupdate-api.maxConnections")
+        @Named("pageupdate-api.maxConnections")
         Optional<Integer> maxConnections;
         @Inject
-        @Named("npo-pageupdate-api.maxConnectionsPerRoute")
+        @Named("pageupdate-api.maxConnectionsPerRoute")
         Optional<Integer> maxConnectionsPerRoute;
         @Inject
-        @Named("npo-pageupdate-api.warnThreshold")
+        @Named("pageupdate-api.warnThreshold")
         Optional<String> warnThreshold;
         // should have worked, but at least I couldn't get it working in magnolia. I made a duration convertor in ProviderAndBuilder now.
         // Optional<Duration> warnThreshold;
@@ -139,7 +139,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         String jwsKey,
         String jwsUser
         ) {
-        super(baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api",
+        super(baseUrl == null ? "https://publish.pages.omroep.nl/api" : (baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api"),
             connectionRequestTimeout,
             connectTimeout,
             socketTimeout,
@@ -258,7 +258,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     @Override
     protected void buildResteasy(ResteasyClientBuilder builder) {
-        builder.register(authentication);
+        builder
+            .register(authentication);
     }
 
 
