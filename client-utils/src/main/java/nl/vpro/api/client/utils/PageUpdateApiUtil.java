@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.SocketException;
 import java.util.HashMap;
+import java.util.function.Function;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
@@ -14,8 +16,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.impl.execchain.RequestAbortedException;
-import com.google.common.base.Function;
-import com.google.inject.Inject;
 
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
 import nl.vpro.api.client.resteasy.Utils;
