@@ -31,6 +31,7 @@ import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.api.rs.v3.thesaurus.ThesaurusRestService;
 import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
+import nl.vpro.domain.media.MediaObject;
 import nl.vpro.jackson2.Jackson2Mapper;
 import nl.vpro.util.ConfigUtils;
 import nl.vpro.util.Env;
@@ -61,6 +62,25 @@ public class NpoApiClients extends AbstractApiClient  {
     private ThreadLocal<String> profile = ThreadLocal.withInitial(() -> null);
     private ThreadLocal<Integer> max = ThreadLocal.withInitial(() -> null);
 
+   @Override
+    protected void appendTestResult(StringBuilder builder, String arg) {
+       super.appendTestResult(builder, arg);
+       builder.append(getMediaService());
+       builder.append("\n");
+       try {
+           MediaObject load = getMediaService().load(arg, null, null);
+           builder.append("load(").append(arg).append(")").append(load);
+       } catch (Exception e) {
+           builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
+       }
+       builder.append("\n");
+       builder.append("version:").append(getVersion());
+       builder.append("\n");
+       builder.append(getPageService());
+       builder.append("\n");
+       builder.append(getProfileService());
+       builder.append("\n");
+    }
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "unused", "OptionalUsedAsFieldOrParameterType"})
     @Named
@@ -172,7 +192,8 @@ public class NpoApiClients extends AbstractApiClient  {
         String profile,
         Integer max,
         Jackson2Mapper objectMapper,
-        String mbeanName
+        String mbeanName,
+        ClassLoader classLoader
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
             connectionRequestTimeout,
@@ -191,7 +212,8 @@ public class NpoApiClients extends AbstractApiClient  {
             contentType,
             trustAll,
             objectMapper,
-            mbeanName
+            mbeanName,
+            classLoader
             );
         this.apiKey = apiKey;
 

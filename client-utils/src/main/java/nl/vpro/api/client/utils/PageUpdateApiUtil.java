@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.SocketException;
 import java.util.HashMap;
+import java.util.function.Function;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
@@ -14,8 +16,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.impl.execchain.RequestAbortedException;
-import com.google.common.base.Function;
-import com.google.inject.Inject;
 
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
 import nl.vpro.api.client.resteasy.Utils;
@@ -93,11 +93,18 @@ public class PageUpdateApiUtil {
 
     protected Result exceptionToResult(Exception e) {
         Throwable cause = e.getCause();
-        if (cause instanceof RequestAbortedException) {
+        while (e.getCause() != null) {
+            cause = e.getCause();
+        }
+        try {
+            throw cause;
+        } catch (RequestAbortedException rae) {
             return returnResult(Result.aborted(pageUpdateApiClient + ":" + cause.getClass().getName() + " " + cause.getMessage()));
-        } else if (cause instanceof SocketException) {
+        } catch (SocketException se) {
             return returnResult(Result.error(pageUpdateApiClient + ":" + cause.getClass().getName() + " " + cause.getMessage()));
-        } else {
+        } catch (ProcessingException | NullPointerException fatal) {
+            return returnResult(Result.fatal(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage(), e));
+        } catch (Throwable t) {
             return returnResult(Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage()));
         }
     }

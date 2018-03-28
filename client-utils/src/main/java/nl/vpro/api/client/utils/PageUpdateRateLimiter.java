@@ -1,7 +1,5 @@
 package nl.vpro.api.client.utils;
 
-import lombok.Builder;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -9,7 +7,7 @@ import javax.inject.Named;
  * @author Michiel Meeuwissen
  * @since 1.1
  */
-@Builder
+@lombok.Builder
 public class PageUpdateRateLimiter extends AbstractRateLimiter {
 
     @Inject

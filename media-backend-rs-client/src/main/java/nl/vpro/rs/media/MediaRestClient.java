@@ -195,7 +195,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         Double throttleRate,
         Double asynchronousThrottleRate,
         boolean validateInput,
-        String mbeanName) {
+        String mbeanName,
+        ClassLoader classLoader) {
         super(baseUrl,
             connectionRequestTimeout,
             connectTimeout,
@@ -213,7 +214,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             null,
             trustAll,
             null, // only xml is relevant
-            mbeanName);
+            mbeanName,
+            classLoader);
         if (defaultMax != null) {
             this.defaultMax = defaultMax;
         }

@@ -28,6 +28,7 @@ import nl.vpro.api.client.utils.Config;
 import nl.vpro.api.client.utils.Swagger;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.rs.thesaurus.update.NewPersonRequest;
 import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
@@ -57,6 +58,26 @@ public class PageUpdateApiClient extends AbstractApiClient {
     private final BasicAuthentication authentication;
 
     private ClassificationService classificationService;
+
+
+    @Override
+    protected void appendTestResult(StringBuilder builder, String arg) {
+        super.appendTestResult(builder, arg);
+        builder.append(getPageUpdateRestService());
+        builder.append("\n");
+        try {
+            PageUpdate load = getPageUpdateRestService().load(arg);
+            builder.append("load(").append(arg).append(")").append(load);
+        } catch (Exception e) {
+            builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
+        }
+        builder.append("\n");
+        builder.append("version:").append(getVersion()).append("\n");
+        builder.append(getThesaurusUpdateRestService());
+        builder.append("\n");
+        builder.append(getClassificationService());
+        builder.append("\n");
+    }
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType"})
     @Named
@@ -137,7 +158,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
         ClassificationService classificationService,
         String jwsIssuer,
         String jwsKey,
-        String jwsUser
+        String jwsUser,
+        ClassLoader classLoader
         ) {
         super(baseUrl == null ? "https://publish.pages.omroep.nl/api" : (baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api"),
             connectionRequestTimeout,
@@ -156,7 +178,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
             null,
             trustAll,
             null,
-            mbeanName);
+            mbeanName,
+            classLoader
+            );
         if (user == null){
             throw new IllegalArgumentException("No user given");
         }
@@ -169,6 +193,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         this.jwsIssuer = jwsIssuer;
         this.jwsKey = jwsKey == null ? null : jwsKey.getBytes();
         this.jwsUser = jwsUser;
+
     }
 
     public static Builder configured(String... configFiles) {
@@ -211,8 +236,10 @@ public class PageUpdateApiClient extends AbstractApiClient {
                 PageUpdateRestService.class,
                     getTarget(getClientHttpEngine())
                         .proxyBuilder(PageUpdateRestService.class)
-                        .classloader(PageUpdateRestService.class.getClassLoader())
-                        .defaultConsumes(MediaType.APPLICATION_XML).build(),
+                        .classloader(classLoader)
+                        .defaultConsumes(MediaType.APPLICATION_XML)
+
+                        .build(),
                 Error.class
             ));
     }
@@ -222,17 +249,23 @@ public class PageUpdateApiClient extends AbstractApiClient {
         return thesaurusUpdateRestService = produceIfNull(
             () -> thesaurusUpdateRestService,
             () -> proxyErrorsAndCount(ThesaurusUpdateRestService.class,
-                proxyForJws(getTarget(getClientHttpEngine())
-                    .proxyBuilder(ThesaurusUpdateRestService.class)
-                    .classloader(ThesaurusUpdateRestService.class.getClassLoader())
-                    .defaultConsumes(MediaType.APPLICATION_XML).build()),
+                proxyForJws(
+                    getTarget(getClientHttpEngine())
+                        .proxyBuilder(ThesaurusUpdateRestService.class)
+                        .classloader(classLoader)
+                        .defaultConsumes(MediaType.APPLICATION_XML)
+                        .build()
+                ),
                 Error.class
             ));
     }
 
 
     public ThesaurusUpdateRestService proxyForJws(ThesaurusUpdateRestService clean) {
-        return (ThesaurusUpdateRestService) Proxy.newProxyInstance(ThesaurusUpdateRestService.class.getClassLoader(), new Class[]{ThesaurusUpdateRestService.class}, new JwsAspect(clean));
+        return (ThesaurusUpdateRestService) Proxy.newProxyInstance(
+            classLoader,
+            new Class[]{ThesaurusUpdateRestService.class}, new JwsAspect(clean)
+        );
     }
 
 
@@ -267,6 +300,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
     public synchronized void invalidate() {
         super.invalidate();
         pageUpdateRestService = null;
+        thesaurusUpdateRestService = null;
     }
 
     private Supplier<String> version = null;
@@ -308,7 +342,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (args[0] instanceof NewPersonRequest) {
+            if (args != null && args.length > 1 && args[0] instanceof NewPersonRequest) {
                 NewPersonRequest newPerson = (NewPersonRequest) args[0];
                 if (StringUtils.isEmpty(newPerson.getJws())) {
                     newPerson.setJws(jws());
