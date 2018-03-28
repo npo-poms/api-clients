@@ -62,16 +62,17 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     @Override
     protected void appendTestResult(StringBuilder builder, String arg) {
+        super.appendTestResult(builder, arg);
         builder.append(getPageUpdateRestService());
         builder.append("\n");
         try {
             PageUpdate load = getPageUpdateRestService().load(arg);
             builder.append("load(").append(arg).append(")").append(load);
-            builder.append("\n");
         } catch (Exception e) {
             builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
         }
-        builder.append("version:").append(getVersion());
+        builder.append("\n");
+        builder.append("version:").append(getVersion()).append("\n");
         builder.append(getThesaurusUpdateRestService());
         builder.append("\n");
         builder.append(getClassificationService());
@@ -248,11 +249,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
         return thesaurusUpdateRestService = produceIfNull(
             () -> thesaurusUpdateRestService,
             () -> proxyErrorsAndCount(ThesaurusUpdateRestService.class,
-                proxyForJws(getTarget(getClientHttpEngine())
-                    .proxyBuilder(ThesaurusUpdateRestService.class)
-                    .classloader(classLoader)
-                    .defaultConsumes(MediaType.APPLICATION_XML)
-                    .build()),
+                proxyForJws(
+                    getTarget(getClientHttpEngine())
+                        .proxyBuilder(ThesaurusUpdateRestService.class)
+                        .classloader(classLoader)
+                        .defaultConsumes(MediaType.APPLICATION_XML)
+                        .build()
+                ),
                 Error.class
             ));
     }
@@ -260,8 +263,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     public ThesaurusUpdateRestService proxyForJws(ThesaurusUpdateRestService clean) {
         return (ThesaurusUpdateRestService) Proxy.newProxyInstance(
-            ThesaurusUpdateRestService.class.getClassLoader(), new
-                Class[]{ThesaurusUpdateRestService.class}, new JwsAspect(clean)
+            classLoader,
+            new Class[]{ThesaurusUpdateRestService.class}, new JwsAspect(clean)
         );
     }
 
@@ -339,7 +342,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (args[0] instanceof NewPersonRequest) {
+            if (args != null && args.length > 1 && args[0] instanceof NewPersonRequest) {
                 NewPersonRequest newPerson = (NewPersonRequest) args[0];
                 if (StringUtils.isEmpty(newPerson.getJws())) {
                     newPerson.setJws(jws());

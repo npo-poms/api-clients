@@ -64,20 +64,22 @@ public class NpoApiClients extends AbstractApiClient  {
 
    @Override
     protected void appendTestResult(StringBuilder builder, String arg) {
-        builder.append(getMediaService());
-        builder.append("\n");
-        try {
-            MediaObject load = getMediaService().load(arg, null, null);
-            builder.append("load(").append(arg).append(")").append(load);
-            builder.append("\n");
-        } catch (Exception e) {
-            builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
-        }
-        builder.append("version:").append(getVersion());
-        builder.append(getPageService());
-        builder.append("\n");
-        builder.append(getProfileService());
-        builder.append("\n");
+       super.appendTestResult(builder, arg);
+       builder.append(getMediaService());
+       builder.append("\n");
+       try {
+           MediaObject load = getMediaService().load(arg, null, null);
+           builder.append("load(").append(arg).append(")").append(load);
+       } catch (Exception e) {
+           builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
+       }
+       builder.append("\n");
+       builder.append("version:").append(getVersion());
+       builder.append("\n");
+       builder.append(getPageService());
+       builder.append("\n");
+       builder.append(getProfileService());
+       builder.append("\n");
     }
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "unused", "OptionalUsedAsFieldOrParameterType"})
