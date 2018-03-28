@@ -31,6 +31,7 @@ import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.api.rs.v3.thesaurus.ThesaurusRestService;
 import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
+import nl.vpro.domain.media.MediaObject;
 import nl.vpro.jackson2.Jackson2Mapper;
 import nl.vpro.util.ConfigUtils;
 import nl.vpro.util.Env;
@@ -61,6 +62,23 @@ public class NpoApiClients extends AbstractApiClient  {
     private ThreadLocal<String> profile = ThreadLocal.withInitial(() -> null);
     private ThreadLocal<Integer> max = ThreadLocal.withInitial(() -> null);
 
+   @Override
+    protected void appendTestResult(StringBuilder builder, String arg) {
+        builder.append(getMediaService());
+        builder.append("\n");
+        try {
+            MediaObject load = getMediaService().load(arg, null, null);
+            builder.append("load(").append(arg).append(")").append(load);
+            builder.append("\n");
+        } catch (Exception e) {
+            builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
+        }
+        builder.append("version:").append(getVersion());
+        builder.append(getPageService());
+        builder.append("\n");
+        builder.append(getProfileService());
+        builder.append("\n");
+    }
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "unused", "OptionalUsedAsFieldOrParameterType"})
     @Named

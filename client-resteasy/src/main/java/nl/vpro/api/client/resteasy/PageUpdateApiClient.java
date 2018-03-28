@@ -28,6 +28,7 @@ import nl.vpro.api.client.utils.Config;
 import nl.vpro.api.client.utils.Swagger;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.rs.thesaurus.update.NewPersonRequest;
 import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
@@ -57,6 +58,25 @@ public class PageUpdateApiClient extends AbstractApiClient {
     private final BasicAuthentication authentication;
 
     private ClassificationService classificationService;
+
+
+    @Override
+    protected void appendTestResult(StringBuilder builder, String arg) {
+        builder.append(getPageUpdateRestService());
+        builder.append("\n");
+        try {
+            PageUpdate load = getPageUpdateRestService().load(arg);
+            builder.append("load(").append(arg).append(")").append(load);
+            builder.append("\n");
+        } catch (Exception e) {
+            builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
+        }
+        builder.append("version:").append(getVersion());
+        builder.append(getThesaurusUpdateRestService());
+        builder.append("\n");
+        builder.append(getClassificationService());
+        builder.append("\n");
+    }
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType"})
     @Named
