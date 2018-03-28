@@ -93,11 +93,18 @@ public class PageUpdateApiUtil {
 
     protected Result exceptionToResult(Exception e) {
         Throwable cause = e.getCause();
-        if (cause instanceof RequestAbortedException) {
+        while (e.getCause() != null) {
+            cause = e.getCause();
+        }
+        try {
+            throw cause;
+        } catch (RequestAbortedException rae) {
             return returnResult(Result.aborted(pageUpdateApiClient + ":" + cause.getClass().getName() + " " + cause.getMessage()));
-        } else if (cause instanceof SocketException) {
+        } catch (SocketException se) {
             return returnResult(Result.error(pageUpdateApiClient + ":" + cause.getClass().getName() + " " + cause.getMessage()));
-        } else {
+        } catch (ProcessingException | NullPointerException fatal) {
+            return returnResult(Result.fatal(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage(), e));
+        } catch (Throwable t) {
             return returnResult(Result.error(pageUpdateApiClient + ":" + e.getClass().getName() + " " + e.getMessage()));
         }
     }

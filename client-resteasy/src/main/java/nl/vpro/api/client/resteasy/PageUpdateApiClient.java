@@ -137,7 +137,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
         ClassificationService classificationService,
         String jwsIssuer,
         String jwsKey,
-        String jwsUser
+        String jwsUser,
+        ClassLoader classLoader
         ) {
         super(baseUrl == null ? "https://publish.pages.omroep.nl/api" : (baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api"),
             connectionRequestTimeout,
@@ -156,7 +157,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
             null,
             trustAll,
             null,
-            mbeanName);
+            mbeanName,
+            classLoader
+            );
         if (user == null){
             throw new IllegalArgumentException("No user given");
         }
@@ -169,6 +172,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         this.jwsIssuer = jwsIssuer;
         this.jwsKey = jwsKey == null ? null : jwsKey.getBytes();
         this.jwsUser = jwsUser;
+
     }
 
     public static Builder configured(String... configFiles) {
@@ -211,8 +215,10 @@ public class PageUpdateApiClient extends AbstractApiClient {
                 PageUpdateRestService.class,
                     getTarget(getClientHttpEngine())
                         .proxyBuilder(PageUpdateRestService.class)
-                        .classloader(PageUpdateRestService.class.getClassLoader())
-                        .defaultConsumes(MediaType.APPLICATION_XML).build(),
+                        .classloader(classLoader)
+                        .defaultConsumes(MediaType.APPLICATION_XML)
+
+                        .build(),
                 Error.class
             ));
     }
@@ -224,15 +230,19 @@ public class PageUpdateApiClient extends AbstractApiClient {
             () -> proxyErrorsAndCount(ThesaurusUpdateRestService.class,
                 proxyForJws(getTarget(getClientHttpEngine())
                     .proxyBuilder(ThesaurusUpdateRestService.class)
-                    .classloader(ThesaurusUpdateRestService.class.getClassLoader())
-                    .defaultConsumes(MediaType.APPLICATION_XML).build()),
+                    .classloader(classLoader)
+                    .defaultConsumes(MediaType.APPLICATION_XML)
+                    .build()),
                 Error.class
             ));
     }
 
 
     public ThesaurusUpdateRestService proxyForJws(ThesaurusUpdateRestService clean) {
-        return (ThesaurusUpdateRestService) Proxy.newProxyInstance(ThesaurusUpdateRestService.class.getClassLoader(), new Class[]{ThesaurusUpdateRestService.class}, new JwsAspect(clean));
+        return (ThesaurusUpdateRestService) Proxy.newProxyInstance(
+            ThesaurusUpdateRestService.class.getClassLoader(), new
+                Class[]{ThesaurusUpdateRestService.class}, new JwsAspect(clean)
+        );
     }
 
 
@@ -267,6 +277,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
     public synchronized void invalidate() {
         super.invalidate();
         pageUpdateRestService = null;
+        thesaurusUpdateRestService = null;
     }
 
     private Supplier<String> version = null;
