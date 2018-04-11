@@ -21,10 +21,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Slf4j
 public class Swagger {
 
-    private static final Pattern VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
+    private static final Pattern BRANCH_VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
+
+    private static final Pattern VERSION = Pattern.compile("(\\d+.\\d+(?:\\.\\d+)?).*");
 
     public static String getVersionFromSwagger(String baseUrl, String defaultVersion) {
-        String result = "unknown";
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonFactory factory = new JsonFactory();
@@ -32,23 +33,48 @@ public class Swagger {
             JsonParser jp = factory.createParser(url.openStream());
             JsonNode swagger = mapper.readTree(jp);
             String versionString = swagger.get("info").get("version").asText();
-            Matcher matcher = VERSION.matcher(versionString);
-            if (matcher.find()) {
-                result = matcher.group(1);
-            } else {
-                result = defaultVersion;
-                log.info("No version found in {} {}, supposing {}", url, versionString,  result);
-            }
+            return getVersion(versionString, defaultVersion);
         } catch (JsonParseException jpe) {
             log.warn(jpe.getMessage());
-            result = defaultVersion;
+            return defaultVersion;
         } catch (ConnectException e) {
             log.warn(e.getMessage());
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
-        return result;
+        return "unknown";
+
     }
+
+    public static String getVersion(String versionString, String defaultVersion) {
+        String result = null;
+        {
+            Matcher matcher = BRANCH_VERSION.matcher(versionString);
+            if (matcher.find()) {
+                result = matcher.group(1);
+                log.info("Version found from {} -> result", versionString, result);
+            }
+        }
+        if (result == null) {
+            Matcher matcher = VERSION.matcher(versionString);
+            if (matcher.matches()) {
+                result = matcher.group(1);
+            }
+        }
+
+        if (result == null) {
+            result = defaultVersion;
+            log.info("No version found in {}, supposing {}", versionString,  result);
+        }
+        return result;
+
+    }
+
+
+    public static Float getVersionNumber(String versionString, String defaultVersion) {
+        return getVersionNumber(getVersion(versionString, defaultVersion));
+    }
+
 
 
     /**
