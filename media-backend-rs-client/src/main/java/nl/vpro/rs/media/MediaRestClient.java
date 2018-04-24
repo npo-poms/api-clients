@@ -118,6 +118,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Setter
     private boolean imageMetaData = false;
 
+
+
     public <T> T doValidated(Callable<T> callable) throws Exception {
         boolean was = validateInput;
         try {
@@ -196,7 +198,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         Double asynchronousThrottleRate,
         boolean validateInput,
         String mbeanName,
-        ClassLoader classLoader) {
+        ClassLoader classLoader,
+        String version) {
         super(baseUrl,
             connectionRequestTimeout,
             connectTimeout,
@@ -246,6 +249,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             this.setAsynchronousThrottleRate(asynchronousThrottleRate);
         }
         this.validateInput = validateInput;
+        this.version = version == null ? null : () -> version;
     }
 
     enum Type {
@@ -556,6 +560,13 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String transcode(TranscodeRequest request) {
+        Response response = getBackendRestService().transcode(null, request);
+        String result = response.readEntity(String.class);
+        response.close();
+        return  result;
     }
 
     protected String set(final Type type, final MediaUpdate update) {
