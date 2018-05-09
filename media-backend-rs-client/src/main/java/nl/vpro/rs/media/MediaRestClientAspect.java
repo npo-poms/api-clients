@@ -8,10 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 /**
@@ -77,10 +74,26 @@ class MediaRestClientAspect<T> implements InvocationHandler {
                 }
             } catch (NotFoundException nfe) {
                 return null;
-            } catch (ServiceUnavailableException sue) {
-                client.retryAfterWaitOrException(method.getName() + ": Service unavailable", sue);
+            } catch (ServiceUnavailableException  sue) {
+                client.retryAfterWaitOrException(method.getName() + ": Service unavailable:" + sue.getMessage(), sue);
                 // retry
                 continue;
+            } catch (InternalServerErrorException isee) {
+                // odd, should not happen.
+/*
+) 500:<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>500 Internal Server Error</title>
+</head><body>
+<h1>Internal Server Error</h1>
+<p>The server encountered an internal error or
+misconfiguration and was unable to complete
+your request.</p>
+*/
+                client.retryAfterWaitOrException(method.getName() + ": Internal Server error: " + isee.getMessage(), isee);
+                // retry
+                continue;
+
             } catch (RuntimeException re) {
                 throw re;
             } catch (Exception e) {
