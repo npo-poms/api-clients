@@ -447,7 +447,7 @@ public class MediaRestClientTest {
             .mainTitle("Deze group gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID).toString())
             .mainDescription(LocalDateTime.now(Schedule.ZONE_ID).toString())
             ;
-        GroupUpdate groupUpdate = GroupUpdate.create(group);
+        GroupUpdate groupUpdate = GroupUpdate.create(group.build());
         String groupMid = client.set(groupUpdate);
         System.out.println("" + groupCrid + " ->  " + groupMid);
         return new WithId<>(groupUpdate, groupMid);
