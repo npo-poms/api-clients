@@ -51,7 +51,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     private int cacheSize = 500;
     private Duration cacheTTL = Duration.ofMinutes(5);
 
-    LoadingCache<String, Optional<MediaObject>> cache = buildCache();
+    LoadingCache<String, Optional<? extends MediaObject>> cache = buildCache();
 
     @Inject
     public NpoApiMediaUtil(@NotNull NpoApiClients clients, @NotNull NpoApiRateLimiter limiter) {
@@ -81,13 +81,13 @@ public class NpoApiMediaUtil implements MediaProvider {
         cache = buildCache();
     }
 
-    private LoadingCache<String, Optional<MediaObject>> buildCache() {
+    private LoadingCache<String, Optional<? extends MediaObject>> buildCache() {
         return CacheBuilder.newBuilder()
             .concurrencyLevel(4)
             .maximumSize(cacheSize)
             .expireAfterWrite(cacheTTL.toMillis(), TimeUnit.MILLISECONDS)
             .build(
-                new CacheLoader<String, Optional<MediaObject>>() {
+                new CacheLoader<String, Optional<? extends MediaObject>>() {
                     @Override
                     public Optional<MediaObject> load(@NotNull String mid) throws IOException {
                         limiter.acquire();
@@ -216,7 +216,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public MediaObject[] load(String... id) throws IOException {
-        Optional<MediaObject>[] result = new Optional[id.length];
+        Optional<? extends MediaObject>[] result = new Optional[id.length];
         Set<String> toRequest = new LinkedHashSet<>();
         for (int i = 0; i < id.length; i++) {
             result[i] = cache.getIfPresent(id[i]);
@@ -268,15 +268,8 @@ public class NpoApiMediaUtil implements MediaProvider {
 
 
     public RedirectList redirects() {
-        Response response= null;
-        try {
-            response = clients.getMediaService().redirects(null);
+        try (Response response = clients.getMediaService().redirects(null)) {
             return response.readEntity(RedirectList.class);
-
-        } finally {
-            if (response != null) {
-                response.close();
-            }
         }
 
     }
