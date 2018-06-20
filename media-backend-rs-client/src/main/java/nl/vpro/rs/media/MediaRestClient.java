@@ -171,7 +171,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     @lombok.Builder(builderClassName = "Builder")
     protected MediaRestClient(
-        String userAgent,
+
         String baseUrl,
         Duration connectionRequestTimeout,
         Duration connectTimeout,
@@ -200,9 +200,9 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         boolean validateInput,
         String mbeanName,
         ClassLoader classLoader,
+        String userAgent,
         String version) {
         super(
-            userAgent,
             baseUrl,
             connectionRequestTimeout,
             connectTimeout,
@@ -221,7 +221,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             trustAll,
             null, // only xml is relevant
             mbeanName,
-            classLoader);
+            classLoader,
+            userAgent);
         if (defaultMax != null) {
             this.defaultMax = defaultMax;
         }
