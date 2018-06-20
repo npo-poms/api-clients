@@ -193,7 +193,8 @@ public class NpoApiClients extends AbstractApiClient  {
         Integer max,
         Jackson2Mapper objectMapper,
         String mbeanName,
-        ClassLoader classLoader
+        ClassLoader classLoader,
+        String userAgent
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
             connectionRequestTimeout,
@@ -213,7 +214,8 @@ public class NpoApiClients extends AbstractApiClient  {
             trustAll,
             objectMapper,
             mbeanName,
-            classLoader
+            classLoader,
+            userAgent
             );
         this.apiKey = apiKey;
 

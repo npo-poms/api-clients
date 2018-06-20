@@ -159,9 +159,11 @@ public class PageUpdateApiClient extends AbstractApiClient {
         String jwsIssuer,
         String jwsKey,
         String jwsUser,
-        ClassLoader classLoader
+        ClassLoader classLoader,
+        String userAgent
         ) {
-        super(baseUrl == null ? "https://publish.pages.omroep.nl/api" : (baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api"),
+        super(
+            baseUrl == null ? "https://publish.pages.omroep.nl/api" : (baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api"),
             connectionRequestTimeout,
             connectTimeout,
             socketTimeout,
@@ -179,7 +181,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
             trustAll,
             null,
             mbeanName,
-            classLoader
+            classLoader,
+            userAgent
             );
         if (user == null){
             throw new IllegalArgumentException("No user given");

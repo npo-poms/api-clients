@@ -171,6 +171,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     @lombok.Builder(builderClassName = "Builder")
     protected MediaRestClient(
+        String userAgent,
         String baseUrl,
         Duration connectionRequestTimeout,
         Duration connectTimeout,
@@ -200,7 +201,9 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         String mbeanName,
         ClassLoader classLoader,
         String version) {
-        super(baseUrl,
+        super(
+            userAgent,
+            baseUrl,
             connectionRequestTimeout,
             connectTimeout,
             socketTimeout,
