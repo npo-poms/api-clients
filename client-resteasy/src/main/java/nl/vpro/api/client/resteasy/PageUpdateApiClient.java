@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.MalformedURLException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -277,13 +276,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
         return classificationService = produceIfNull(
             () -> classificationService,
             () -> {
-                try {
 
-                    log.info("No classification service wired. Created {}", this.classificationService);
-                    return new CachedURLClassificationServiceImpl(this.baseUrl);
-                } catch (MalformedURLException e) {
-                    throw new RuntimeException(e);
-                }
+                log.info("No classification service wired. Created {}", this.classificationService);
+                return new CachedURLClassificationServiceImpl(this.baseUrl);
             });
     }
 
