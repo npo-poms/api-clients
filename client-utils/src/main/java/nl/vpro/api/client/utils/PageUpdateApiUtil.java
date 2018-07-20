@@ -1,12 +1,13 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.SocketException;
-import java.util.HashMap;
-import java.util.function.Function;
+import nl.vpro.api.client.resteasy.PageUpdateApiClient;
+import nl.vpro.api.client.resteasy.Utils;
+import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.jackson2.Jackson2Mapper;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.impl.execchain.RequestAbortedException;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -14,14 +15,11 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-
-import org.apache.http.impl.execchain.RequestAbortedException;
-
-import nl.vpro.api.client.resteasy.PageUpdateApiClient;
-import nl.vpro.api.client.resteasy.Utils;
-import nl.vpro.domain.classification.ClassificationService;
-import nl.vpro.domain.page.update.PageUpdate;
-import nl.vpro.jackson2.Jackson2Mapper;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.function.Function;
 
 /**
  * @author Michiel Meeuwissen
@@ -92,10 +90,7 @@ public class PageUpdateApiUtil {
     }
 
     protected Result exceptionToResult(Exception e) {
-        Throwable cause = e.getCause();
-        while (e.getCause() != null) {
-            cause = e.getCause();
-        }
+        Throwable cause = ExceptionUtils.getRootCause(e);
         try {
             throw cause;
         } catch (RequestAbortedException rae) {
