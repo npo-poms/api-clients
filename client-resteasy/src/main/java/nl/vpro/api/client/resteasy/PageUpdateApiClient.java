@@ -340,7 +340,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (args != null && args.length > 1 && args[0] instanceof NewPersonRequest) {
+            if (args != null && args.length >= 1 && args[0] instanceof NewPersonRequest) {
                 NewPersonRequest newPerson = (NewPersonRequest) args[0];
                 if (StringUtils.isEmpty(newPerson.getJws())) {
                     newPerson.setJws(jws());
