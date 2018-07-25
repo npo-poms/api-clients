@@ -343,7 +343,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
             if (args != null && args.length >= 1 && args[0] instanceof NewPersonRequest) {
                 NewPersonRequest newPerson = (NewPersonRequest) args[0];
                 if (StringUtils.isEmpty(newPerson.getJws())) {
-                    newPerson.setJws(jws());
+                    String jws = jws();
+                    log.debug("implicetely set jws to {}", jws);
+                    newPerson.setJws(jws);
                 }
             }
             return method.invoke(proxied, args);
