@@ -130,6 +130,8 @@ public class NpoApiClients extends AbstractApiClient  {
         Optional<Integer> bucketCount;
 
 
+        private ClassLoader classLoader = NpoApiClients.class.getClassLoader();
+
 
         public Builder builder = builder();
 
