@@ -1,5 +1,7 @@
 package nl.vpro.rs.media;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
@@ -31,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Michiel Meeuwissen
  */
 @Ignore("needs a running rest-service (TODO: make an integration test)")
+@Slf4j
 public class MediaRestClientTest {
 
     private MediaRestClient client;
@@ -66,9 +69,20 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void loadCrid() {
+    public void loadByCrid() {
         ProgramUpdate update3 = client.get("crid://tmp.fragment.mmbase.vpro.nl/43084334");
-        System.out.println("update: " + update3);
+        assertThat(update3).isNotNull();
+        log.info("update: {}", update3);
+
+
+    }
+
+
+    @Test
+    public void loadFullByCrid() {
+        Program update3 = client.getFull(Program.class, "crid://tmp.fragment.mmbase.vpro.nl/43084334");
+        assertThat(update3).isNotNull();
+        log.info("update: {}", update3);
 
 
     }
