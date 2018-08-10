@@ -4,7 +4,6 @@
  */
 package nl.vpro.api.client.resteasy;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
@@ -27,7 +26,7 @@ public class ApiAuthenticationRequestFilter implements ClientRequestFilter {
     }
 
     @Override
-    public void filter(ClientRequestContext requestContext) throws IOException {
+    public void filter(ClientRequestContext requestContext) {
         authenticate(requestContext.getUri(), requestContext.getHeaders());
     }
 
