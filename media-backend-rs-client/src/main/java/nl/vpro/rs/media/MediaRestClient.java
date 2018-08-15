@@ -438,7 +438,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @SuppressWarnings("unchecked")
     protected <T extends MediaUpdate<?>> T get(final Class<T> type, final String id) {
         try {
-            return (T) getBackendRestService().getMedia(Type.valueOf(type).toString(), id, followMerges);
+            return (T) getBackendRestService()
+                .getMedia(Type.valueOf(type).toString(), id, followMerges);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
