@@ -1,5 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -41,6 +43,7 @@ import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
  * @author Michiel Meeuwissen
  */
 @Named
+@Slf4j
 public class NpoApiMediaUtil implements MediaProvider {
 
     final NpoApiClients clients;
@@ -67,6 +70,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         cache.invalidateAll();
         if (clients.getBrowserCache() != null) {
             clients.getBrowserCache().clear();
+            log.info("Cleared browser cache");
         }
     }
     @Named("npo-api-mediautil.cachesize")
