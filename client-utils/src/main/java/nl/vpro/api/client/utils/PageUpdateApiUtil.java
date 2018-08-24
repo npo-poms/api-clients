@@ -73,7 +73,10 @@ public class PageUpdateApiUtil {
     public Result delete(@NotNull String id) {
         limiter.acquire();
         try {
-            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, false, 1), id, STRING, DeleteResult.class);
+            return handleResponse(
+                pageUpdateApiClient.getPageUpdateRestService()
+                    .delete(id, false, 1), id, STRING, DeleteResult.class
+            );
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
@@ -81,10 +84,15 @@ public class PageUpdateApiUtil {
 
     public Result deleteWhereStartsWith(@NotNull String prefix) {
         limiter.acquire();
+        int batchSize = 10000;
         try {
             Result r;
             while (true) {
-                r = handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(prefix, true, 10000), prefix, STRING, DeleteResult.class);
+                r = handleResponse(
+                    pageUpdateApiClient.getPageUpdateRestService()
+                        .delete(prefix, true, batchSize), prefix, STRING, DeleteResult.class
+                );
+                log.info("Batch deleted {}", r);
                 if (r.isOk()) {
                     if ( ((DeleteResult) r.getEntity()).getCount() == 0) {
                         return r;
@@ -126,7 +134,7 @@ public class PageUpdateApiUtil {
                 case 200:
                 case 202:
                     log.debug(pageUpdateApiClient + " " + response.getStatus());
-                    return returnResult(Result.success(response.readEntity(e)));
+                    return returnResult(Result.success(response, e));
                 case 400: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;

@@ -2,6 +2,8 @@ package nl.vpro.api.client.utils;
 
 import lombok.Getter;
 
+import javax.ws.rs.core.Response;
+
 /**
  * @author Michiel Meeuwissen
  * @since 1.0
@@ -38,6 +40,14 @@ public class Result<E> {
 
     public static <E> Result<E> success(E entity) {
         return new Result<>(Status.SUCCESS, null, null, entity);
+    }
+
+    public static <E> Result<E> success(Response response, Class<E> entityClass) {
+        if (Void.class.equals(entityClass)) {
+            return success(null);
+        } else {
+            return success(response.readEntity(entityClass));
+        }
     }
 
 

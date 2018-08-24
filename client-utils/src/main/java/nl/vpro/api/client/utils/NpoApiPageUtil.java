@@ -94,7 +94,7 @@ public class NpoApiPageUtil  {
             PageFormBuilder builder = PageFormBuilder.form();
             for (List<String> idList : Lists.partition(Arrays.asList(mids), 500)) {
 
-                builder.mediaForm().mediaIds(idList.toArray(new String[idList.size()]));
+                builder.mediaForm().mediaIds(idList.toArray(new String[0]));
                 PageSearchResult pages =
                     clients.getPageService().find(builder.build(), profile, props, 0L, 240);
                 for (Page page : pages.asList()) {
@@ -107,7 +107,8 @@ public class NpoApiPageUtil  {
                 }
             }
         }
-        Page[] result = Collections.nCopies(mids.length, null).toArray(new Page[mids.length]);
+        Page[] result = Collections.<Page>nCopies(mids.length, null)
+            .toArray(new Page[0]);
         for (int i = 0; i < mids.length; i++) {
             result[i] = map.get(mids[i]);
         }
@@ -159,7 +160,8 @@ public class NpoApiPageUtil  {
         private Optional<Page> get(String mid) {
             NpoApiPageUtil.this.pageSupplier.put(key, new PageSupplier(key));
             if (results == null) {
-                results = NpoApiPageUtil.this.loadByMid(key.profiles, key.props, mids.toArray(new String[mids.size()]));
+                results = NpoApiPageUtil.this.loadByMid(key.profiles, key.props, mids
+                    .toArray(new String[0]));
             }
             return Optional.ofNullable(results[mids.indexOf(mid)]);
         }

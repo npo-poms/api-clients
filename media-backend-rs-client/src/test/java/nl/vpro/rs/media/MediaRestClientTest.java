@@ -25,6 +25,7 @@ import nl.vpro.domain.media.search.TitleForm;
 import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
 import nl.vpro.domain.media.update.*;
+import nl.vpro.logging.LoggerOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,7 +40,7 @@ public class MediaRestClientTest {
     private MediaRestClient client;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         client = MediaRestClient.configured().build();
         client.setWaitForRetry(true);
 
@@ -160,7 +161,7 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void addMemberOfOtherBroadcasterBetterVersion() throws IOException {
+    public void addMemberOfOtherBroadcasterBetterVersion() {
         WithId<GroupUpdate> group = sampleGroup("createMember", "VPRO");
         System.out.println(group.id);
 
@@ -170,7 +171,7 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void removeMemberOfOtherBroadcasterBetterVersion() throws IOException {
+    public void removeMemberOfOtherBroadcasterBetterVersion() {
         WithId<GroupUpdate> group = sampleGroup("createMember", "VPRO");
         System.out.println(group.id);
 
@@ -192,16 +193,16 @@ public class MediaRestClientTest {
             for (MemberRefUpdate r : update.getMemberOf()) {
                 if (r.getMediaRef().equals(groupUpdate.getMid())) {
 
-                    JAXB.marshal(r, System.out);
+                    JAXB.marshal(r, LoggerOutputStream.info(log));
                     //r.setMediaRef(null);
-                    System.out.println("" + groupUpdate + "->" + r.getMediaRef());
+                    log.info("" + groupUpdate + "->" + r.getMediaRef());
                     Response response = client.getBackendRestService().removeMemberOf(null, update.getMid(), groupUpdate.getMid(), null, true, null);
                     response.close();
                 }
             }
             //update.getMemberOf().removeIf(m -> m.getMediaRef().equals(groupUpdate.getMid()));
 
-            System.out.println("Removed " + update.getMid() + " from group " + groupUpdate.getMid());
+            log.info("Removed " + update.getMid() + " from group " + groupUpdate.getMid());
             break;
         }
     }
@@ -224,7 +225,7 @@ public class MediaRestClientTest {
 
         newProgram.setLocations(program.getLocations());
 
-        System.out.println(client.set(newProgram));
+        log.info(client.set(newProgram));
     }
 
     @Test
@@ -238,11 +239,11 @@ public class MediaRestClientTest {
 
         newProgram.setLocations(client.cloneLocations("VPRO_1142324"));
 
-        System.out.println(client.set(newProgram));
+        log.info(client.set(newProgram));
     }
 
     @Test
-    public void copyLocations2() throws IOException {
+    public void copyLocations2() {
 
         ProgramUpdate existing = client.get("POMS_VARA_256131");
 
@@ -255,8 +256,8 @@ public class MediaRestClientTest {
         }
 
 
-        JAXB.marshal(existing, System.out);
-        System.out.println(client.set(existing));
+        JAXB.marshal(existing, LoggerOutputStream.info(log));
+        log.info(client.set(existing));
 
     }
 

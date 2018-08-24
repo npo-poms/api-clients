@@ -17,6 +17,7 @@ import nl.vpro.domain.page.update.ParagraphUpdate;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.util.Env;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 
@@ -35,6 +36,10 @@ public class PageUpdateApiClientITest {
     @Test
     public void testSave() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
+        PageUpdateRestService client2 = clients.getPageUpdateRestService();
+
+        assertThat(client).isSameAs(client2);
+
         PageUpdate instance = PageUpdateBuilder.article("http://www.meeuw.org/test/1234")
             .title("my title " + Instant.now())
             .broadcasters("VPRO").build();
