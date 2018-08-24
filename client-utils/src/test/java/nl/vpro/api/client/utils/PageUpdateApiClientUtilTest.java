@@ -1,8 +1,10 @@
 package nl.vpro.api.client.utils;
 
-import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.StringReader;
 
+import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXB;
 
 import org.junit.Before;
@@ -12,23 +14,23 @@ import org.junit.Test;
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
 import nl.vpro.domain.page.PageType;
 import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.util.Env;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Ignore("This required running server at publish-dev")
+@Slf4j
 public class PageUpdateApiClientUtilTest {
 
     private PageUpdateApiUtil util;
 
-    private String target = "http://publish-test.pages.omroep.nl/";
-    //private String target = "http://localhost:8060/";
-
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         PageUpdateApiClient clients = PageUpdateApiClient
-            .configured()
+            .configured(Env.LOCALHOST)
+            .accept(MediaType.APPLICATION_JSON_TYPE)
             .build();
-        util = new PageUpdateApiUtil(clients, new PageUpdateRateLimiter());
+        util = PageUpdateApiUtil.builder().client(clients).build();
     }
 
     @Test
@@ -73,5 +75,12 @@ public class PageUpdateApiClientUtilTest {
         Result result = util.save(update);
         assertThat(result.getStatus()).isEqualTo(Result.Status.DENIED);
         assertThat(result.getErrors()).contains("Access is denied");
+    }
+
+    @Test
+    public void deleteWhereStartsWith() {
+        log.info("{}", util);
+        Result result = util.deleteWhereStartsWith("http://bla/bloe");
+        log.info("{}", result.getEntity());
     }
 }

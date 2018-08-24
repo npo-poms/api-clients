@@ -1,13 +1,12 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.api.client.resteasy.PageUpdateApiClient;
-import nl.vpro.api.client.resteasy.Utils;
-import nl.vpro.domain.classification.ClassificationService;
-import nl.vpro.domain.page.update.PageUpdate;
-import nl.vpro.jackson2.Jackson2Mapper;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.http.impl.execchain.RequestAbortedException;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -15,11 +14,16 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.SocketException;
-import java.util.HashMap;
-import java.util.function.Function;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.impl.execchain.RequestAbortedException;
+
+import nl.vpro.api.client.resteasy.PageUpdateApiClient;
+import nl.vpro.api.client.resteasy.Utils;
+import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.page.update.DeleteResult;
+import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.jackson2.Jackson2Mapper;
 
 /**
  * @author Michiel Meeuwissen
@@ -43,15 +47,18 @@ public class PageUpdateApiUtil {
     private final PageUpdateRateLimiter limiter;
 
     @Inject
-    public PageUpdateApiUtil(PageUpdateApiClient clients, PageUpdateRateLimiter limiter) {
-        pageUpdateApiClient = clients;
-        this.limiter = limiter;
+    @lombok.Builder
+    public PageUpdateApiUtil(
+        PageUpdateApiClient client,
+        PageUpdateRateLimiter limiter) {
+        pageUpdateApiClient = client;
+        this.limiter = limiter == null ?  PageUpdateRateLimiter.builder().build() : limiter;
     }
 
     public Result save(@NotNull @Valid PageUpdate update) {
         limiter.acquire();
         try {
-            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().save(update), update, JACKSON);
+            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().save(update), update, JACKSON, Void.class);
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
@@ -66,16 +73,25 @@ public class PageUpdateApiUtil {
     public Result delete(@NotNull String id) {
         limiter.acquire();
         try {
-            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, false, 1), id, STRING);
+            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, false, 1), id, STRING, DeleteResult.class);
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
     }
 
-    public Result deleteWhereStartsWith(@NotNull String id) {
+    public Result deleteWhereStartsWith(@NotNull String prefix) {
         limiter.acquire();
         try {
-            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(id, true, 10000), id, STRING);
+            Result r;
+            while (true) {
+                r = handleResponse(pageUpdateApiClient.getPageUpdateRestService().delete(prefix, true, 10000), prefix, STRING, DeleteResult.class);
+                if (r.isOk()) {
+                    if ( ((DeleteResult) r.getEntity()).getCount() == 0) {
+                        return r;
+                    }
+                }
+            }
+
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
@@ -104,13 +120,13 @@ public class PageUpdateApiUtil {
         }
     }
 
-    protected <T> Result handleResponse(Response response, T input, Function<Object, String> toString) {
+    protected <T, E> Result<?> handleResponse(Response response, T input, Function<Object, String> toString, Class<E> e) {
         try {
             switch (response.getStatus()) {
                 case 200:
                 case 202:
                     log.debug(pageUpdateApiClient + " " + response.getStatus());
-                    return returnResult(Result.success());
+                    return returnResult(Result.success(response.readEntity(e)));
                 case 400: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
@@ -140,8 +156,8 @@ public class PageUpdateApiUtil {
                             try {
                                 String string = response.readEntity(String.class);
                                 return returnResult(Result.invalid(pageUpdateApiClient + ":" + string));
-                            } catch (Exception e) {
-                                return returnResult(Result.invalid(pageUpdateApiClient + ":" + String.valueOf(new HashMap<>(headers)) + "(" + e.getMessage() + ")"));
+                            } catch (Exception ex) {
+                                return returnResult(Result.invalid(pageUpdateApiClient + ":" + String.valueOf(new HashMap<>(headers)) + "(" + ex.getMessage() + ")"));
                             }
                         }
                     } else {
@@ -156,7 +172,7 @@ public class PageUpdateApiUtil {
         }
     }
 
-    protected Result returnResult(Result result) {
+    protected <E> Result<E> returnResult(Result<E> result) {
         if (result.needsRetry()) {
             limiter.downRate();
         }

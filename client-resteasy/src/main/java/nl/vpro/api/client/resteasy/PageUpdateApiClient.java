@@ -150,6 +150,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         Integer bucketCount,
         Duration warnThreshold,
         List<Locale> acceptableLanguages,
+        MediaType accept,
         Boolean trustAll,
         String user,
         String password,
@@ -175,7 +176,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
             bucketCount,
             warnThreshold,
             acceptableLanguages,
-            null,
+            accept,
             null,
             trustAll,
             null,
@@ -240,7 +241,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
                         .proxyBuilder(PageUpdateRestService.class)
                         .classloader(classLoader)
                         .defaultConsumes(MediaType.APPLICATION_XML)
-
                         .build(),
                 Error.class
             ));

@@ -6,7 +6,7 @@ import lombok.Getter;
  * @author Michiel Meeuwissen
  * @since 1.0
  */
-public class Result {
+public class Result<E> {
 
     @Getter
     private final Status status;
@@ -17,46 +17,56 @@ public class Result {
     @Getter
     private final Throwable cause;
 
+    @Getter
+    private final E entity;
+
+
     private Result(Status success, String errors) {
-        this(success, errors, null);
+        this(success, errors, null, null);
     }
 
-     private Result(Status success, String errors, Throwable cause) {
+    private Result(Status success, String errors, Throwable cause, E entity) {
         this.status = success;
         this.errors = errors;
         this.cause = cause;
+        this.entity = entity;
     }
 
-    public static Result success() {
-        return new Result(Status.SUCCESS, null);
+    public static Result<Void> success() {
+        return new Result<>(Status.SUCCESS, null);
     }
 
-    public static Result notneeded() {
-        return new Result(Status.NOTNEEDED, null);
+    public static <E> Result<E> success(E entity) {
+        return new Result<>(Status.SUCCESS, null, null, entity);
     }
 
-    public static Result error(String message) {
-        return new Result(Status.ERROR, message);
+
+    public static Result<Void> notneeded() {
+        return new Result<>(Status.NOTNEEDED, null);
     }
 
-    public static Result fatal(String message, Throwable t) {
-        return new Result(Status.FATAL_ERROR, message, t);
+    public static Result<Void> error(String message) {
+        return new Result<>(Status.ERROR, message);
     }
 
-    public static Result notfound(String message) {
-        return new Result(Status.NOTFOUND, message);
+    public static Result<Void> fatal(String message, Throwable t) {
+        return new Result<>(Status.FATAL_ERROR, message, t, null);
     }
 
-    public static Result aborted(String message) {
-        return new Result(Status.ABORTED, message);
+    public static Result<Void> notfound(String message) {
+        return new Result<>(Status.NOTFOUND, message);
     }
 
-    public static Result denied(String message) {
-        return new Result(Status.DENIED, message);
+    public static Result<Void> aborted(String message) {
+        return new Result<>(Status.ABORTED, message);
     }
 
-    public static Result invalid(String message) {
-        return new Result(Status.INVALID, message);
+    public static Result<Void> denied(String message) {
+        return new Result<>(Status.DENIED, message);
+    }
+
+    public static Result<Void> invalid(String message) {
+        return new Result<>(Status.INVALID, message);
     }
 
     public boolean needsRetry() {
