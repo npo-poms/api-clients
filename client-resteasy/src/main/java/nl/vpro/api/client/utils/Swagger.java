@@ -25,7 +25,7 @@ public class Swagger {
 
     private static final Pattern VERSION = Pattern.compile("(\\d+.\\d+(?:\\.\\d+)?).*");
 
-    public static String getVersionFromSwagger(String baseUrl, String defaultVersion) {
+    public static VersionResult getVersionFromSwagger(String baseUrl, String defaultVersion) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonFactory factory = new JsonFactory();
@@ -33,17 +33,17 @@ public class Swagger {
             JsonParser jp = factory.createParser(url.openStream());
             JsonNode swagger = mapper.readTree(jp);
             String versionString = swagger.get("info").get("version").asText();
-            return getVersion(versionString, defaultVersion);
+            return VersionResult.builder().version(getVersion(versionString, defaultVersion)).available(true).build();
         } catch (JsonParseException jpe) {
             log.warn(jpe.getMessage());
-            return defaultVersion;
+            return VersionResult.builder().version(defaultVersion).available(true).build();
         } catch (ConnectException e) {
             log.warn(e.getMessage());
+            return VersionResult.builder().version(defaultVersion).available(false).build();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
+            return VersionResult.builder().version(defaultVersion).available(false).build();
         }
-        return "unknown";
-
     }
 
     public static String getVersion(String versionString, String defaultVersion) {

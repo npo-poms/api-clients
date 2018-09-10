@@ -10,10 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import nl.vpro.domain.classification.ClassificationService;
-import nl.vpro.domain.page.update.LinkUpdate;
-import nl.vpro.domain.page.update.PageUpdate;
-import nl.vpro.domain.page.update.PageUpdateBuilder;
-import nl.vpro.domain.page.update.ParagraphUpdate;
+import nl.vpro.domain.page.update.*;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.util.Env;
 
@@ -101,6 +98,7 @@ public class PageUpdateApiClientITest {
     public void testDelete() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
         Response response = client.delete("http://www.meeuw.org/test/1234", false, 1);
+
         if (response.getStatus() == 400) {
             ViolationReport report = response.readEntity(ViolationReport.class);
             JAXB.marshal(report, System.out);

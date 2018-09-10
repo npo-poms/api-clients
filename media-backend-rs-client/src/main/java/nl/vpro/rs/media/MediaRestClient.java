@@ -24,6 +24,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
+import nl.vpro.api.client.utils.VersionResult;
 import nl.vpro.api.rs.subtitles.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.MediaForm;
@@ -93,7 +94,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     private Map<String, Object> headers;
 
-    Supplier<String> version;
+    Supplier<VersionResult> version;
 
     protected String userName;
     protected String password;
@@ -200,8 +201,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         boolean validateInput,
         String mbeanName,
         ClassLoader classLoader,
-        String userAgent,
-        String version) {
+        String userAgent) {
         super(
             baseUrl,
             connectionRequestTimeout,
@@ -253,7 +253,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             this.setAsynchronousThrottleRate(asynchronousThrottleRate);
         }
         this.validateInput = validateInput;
-        this.version = version == null ? null : () -> version;
     }
 
     enum Type {
@@ -355,18 +354,24 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
                             getTarget(getClientHttpEngine()).proxy(VersionRestService.class));
                     String v = p.getVersion();
                     if (v != null) {
-                        return v;
+                        return VersionResult.builder().version(v).available(true).build();
                     }
                 } catch (javax.ws.rs.NotFoundException nfe) {
-                    return "4.8.6";
+                    return VersionResult.builder().version("4.8.6").available(true).build();
                 } catch (Exception io) {
                     log.warn(io.getClass().getName() + " " + io.getMessage());
                 }
-                return "unknown";
+                return VersionResult.builder().version("unknown").available(false).build();
             }, 30L, TimeUnit.MINUTES).get();
         }
-        return version.get();
+        return version.get().getVersion();
     }
+
+    public boolean isAvailable() {
+        getVersion();
+        return version.get().isAvailable();
+    }
+
 
     /**
      * The version of the rest-service we are talking too.

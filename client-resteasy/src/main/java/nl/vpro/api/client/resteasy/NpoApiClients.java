@@ -21,6 +21,7 @@ import com.google.common.base.Suppliers;
 
 import nl.vpro.api.client.utils.Config;
 import nl.vpro.api.client.utils.Swagger;
+import nl.vpro.api.client.utils.VersionResult;
 import nl.vpro.api.rs.subtitles.VTTSubtitlesReader;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
@@ -238,12 +239,16 @@ public class NpoApiClients extends AbstractApiClient  {
 
     }
 
-    private Supplier<String> version = null;
+    private Supplier<VersionResult> version = null;
     public String getVersion() {
         if (version == null) {
             version = Suppliers.memoizeWithExpiration(() -> Swagger.getVersionFromSwagger(baseUrl, "5.9"), 30, TimeUnit.MINUTES);
         }
-        return version.get();
+        return version.get().getVersion();
+    }
+
+    public boolean isAvailable() {
+        return version.get().isAvailable();
     }
 
     /**

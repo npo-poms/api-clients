@@ -25,10 +25,12 @@ import com.google.common.base.Suppliers;
 
 import nl.vpro.api.client.utils.Config;
 import nl.vpro.api.client.utils.Swagger;
+import nl.vpro.api.client.utils.VersionResult;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
+import nl.vpro.rs.provider.ApiProviderRestService;
 import nl.vpro.rs.thesaurus.update.NewPersonRequest;
 import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
 import nl.vpro.util.ConfigUtils;
@@ -44,7 +46,12 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     private PageUpdateRestService pageUpdateRestService;
 
+    private ApiProviderRestService apiProvider;
+
     private ThesaurusUpdateRestService thesaurusUpdateRestService;
+
+
+
 
     @Getter
     private final String description;
@@ -247,6 +254,21 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
 
+    public ApiProviderRestService getProviderRestService() {
+        return apiProvider = produceIfNull(
+            () -> apiProvider,
+            () -> proxyErrorsAndCount(
+                ApiProviderRestService.class,
+                    getTarget(getClientHttpEngine())
+                        .proxyBuilder(ApiProviderRestService.class)
+                        .classloader(classLoader)
+                        .defaultConsumes(MediaType.APPLICATION_XML)
+                        .build(),
+                Error.class
+            ));
+    }
+
+
     public ThesaurusUpdateRestService getThesaurusUpdateRestService() {
         return thesaurusUpdateRestService = produceIfNull(
             () -> thesaurusUpdateRestService,
@@ -301,13 +323,17 @@ public class PageUpdateApiClient extends AbstractApiClient {
         thesaurusUpdateRestService = null;
     }
 
-    private Supplier<String> version = null;
+    private Supplier<VersionResult> version = null;
 
     public String getVersion() {
         if (version == null) {
             version = Suppliers.memoizeWithExpiration(() -> Swagger.getVersionFromSwagger(baseUrl, "4.5"), 30, TimeUnit.MINUTES);
         }
-        return version.get();
+        return version.get().getVersion();
+    }
+
+    public boolean isAvailable() {
+        return version.get().isAvailable();
     }
 
     public Float getVersionNumber() {

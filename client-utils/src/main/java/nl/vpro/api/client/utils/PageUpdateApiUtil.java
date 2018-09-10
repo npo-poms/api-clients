@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.SocketException;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.inject.Inject;
@@ -21,6 +22,8 @@ import org.apache.http.impl.execchain.RequestAbortedException;
 import nl.vpro.api.client.resteasy.PageUpdateApiClient;
 import nl.vpro.api.client.resteasy.Utils;
 import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.page.Page;
 import nl.vpro.domain.page.update.DeleteResult;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.jackson2.Jackson2Mapper;
@@ -55,7 +58,7 @@ public class PageUpdateApiUtil {
         this.limiter = limiter == null ?  PageUpdateRateLimiter.builder().build() : limiter;
     }
 
-    public Result save(@NotNull @Valid PageUpdate update) {
+    public Result<Void> save(@NotNull @Valid PageUpdate update) {
         limiter.acquire();
         try {
             return handleResponse(pageUpdateApiClient.getPageUpdateRestService().save(update), update, JACKSON, Void.class);
@@ -70,32 +73,39 @@ public class PageUpdateApiUtil {
         return Utils.wrapNotFound(() -> pageUpdateApiClient.getPageUpdateRestService().load(url)).orElse(null);
     }
 
-    public Result delete(@NotNull String id) {
+    public Result<DeleteResult> delete(@NotNull String id) {
         limiter.acquire();
         try {
             return handleResponse(
                 pageUpdateApiClient.getPageUpdateRestService()
-                    .delete(id, false, 1), id, STRING, DeleteResult.class
+                    .delete(id, false, 1, false), id, STRING, DeleteResult.class
             );
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
     }
 
-    public Result deleteWhereStartsWith(@NotNull String prefix) {
+    public Result<DeleteResult> deleteWhereStartsWith(@NotNull String prefix) {
         limiter.acquire();
         int batchSize = 10000;
         try {
-            Result r;
+            DeleteResult result = null;
             while (true) {
-                r = handleResponse(
+                Result<DeleteResult> r = handleResponse(
                     pageUpdateApiClient.getPageUpdateRestService()
-                        .delete(prefix, true, batchSize), prefix, STRING, DeleteResult.class
+                        .delete(prefix, true, batchSize, true), prefix, STRING, DeleteResult.class
                 );
                 log.info("Batch deleted {}", r);
+                if (result == null) {
+                    result = r.getEntity();
+                } else {
+                    result = result.and(r.getEntity());
+                }
                 if (r.isOk()) {
-                    if ( ((DeleteResult) r.getEntity()).getCount() == 0) {
-                        return r;
+                    if (r.getEntity().getCount() == 0) {
+                        return Result.<DeleteResult>builder()
+                            .entity(result)
+                            .build();
                     }
                 }
             }
@@ -103,6 +113,20 @@ public class PageUpdateApiUtil {
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
+    }
+
+    public Optional<Page> getPage(String url) {
+        try {
+            return Optional.of(getPageUpdateApiClient().getProviderRestService().getPage(url));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return Optional.empty();
+        }
+    }
+
+    public Optional<MediaObject> getMedia(String mid) {
+        return Optional.of(getPageUpdateApiClient().getProviderRestService().getMedia(mid));
+
     }
 
     public ClassificationService getClassificationService() {
@@ -113,7 +137,7 @@ public class PageUpdateApiUtil {
         return pageUpdateApiClient;
     }
 
-    protected Result exceptionToResult(Exception e) {
+    protected <E> Result<E> exceptionToResult(Exception e) {
         Throwable cause = ExceptionUtils.getRootCause(e);
         try {
             throw cause;
@@ -128,7 +152,7 @@ public class PageUpdateApiUtil {
         }
     }
 
-    protected <T, E> Result<?> handleResponse(Response response, T input, Function<Object, String> toString, Class<E> e) {
+    protected <T, E> Result<E> handleResponse(Response response, T input, Function<Object, String> toString, Class<E> e) {
         try {
             switch (response.getStatus()) {
                 case 200:

@@ -27,6 +27,7 @@ public class Result<E> {
         this(success, errors, null, null);
     }
 
+    @lombok.Builder
     private Result(Status success, String errors, Throwable cause, E entity) {
         this.status = success;
         this.errors = errors;
@@ -51,31 +52,31 @@ public class Result<E> {
     }
 
 
-    public static Result<Void> notneeded() {
+    public static <E> Result<E> notneeded() {
         return new Result<>(Status.NOTNEEDED, null);
     }
 
-    public static Result<Void> error(String message) {
+    public static <E> Result<E> error(String message) {
         return new Result<>(Status.ERROR, message);
     }
 
-    public static Result<Void> fatal(String message, Throwable t) {
+    public static <E> Result<E> fatal(String message, Throwable t) {
         return new Result<>(Status.FATAL_ERROR, message, t, null);
     }
 
-    public static Result<Void> notfound(String message) {
+    public static <E> Result<E> notfound(String message) {
         return new Result<>(Status.NOTFOUND, message);
     }
 
-    public static Result<Void> aborted(String message) {
+    public static <E> Result<E> aborted(String message) {
         return new Result<>(Status.ABORTED, message);
     }
 
-    public static Result<Void> denied(String message) {
+    public static <E> Result<E> denied(String message) {
         return new Result<>(Status.DENIED, message);
     }
 
-    public static Result<Void> invalid(String message) {
+    public static <E> Result<E> invalid(String message) {
         return new Result<>(Status.INVALID, message);
     }
 
@@ -90,7 +91,7 @@ public class Result<E> {
 
     @Override
     public String toString() {
-        return status + (errors != null ? (":" + errors) : "");
+        return status + (errors != null ? (":" + errors) : "" + (entity == null ? "" : entity));
     }
 
     public enum Status {
