@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 /**
@@ -131,6 +132,13 @@ your request.</p>
                         if ("entity".equals(pathParam.value())) {
                             log.debug("Implicetely set entity to media");
                             args[i] = "media";
+                        }
+
+                    }
+                    if (annotations[i][j] instanceof HeaderParam) {
+                        HeaderParam headerParam = (HeaderParam) annotations[i][j];
+                        if (HttpHeaders.CONTENT_TYPE.equals(headerParam.value())) {
+                            ContentTypeInterceptor.CONTENT_TYPE.set((String) args[i]);
                         }
 
                     }

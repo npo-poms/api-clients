@@ -327,7 +327,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     public String getVersion() {
         if (version == null) {
-            version = Suppliers.memoizeWithExpiration(() -> Swagger.getVersionFromSwagger(baseUrl, "4.5"), 30, TimeUnit.MINUTES);
+            version = Suppliers.memoizeWithExpiration(() -> Swagger.getVersionFromSwagger(baseUrl, "5.8"), 30, TimeUnit.MINUTES);
         }
         return version.get().getVersion();
     }

@@ -411,6 +411,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             .register(SRTSubtitlesReader.class)
             .register(VTTWriter.class)
             .register(VTTSubtitlesWriter.class)
+            .register(ContentTypeInterceptor.class)
+
         ;
     }
 

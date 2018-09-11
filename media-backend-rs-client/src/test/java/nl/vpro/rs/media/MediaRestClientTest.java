@@ -2,8 +2,7 @@ package nl.vpro.rs.media;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -26,6 +25,7 @@ import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
 import nl.vpro.domain.media.update.*;
 import nl.vpro.logging.LoggerOutputStream;
+import nl.vpro.util.Env;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,7 +41,7 @@ public class MediaRestClientTest {
 
     @Before
     public void setUp() {
-        client = MediaRestClient.configured().build();
+        client = MediaRestClient.configured(Env.LOCALHOST).build();
         client.setWaitForRetry(true);
 
     }
@@ -251,7 +251,7 @@ public class MediaRestClientTest {
 
         for (TitleUpdate o : existing.getTitles()) {
             if (o.getType() == TextualType.MAIN) {
-                o.setTitle(o.getTitle() + " x");
+                o.set(o.get() + " x");
             }
         }
 
@@ -394,6 +394,7 @@ public class MediaRestClientTest {
     public void addFrame() {
         client.getFrameCreatorRestService().createFrame("bla", Duration.ofMillis(1000), null, new ByteArrayInputStream("bla bla".getBytes()));
     }
+
 
 
     protected WithId<ProgramUpdate> sampleProgram(String test, String... broadcasters) {
