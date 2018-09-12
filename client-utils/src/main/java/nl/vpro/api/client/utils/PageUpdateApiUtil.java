@@ -106,6 +106,7 @@ public class PageUpdateApiUtil {
                     if (r.getEntity().getCount() == 0) {
                         return Result.<DeleteResult>builder()
                             .entity(result)
+                            .status(Result.Status.SUCCESS)
                             .build();
                     }
                 }
