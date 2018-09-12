@@ -91,7 +91,7 @@ public class Result<E> {
 
     @Override
     public String toString() {
-        return status + (errors != null ? (":" + errors) : "" + (entity == null ? "" : entity));
+        return status + (errors != null ? (":" + errors) : "" + (entity == null ? "" : "" + entity));
     }
 
     public enum Status {
