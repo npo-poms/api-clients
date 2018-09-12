@@ -12,6 +12,7 @@ import java.util.function.Function;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -118,6 +119,8 @@ public class PageUpdateApiUtil {
     public Optional<Page> getPage(String url) {
         try {
             return Optional.of(getPageUpdateApiClient().getProviderRestService().getPage(url));
+        } catch (NotFoundException nfe) {
+            return Optional.empty();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             return Optional.empty();
