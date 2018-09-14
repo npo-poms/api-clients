@@ -117,7 +117,7 @@ public class PageUpdateApiUtil {
         }
     }
 
-    public Optional<Page> getPage(String url) {
+    public Optional<Page> getPublishedPage(String url) {
         try {
             return Optional.of(getPageUpdateApiClient().getProviderRestService().getPage(url));
         } catch (NotFoundException nfe) {
