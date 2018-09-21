@@ -81,11 +81,11 @@ public class Result<E> {
     }
 
     public boolean needsRetry() {
-        return status.needsRetry;
+        return status != null && status.needsRetry;
     }
 
     public boolean isOk() {
-        return status.ok;
+        return status != null && status.ok;
     }
 
 
