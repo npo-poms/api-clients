@@ -28,8 +28,12 @@ public class Result<E> {
     }
 
     @lombok.Builder
-    private Result(Status success, String errors, Throwable cause, E entity) {
-        this.status = success;
+    private Result(
+        Status status,
+        String errors,
+        Throwable cause,
+        E entity) {
+        this.status = status;
         this.errors = errors;
         this.cause = cause;
         this.entity = entity;
@@ -81,11 +85,11 @@ public class Result<E> {
     }
 
     public boolean needsRetry() {
-        return status.needsRetry;
+        return status != null && status.needsRetry;
     }
 
     public boolean isOk() {
-        return status.ok;
+        return status != null && status.ok;
     }
 
 
