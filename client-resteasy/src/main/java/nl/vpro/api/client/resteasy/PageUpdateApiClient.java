@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import com.google.common.base.Suppliers;
@@ -28,10 +27,10 @@ import nl.vpro.api.client.utils.Swagger;
 import nl.vpro.api.client.utils.VersionResult;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.media.gtaa.GTAANewPerson;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.rs.provider.ApiProviderRestService;
-import nl.vpro.rs.thesaurus.update.NewPersonRequest;
 import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
 import nl.vpro.util.ConfigUtils;
 import nl.vpro.util.Env;
@@ -366,13 +365,17 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (args != null && args.length >= 1 && args[0] instanceof NewPersonRequest) {
+            // TODO TODO
+            if (args != null && args.length >= 2 && args[1] instanceof GTAANewPerson) {
+                /*
                 NewPersonRequest newPerson = (NewPersonRequest) args[0];
                 if (StringUtils.isEmpty(newPerson.getJws())) {
                     String jws = jws();
                     log.debug("implicetely set jws to {}", jws);
                     newPerson.setJws(jws);
                 }
+                TODO BROKEN
+                */
             }
             return method.invoke(proxied, args);
         }
