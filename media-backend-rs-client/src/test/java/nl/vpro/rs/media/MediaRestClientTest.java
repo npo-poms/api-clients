@@ -273,7 +273,7 @@ public class MediaRestClientTest {
         newProgram.setLocations(client.get("WO_BNN_351473").getLocations());
 
         JAXB.marshal(newProgram, System.out);
-        System.out.println(client.set(newProgram));
+        log.info(client.set(newProgram));
 
     }
 
@@ -392,7 +392,8 @@ public class MediaRestClientTest {
     @Test
     //MSE-3604
     public void addFrame() {
-        client.getFrameCreatorRestService().createFrame("bla", Duration.ofMillis(1000), null, new ByteArrayInputStream("bla bla".getBytes()));
+        client.getFrameCreatorRestService().createFrame(
+            "bla", Duration.ofMillis(1000),null, null, new ByteArrayInputStream("bla bla".getBytes()));
     }
 
 
