@@ -30,6 +30,7 @@ import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaList;
 import nl.vpro.domain.media.search.MediaListItem;
+import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
 import nl.vpro.domain.subtitles.Subtitles;
@@ -118,6 +119,11 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Getter
     @Setter
     private boolean imageMetaData = false;
+
+    @lombok.Builder.Default
+    @Getter
+    @Setter
+    private OwnerType owner = OwnerType.BROADCASTER;
 
 
 
@@ -446,7 +452,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     protected <T extends MediaUpdate<?>> T get(final Class<T> type, final String id) {
         try {
             return (T) getBackendRestService()
-                .getMedia(Type.valueOf(type).toString(), id, followMerges);
+                .getMedia(Type.valueOf(type).toString(), id, followMerges, owner);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -591,7 +597,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
         try {
             Response response = getBackendRestService().update(type.toString(), update, followMerges, errors,
-                    lookupCrids, validateInput, imageMetaData);
+                    lookupCrids, validateInput, imageMetaData, owner);
             String result = response.readEntity(String.class);
             response.close();
             return result;
