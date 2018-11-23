@@ -202,6 +202,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         String errors,
         boolean waitForRetry,
         boolean lookupCrids,
+        OwnerType owner,
         Double throttleRate,
         Double asynchronousThrottleRate,
         boolean validateInput,
@@ -259,6 +260,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             this.setAsynchronousThrottleRate(asynchronousThrottleRate);
         }
         this.validateInput = validateInput;
+        this.owner = owner;
     }
 
     enum Type {
