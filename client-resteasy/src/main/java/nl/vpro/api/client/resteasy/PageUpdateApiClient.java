@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -16,6 +17,8 @@ import java.util.function.Supplier;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
@@ -27,7 +30,6 @@ import nl.vpro.api.client.utils.Swagger;
 import nl.vpro.api.client.utils.VersionResult;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
-import nl.vpro.domain.media.gtaa.GTAANewPerson;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.rs.provider.ApiProviderRestService;
@@ -365,17 +367,20 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            // TODO TODO
-            if (args != null && args.length >= 2 && args[1] instanceof GTAANewPerson) {
-                /*
-                NewPersonRequest newPerson = (NewPersonRequest) args[0];
-                if (StringUtils.isEmpty(newPerson.getJws())) {
-                    String jws = jws();
-                    log.debug("implicetely set jws to {}", jws);
-                    newPerson.setJws(jws);
+            if (args != null) {
+                AnnotatedType[] annotatedParameterTypes = method.getAnnotatedParameterTypes();
+                int authorizationParam = -1;
+                for (int i = 0; i < annotatedParameterTypes.length; i++) {
+                    AnnotatedType annotatedType = annotatedParameterTypes[i];
+                    HeaderParam headerParam = annotatedType.getAnnotation(HeaderParam.class);
+                    if (headerParam != null && headerParam.value().equals(HttpHeaders.AUTHORIZATION)) {
+                        authorizationParam = i;
+                    }
+
                 }
-                TODO BROKEN
-                */
+                if (authorizationParam >= 0) {
+                    args[authorizationParam] = ThesaurusUpdateRestService.AUTHENTICATION_SCHEME + " " + jws();
+                }
             }
             return method.invoke(proxied, args);
         }
