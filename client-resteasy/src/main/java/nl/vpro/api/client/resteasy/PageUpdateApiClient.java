@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -18,6 +19,7 @@ import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
@@ -52,8 +54,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
     private ThesaurusUpdateRestService thesaurusUpdateRestService;
 
 
-
-
     @Getter
     private final String description;
 
@@ -62,7 +62,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
     private final String jwsUser;
 
 
-    private final BasicAuthentication authentication;
+    private final ConditionalBasicAuthentication authentication;
+
 
     private ClassificationService classificationService;
 
@@ -198,7 +199,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         if (password == null) {
             throw new IllegalArgumentException("No  password given");
         }
-        authentication = new BasicAuthentication(user, password);
+        authentication = new ConditionalBasicAuthentication(user, password);
         description = user + "@" + this.getBaseUrl();
         this.classificationService = classificationService;
         this.jwsIssuer = jwsIssuer;
@@ -385,6 +386,23 @@ public class PageUpdateApiClient extends AbstractApiClient {
         }
 
 
+    }
+
+    public class ConditionalBasicAuthentication extends BasicAuthentication {
+
+        public ConditionalBasicAuthentication(String username, String password) {
+            super(username, password);
+        }
+
+        @Override
+        public void filter(ClientRequestContext requestContext) throws IOException {
+            List<Object> existing = requestContext.getHeaders().get(HttpHeaders.AUTHORIZATION);
+            if (existing == null || existing.isEmpty()) {
+                super.filter(requestContext);
+            } else {
+                log.debug("Request already contains other authorization headers {}", existing);
+            }
+        }
     }
 
 
