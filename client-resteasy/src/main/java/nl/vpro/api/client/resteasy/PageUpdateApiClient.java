@@ -5,7 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.AnnotatedType;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -368,18 +368,17 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (args != null) {
-                AnnotatedType[] annotatedParameterTypes = method.getAnnotatedParameterTypes();
-                int authorizationParam = -1;
-                for (int i = 0; i < annotatedParameterTypes.length; i++) {
-                    AnnotatedType annotatedType = annotatedParameterTypes[i];
-                    HeaderParam headerParam = annotatedType.getAnnotation(HeaderParam.class);
-                    if (headerParam != null && headerParam.value().equals(HttpHeaders.AUTHORIZATION)) {
-                        authorizationParam = i;
-                    }
 
-                }
-                if (authorizationParam >= 0) {
-                    args[authorizationParam] = ThesaurusUpdateRestService.AUTHENTICATION_SCHEME + " " + jws();
+                Annotation[][] annotations = method.getParameterAnnotations();
+                for (int i = 0; i < annotations.length; i++) {
+                    for (Annotation o : annotations[i]) {
+                        if (o instanceof HeaderParam) {
+                            HeaderParam headerParam = (HeaderParam) o;
+                            if (headerParam.value().equals(HttpHeaders.AUTHORIZATION)) {
+                                args[i] = ThesaurusUpdateRestService.AUTHENTICATION_SCHEME + " " + jws();
+                            }
+                        }
+                    }
                 }
             }
             return method.invoke(proxied, args);
