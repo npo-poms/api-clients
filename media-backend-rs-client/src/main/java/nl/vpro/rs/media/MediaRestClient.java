@@ -501,7 +501,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     public String addImage(ImageUpdate update, String mid) {
-        Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors, validateInput, imageMetaData);
+        Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors, validateInput, imageMetaData, owner);
         String result = response.readEntity(String.class);
         response.close();
         return result;
@@ -511,7 +511,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
         SortedSet<LocationUpdate> result = new TreeSet<>();
         try {
-            XmlCollection<LocationUpdate> i = getBackendRestService().getLocations("media", id, true);
+            XmlCollection<LocationUpdate> i = getBackendRestService().getLocations("media", id, true, owner);
             for (LocationUpdate lu : i) {
                 lu.setUrn(null);
                 result.add(lu);
@@ -646,7 +646,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public MediaUpdateList<MemberUpdate> getGroupMembers(final String id, final int max, final long offset) {
         try {
-            return getBackendRestService().getGroupMembers("media", id, offset, max, "ASC", followMerges);
+            return getBackendRestService().getGroupMembers("media", id, offset, max, "ASC", followMerges, owner);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -658,7 +658,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public MediaUpdateList<MemberUpdate> getGroupEpisodes(final String id, final int max, final long offset) {
         try {
-            return getBackendRestService().getGroupEpisodes(id, offset, max, "ASC", followMerges);
+            return getBackendRestService().getGroupEpisodes(id, offset, max, "ASC", followMerges, owner);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -689,7 +689,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             .batchSize(240)
             .batchGetter((offset, max) -> {
                 try {
-                    return getBackendRestService().getGroupMembers("media", mid, offset, max, "ASC", followMerges).iterator();
+                    return getBackendRestService().getGroupMembers("media", mid, offset, max, "ASC", followMerges, owner).iterator();
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);
                     throw new RuntimeException(e);
@@ -703,7 +703,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             .batchSize(defaultMax)
             .batchGetter((offset, max) -> {
                 try {
-                    return getBackendRestService().getGroupEpisodes(mid, offset, max, "ASC", followMerges).iterator();
+                    return getBackendRestService().getGroupEpisodes(mid, offset, max, "ASC", followMerges, owner).iterator();
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);
                     throw new RuntimeException(e);
