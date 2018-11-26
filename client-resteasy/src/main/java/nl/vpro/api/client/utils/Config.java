@@ -37,7 +37,8 @@ public class Config {
         npo_backend_api,
         parkpost,
         npo_pageupdate_api,
-        poms;
+        poms,
+        images;
 
         public String getKey() {
             return name().replace('_', '-');
