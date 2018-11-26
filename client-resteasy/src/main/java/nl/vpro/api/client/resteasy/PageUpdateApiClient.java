@@ -388,6 +388,9 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     }
 
+    /**
+     * Like {@link BasicAuthentication}, but does not replace existing headers.
+     */
     public class ConditionalBasicAuthentication extends BasicAuthentication {
 
         public ConditionalBasicAuthentication(String username, String password) {
