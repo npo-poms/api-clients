@@ -5,7 +5,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -19,11 +18,9 @@ import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import com.google.common.base.Suppliers;
 
@@ -33,6 +30,7 @@ import nl.vpro.api.client.utils.VersionResult;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.resteasy.ConditionalBasicAuthentication;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.rs.provider.ApiProviderRestService;
 import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
@@ -386,26 +384,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
         }
 
 
-    }
-
-    /**
-     * Like {@link BasicAuthentication}, but does not replace existing headers.
-     */
-    public class ConditionalBasicAuthentication extends BasicAuthentication {
-
-        public ConditionalBasicAuthentication(String username, String password) {
-            super(username, password);
-        }
-
-        @Override
-        public void filter(ClientRequestContext requestContext) throws IOException {
-            List<Object> existing = requestContext.getHeaders().get(HttpHeaders.AUTHORIZATION);
-            if (existing == null || existing.isEmpty()) {
-                super.filter(requestContext);
-            } else {
-                log.debug("Request already contains other authorization headers {}", existing);
-            }
-        }
     }
 
 
