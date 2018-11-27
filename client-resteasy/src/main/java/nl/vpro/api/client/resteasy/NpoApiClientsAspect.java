@@ -8,7 +8,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 
 import static nl.vpro.domain.api.Constants.*;
 
@@ -47,6 +49,13 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
             return method.invoke(proxied, args);
         } catch (InvocationTargetException itc) {
             throw itc.getCause();
+        } catch(InternalServerErrorException ise) {
+            log.error(ise.getResponse().getEntity().toString(), ise);
+            throw ise;
+        } catch (WebApplicationException wae) {
+            log.error(wae.getResponse().getEntity().toString(), wae);
+            throw wae;
+
         }
     }
 

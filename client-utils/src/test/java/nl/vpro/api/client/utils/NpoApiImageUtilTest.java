@@ -20,6 +20,6 @@ public class NpoApiImageUtilTest {
 
         ConfigUtils.configured(util, "apiclients.properties");
 
-        assertThat(util.getSize("urn:image:123").get()).isEqualTo(1234l);
+        assertThat(util.getSize("urn:image:706133").get()).isEqualTo(62210L);
     }
 }

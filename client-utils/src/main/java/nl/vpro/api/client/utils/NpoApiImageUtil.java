@@ -33,13 +33,16 @@ public class NpoApiImageUtil {
 
     @Inject
     public NpoApiImageUtil(
-        @NotNull @Named("image.baseUrl") String baseUrl) {
+        @NotNull
+        @Named("image.baseUrl") String baseUrl) {
         this.baseUrl = baseUrl;
     }
 
 
     public Optional<String> getUrl(String imageUri) {
-        return Optional.of(baseUrl + "" + imageUri);
+        int lastColon = imageUri.lastIndexOf(':');
+        int number = Integer.parseInt(imageUri.substring(lastColon + 1));
+        return Optional.of(baseUrl + "/image/" + number + ".jpg");
     }
 
     public Optional<String> getUrl(ImageUpdate iu) {
@@ -65,14 +68,14 @@ public class NpoApiImageUtil {
 
                         return Long.valueOf(response.getFirstHeader("Content-Length").getValue());
                     } else {
-                        return null;
+                        return -1L;
                     }
                 } catch (ClientProtocolException e) {
                     log.error(e.getMessage(), e);
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);
                 }
-                return null;
+                return -1L;
             });
     }
 
@@ -80,5 +83,10 @@ public class NpoApiImageUtil {
         return HttpClientBuilder
             .create()
             .build();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "@" + getBaseUrl();
     }
 }
