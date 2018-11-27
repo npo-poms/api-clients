@@ -341,11 +341,11 @@ public class PageUpdateApiClient extends AbstractApiClient {
     }
 
 
-    protected String jws() {
+    protected String jws(String subject) {
         Instant now = Instant.now();
         Instant expires = now.plus(Duration.ofHours(12));
         String compactJws = Jwts.builder()
-            .setSubject("GTAAPerson")
+            .setSubject(subject)
             .claim("usr", jwsUser)
             .setIssuedAt(Date.from(now))
             .setIssuer(jwsIssuer)
@@ -374,7 +374,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
                         if (o instanceof HeaderParam) {
                             HeaderParam headerParam = (HeaderParam) o;
                             if (headerParam.value().equals(HttpHeaders.AUTHORIZATION)) {
-                                args[i] = ThesaurusUpdateRestService.AUTHENTICATION_SCHEME + " " + jws();
+                                args[i] = ThesaurusUpdateRestService.AUTHENTICATION_SCHEME + " " + jws(method.getName());
                             }
                         }
                     }
