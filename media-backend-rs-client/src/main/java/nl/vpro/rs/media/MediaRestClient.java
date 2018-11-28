@@ -115,6 +115,13 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Setter
     private boolean validateInput = false;
 
+
+    @lombok.Builder.Default
+    @Getter
+    @Setter
+    private AssemblageConfig.Steal stealCrids = AssemblageConfig.Steal.IF_DELETED;
+
+
     @lombok.Builder.Default
     @Getter
     @Setter
@@ -202,6 +209,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         String errors,
         boolean waitForRetry,
         boolean lookupCrids,
+        AssemblageConfig.Steal stealCrids,
         OwnerType owner,
         Double throttleRate,
         Double asynchronousThrottleRate,
@@ -253,6 +261,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         this.errors = errors;
         this.waitForRetry = waitForRetry;
         this.lookupCrids = lookupCrids;
+        this.stealCrids = stealCrids;
         if (throttleRate != null) {
             this.setThrottleRate(throttleRate);
         }
@@ -460,6 +469,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
+
     @SuppressWarnings("unchecked")
     protected <T extends MediaObject> T getFull(final Class<T> type, final String id) {
         try {
@@ -488,6 +498,19 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return (T) get(MediaUpdate.class, id);
     }
 
+
+    @SuppressWarnings("unchecked")
+    public <T extends MediaUpdate<?>> Optional<T> optional(String id) {
+        try {
+            return Optional.ofNullable((T) get(MediaUpdate.class, id));
+        } catch (ResponseError re) {
+            if (re.getStatus() == 404) {
+                return Optional.empty();
+            }
+            throw re;
+        }
+    }
+
     public String delete(String mid) {
         try {
             Response response = getBackendRestService().deleteMedia(null, mid, followMerges, errors);
@@ -497,6 +520,18 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+
+    public String deleteIfExists(String mid) {
+        try {
+            return delete(mid);
+        } catch (ResponseError responseError) {
+            if (responseError.getStatus() == 404) {
+                return responseError.getMessage();
+            }
+            throw responseError;
         }
     }
 
@@ -599,7 +634,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
         try {
             Response response = getBackendRestService().update(type.toString(), update, followMerges, errors,
-                    lookupCrids, validateInput, imageMetaData, owner);
+                    lookupCrids, stealCrids, validateInput, imageMetaData, owner);
             String result = response.readEntity(String.class);
             response.close();
             return result;
