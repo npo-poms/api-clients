@@ -512,12 +512,9 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     public String delete(String mid) {
-        try {
-            Response response = getBackendRestService().deleteMedia(null, mid, followMerges, errors);
+        try (Response response = getBackendRestService().deleteMedia(null, mid, followMerges, errors)) {
             String result = response.readEntity(String.class);
-            response.close();
             return result;
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -536,10 +533,10 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     public String addImage(ImageUpdate update, String mid) {
-        Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors, validateInput, imageMetaData, owner);
-        String result = response.readEntity(String.class);
-        response.close();
-        return result;
+        try (Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors, validateInput, imageMetaData, owner)) {
+            String result = response.readEntity(String.class);
+            return result;
+        }
     }
 
     public SortedSet<LocationUpdate> cloneLocations(String id) {
@@ -561,9 +558,10 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     /** add a location to a Program, Segment or Group */
     protected void addLocation(final Type type, final LocationUpdate location, final String id) {
-        Response response = getBackendRestService()
-            .addLocation(type.toString(), location, id, followMerges, errors, validateInput);
-        response.close();
+        try (Response response = getBackendRestService()
+            .addLocation(type.toString(), location, id, followMerges, errors, validateInput)) {
+            log.debug("{}", response);
+        }
     }
 
     public void addLocationToProgram(LocationUpdate location, String programId) {
@@ -579,10 +577,9 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     public void createMember(String owner, String member, Integer number) {
-        try {
-            Response response = getBackendRestService().addMemberOf(
-                new MemberRefUpdate(number, owner), "media", member, followMerges, errors, validateInput);
-            response.close();
+        try (Response response = getBackendRestService().addMemberOf(
+                new MemberRefUpdate(number, owner), "media", member, followMerges, errors, validateInput)) {
+            log.debug("{}", response);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -599,29 +596,27 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     public void createEpisode(String owner, String member, Integer number) {
-        try {
-            Response response = getBackendRestService()
-                .addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors, validateInput);
-            response.close();
+        try (Response response = getBackendRestService()
+                .addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors, validateInput)) {
+            log.debug("{}", response);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void removeEpisode(String owner, String member, Integer number) {
-        try {
-            Response response = getBackendRestService().removeEpisodeOf(member, owner, number, followMerges, errors);
-            response.close();
+        try (Response response = getBackendRestService().removeEpisodeOf(member, owner, number, followMerges, errors)) {
+            log.debug("{}", response);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public String transcode(TranscodeRequest request) {
-        Response response = getBackendRestService().transcode(null, request);
-        String result = response.readEntity(String.class);
-        response.close();
-        return  result;
+        try (Response response = getBackendRestService().transcode(null, request)) {
+            String result = response.readEntity(String.class);
+            return  result;
+        }
     }
 
     protected String set(final Type type, final MediaUpdate update) {
@@ -632,11 +627,9 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         if (errors == null) {
             errors = this.errors;
         }
-        try {
-            Response response = getBackendRestService().update(type.toString(), update, followMerges, errors,
-                    lookupCrids, stealCrids, validateInput, imageMetaData, owner);
+        try (Response response = getBackendRestService().update(type.toString(), update, followMerges, errors,
+                    lookupCrids, stealCrids, validateInput, imageMetaData, owner)) {
             String result = response.readEntity(String.class);
-            response.close();
             return result;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -644,10 +637,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     public String removeSegment(String program, String segment) {
-        try {
-            Response response = getBackendRestService().removeSegment(program, segment, followMerges, errors);
+        try (Response response = getBackendRestService().removeSegment(program, segment, followMerges, errors)) {
             String result = response.readEntity(String.class);
-            response.close();
             return result;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -786,16 +777,18 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public void setSubtitles(Subtitles subtitles) {
         SubtitlesId id = subtitles.getId();
-        Response response = getBackendRestService().setSubtitles(id.getMid(), id.getLanguage(), id.getType(), Duration.ZERO, true, errors, subtitles);
-        response.close();
+        try (Response response = getBackendRestService().setSubtitles(id.getMid(), id.getLanguage(), id.getType(), Duration.ZERO, true, errors, subtitles)) {
+            log.debug("{}", response);
+
+        }
     }
 
 
     public void deleteSubtitles(SubtitlesId id) {
-        Response response = getBackendRestService()
-            .deleteSubtitles(id.getMid(), id.getLanguage(), id.getType(), true, errors);
-        response.close();
-
+        try(Response response = getBackendRestService()
+            .deleteSubtitles(id.getMid(), id.getLanguage(), id.getType(), true, errors)) {
+            log.debug("{}", response);
+        };
 
     }
 

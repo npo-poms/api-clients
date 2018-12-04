@@ -66,11 +66,7 @@ class MediaRestClientAspect<T> implements InvocationHandler {
                                 );
                             }
                         } finally {
-/*
-                            if (buffered) {
-                                response.close();
-                            }
-*/
+                           // response.close();
                         }
 
 

@@ -12,7 +12,6 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -70,8 +69,6 @@ public class NpoApiImageUtil {
                     } else {
                         return -1L;
                     }
-                } catch (ClientProtocolException e) {
-                    log.error(e.getMessage(), e);
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);
                 }
