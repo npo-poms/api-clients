@@ -154,9 +154,10 @@ public class MediaRestClientTest {
         System.out.println(group.id);
         ProgramUpdate update = client.get("EO_101205912");
         update.getMemberOf().add(new MemberRefUpdate(1, group.id));
-        Response response = client.getBackendRestService().addMemberOf(
-            new MemberRefUpdate(1, "POMS_S_VPRO_1421920"/*owner*/), null,  update.getMid()/*member*/, true, null, null);
-        System.out.println("Created " + response.getEntity());
+        try (Response response = client.getBackendRestService().addMemberOf(
+            new MemberRefUpdate(1, "POMS_S_VPRO_1421920"/*owner*/), null,  update.getMid()/*member*/, true, null, null)) {
+            log.info("Created {}", response.getEntity());
+        }
     }
 
 
@@ -196,8 +197,10 @@ public class MediaRestClientTest {
                     JAXB.marshal(r, LoggerOutputStream.info(log));
                     //r.setMediaRef(null);
                     log.info("" + groupUpdate + "->" + r.getMediaRef());
-                    Response response = client.getBackendRestService().removeMemberOf(null, update.getMid(), groupUpdate.getMid(), null, true, null);
-                    response.close();
+                    try (Response response = client.getBackendRestService().removeMemberOf(null, update.getMid(), groupUpdate.getMid(), null, true, null)) {
+                        log.info("{}", response);
+                    }
+
                 }
             }
             //update.getMemberOf().removeIf(m -> m.getMediaRef().equals(groupUpdate.getMid()));

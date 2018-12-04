@@ -586,10 +586,9 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     public void removeMember(String owner, String member, Integer number) {
-        try {
-            Response response = getBackendRestService()
-                .removeMemberOf("media", member, owner, number, followMerges, errors);
-            response.close();
+        try (Response response = getBackendRestService()
+                .removeMemberOf("media", member, owner, number, followMerges, errors)) {
+            log.debug("{}", response);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

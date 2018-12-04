@@ -49,15 +49,16 @@ public class MediaRestClientUploadITest {
             .batchSize(5_000_000L)
             .logger(log)
             .build();
-        Response response = client.getBackendRestService().
+        try(Response response = client.getBackendRestService().
             uploadAndTranscode("POMS_VPRO_1424050",Encryption.NONE, TranscodeRequest.Priority.NORMAL,  "",
                 is,
                 "video/mp4",
                 null,  true, true, null,
-                null);
-        InputStream responseEntity = (InputStream) response.getEntity();
+                null)) {
+            InputStream responseEntity = (InputStream) response.getEntity();
 
-        IOUtils.copy(responseEntity, LoggerOutputStream.info(log));
+            IOUtils.copy(responseEntity, LoggerOutputStream.info(log));
+        }
 
     }
 
