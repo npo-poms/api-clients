@@ -10,7 +10,7 @@
 
   <groupId>nl.vpro.api-client</groupId>
   <artifactId>api-client-parent</artifactId>
-  <version>5.9-SNAPSHOT</version>
+  <version>5.10-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Clients for NPO API's</description>
 
@@ -25,9 +25,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/branches/REL-5.9-SNAPSHOT</connection>
-    <developerConnection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/branches/REL-5.9-SNAPSHOT</developerConnection>
-    <url>https://subversion.vpro.nl/viewvc/nl/vpro/api-clients/branches/REL-5.9-SNAPSHOT</url>
+    <connection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/trunk</connection>
+    <developerConnection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/trunk</developerConnection>
+    <url>https://subversion.vpro.nl/viewvc/nl/vpro/api-clients/trunk</url>
   </scm>
 
   <properties>
