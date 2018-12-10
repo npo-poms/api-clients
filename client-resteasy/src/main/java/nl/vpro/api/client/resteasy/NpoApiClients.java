@@ -34,10 +34,7 @@ import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.jackson2.Jackson2Mapper;
-import nl.vpro.util.ConfigUtils;
-import nl.vpro.util.Env;
-import nl.vpro.util.ProviderAndBuilder;
-import nl.vpro.util.ReflectionUtils;
+import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 
@@ -255,7 +252,7 @@ public class NpoApiClients extends AbstractApiClient  {
      * The version of the npo frontend api we are talking too.
      * @return a float representing the major/minor version. The patch level is added as thousands.
      */
-    public Float getVersionNumber() {
+    public IntegerVersion getVersionNumber() {
         return Swagger.getVersionNumber(getVersion());
     }
 

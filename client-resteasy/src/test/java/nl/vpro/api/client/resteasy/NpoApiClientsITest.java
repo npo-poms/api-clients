@@ -44,6 +44,7 @@ import nl.vpro.domain.page.Page;
 import nl.vpro.i18n.Locales;
 import nl.vpro.logging.LoggerOutputStream;
 import nl.vpro.util.Env;
+import nl.vpro.util.Version;
 
 import static nl.vpro.domain.api.Constants.ASC;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,7 +61,7 @@ public class NpoApiClientsITest {
     private NpoApiClients clients;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         clients = NpoApiClients.configured(env)
             .accept(MediaType.APPLICATION_XML_TYPE)
             .clearAcceptableLanguages()
@@ -104,7 +105,7 @@ public class NpoApiClientsITest {
     @Test
     public void testGetVersionNumber() {
         log.info("version: {}", clients.getVersionNumber());
-        assertThat(clients.getVersionNumber()).isGreaterThanOrEqualTo(4.7f);
+        assertThat(clients.getVersionNumber()).isGreaterThanOrEqualTo(Version.of(4, 7));
     }
 
     @Test
@@ -163,6 +164,7 @@ public class NpoApiClientsITest {
         InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null, null, null);
         IOUtils.copy(response, LoggerOutputStream.info(log));
     }
+
 
     @Test
     @Ignore("Takes very long")

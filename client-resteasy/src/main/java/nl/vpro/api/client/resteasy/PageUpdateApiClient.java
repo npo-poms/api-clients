@@ -34,10 +34,7 @@ import nl.vpro.resteasy.ConditionalBasicAuthentication;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.rs.provider.ApiProviderRestService;
 import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
-import nl.vpro.util.ConfigUtils;
-import nl.vpro.util.Env;
-import nl.vpro.util.ProviderAndBuilder;
-import nl.vpro.util.ReflectionUtils;
+import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 
@@ -336,7 +333,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         return version.get().isAvailable();
     }
 
-    public Float getVersionNumber() {
+    public IntegerVersion getVersionNumber() {
         return Swagger.getVersionNumber(getVersion());
     }
 

@@ -14,6 +14,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import nl.vpro.util.IntegerVersion;
+
 /**
  * @author Michiel Meeuwissen
  * @since 5.6
@@ -71,7 +73,7 @@ public class Swagger {
     }
 
 
-    public static Float getVersionNumber(String versionString, String defaultVersion) {
+    public static IntegerVersion getVersionNumber(String versionString, String defaultVersion) {
         return getVersionNumber(getVersion(versionString, defaultVersion));
     }
 
@@ -79,21 +81,9 @@ public class Swagger {
 
     /**
      * The version of the npo frontend api we are talking too.
-     *
-     * @return a float representing the major/minor version. The patch level is added as thousands.
+     **
      */
-    public static Float getVersionNumber(String version) {
-        Matcher matcher = Pattern.compile("(\\d+\\.\\d+)\\.?(\\d+)?.*").matcher(version);
-        if (matcher.find()) {
-            Double result = Double.parseDouble(matcher.group(1));
-            String minor = matcher.group(2);
-            if (minor != null) {
-                result += (double) Integer.parseInt(minor) / 1000d;
-            }
-            return result.floatValue();
-        } else {
-            log.info("Version {} could not be parsed", version);
-            return 0f;
-        }
+    public static IntegerVersion  getVersionNumber(String version) {
+        return IntegerVersion.parseIntegers(version);
     }
 }

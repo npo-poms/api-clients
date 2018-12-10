@@ -1,5 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,11 +41,13 @@ import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.DescendantRef;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaType;
+import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.util.CloseableIterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Ignore("This is an integration test")
+@Slf4j
 public class NpoApiClientUtilTest {
 
     private NpoApiMediaUtil util;
@@ -130,16 +134,34 @@ public class NpoApiClientUtilTest {
 
     }
 
+
+    @Test
+    @Ignore("Takes long!!")
+    public void testChangesEpoch() {
+        JsonArrayIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, Integer.MAX_VALUE);
+        long i = 0;
+        while (result.hasNext()) {
+            MediaChange next = result.next();
+            if (i++ % 1000 == 0) {
+                log.info("{} {}", result.getCount(), next);
+                //Thread.sleep(10000);
+            }
+        }
+
+
+    }
+
+
     @Test
     @Ignore("Takes long!")
     public void testIterate() throws IOException {
         Instant start = Instant.now();
-        Iterator<MediaObject> result = util.iterate(new MediaForm(), "vpro");
+        Iterator<MediaObject> result = util.iterate(new MediaForm(), null);
         long i = 0;
         while (result.hasNext()) {
             MediaObject next = result.next();
             if (i++ % 100 == 0) {
-                System.out.println(i + " " + next +  " " + next.getLastPublished());
+                System.out.println(i + " " + next +  " " + next.getLastPublishedInstant());
                 //Thread.sleep(10000);
             }
         }
