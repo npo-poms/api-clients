@@ -441,6 +441,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         try {
             return (T) getBackendRestService().getFullMediaObject(valueOf(type), id, followMerges);
         } catch (IOException e) {
+            log.warn(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
