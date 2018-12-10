@@ -12,6 +12,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
+import nl.vpro.domain.media.EntityType;
+
 /**
  * This Proxy:
  * - throttles all calls
@@ -126,9 +128,18 @@ your request.</p>
                     if (annotations[i][j] instanceof PathParam && args[i] == null) {
                         PathParam pathParam = (PathParam) annotations[i][j];
                         if ("entity".equals(pathParam.value())) {
-                            log.debug("Implicetely set entity to media");
-                            args[i] = "media";
+                            if (CharSequence.class.isAssignableFrom(method.getParameterTypes()[i])) {
+                                args[i] = "media";
+                            } else if (EntityType.class.isAssignableFrom(method.getParameterTypes()[i])) {
+                                try {
+                                    args[i] = method.getParameterTypes()[i].getDeclaredField("media").get(null);
+                                } catch (Exception e) {
+                                    log.error(e.getMessage());
+                                }
+                            }
+                            log.debug("Implicetely set entity to {}", args[i]);
                         }
+
 
                     }
                     if (annotations[i][j] instanceof HeaderParam) {
