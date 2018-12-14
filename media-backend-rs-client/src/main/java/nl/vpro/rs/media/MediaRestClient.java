@@ -346,7 +346,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             version = () -> Suppliers.memoizeWithExpiration(() -> {
                 try {
                     VersionRestService p = proxyErrorsAndCount(VersionRestService.class,
-                            getTarget(getClientHttpEngine()).proxy(VersionRestService.class));
+                            getTarget(getClientHttpEngine())
+                                .proxy(VersionRestService.class));
                     String v = p.getVersion();
                     if (v != null) {
                         return VersionResult.builder().version(v).available(true).build();

@@ -56,19 +56,23 @@ class MediaRestClientAspect<T> implements InvocationHandler {
                                 String message = response.readEntity(String.class);
                                 // retry
                                 client.retryAfterWaitOrException(method.getName() + " " + message, new ServiceUnavailableException(message));
+                                response.close();
                                 continue;
                             }
                             if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-                                throw new ResponseError(
+
+                                ResponseError error = new ResponseError(
                                     client.toString(),
                                     method,
                                     response.getStatus(),
                                     response.getStatusInfo(),
                                     response.readEntity(String.class)
                                 );
+                                response.close();
+                                throw error;
                             }
                         } finally {
-                           // response.close();
+
                         }
 
 
