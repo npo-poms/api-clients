@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 
@@ -409,9 +410,13 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         if (proxy == null) {
             log.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, baseUrl);
             proxy = MediaRestClientAspect.proxy(this,
-                proxyErrorsAndCount(MediaBackendRestService.class,
-                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class)),
-                MediaBackendRestService.class);
+                proxyErrorsAndCount(
+                    MediaBackendRestService.class,
+                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class),
+                    nl.vpro.rs.Error.class
+                ),
+                MediaBackendRestService.class
+            );
         }
         return proxy;
     }

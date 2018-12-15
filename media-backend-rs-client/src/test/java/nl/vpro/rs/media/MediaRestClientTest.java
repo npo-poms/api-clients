@@ -41,7 +41,7 @@ public class MediaRestClientTest {
 
     @Before
     public void setUp() {
-        client = MediaRestClient.configured(Env.LOCALHOST).build();
+        client = MediaRestClient.configured(Env.DEV).build();
         client.setWaitForRetry(true);
 
     }
@@ -345,6 +345,15 @@ public class MediaRestClientTest {
 
     }
 
+
+    @Test
+    public void testGet404() {
+        GroupUpdate group = client.getGroup("bestaat niet");
+
+        assertThat(group).isNull();
+
+    }
+
     @Test
     public void testCreateWitPortal() {
         WithId<ProgramUpdate> sample = sampleProgram("withPortal");
@@ -395,8 +404,10 @@ public class MediaRestClientTest {
     @Test
     //MSE-3604
     public void addFrame() {
-        client.getFrameCreatorRestService().createFrame(
-            "bla", Duration.ofMillis(1000),null, null, new ByteArrayInputStream("bla bla".getBytes()));
+        try (Response res = client.getFrameCreatorRestService().createFrame(
+            "bla", Duration.ofMillis(1000),null, null, new ByteArrayInputStream("bla bla".getBytes()))) {
+            log.info("{}", res);
+        }
     }
 
 
