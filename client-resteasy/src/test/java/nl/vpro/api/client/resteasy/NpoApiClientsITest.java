@@ -169,14 +169,17 @@ public class NpoApiClientsITest {
     @Test
     @Ignore("Takes very long")
     public void testIterate() throws IOException {
-        InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predcitions", null, 0L, Integer.MAX_VALUE, null, null);
-        IOUtils.copy(response, ByteStreams.nullOutputStream());
+        try (InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predcitions", null, 0L, Integer.MAX_VALUE, null, null)) {
+            IOUtils.copy(response, ByteStreams.nullOutputStream());
+        }
     }
 
 
     @Test(expected = NotFoundException.class)
     public void testChangesError() throws IOException {
-        clients.getMediaService().changes("no profile", null, -1L, null, "ASC", 100, null, null, null, null);
+        try (InputStream is = clients.getMediaService().changes("no profile", null, -1L, null, "ASC", 100, null, null, null, null)) {
+            log.info("{}", is);
+        }
     }
 
 
@@ -207,7 +210,7 @@ public class NpoApiClientsITest {
 
 
     @Test(expected = BadRequestException.class)
-    public void testBadRequest() throws Exception {
+    public void testBadRequest() {
         PageRestService pageService = clients.getPageService();
         pageService.find(new PageForm(), null, "none", -1L, 1000);
     }

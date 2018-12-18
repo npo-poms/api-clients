@@ -24,6 +24,7 @@ import nl.vpro.domain.media.*;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.CloseableIterator;
 import nl.vpro.util.FileCachingInputStream;
 import nl.vpro.util.LazyIterator;
 
@@ -202,10 +203,9 @@ public class MediaRestClientUtils {
 
     /**
      *
-     * @deprecated We'll make a sitemap feature on page rest service.
      */
-    @Deprecated
-    public static Iterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) {
+
+    public static CloseableIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) {
         return new LazyIterator<>(() -> {
             try {
                 final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE, null,

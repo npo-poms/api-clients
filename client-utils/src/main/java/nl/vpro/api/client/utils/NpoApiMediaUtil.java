@@ -307,7 +307,6 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
-    @Deprecated
     public Iterator<MediaObject> iterate(MediaForm form, String profile)  {
         limiter.acquire();
         try {
