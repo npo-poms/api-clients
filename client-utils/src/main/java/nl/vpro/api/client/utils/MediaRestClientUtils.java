@@ -204,7 +204,6 @@ public class MediaRestClientUtils {
     /**
      *
      */
-
     public static CloseableIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) {
         return new LazyIterator<>(() -> {
             try {
@@ -213,17 +212,17 @@ public class MediaRestClientUtils {
                 // Cache the stream to a file first.
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
                 FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
-                    .filePrefix("iterate-" + profile + "-")
-                    .batchSize(1000000L)
-                    .logger(log)
-                    .input(inputStream)
-                    .build();
+                        .filePrefix("iterate-" + profile + "-")
+                        .batchSize(1000000L)
+                        .logger(log)
+                        .input(inputStream)
+                        .build();
                 return JsonArrayIterator.<MediaObject>builder()
-                    .inputStream(cacheToFile)
-                    .valueClass(MediaObject.class)
-                    .callback(() -> IOUtils.closeQuietly(inputStream, cacheToFile))
-                    .logger(log)
-                    .build();
+                        .inputStream(cacheToFile)
+                        .valueClass(MediaObject.class)
+                        .callback(() -> IOUtils.closeQuietly(inputStream, cacheToFile))
+                        .logger(log)
+                        .build();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
