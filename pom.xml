@@ -31,7 +31,9 @@
   </scm>
 
   <properties>
-    <poms.shared.version>5.9.1</poms.shared.version>
+    <poms.shared.version>5.9.2</poms.shared.version>
+    <resteasy.version>3.6.2.Final</resteasy.version>
+
    </properties>
 
   <build>
