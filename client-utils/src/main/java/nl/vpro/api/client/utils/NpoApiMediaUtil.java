@@ -91,14 +91,14 @@ public class NpoApiMediaUtil implements MediaProvider {
             .build(
                 new CacheLoader<String, Optional<? extends MediaObject>>() {
                     @Override
-                    public Optional<MediaObject> load(@NotNull String mid) throws IOException {
+                    public Optional<MediaObject> load(@NotNull String mid) {
                         limiter.acquire();
                         try {
                             MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
                             limiter.upRate();
                             //return Optional.ofNullable(object);
                             return Optional.ofNullable(object);
-                        } catch (IOException | RuntimeException se) {
+                        } catch (RuntimeException se) {
                             limiter.downRate();
                             throw se;
                         }

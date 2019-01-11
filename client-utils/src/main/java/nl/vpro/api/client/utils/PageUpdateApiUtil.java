@@ -123,9 +123,6 @@ public class PageUpdateApiUtil {
             return Optional.of(getPageUpdateApiClient().getProviderRestService().getPage(url));
         } catch (NotFoundException nfe) {
             return Optional.empty();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            return Optional.empty();
         }
     }
 
