@@ -76,7 +76,7 @@ public class MediaRestClientUtils {
         };
     }
 
-    public static MediaObject loadOrNull(MediaRestService restService, String id) throws IOException {
+    public static MediaObject loadOrNull(MediaRestService restService, String id) {
         /*return wrapForOrNull(
             () -> restService.load(id, null, null),
             () -> id

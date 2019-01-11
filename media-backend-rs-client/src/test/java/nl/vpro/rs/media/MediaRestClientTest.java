@@ -149,7 +149,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void addMemberOfOtherBroadcasterWorkingVersion() throws IOException {
+    public void addMemberOfOtherBroadcasterWorkingVersion() {
         WithId<GroupUpdate> group = sampleGroup("addMemberOfDisallowed", "VPRO");
         System.out.println(group.id);
         ProgramUpdate update = client.get("EO_101205912");
@@ -181,7 +181,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void removeMemberOf() throws IOException {
+    public void removeMemberOf() {
         String groupCrid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest";
 
         GroupUpdate groupUpdate = client.get(groupCrid);

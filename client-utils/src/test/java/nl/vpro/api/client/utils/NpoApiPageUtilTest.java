@@ -31,7 +31,7 @@ public class NpoApiPageUtilTest {
         new NpoApiRateLimiter());
 
     @Test
-    public void testLoadMultiple() throws Exception {
+    public void testLoadMultiple() {
         Page[] result = util.loadByMid(Arrays.asList("vpro", null), null, TEST_MIDS);
         System.out.println(Arrays.asList(result));
         System.out.println(util.getClients().getCounts());
@@ -40,7 +40,7 @@ public class NpoApiPageUtilTest {
     }
 
     @Test
-    public void testSupplier() throws Exception {
+    public void testSupplier() {
         List<Supplier<Optional<Page>>> result = new ArrayList<>();
         for (String m : TEST_MIDS) {
             result.add(util.supplyByMid(Arrays.asList("vpro", null), null, m));

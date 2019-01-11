@@ -40,7 +40,7 @@ public class NpoApiClientsPagesITest {
 
 
     @BeforeClass
-    public static void setUp() throws IOException {
+    public static void setUp() {
         clients = NpoApiClients
             .configured()
             .build();

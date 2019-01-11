@@ -58,7 +58,7 @@ public class NpoApiClientUtilTest {
 
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
 
         util = new NpoApiMediaUtil(NpoApiClients.configured().warnThreshold(Duration.ofMillis(1)).build(), new NpoApiRateLimiter());
 
@@ -120,7 +120,7 @@ public class NpoApiClientUtilTest {
 
     @Test
     @Ignore("Takes long!!")
-    public void testChanges() throws Exception {
+    public void testChanges() {
         CloseableIterator<MediaChange> result = util.changes("woord", 1433329965809L, Order.ASC, Integer.MAX_VALUE);
         long i = 0;
         while (result.hasNext()) {
@@ -154,7 +154,7 @@ public class NpoApiClientUtilTest {
 
     @Test
     @Ignore("Takes long!")
-    public void testIterate() throws IOException {
+    public void testIterate() {
         Instant start = Instant.now();
         Iterator<MediaObject> result = util.iterate(new MediaForm(), null);
         long i = 0;
@@ -172,7 +172,7 @@ public class NpoApiClientUtilTest {
 
 
     @Test
-    public void testListDescendants() throws Exception {
+    public void testListDescendants() {
         MediaResult result = util.listDescendants("RBX_S_NTR_553927", Order.DESC, input -> input.getMediaType() == MediaType.BROADCAST, 123);
         assertThat(result.getSize()).isEqualTo(123);
 
@@ -180,7 +180,7 @@ public class NpoApiClientUtilTest {
     }
 
     @Test
-    public void testListRelated() throws Exception {
+    public void testListRelated() {
         MediaSearchResult result = util.getClients().getMediaService().findRelated(MediaFormBuilder.emptyForm(), "VPWON_1174495", "vpro", null, 10);
         System.out.println(result.asList().get(0).getDescendantOf().iterator().next().getMidRef());
     }
@@ -225,7 +225,7 @@ public class NpoApiClientUtilTest {
     //@Test(expected = IOException.class)
     @Test
     @Ignore("Doesn't test api, but httpclient")
-    public void timeoutWithInvoke() throws URISyntaxException, IOException {
+    public void timeoutWithInvoke() throws URISyntaxException {
         ApacheHttpClient4Engine engine = (ApacheHttpClient4Engine) utilShortTimeout.getClients().getClientHttpEngine();
         String host = utilShortTimeout.getClients().getBaseUrl() + "/media/AVRO_1656037";
         URI uri = new URI(host);
@@ -249,13 +249,13 @@ public class NpoApiClientUtilTest {
 
 
     @Test
-    public void testLoadProfile() throws Exception {
+    public void testLoadProfile() {
         Profile profile = util.getClients().getProfileService().load("human", null);
         System.out.println(profile.getMediaProfile());
     }
 
     @Test(expected = javax.ws.rs.NotFoundException.class)
-    public void badRequest() throws IOException {
+    public void badRequest() {
         //MediaForm form = Jackson2Mapper.getInstance().readValue("{\"searches\":{\"mediaIds\":[{\"value\":\"VPWON_1181924\",\"match\":\"not\"}],\"types\":[{\"value\":\"BROADCAST\",\"match\":\"should\"},{\"value\":\"CLIP\",\"match\":\"should\"},{\"value\":\"SEGMENT\",\"match\":\"should\"},{\"value\":\"TRACK\",\"match\":\"should\"}]}}", MediaForm.class);
         /*String seriesRef = getSeriesRef(util.getClients().getMediaService().load("VPWON_1229797", null));
         System.out.println("" + seriesRef);*/
@@ -284,7 +284,7 @@ public class NpoApiClientUtilTest {
         return seriesRef;
     }
 
-    private HttpGet getAuthenticatedRequest(URI uri) throws URISyntaxException {
+    private HttpGet getAuthenticatedRequest(URI uri) {
         ApiAuthenticationRequestFilter authentication = utilShortTimeout.getClients().getAuthentication();
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         authentication.authenticate(uri, headers);

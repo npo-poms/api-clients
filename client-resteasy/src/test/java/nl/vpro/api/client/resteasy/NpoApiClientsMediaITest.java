@@ -31,7 +31,7 @@ public class NpoApiClientsMediaITest {
     private static NpoApiClients clients;
 
     @BeforeClass
-    public static void setUp() throws IOException {
+    public static void setUp() {
         clients = NpoApiClients.configured().trustAll(true).build();
         System.out.println("Testing with " + clients);
     }

@@ -72,7 +72,7 @@ public class NpoApiClientsITest {
     }
 
     @Test(expected = NotAuthorizedException.class)
-    public void testAccessForbidden() throws Exception {
+    public void testAccessForbidden() {
         NpoApiClients wrongPassword = NpoApiClients
             .configured(env).secret("WRONG PASSWORD").build();
 
@@ -80,13 +80,13 @@ public class NpoApiClientsITest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void testNotFound() throws Exception {
+    public void testNotFound() {
         clients.getMediaService().load("DOES_NOT_EXIST", null, null);
     }
 
 
     @Test(expected = NotFoundException.class)
-    public void testYoutubeNotFound() throws Exception {
+    public void testYoutubeNotFound() {
         clients.getMediaService().load("https://www.youtube.com/watch?v=YWX2PSpy1TU", null, null);
     }
     @Test
@@ -109,7 +109,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testFound() throws Exception {
+    public void testFound() {
         for (int i = 0; i < 100; i++) {
             MediaObject program = clients.getMediaService().load("POMS_S_VPRO_827832", null, null);
             log.info(i + ":" + program.getMainTitle());
@@ -117,7 +117,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testMediaServiceLists() throws Exception {
+    public void testMediaServiceLists() {
         MediaRestService mediaService = clients.getMediaService();
 
         MediaResult list = mediaService.list(null, null, null, null);
@@ -137,7 +137,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testMediaServiceFinds() throws Exception {
+    public void testMediaServiceFinds() {
         try {
             MediaRestService mediaService = clients.getMediaService();
             MediaForm form = MediaFormBuilder.form().broadcasters("VPRO").broadcasterFacet().build();
@@ -184,7 +184,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testGetPageService() throws Exception {
+    public void testGetPageService() {
         PageRestService pageService = clients.getPageService();
         PageForm form = PageFormBuilder.form().broadcasters("VPRO").broadcasterFacet().build();
 
@@ -201,7 +201,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testGetProfile() throws Exception {
+    public void testGetProfile() {
         ProfileRestService profileService = clients.getProfileService();
         Profile p = profileService.load("cultura", null);
         log.info("cultura: {}", p);

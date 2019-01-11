@@ -20,7 +20,7 @@ public class ConfigTest {
     Config config = new Config("apiclient-test.properties", "apiclient-test2.properties");
 
     @Test
-    public void env() throws Exception {
+    public void env() {
         Map<String, String> props = config.getProperties(Config.Prefix.npo_api);
         log.info("{}", props);
         assertThat(config.env()).isEqualTo(Env.TEST);
@@ -31,7 +31,7 @@ public class ConfigTest {
 
 
     @Test
-    public void setEnv() throws Exception {
+    public void setEnv() {
 
         config.setEnv(Env.DEV);
         assertThat(config.env()).isEqualTo(Env.DEV);

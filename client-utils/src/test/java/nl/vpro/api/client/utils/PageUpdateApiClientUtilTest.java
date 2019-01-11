@@ -34,7 +34,7 @@ public class PageUpdateApiClientUtilTest {
     }
 
     @Test
-    public void testSaveInvalid() throws Exception {
+    public void testSaveInvalid() {
         PageUpdate instance = new PageUpdate(PageType.ARTICLE, "http://vpro.nl/test");
         Result result = util.save(instance);
         assertThat(result.getStatus()).isEqualTo(Result.Status.INVALID);
@@ -42,7 +42,7 @@ public class PageUpdateApiClientUtilTest {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() {
         String id  = "http://BESTAATNIET";
         Result result = util.delete(id);
         assertThat(result.getStatus()).isEqualTo(Result.Status.SUCCESS);
