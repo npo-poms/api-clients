@@ -2,6 +2,7 @@ package nl.vpro.rs.media;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 
 import java.time.Duration;
 import java.util.*;
@@ -77,6 +78,7 @@ import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
  * @author Michiel Meeuwissen
  */
 
+@SuppressWarnings("WeakerAccess")
 public class MediaRestClient extends AbstractApiClient implements MediaRestClientMXBean {
 
     private int defaultMax = 50;
@@ -156,7 +158,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     }
 
-    @SuppressWarnings({ "SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType" })
+    @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType", "unused"})
     @Named
     public static class Provider implements javax.inject.Provider<MediaRestClient> {
 
@@ -430,6 +432,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     @SuppressWarnings("unchecked")
+    @SneakyThrows
     protected <T extends MediaUpdate<?>> T get(final Class<T> type, final String id) {
         return (T) getBackendRestService()
             .getMedia(valueOf(type), id, followMerges, owner);
@@ -438,6 +441,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
 
     @SuppressWarnings("unchecked")
+    @SneakyThrows
     protected <T extends MediaObject> T getFull(final Class<T> type, final String id) {
         return (T) getBackendRestService().getFullMediaObject(valueOf(type), id, followMerges);
     }
@@ -474,6 +478,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
+    @SneakyThrows
     public String delete(String mid) {
         try (Response response = getBackendRestService().deleteMedia(null, mid, followMerges, errors)) {
             String result = response.readEntity(String.class);
@@ -500,6 +505,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
+    @SneakyThrows
     public SortedSet<LocationUpdate> cloneLocations(String id) {
 
         SortedSet<LocationUpdate> result = new TreeSet<>();
@@ -532,13 +538,14 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
 
+    @SneakyThrows
     public void createMember(String owner, String member, Integer number) {
         try (Response response = getBackendRestService().addMemberOf(
                 new MemberRefUpdate(number, owner), EntityType.AllMedia.media, member, followMerges, errors, validateInput)) {
             log.debug("{}", response);
         }
     }
-
+    @SneakyThrows
     public void removeMember(String owner, String member, Integer number) {
         try (Response response = getBackendRestService()
                 .removeMemberOf(EntityType.AllMedia.media, member, owner, number, followMerges, errors)) {
@@ -546,6 +553,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
+    @SneakyThrows
     public void createEpisode(String owner, String member, Integer number) {
         try (Response response = getBackendRestService()
                 .addEpisodeOf(new MemberRefUpdate(number, owner), member, followMerges, errors, validateInput)) {
@@ -553,6 +561,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
+    @SneakyThrows
     public void removeEpisode(String owner, String member, Integer number) {
         try (Response response = getBackendRestService().removeEpisodeOf(member, owner, number, followMerges, errors)) {
             log.debug("{}", response);
@@ -570,6 +579,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return set(type, update, null);
     }
 
+    @SneakyThrows
     protected String set(final EntityType type, final MediaUpdate update, String errors) {
         if (errors == null) {
             errors = this.errors;
@@ -582,6 +592,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
+    @SneakyThrows
     public String removeSegment(String program, String segment) {
         try (Response response = getBackendRestService().removeSegment(program, segment, followMerges, errors)) {
             String result = response.readEntity(String.class);
@@ -614,6 +625,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return (T) getFull(MediaObject.class, id);
     }
 
+    @SneakyThrows
     public MediaUpdateList<MemberUpdate> getGroupMembers(final String id, final int max, final long offset) {
         return getBackendRestService().getGroupMembers(EntityType.NoSegments.media, id, offset, max, "ASC", followMerges, owner);
     }
@@ -622,6 +634,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return getGroupMembers(id, defaultMax, 0);
     }
 
+    @SneakyThrows
     public MediaUpdateList<MemberUpdate> getGroupEpisodes(final String id, final int max, final long offset) {
         return getBackendRestService().getGroupEpisodes(id, offset, max, "ASC", followMerges, owner);
     }
@@ -646,6 +659,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return set(EntityType.AllMedia.media, mediaUpdate, errors);
     }
 
+    @SneakyThrows
     public Iterator<MemberUpdate> getAllMembers(String mid) {
         return BatchedReceiver.<MemberUpdate>builder()
             .batchSize(240)
@@ -653,6 +667,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             .build();
     }
 
+    @SneakyThrows
     public Iterator<MemberUpdate> getAllEpisodes(String mid) {
         return BatchedReceiver.<MemberUpdate>builder()
             .batchSize(defaultMax)
@@ -661,6 +676,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
 
+    @SneakyThrows
     public Iterator<Member> getAllFullMembers(String mid) {
         return BatchedReceiver.<Member>builder()
             .batchSize(defaultMax)
@@ -668,6 +684,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             .build();
     }
 
+    @SneakyThrows
     public Iterator<Member> getAllFullEpisodes(String mid) {
         return BatchedReceiver.<Member>builder()
             .batchSize(defaultMax)
@@ -675,6 +692,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             .build();
     }
 
+    @SneakyThrows
     public MediaList<MediaListItem> find(MediaForm form) {
         return getBackendRestService().find(form, false, validateInput);
     }
