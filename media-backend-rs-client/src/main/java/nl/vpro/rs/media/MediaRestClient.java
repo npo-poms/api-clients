@@ -435,8 +435,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @SneakyThrows
     protected <T extends MediaUpdate<?>> T get(final Class<T> type, final String id) {
         return (T) getBackendRestService()
-            .getMedia(valueOf(type), id, followMerges, owner);
-
+                .getMedia(valueOf(type), id, followMerges, owner);
     }
 
 
@@ -545,6 +544,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             log.debug("{}", response);
         }
     }
+
     @SneakyThrows
     public void removeMember(String owner, String member, Integer number) {
         try (Response response = getBackendRestService()
