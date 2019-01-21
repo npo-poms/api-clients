@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -152,7 +153,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             return null;
         });
     }
-
 
     public static class Builder {
 
@@ -659,36 +659,60 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return set(EntityType.AllMedia.media, mediaUpdate, errors);
     }
 
-    @SneakyThrows
-    public Iterator<MemberUpdate> getAllMembers(String mid) {
+    public Iterator<MemberUpdate> getAllMembers(String mid) throws IOException {
         return BatchedReceiver.<MemberUpdate>builder()
             .batchSize(240)
-            .batchGetter((offset, max) -> getBackendRestService().getGroupMembers(EntityType.NoSegments.media, mid, offset, max, "ASC", followMerges, owner).iterator())
+            .batchGetter((offset, max) -> {
+                try {
+                    return getBackendRestService().getGroupMembers(EntityType.NoSegments.media, mid, offset, max, "ASC", followMerges, owner).iterator();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+            })
             .build();
     }
 
-    @SneakyThrows
     public Iterator<MemberUpdate> getAllEpisodes(String mid) {
         return BatchedReceiver.<MemberUpdate>builder()
             .batchSize(defaultMax)
-            .batchGetter((offset, max) -> getBackendRestService().getGroupEpisodes(mid, offset, max, "ASC", followMerges, owner).iterator())
+            .batchGetter((offset, max) -> {
+                try {
+                    return getBackendRestService().getGroupEpisodes(mid, offset, max, "ASC", followMerges, owner).iterator();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+            })
             .build();
     }
 
 
-    @SneakyThrows
     public Iterator<Member> getAllFullMembers(String mid) {
         return BatchedReceiver.<Member>builder()
             .batchSize(defaultMax)
-            .batchGetter((offset, max) -> getBackendRestService().getFullGroupMembers(EntityType.NoSegments.media, mid, offset, max, "ASC", followMerges).iterator())
+            .batchGetter((offset, max) -> {
+                try {
+                    return getBackendRestService().getFullGroupMembers(EntityType.NoSegments.media, mid, offset, max, "ASC", followMerges).iterator();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+            })
             .build();
     }
 
-    @SneakyThrows
     public Iterator<Member> getAllFullEpisodes(String mid) {
         return BatchedReceiver.<Member>builder()
             .batchSize(defaultMax)
-            .batchGetter((offset, max) -> getBackendRestService().getFullGroupEpisodes(mid, offset, max, "ASC", followMerges).iterator())
+            .batchGetter((offset, max) -> {
+                try {
+                    return getBackendRestService().getFullGroupEpisodes(mid, offset, max, "ASC", followMerges).iterator();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+            })
             .build();
     }
 
