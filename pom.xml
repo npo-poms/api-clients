@@ -24,10 +24,13 @@
     <module>media-backend-rs-client</module>
   </modules>
 
-  <scm>
-    <connection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/trunk</connection>
-    <developerConnection>scm:svn:https://subversion.vpro.nl/repo/nl/vpro/api-clients/trunk</developerConnection>
-    <url>https://subversion.vpro.nl/viewvc/nl/vpro/api-clients/trunk</url>
+
+
+   <scm>
+    <connection>scm:git:git://git@github.com/npo-poms/api-clients.git</connection>
+    <developerConnection>scm:git:git@github.com:npo-poms/api-clients.git</developerConnection>
+    <url>https://github.com/npo-poms/api-clients</url>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
@@ -76,5 +79,28 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh-release</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  <repositories>
+     <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+       <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>
