@@ -5,7 +5,7 @@
   <parent>
     <groupId>nl.vpro.poms</groupId>
     <artifactId>poms-parent</artifactId>
-    <version>5.10.1</version>
+    <version>5.10.2</version>
   </parent>
 
   <groupId>nl.vpro.api-client</groupId>
@@ -31,7 +31,7 @@
   </scm>
 
   <properties>
-    <poms.shared.version>5.10-SNAPSHOT</poms.shared.version>
+    <poms.shared.version>5.10.0</poms.shared.version>
   </properties>
 
   <build>
@@ -77,28 +77,4 @@
     </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <id>vpro</id>
-      <url>https://nexus.vpro.nl/content/groups/public</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>vpro</id>
-      <url>https://nexus.vpro.nl/content/groups/public</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
 </project>
