@@ -1,0 +1,12 @@
+language: java
+env:
+  global:
+  - SONATYPE_USERNAME=vpro
+  - secure: BGQCZMHSOgrQSmZIWXmjtwpZqAN14sIqQRIKpDM3tQcxJ4VuPgACQAfdYrVDh4AtKCqHBw7qIrdXItLkKrFURMEUieNR4yAp+da/RcW/KcmeKDg63Ltd9q2yC98b0BSSut+oeD9MT9YG8rStvQJ9LQV4EllLrlvc/ZClFd7y860vlV0wYUilGCgO98Ax3rO/NYgu9UhR68GM4x01iwv65ckh852lXC+/vcDpJJlx7JWW87ydla8rKHYda80r0gQZ4cjo/dDDf/UBFOKpD8HAxPP1GLqPl+GdRxDq99rxaAGn20BxPJIL/sVlWQwBcR6olVX4rDc9Sz/MjfePAJmhkU38MN6YnRrKMEnxHMcmYDiHLKGi/uocdjop1U0ejKhpS/9EGFKjdeUixiVZwFT/HHnf3iji5HY6nyjvd4ASfA36n9thGklkviWaCnjZxkNxtgnA7QnvMk1Gzp7VwKjhPvuJHBZhu73OTcADwbdMLOyHnFY0cohqQHMS0G9TNJJdUQeAoFlPA9VCshwJ3hEH9Jp0lcxjSUMhfeUch55Z+88XzHAN6AGMs1uXZbezVEuz3qKsgMBMSGNrrZbKmvG6Z98SCCH3O2O8ToB3GEegFettx7263a+bilOHLg/n/lMdF7ITyEQD7UnOAXPxNH6Culz7t+TsZKmM+DGRm/vT3IM=
+jdk:
+- oraclejdk8
+sudo: false
+script: mvn --fail-never -T 1C -Pdeploy,ossrh clean test deploy --settings .travis-settings.xml
+  -Dgpg.skip=true
+after_success:
+- bash <(curl -s https://codecov.io/bash)
