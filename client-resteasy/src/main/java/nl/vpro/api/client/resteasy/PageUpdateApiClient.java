@@ -1,29 +1,10 @@
 package nl.vpro.api.client.resteasy;
 
+import com.google.common.base.Suppliers;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import com.google.common.base.Suppliers;
-
 import nl.vpro.api.client.utils.Config;
 import nl.vpro.api.client.utils.Swagger;
 import nl.vpro.api.client.utils.VersionResult;
@@ -35,6 +16,22 @@ import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.rs.provider.ApiProviderRestService;
 import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
 import nl.vpro.util.*;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 
@@ -164,30 +161,31 @@ public class PageUpdateApiClient extends AbstractApiClient {
         String jwsKey,
         String jwsUser,
         ClassLoader classLoader,
-        String userAgent
+        String userAgent,
+        Boolean registerMBean
         ) {
-        super(
-            baseUrl == null ? "https://publish.pages.omroep.nl/api" : (baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api"),
-            connectionRequestTimeout,
-            connectTimeout,
-            socketTimeout,
-            maxConnections,
-            maxConnectionsPerRoute,
-            null,
-            null,
-            connectionInPoolTTL,
-            countWindow,
-            bucketCount,
-            warnThreshold,
-            acceptableLanguages,
-            accept,
-            null,
-            trustAll,
-            null,
-            mbeanName,
-            classLoader,
-            userAgent
-            );
+        super(baseUrl == null ? "https://publish.pages.omroep.nl/api" : (baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api"),
+                connectionRequestTimeout,
+                connectTimeout,
+                socketTimeout,
+                maxConnections,
+                maxConnectionsPerRoute,
+                null,
+                null,
+                connectionInPoolTTL,
+                countWindow,
+                bucketCount,
+                warnThreshold,
+                acceptableLanguages,
+                accept,
+                null,
+                trustAll,
+                null,
+                mbeanName,
+                classLoader,
+                userAgent,
+                registerMBean
+        );
         if (user == null){
             throw new IllegalArgumentException("No user given");
         }
@@ -295,9 +293,11 @@ public class PageUpdateApiClient extends AbstractApiClient {
         return classificationService = produceIfNull(
             () -> classificationService,
             () -> {
+                String classificationUrl = this.baseUrl.replaceAll("/api$", "");
 
-                log.info("No classification service wired. Created {}", this.classificationService);
-                return new CachedURLClassificationServiceImpl(this.baseUrl);
+                ClassificationService impl = new CachedURLClassificationServiceImpl(classificationUrl);
+                log.info("No classification service wired. Created {}", impl);
+                return impl;
             });
     }
 
