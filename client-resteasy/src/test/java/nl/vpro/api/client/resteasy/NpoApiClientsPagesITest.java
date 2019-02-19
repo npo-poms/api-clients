@@ -4,18 +4,8 @@
  */
 package nl.vpro.api.client.resteasy;
 
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.time.Duration;
-import java.time.Instant;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-
+import lombok.extern.slf4j.Slf4j;
 import nl.vpro.domain.api.FacetOrder;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.SearchResultItem;
@@ -23,6 +13,13 @@ import nl.vpro.domain.api.page.*;
 import nl.vpro.domain.media.Schedule;
 import nl.vpro.domain.page.*;
 import nl.vpro.jackson2.Jackson2Mapper;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.time.Duration;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +47,7 @@ public class NpoApiClientsPagesITest {
             .socketTimeout(Duration.ofMillis(100))
             .connectTimeout(Duration.ofMillis(1000))
             .build();
-        System.out.println("Testing with " + clients);
+        log.info("Testing with {}", clients);
     }
 
     @Test

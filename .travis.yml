@@ -10,3 +10,6 @@ script: mvn --fail-never -T 1C -Pdeploy,ossrh clean test deploy --settings .trav
   -Dgpg.skip=true
 after_success:
 - bash <(curl -s https://codecov.io/bash)
+before_install:
+  - mkdir $HOME/conf
+  - openssl aes-256-cbc -K $encrypted_586f6f68bf53_key -iv $encrypted_586f6f68bf53_iv -in .travis/apiclient.properties.enc -out $HOME/conf/apiclient.properties -d
