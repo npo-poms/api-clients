@@ -35,6 +35,7 @@
 
   <properties>
     <poms.shared.version>5.10.0</poms.shared.version>
+    <vpro.shared.version>2.6-SNAPSHOT</vpro.shared.version>
   </properties>
 
   <build>
