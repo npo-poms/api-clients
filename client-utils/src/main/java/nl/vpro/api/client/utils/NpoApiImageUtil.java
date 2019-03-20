@@ -41,7 +41,7 @@ public class NpoApiImageUtil {
     public Optional<String> getUrl(String imageUri) {
         int lastColon = imageUri.lastIndexOf(':');
         int number = Integer.parseInt(imageUri.substring(lastColon + 1));
-        return Optional.of(baseUrl + "/image/" + number + ".jpg");
+        return Optional.of(baseUrl + "/image/" + number);
     }
 
     public Optional<String> getUrl(ImageUpdate iu) {
@@ -67,6 +67,7 @@ public class NpoApiImageUtil {
 
                         return Long.valueOf(response.getFirstHeader("Content-Length").getValue());
                     } else {
+                        log.warn("Response {}", response.getStatusLine());
                         return -1L;
                     }
                 } catch (IOException e) {
