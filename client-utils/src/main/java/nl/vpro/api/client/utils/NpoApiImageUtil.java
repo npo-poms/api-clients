@@ -30,6 +30,8 @@ public class NpoApiImageUtil {
     @Getter
     private String baseUrl;
 
+    boolean supportsOriginal;
+
     @Inject
     public NpoApiImageUtil(
         @NotNull
@@ -41,7 +43,12 @@ public class NpoApiImageUtil {
     public Optional<String> getUrl(String imageUri) {
         int lastColon = imageUri.lastIndexOf(':');
         int number = Integer.parseInt(imageUri.substring(lastColon + 1));
-        return Optional.of(baseUrl + "/image/" + number);
+        if (supportsOriginal) {
+            return Optional.of(baseUrl + "/image/" + number);
+        } else {
+            return Optional.of(baseUrl + "/image/" + number + ".jpg");
+
+        }
     }
 
     public Optional<String> getUrl(ImageUpdate iu) {
@@ -57,6 +64,7 @@ public class NpoApiImageUtil {
     }
 
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     Optional<Long> getSize(Optional<String> url) {
         return url
             .map(u -> {
