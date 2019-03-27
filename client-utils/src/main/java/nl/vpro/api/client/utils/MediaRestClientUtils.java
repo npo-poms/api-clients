@@ -53,7 +53,7 @@ public class MediaRestClientUtils {
         excludedTypes.add(ProgramType.TRACK.getMediaType());
         excludedTypes.add(SegmentType.SEGMENT.getMediaType());
 
-        MediaForm form = formBuilder.types(Match.NOT, excludedTypes.toArray(new MediaType[excludedTypes.size()])).build();
+        MediaForm form = formBuilder.types(Match.NOT, excludedTypes.toArray(new MediaType[0])).build();
         form.addSortField(new MediaSortOrder(MediaSortField.sortDate, Order.DESC));
 
         return form;

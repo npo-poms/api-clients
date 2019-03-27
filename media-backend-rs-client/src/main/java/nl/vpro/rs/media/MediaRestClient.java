@@ -217,7 +217,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         boolean validateInput,
         String mbeanName,
         ClassLoader classLoader,
-        String userAgent) {
+        String userAgent,
+        Boolean registerMBean) {
         super(
             baseUrl,
             connectionRequestTimeout,
@@ -238,7 +239,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             null, // only xml is relevant
             mbeanName,
             classLoader,
-            userAgent);
+            userAgent,
+            registerMBean);
         if (defaultMax != null) {
             this.defaultMax = defaultMax;
         }

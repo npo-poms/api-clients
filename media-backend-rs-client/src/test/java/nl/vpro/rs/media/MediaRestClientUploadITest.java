@@ -31,7 +31,7 @@ public class MediaRestClientUploadITest {
 
     @Before
     public void setUp() {
-        client = MediaRestClient.configured(Env.LOCALHOST).build();
+        client = MediaRestClient.configured(Env.TEST).build();
 
     }
     @After
@@ -43,22 +43,26 @@ public class MediaRestClientUploadITest {
 
     @Test
     public void uploadAndTranscode() throws IOException {
-        File file = new File("/Users/michiel/mmbase/trunk/applications/streams/samples/JessieJ-174205.jpg");
-        InputStream is = FileCachingInputStream.builder()
+        File file = new File("/Users/michiel/mmbase/trunk/applications/streams/samples/retour_madrid.mp4");
+        try(InputStream is = FileCachingInputStream.builder()
             .input(new FileInputStream(file))
             .batchSize(5_000_000L)
+            .progressLogging(false)
             .logger(log)
             .build();
-        try(Response response = client.getBackendRestService().
-            uploadAndTranscode("POMS_VPRO_1424050",Encryption.NONE, TranscodeRequest.Priority.NORMAL,  "",
-                is,
-                "video/mp4",
-                null,  true, true, null,
-                null)) {
+            Response response = client.getBackendRestService().
+                uploadAndTranscode("POMS_VPRO_1424050",Encryption.NONE, TranscodeRequest.Priority.NORMAL,  "",
+                    is,
+                    "video/mp4",
+                    null,  true, true, null,
+                    null)) {
             InputStream responseEntity = (InputStream) response.getEntity();
 
             IOUtils.copy(responseEntity, LoggerOutputStream.info(log));
+
         }
+
+
 
     }
 

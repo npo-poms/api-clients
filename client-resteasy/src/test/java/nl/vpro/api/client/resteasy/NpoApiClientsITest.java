@@ -111,8 +111,8 @@ public class NpoApiClientsITest {
     @Test
     public void testFound() {
         for (int i = 0; i < 100; i++) {
-            MediaObject program = clients.getMediaService().load("POMS_S_VPRO_827832", null, null);
-            log.info(i + ":" + program.getMainTitle());
+            MediaObject program = clients.getMediaService().load("POMS_S_VPRO_788298", null, null);
+            log.info(i + ":" + program.getMainTitle() + ":" + program.getMainImage().getLicense());
         }
     }
 
