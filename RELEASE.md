@@ -1,8 +1,7 @@
 
 
 ```bash
-mvn release:branch -DbranchName=REL-2.6-SNAPSHOT -DdevelopmentVersion=2.7-SNAPSHOT
-git checkout REL-2.6-SNAPSHOT
-mvn -Pdeploy release:prepare release:perform -DreleaseVersion=2.6.0 -DdevelopmentVersion=2.6.1-SNAPSHOT
+mvn release:branch -DbranchName=REL-5.10-SNAPSHOT -DdevelopmentVersion=5.11-SNAPSHOT
+git checkout REL-5.10-SNAPSHOT
+mvn -Pdeploy,ossrh release:prepare release:perform -DreleaseVersion=5.10.0 -DdevelopmentVersion=5.10.1-SNAPSHOT
 ```
-
