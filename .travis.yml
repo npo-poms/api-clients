@@ -2,13 +2,15 @@ language: java
 env:
   global:
   - SONATYPE_USERNAME=vpro
-  - secure: BGQCZMHSOgrQSmZIWXmjtwpZqAN14sIqQRIKpDM3tQcxJ4VuPgACQAfdYrVDh4AtKCqHBw7qIrdXItLkKrFURMEUieNR4yAp+da/RcW/KcmeKDg63Ltd9q2yC98b0BSSut+oeD9MT9YG8rStvQJ9LQV4EllLrlvc/ZClFd7y860vlV0wYUilGCgO98Ax3rO/NYgu9UhR68GM4x01iwv65ckh852lXC+/vcDpJJlx7JWW87ydla8rKHYda80r0gQZ4cjo/dDDf/UBFOKpD8HAxPP1GLqPl+GdRxDq99rxaAGn20BxPJIL/sVlWQwBcR6olVX4rDc9Sz/MjfePAJmhkU38MN6YnRrKMEnxHMcmYDiHLKGi/uocdjop1U0ejKhpS/9EGFKjdeUixiVZwFT/HHnf3iji5HY6nyjvd4ASfA36n9thGklkviWaCnjZxkNxtgnA7QnvMk1Gzp7VwKjhPvuJHBZhu73OTcADwbdMLOyHnFY0cohqQHMS0G9TNJJdUQeAoFlPA9VCshwJ3hEH9Jp0lcxjSUMhfeUch55Z+88XzHAN6AGMs1uXZbezVEuz3qKsgMBMSGNrrZbKmvG6Z98SCCH3O2O8ToB3GEegFettx7263a+bilOHLg/n/lMdF7ITyEQD7UnOAXPxNH6Culz7t+TsZKmM+DGRm/vT3IM=
+  - secure: TdRu39a8x/MiLOsmlMu/cwEFBrDwt2C57HQ/8BEEHqn1kqQ09ANoxfIsMN8BnCyoa0oSTZzgbrCDM+RPOUwR91zm2ShWMsxpgbJ035giSVr2lGnT4dkHtqktmspd9Gw6f0Hoac+7Iji45CRWoegvxuGG9s/GrCnjRxntvmS3jiVilTARjUITOEZCtcutBiDcUJYHa83LmxnkRexhXr+IIyt88l4Mej3s/uXu2eRrE9QszpUzw3CPE9bdqzmY8JgXMOu/R1BzapgTfj6flKEG5Oii52fHXx/t4nNzLOYsfdxJxdyEDqqbxPEx/er4haa+CvfCsy9NpWT/pc13GeozrVyYU0V+pUqoa5wZbxFTSi1nz1khR3NUb2EuPUZBuDWlDVSxCkmgEeUjwxJJfLusVP6dNLSICv7xzPdT64IvmmvpvzTZqcueTxTQ1ezi0wFRHM4nOoZuZv5OEBWxHCUij701dho7+7AwrusJNtWDrVywtZ9YLkREIFn+MntN+mBoOp3Zcuz8MeZ8xWyFE+AKMh4NuNQ1svDjWc8QoUaGuA4ly4Vl9WDBdnBs9HP7FRW1ROGSU2yZ7kMVdqYAByl0ZnX0kx0h5yKiUAIHnSoHx75loXfbPInisW6D/vTcQ5Tap6oUb2wF+vvp0eaKFHlRkkPg1I6FkhYwofHwvY9QNLA=
 jdk:
 - oraclejdk8
 sudo: false
-script: mvn --fail-never -T 1C -Pdeploy,ossrh -DskipITs=false clean test integration-test deploy --settings .travis-settings.xml -Dgpg.skip=true
+script: mvn --fail-never -T 1C -Pdeploy,ossrh -DskipITs=false clean test integration-test
+  deploy --settings .travis-settings.xml -Dgpg.skip=true
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 before_install:
-  - mkdir $HOME/conf
-  - openssl aes-256-cbc -K $encrypted_586f6f68bf53_key -iv $encrypted_586f6f68bf53_iv -in .travis/apiclient.properties.enc -out $HOME/conf/apiclient.properties -d
+- mkdir $HOME/conf
+- openssl aes-256-cbc -K $encrypted_586f6f68bf53_key -iv $encrypted_586f6f68bf53_iv
+  -in .travis/apiclient.properties.enc -out $HOME/conf/apiclient.properties -d
