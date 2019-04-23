@@ -6,3 +6,20 @@
 
 # api-clients
 Java API clients for the POMS Rest API's (Frontend API, Backend API, Pages Publisher)
+
+It is split up in several modules. These are the important ones:
+
+* `client-resteasy` Provides clients for the [NPO Frontend API](https://rs.poms.omroep.nl) and Pages Update API, implemented using resteasy.
+
+* `media-backend-rs-client`. Provides a client for the [POMS Backend API](https://api.poms.omroep.nl). Also using resteasy.
+
+The clients can be configured by code and/or an configuration file in `${user.home}/conf/apiclient.properties`
+```java
+   clients = NpoApiClients.configured(env).build();
+   
+```
+There are also 'providers' available to configure them easily via spring or guice.
+
+
+## TODO
+There might not be good reason to have this many modules in this project. 
