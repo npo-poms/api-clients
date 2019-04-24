@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.vpro.domain.media.Encryption;
@@ -25,6 +26,7 @@ import nl.vpro.util.FileCachingInputStream;
  * @author Michiel Meeuwissen
  */
 @Slf4j
+@Ignore
 public class MediaRestClientUploadITest {
 
     private MediaRestClient client;
