@@ -26,8 +26,9 @@ The clients can be configured by code and/or an configuration file in `${user.ho
     });
    
 ```
-There are also 'providers' available to configure them easily via spring or guice.
+There are also 'providers' available to configure them easily via spring XML's or for example XML's of magnolia CMS (which uses guice)
 
 
 ## TODO
-There might not be good reason to have this many modules in this project. 
+- There might not be good reason to have this many modules in this project. 
+- Document how to wire via spring xml
