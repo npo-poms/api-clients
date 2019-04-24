@@ -8,6 +8,8 @@ import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
 
 /**
+ * An implementation of {@link MediaSearchRepository}, but based on an api client.
+ *
  * @author Michiel Meeuwissen
  * @since 1.1
  */
@@ -44,7 +46,7 @@ public class ApiClientMediaSearchRepository extends AbstractApiClientMediaReposi
 
     @Override
     public MediaSearchResult findRelated(MediaObject media, ProfileDefinition<MediaObject> profile, MediaForm form, Integer max) {
-        return clients.getMediaService().findRelated(form != null ? form : MediaFormBuilder.emptyForm(), media.getMid(), name(profile), null, max);
+        return clients.getMediaService().findRelated(form != null ? form : MediaFormBuilder.emptyForm(), media.getMid(), name(profile), null, max, null);
     }
 
 
