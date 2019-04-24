@@ -11,6 +11,8 @@
   <artifactId>client-utils</artifactId>
   <name>client-utils</name>
 
+  <description>Utils for the NPO api clients</description>
+
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
