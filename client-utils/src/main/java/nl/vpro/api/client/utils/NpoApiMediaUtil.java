@@ -13,6 +13,8 @@ import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
@@ -40,6 +42,14 @@ import nl.vpro.util.TimeUtils;
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 
 /**
+ * Wrapper around {@link NpoApiClients}, that provides things like:
+ - rate limiting
+ - caching
+ - un paging of calls that require paging. if the api enforces a max of at most e.g. 240, calls in this utility will accept any max, and do paging implicitely
+ - less arguments. Some of the Rest service interface want arguments like request and response object which should at the client side simply remain null
+ -  exception handling
+ - Parsing of input stream if that it the return value (huge results like {@link nl.vpro.api.rs.v3.media.MediaRestService#changes(String, String, Long, String, String, Integer, Boolean, Deletes, HttpServletRequest, HttpServletResponse)} and {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer, HttpServletRequest, HttpServletResponse)} have that.
+
  * @author Michiel Meeuwissen
  */
 @Named
@@ -168,6 +178,10 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
+    /**
+     * The api has limits on max size, requiring you to use paging when you want more.
+     * This method arranges that.
+     */
     public ProgramResult unPageProgramResult(BiFunction<Integer, Long, ProgramResult> supplier, Predicate<MediaObject> filter, int max) {
         limiter.acquire();
         if (filter == null) {
@@ -201,6 +215,10 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
 
+    /**
+     * Wraps {@link nl.vpro.api.rs.v3.media.MediaRestService#listDescendants(String, String, String, String, Long, Integer)}, but with less arguments.
+     * @param max The max number of results you want. If this is bigger than the maximum accepted by the API, implicit paging will happen.
+     */
     public MediaResult listDescendants(String mid, Order order, Predicate<MediaObject> filter, int max) {
         BiFunction<Integer, Long, MediaResult> descendants = (batch, offset) ->
             clients.getMediaService().listDescendants(mid, null, null, order.toString(), offset, batch);
@@ -307,6 +325,9 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
+    /**
+     * Calls {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer, HttpServletRequest, HttpServletResponse)}, and wraps the resulting {@link java.io.InputStream} in an {@link Iterator} of {@link MediaObject}}
+     */
     public Iterator<MediaObject> iterate(MediaForm form, String profile)  {
         limiter.acquire();
         try {
