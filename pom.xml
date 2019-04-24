@@ -15,9 +15,6 @@
   <description>Clients for NPO API's</description>
 
   <modules>
-    <!--
-    <module>api-client-scripts</module>
-    -->
     <module>client-resteasy</module>
     <module>client-utils</module>
     <module>media-backend-rs-client</module>
@@ -33,8 +30,8 @@
   </scm>
 
   <properties>
-    <poms.shared.version>5.10.0</poms.shared.version>
-    <vpro.shared.version>2.6.0</vpro.shared.version>
+    <poms.shared.version>5.10.2</poms.shared.version>
+    <vpro.shared.version>2.6.2</vpro.shared.version>
   </properties>
 
   <build>
