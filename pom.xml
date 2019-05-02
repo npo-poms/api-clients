@@ -10,7 +10,7 @@
 
   <groupId>nl.vpro.api-client</groupId>
   <artifactId>api-client-parent</artifactId>
-  <version>5.11-SNAPSHOT</version>
+  <version>{$parent.version}</version>
   <packaging>pom</packaging>
   <description>Clients for NPO API's</description>
 
@@ -28,11 +28,6 @@
     <url>https://github.com/npo-poms/api-clients</url>
     <tag>HEAD</tag>
   </scm>
-
-  <properties>
-    <poms.shared.version>5.11-SNAPSHOT</poms.shared.version>
-    <vpro.shared.version>2.7-SNAPSHOT</vpro.shared.version>
-  </properties>
 
   <build>
      <plugins>
