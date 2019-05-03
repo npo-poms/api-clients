@@ -10,7 +10,7 @@
 
   <groupId>nl.vpro.api-client</groupId>
   <artifactId>api-client-parent</artifactId>
-  <version>{$parent.version}</version>
+  <version>5.11-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Clients for NPO API's</description>
 
@@ -19,6 +19,10 @@
     <module>client-utils</module>
     <module>media-backend-rs-client</module>
   </modules>
+
+  <properties>
+    <poms.shared.version>5.11-SNAPSHOT</poms.shared.version>
+  </properties>
 
 
 
