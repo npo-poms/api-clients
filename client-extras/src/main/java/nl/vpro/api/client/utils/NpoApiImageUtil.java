@@ -3,20 +3,17 @@ package nl.vpro.api.client.utils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-
+import nl.vpro.domain.media.update.ImageUpdate;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import nl.vpro.domain.media.update.ImageUpdate;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * @author Michiel Meeuwissen
@@ -37,6 +34,7 @@ public class NpoApiImageUtil {
         @NotNull
         @Named("image.baseUrl") String baseUrl) {
         this.baseUrl = baseUrl;
+        this.supportsOriginal = baseUrl.contains("dev") || baseUrl.contains("test");
     }
 
 
