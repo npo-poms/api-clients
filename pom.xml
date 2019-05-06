@@ -14,7 +14,7 @@
 
   <modules>
     <module>frontend-api-client</module>
-    <module>client-utils</module>
+    <module>client-extras</module>
     <module>media-backend-api-client</module>
   </modules>
 
