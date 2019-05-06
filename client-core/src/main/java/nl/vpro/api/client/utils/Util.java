@@ -4,18 +4,15 @@
  */
 package nl.vpro.api.client.utils;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -29,7 +26,7 @@ class Util {
     public static String sha256(String input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(input.getBytes("UTF-8"));
+            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
             return toString(hash);
         } catch(Exception ex) {
             throw new RuntimeException(ex);
@@ -39,9 +36,9 @@ class Util {
     public static String hmacSHA256(String privateKey, String data) {
         try {
             Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
-            SecretKeySpec keySpec = new SecretKeySpec(privateKey.getBytes("UTF-8"), "HmacSHA256");
+            SecretKeySpec keySpec = new SecretKeySpec(privateKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
             hmacSHA256.init(keySpec);
-            return Base64.encodeBase64String(hmacSHA256.doFinal(data.getBytes())).trim();
+            return Base64.getEncoder().encodeToString(hmacSHA256.doFinal(data.getBytes())).trim();
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
@@ -60,7 +57,7 @@ class Util {
     }
 
     private static String toString(byte[] hash) {
-        StringBuffer hexString = new StringBuffer();
+        StringBuilder hexString = new StringBuilder();
 
         for(int i = 0; i < hash.length; i++) {
             String hex = Integer.toHexString(0xff & hash[i]);
