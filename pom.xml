@@ -13,9 +13,11 @@
   <description>Clients for NPO API's</description>
 
   <modules>
+    <module>client-core</module>
     <module>frontend-api-client</module>
     <module>client-extras</module>
     <module>media-backend-api-client</module>
+    <module>pages-backend-api-client</module>
   </modules>
 
   <properties>
@@ -77,10 +79,16 @@
         <artifactId>frontend-api-client</artifactId>
         <version>${project.version}</version>
       </dependency>
+       <dependency>
+        <groupId>nl.vpro.poms</groupId>
+        <artifactId>client-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

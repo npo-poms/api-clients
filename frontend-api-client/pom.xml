@@ -12,10 +12,14 @@
   <name>frontend-api-client</name>
 
   <description>
-    API Clients for the NPO Frontend API, and NPO Page Update API.
+    API Clients for the NPO Frontend API
   </description>
 
   <dependencies>
+     <dependency>
+      <groupId>nl.vpro.poms</groupId>
+      <artifactId>client-core</artifactId>
+    </dependency>
     <dependency>
       <groupId>nl.vpro.media</groupId>
       <artifactId>media-classification</artifactId>
@@ -54,10 +58,6 @@
       <artifactId>api-rs-services</artifactId>
     </dependency>
     <dependency>
-      <groupId>nl.vpro.pages</groupId>
-      <artifactId>pages-rs-services</artifactId>
-    </dependency>
-    <dependency>
     <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
     </dependency>
@@ -86,10 +86,7 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.jsonwebtoken</groupId>
-      <artifactId>jjwt-impl</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
