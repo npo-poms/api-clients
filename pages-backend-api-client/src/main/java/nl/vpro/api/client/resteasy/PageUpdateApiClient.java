@@ -2,7 +2,7 @@ package nl.vpro.api.client.resteasy;
 
 import com.google.common.base.Suppliers;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import nl.vpro.api.client.utils.Config;
@@ -18,6 +18,7 @@ import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
 import nl.vpro.util.*;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
+import javax.crypto.SecretKey;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.HeaderParam;
@@ -341,13 +342,14 @@ public class PageUpdateApiClient extends AbstractApiClient {
     protected String jws(String subject) {
         Instant now = Instant.now();
         Instant expires = now.plus(Duration.ofHours(12));
+        SecretKey secretKey = Keys.hmacShaKeyFor(jwsKey);
         String compactJws = Jwts.builder()
             .setSubject(subject)
             .claim("usr", jwsUser)
             .setIssuedAt(Date.from(now))
             .setIssuer(jwsIssuer)
             .setExpiration(Date.from(expires))
-            .signWith(SignatureAlgorithm.HS256, jwsKey)
+            .signWith(secretKey)
             .compact();
         log.debug(compactJws);
         return compactJws;
