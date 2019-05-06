@@ -7,6 +7,7 @@
     <artifactId>poms-parent</artifactId>
     <version>5.11-SNAPSHOT</version>
   </parent>
+  <groupId>nl.vpro.poms.api-clients</groupId>
   <artifactId>api-client-parent</artifactId>
   <version>5.11-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -75,17 +76,17 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>nl.vpro.poms</groupId>
+        <groupId>nl.vpro.poms.api-clients</groupId>
         <artifactId>frontend-api-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>nl.vpro.poms</groupId>
+        <groupId>nl.vpro.poms.api-clients</groupId>
         <artifactId>pages-backend-api-client</artifactId>
         <version>${project.version}</version>
       </dependency>
        <dependency>
-        <groupId>nl.vpro.poms</groupId>
+        <groupId>nl.vpro.poms.api-clients</groupId>
         <artifactId>client-core</artifactId>
         <version>${project.version}</version>
       </dependency>

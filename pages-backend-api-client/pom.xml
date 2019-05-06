@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>nl.vpro.poms</groupId>
+    <groupId>nl.vpro.poms.api-clients</groupId>
     <artifactId>api-client-parent</artifactId>
     <version>5.11-SNAPSHOT</version>
   </parent>
@@ -17,7 +17,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>nl.vpro.poms</groupId>
+      <groupId>nl.vpro.poms.api-clients</groupId>
       <artifactId>client-core</artifactId>
     </dependency>
     <dependency>

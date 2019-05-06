@@ -3,6 +3,11 @@
 [![codecov](https://codecov.io/gh/npo-poms/api-clients/branch/master/graph/badge.svg)](https://codecov.io/gh/npo-poms/api-clients)
 [![javadoc](http://www.javadoc.io/badge/nl.vpro.api-client/client-resteasy.svg?color=blue)](http://www.javadoc.io/doc/nl.vpro.api-client/client-resteasy)
 
+[![Maven Central](https://img.shields.io/maven-central/v/nl.vpro.poms.api-clients/api-client-parent.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22nl.vpro.poms%22)
+[![codecov](https://codecov.io/gh/npo-poms/api-clients/branch/master/graph/badge.svg)](https://codecov.io/gh/npo-poms/api-clients)
+[![javadoc](http://www.javadoc.io/badge/nl.vpro.poms.api-clients/frontend-api-client.svg?color=blue)](http://www.javadoc.io/doc/nl.vpro.api-client/client-resteasy)
+
+
 
 # api-clients
 Java API clients for the POMS Rest API's (Frontend API, Backend API, Pages Publisher)
@@ -29,6 +34,12 @@ The clients can be configured by code and/or an configuration file in `${user.ho
 There are also 'providers' available to configure them easily via spring XML's or for example XML's of magnolia CMS (which uses guice)
 
 
+
+## Changes in 5.11
+
+In the 5.11 release we will make mayor changes in naming and structure. The groupId's will be changed and all the same, and the artifactIds will get better names. Also, we will change package names.
+
+See #1.
+
 ## TODO
-- There might not be good reason to have this many modules in this project. 
 - Document how to wire via spring xml
