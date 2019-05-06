@@ -7,17 +7,15 @@
     <artifactId>poms-parent</artifactId>
     <version>5.11-SNAPSHOT</version>
   </parent>
-
-  <groupId>nl.vpro.api-client</groupId>
   <artifactId>api-client-parent</artifactId>
   <version>5.11-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Clients for NPO API's</description>
 
   <modules>
-    <module>client-resteasy</module>
+    <module>frontend-api-client</module>
     <module>client-utils</module>
-    <module>media-backend-rs-client</module>
+    <module>media-backend-api-client</module>
   </modules>
 
   <properties>
@@ -75,13 +73,8 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>nl.vpro.api-client</groupId>
-        <artifactId>client-resteasy</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>nl.vpro.api-client</groupId>
-        <artifactId>client-core</artifactId>
+        <groupId>nl.vpro.poms</groupId>
+        <artifactId>frontend-api-client</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

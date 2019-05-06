@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -24,18 +23,15 @@ import com.google.common.util.concurrent.RateLimiter;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
 import nl.vpro.api.client.utils.VersionResult;
-import nl.vpro.api.rs.subtitles.*;
-import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaList;
 import nl.vpro.domain.media.search.MediaListItem;
 import nl.vpro.domain.media.support.OwnerType;
-import nl.vpro.domain.media.update.*;
+import nl.vpro.domain.media.update.MediaUpdate;
 import nl.vpro.domain.media.update.collections.XmlCollection;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.rs.VersionRestService;
-import nl.vpro.util.*;
 
 import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
 

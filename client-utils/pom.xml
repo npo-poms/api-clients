@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>nl.vpro.api-client</groupId>
+    <groupId>nl.vpro.poms</groupId>
     <artifactId>api-client-parent</artifactId>
     <version>5.11-SNAPSHOT</version>
   </parent>
@@ -40,8 +40,8 @@
       <artifactId>pages-rs-services</artifactId>
     </dependency>
     <dependency>
-      <groupId>nl.vpro.api-client</groupId>
-      <artifactId>client-resteasy</artifactId>
+      <groupId>nl.vpro.poms</groupId>
+      <artifactId>frontend-api-client</artifactId>
     </dependency>
     <dependency>
     <groupId>org.jboss.resteasy</groupId>

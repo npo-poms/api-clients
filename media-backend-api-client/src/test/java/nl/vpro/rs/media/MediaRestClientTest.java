@@ -2,7 +2,6 @@ package nl.vpro.rs.media;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -16,14 +15,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.vpro.domain.image.ImageType;
-import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.MediaForm;
 import nl.vpro.domain.media.search.MediaListItem;
 import nl.vpro.domain.media.search.MediaPager;
 import nl.vpro.domain.media.search.TitleForm;
 import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
-import nl.vpro.domain.media.update.*;
 import nl.vpro.logging.LoggerOutputStream;
 import nl.vpro.util.Env;
 

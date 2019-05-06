@@ -47,7 +47,7 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
     @Override
     public List<MediaObject> loadAll(List<String> ids) {
         try {
-            return Arrays.asList(util.load(ids.toArray(new String[ids.size()])));
+            return Arrays.asList(util.load(ids.toArray(new String[0])));
         } catch (IOException e) {
             log.error(e.getMessage());
             return Collections.nCopies(ids.size(), null);

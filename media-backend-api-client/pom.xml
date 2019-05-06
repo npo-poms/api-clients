@@ -3,13 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>nl.vpro.api-client</groupId>
+    <groupId>nl.vpro.poms</groupId>
     <artifactId>api-client-parent</artifactId>
     <version>5.11-SNAPSHOT</version>
   </parent>
 
-  <artifactId>media-backend-rs-client</artifactId>
-  <name>media-backend-rs-client</name>
+  <artifactId>media-backend-api-client</artifactId>
+  <name>media-backend-api-client</name>
 
   <dependencies>
     <dependency>

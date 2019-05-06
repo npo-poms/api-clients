@@ -3,13 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>nl.vpro.api-client</groupId>
+    <groupId>nl.vpro.poms</groupId>
     <artifactId>api-client-parent</artifactId>
     <version>5.11-SNAPSHOT</version>
   </parent>
 
-  <artifactId>client-resteasy</artifactId>
-  <name>client-resteasy</name>
+  <artifactId>frontend-api-client</artifactId>
+  <name>frontend-api-client</name>
 
   <description>
     API Clients for the NPO Frontend API, and NPO Page Update API.
