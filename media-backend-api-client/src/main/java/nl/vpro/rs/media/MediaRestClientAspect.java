@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
@@ -82,7 +83,7 @@ class MediaRestClientAspect<T> implements InvocationHandler {
                 }
             } catch (NotFoundException nfe) {
                 return null;
-            } catch (ServiceUnavailableException  sue) {
+            } catch (ServiceUnavailableException sue) {
                 client.retryAfterWaitOrException(method.getName() + ": Service unavailable:" + sue.getMessage(), sue);
                 // retry
                 continue;
