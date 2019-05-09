@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import nl.vpro.api.client.resteasy.NpoApiClients;
+import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.domain.page.Page;
 import nl.vpro.util.Env;

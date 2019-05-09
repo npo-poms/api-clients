@@ -4,6 +4,8 @@
  */
 package nl.vpro.api.client.utils;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
@@ -11,14 +13,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 /**
  * @author Roelof Jan Koekoek
  * @since 2.1
  */
-class Util {
+public class Util {
 
     private static final String RFC822 = "EEE, dd MMM yyyy HH:mm:ss z";
 

@@ -64,7 +64,7 @@
     <constructor-arg value="${npo-api.socketTimeout}"/>
   </bean>
 
-  <bean  id="api.clients.provider" class="nl.vpro.api.client.resteasy.NpoApiClients.Provider"  />
-  <bean class="nl.vpro.api.client.resteasy.NpoApiClients" factory-bean="api.clients.provider" factory-method="get" />
+  <bean  id="api.clients.provider" class="nl.vpro.api.client.frontend.NpoApiClients.Provider"  />
+  <bean class="nl.vpro.api.client.frontend.NpoApiClients" factory-bean="api.clients.provider" factory-method="get" />
 
 </beans>

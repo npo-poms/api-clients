@@ -10,7 +10,7 @@ import javax.inject.Named;
 
 import com.google.common.collect.Lists;
 
-import nl.vpro.api.client.resteasy.NpoApiClients;
+import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.IdList;
 import nl.vpro.domain.api.MultiplePageResult;
 import nl.vpro.domain.api.page.PageForm;

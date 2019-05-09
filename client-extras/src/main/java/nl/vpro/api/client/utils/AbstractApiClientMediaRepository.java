@@ -8,7 +8,7 @@ import java.util.*;
 
 import javax.inject.Inject;
 
-import nl.vpro.api.client.resteasy.NpoApiClients;
+import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.Deletes;
 import nl.vpro.domain.api.MediaChange;
 import nl.vpro.domain.api.Order;

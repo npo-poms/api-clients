@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import nl.vpro.api.client.resteasy.PageUpdateApiClient;
+import nl.vpro.api.client.pages.PageUpdateApiClient;
 import nl.vpro.domain.page.PageType;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.util.Env;

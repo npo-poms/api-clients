@@ -24,7 +24,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
-import nl.vpro.api.client.resteasy.NpoApiClients;
+import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.Deletes;
 import nl.vpro.domain.api.MediaChange;
 import nl.vpro.domain.api.Order;

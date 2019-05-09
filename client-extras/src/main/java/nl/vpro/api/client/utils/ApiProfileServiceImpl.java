@@ -14,7 +14,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import nl.vpro.api.client.resteasy.NpoApiClients;
+import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.api.profile.ProfileDefinition;

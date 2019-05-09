@@ -29,8 +29,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import nl.vpro.api.client.resteasy.ApiAuthenticationRequestFilter;
-import nl.vpro.api.client.resteasy.NpoApiClients;
+import nl.vpro.api.client.frontend.ApiAuthenticationRequestFilter;
+import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.MediaChange;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.MediaForm;

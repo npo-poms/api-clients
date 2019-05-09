@@ -3,7 +3,7 @@ package nl.vpro.api.client.utils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import nl.vpro.api.client.resteasy.NpoApiClients;
+import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.SuggestResult;
 import nl.vpro.domain.api.suggest.Query;
 import nl.vpro.domain.api.suggest.QuerySearchRepository;
