@@ -1,13 +1,10 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Map;
-
-import nl.vpro.api.client.utils.Config;
+import nl.vpro.util.Env;
 import org.junit.Test;
 
-import nl.vpro.util.Env;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
