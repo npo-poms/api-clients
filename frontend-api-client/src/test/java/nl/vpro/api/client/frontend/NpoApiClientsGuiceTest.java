@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.HashMap;
 import java.util.Map;
 
-import nl.vpro.api.client.pages.PageUpdateApiClient;
 import org.junit.Before;
 import org.junit.Test;
 import com.google.inject.AbstractModule;
@@ -13,6 +12,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
+import nl.vpro.api.client.pages.PageUpdateApiClient;
 import nl.vpro.api.client.utils.Config;
 import nl.vpro.guice.Convertors;
 import nl.vpro.guice.OptionalModule;
@@ -48,7 +48,7 @@ public class NpoApiClientsGuiceTest {
 
             },
             new Convertors(),
-            new OptionalModule(NpoApiClients.Provider.class,PageUpdateApiClient.Provider.class)
+            new OptionalModule(NpoApiClients.Provider.class, PageUpdateApiClient.Provider.class)
         );
 
 
