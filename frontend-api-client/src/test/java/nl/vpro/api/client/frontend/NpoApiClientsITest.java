@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -60,12 +61,14 @@ public class NpoApiClientsITest {
     private static Env env = Env.TEST;
     private NpoApiClients clients;
 
-    //@Before
+    @Before
     public void setUp() {
         clients = NpoApiClients.configured(env)
             .accept(MediaType.APPLICATION_XML_TYPE)
             .clearAcceptableLanguages()
             .acceptableLanguage(Locale.ENGLISH)
+            .socketTimeout(Duration.ofSeconds(5))
+            .connectTimeout(Duration.ofSeconds(5))
             .acceptableLanguage(Locales.DUTCH)
             .build();
         log.info("{}", clients);
@@ -287,8 +290,10 @@ public class NpoApiClientsITest {
     public void testTimeout() {
         String url = "https://httpbin.org/delay/11";
         ClientHttpEngine httpClient = clients.getClientHttpEngine();
-        ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
+        ResteasyClientBuilder builder = new ResteasyClientBuilder()
+            .httpEngine(httpClient);
         Response response = builder.build().target(url).request().get();
+        log.info("{}", response);
     }
 
 
