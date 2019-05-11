@@ -274,14 +274,14 @@ public class NpoApiClientsITest {
     @Test
     public void testInfiniteTimeoutSocket() {
         Instant start = Instant.now();
-        String url = "https://httpbin.org/drip?duration=12&numbytes=5&code=200";
+        String url = "https://httpbin.org/drip?duration=5&numbytes=5&code=200";
         ClientHttpEngine httpClient = clients.getClientHttpEngineNoTimeout();
         ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
         Response response = builder.build().target(url).request().get();
         assertThat(response.getStatus()).isEqualTo(200);
         log.info(response.readEntity(String.class));
         Duration duration = Duration.between(start, Instant.now());
-        assertThat(duration.getSeconds()).isGreaterThanOrEqualTo(10);
+        assertThat(duration.toMillis()).isGreaterThanOrEqualTo(5000);
 
     }
 
