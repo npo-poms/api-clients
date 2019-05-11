@@ -281,7 +281,7 @@ public class NpoApiClientsITest {
         assertThat(response.getStatus()).isEqualTo(200);
         log.info(response.readEntity(String.class));
         Duration duration = Duration.between(start, Instant.now());
-        assertThat(duration.toMillis()).isGreaterThanOrEqualTo(5000);
+        assertThat(duration.toMillis()).isGreaterThanOrEqualTo(4000);
 
     }
 
