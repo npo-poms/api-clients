@@ -1,14 +1,5 @@
 package nl.vpro.api.client.pages;
 
-import java.time.Instant;
-
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXB;
-
-import org.jboss.resteasy.api.validation.ViolationReport;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.update.LinkUpdate;
 import nl.vpro.domain.page.update.PageUpdate;
@@ -16,12 +7,20 @@ import nl.vpro.domain.page.update.PageUpdateBuilder;
 import nl.vpro.domain.page.update.ParagraphUpdate;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.util.Env;
+import org.jboss.resteasy.api.validation.ViolationReport;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXB;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 
-//@Ignore("This required running server at publish-dev")
+@Ignore("This required running server at publish-dev")
 public class PageUpdateApiClientITest {
 
     private static PageUpdateApiClient clients;
