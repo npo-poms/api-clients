@@ -1,9 +1,22 @@
 package nl.vpro.api.client.frontend;
 
 
-import com.google.common.base.Suppliers;
 import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
+import com.google.common.base.Suppliers;
+
 import nl.vpro.api.client.resteasy.AbstractApiClient;
 import nl.vpro.api.client.utils.Config;
 import nl.vpro.api.client.utils.Swagger;
@@ -21,18 +34,6 @@ import nl.vpro.domain.api.Error;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.jackson2.Jackson2Mapper;
 import nl.vpro.util.*;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-import java.time.Duration;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 
@@ -152,12 +153,13 @@ public class NpoApiClients extends AbstractApiClient {
             return this;
         }
 
+
         public NpoApiClients build() {
             if (env != null) {
                 Map<String, String> defaultProperties = ConfigUtils.filtered(env, Config.Prefix.npo_api.getKey(),
                     ConfigUtils.getPropertiesInHome(CONFIG_FILE)
                 );
-                ReflectionUtils.configureIfNull(this, defaultProperties);
+                ReflectionUtils.configureIfNull(this, defaultProperties, Collections.emptyList(), Collections.emptyList());
             }
             return _build();
         }
@@ -192,7 +194,8 @@ public class NpoApiClients extends AbstractApiClient {
         Jackson2Mapper objectMapper,
         String mbeanName,
         ClassLoader classLoader,
-        String userAgent
+        String userAgent,
+        Boolean registerMBean
     ) {
         super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
             connectionRequestTimeout,
@@ -213,7 +216,8 @@ public class NpoApiClients extends AbstractApiClient {
             objectMapper,
             mbeanName,
             classLoader,
-            userAgent
+            userAgent,
+            registerMBean
             );
         this.apiKey = apiKey;
 
