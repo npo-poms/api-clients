@@ -6,10 +6,10 @@
 
 
 5.11:
-[![Maven Central](https://img.shields.io/maven-central/v/nl.vpro.poms.api-clients/api-client-parent.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22nl.vpro.poms%22)
-[![codecov](https://codecov.io/gh/npo-poms/api-clients/branch/master/graph/badge.svg)](https://codecov.io/gh/npo-poms/api-clients)
+[![Maven Central](https://img.shields.io/maven-central/v/nl.vpro.poms.api-clients/api-client-parent.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22nl.vpro.poms.api-clients%22)
+<!---
 [![javadoc](http://www.javadoc.io/badge/nl.vpro.poms.api-clients/frontend-api-client.svg?color=blue)](http://www.javadoc.io/doc/nl.vpro.api-client/client-resteasy)
-
+-->
 
 
 # api-clients
@@ -42,7 +42,7 @@ There are also 'providers' available to configure them easily via spring XML's o
 
 In the 5.11 release we will make mayor changes in naming and structure. The groupId's will be changed and all the same, and the artifactIds will get better names. Also, we will change package names.
 
-See #1.
+See [#1](../../issues/1).
 
 ## TODO
 - Document how to wire via spring xml
