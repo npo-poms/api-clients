@@ -3,24 +3,28 @@ package nl.vpro.api.client.utils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.domain.media.update.ImageUpdate;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.util.Optional;
+import nl.vpro.domain.media.support.ImageUrlService;
+import nl.vpro.domain.media.update.ImageUpdate;
 
 /**
  * @author Michiel Meeuwissen
  */
 @Named
 @Slf4j
-public class NpoApiImageUtil {
+public class NpoApiImageUtil implements ImageUrlService {
 
 
     @Setter
@@ -39,12 +43,10 @@ public class NpoApiImageUtil {
 
 
     public Optional<String> getUrl(String imageUri) {
-        int lastColon = imageUri.lastIndexOf(':');
-        int number = Integer.parseInt(imageUri.substring(lastColon + 1));
         if (supportsOriginal) {
-            return Optional.of(baseUrl + "/image/" + number);
+            return Optional.of(getOriginalUrlFromImageUri(imageUri));
         } else {
-            return Optional.of(baseUrl + "/image/" + number + ".jpg");
+            return Optional.of(baseUrl + "/image/" + getIdFromImageUri(imageUri) + ".jpg");
 
         }
     }
@@ -92,5 +94,11 @@ public class NpoApiImageUtil {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "@" + getBaseUrl();
+    }
+
+    @Override
+    public String getImageBaseUrl() {
+        return baseUrl + "/image/";
+
     }
 }
