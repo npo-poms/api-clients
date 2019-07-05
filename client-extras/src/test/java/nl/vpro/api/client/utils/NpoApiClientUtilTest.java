@@ -1,34 +1,6 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.StopWatch;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
-import org.jboss.resteasy.client.jaxrs.internal.ClientConfiguration;
-import org.jboss.resteasy.client.jaxrs.internal.ClientInvocation;
-import org.jboss.resteasy.client.jaxrs.internal.ClientRequestHeaders;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import nl.vpro.api.client.frontend.ApiAuthenticationRequestFilter;
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.MediaChange;
@@ -43,6 +15,32 @@ import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaType;
 import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.util.CloseableIterator;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.StopWatch;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
+import org.jboss.resteasy.client.jaxrs.internal.ClientConfiguration;
+import org.jboss.resteasy.client.jaxrs.internal.ClientInvocation;
+import org.jboss.resteasy.client.jaxrs.internal.ClientRequestHeaders;
+import org.jboss.resteasy.core.providerfactory.ResteasyProviderFactoryImpl;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -194,7 +192,7 @@ public class NpoApiClientUtilTest {
     public void timeout() throws IOException, URISyntaxException {
         HttpClient client;
         {
-            ApacheHttpClient4Engine engine = (ApacheHttpClient4Engine) utilShortTimeout.getClients().getClientHttpEngine();
+            ApacheHttpClient43Engine  engine = (ApacheHttpClient43Engine ) utilShortTimeout.getClients().getClientHttpEngine();
             client = engine.getHttpClient();
         }
 
@@ -226,7 +224,7 @@ public class NpoApiClientUtilTest {
     @Test
     @Ignore("Doesn't test api, but httpclient")
     public void timeoutWithInvoke() throws URISyntaxException {
-        ApacheHttpClient4Engine engine = (ApacheHttpClient4Engine) utilShortTimeout.getClients().getClientHttpEngine();
+        ApacheHttpClient43Engine  engine = (ApacheHttpClient43Engine ) utilShortTimeout.getClients().getClientHttpEngine();
         String host = utilShortTimeout.getClients().getBaseUrl() + "/media/AVRO_1656037";
         URI uri = new URI(host);
         System.out.println("Testing " + uri);
@@ -235,7 +233,7 @@ public class NpoApiClientUtilTest {
 
         //engine.getHttpClient().execute(getAuthenticatedRequest(), null);
 
-        ResteasyProviderFactory providerFactory = new ResteasyProviderFactory();
+        ResteasyProviderFactory providerFactory = new ResteasyProviderFactoryImpl();
         ClientConfiguration config = new ClientConfiguration(providerFactory);
         ClientRequestHeaders headers = new ClientRequestHeaders(config);
         Client client = ResteasyClientBuilder.newClient(config);
