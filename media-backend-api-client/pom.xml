@@ -55,6 +55,10 @@
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-client-api</artifactId>
+    </dependency>
 
   </dependencies>
 
