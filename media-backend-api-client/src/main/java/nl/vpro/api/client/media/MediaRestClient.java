@@ -408,7 +408,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     /**
      * returns the proxied interface as is actually used on the POMS backend. This
-     * is (as long as your client's version corresponds) garantueed to be complete
+     * is (as long as your client's version corresponds) guaranteed to be complete
      * and correct.
      */
     public MediaBackendRestService getBackendRestService() {
