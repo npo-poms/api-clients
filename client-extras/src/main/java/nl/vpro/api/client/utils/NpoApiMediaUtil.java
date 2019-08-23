@@ -1,29 +1,10 @@
 package nl.vpro.api.client.utils;
 
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Response;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
-
+import lombok.extern.slf4j.Slf4j;
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.Deletes;
 import nl.vpro.domain.api.MediaChange;
@@ -37,7 +18,24 @@ import nl.vpro.domain.media.MediaProvider;
 import nl.vpro.domain.media.MediaType;
 import nl.vpro.domain.media.Program;
 import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.CloseableIterator;
 import nl.vpro.util.TimeUtils;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 
@@ -328,10 +326,10 @@ public class NpoApiMediaUtil implements MediaProvider {
     /**
      * Calls {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer, HttpServletRequest, HttpServletResponse)}, and wraps the resulting {@link java.io.InputStream} in an {@link Iterator} of {@link MediaObject}}
      */
-    public Iterator<MediaObject> iterate(MediaForm form, String profile)  {
+    public CloseableIterator<MediaObject> iterate(MediaForm form, String profile)  {
         limiter.acquire();
         try {
-            Iterator<MediaObject> result = MediaRestClientUtils.iterate(clients.getMediaServiceNoTimeout(), form, profile);
+            CloseableIterator<MediaObject> result = MediaRestClientUtils.iterate(clients.getMediaServiceNoTimeout(), form, profile);
             limiter.upRate();
             return result;
         } catch (Throwable e) {

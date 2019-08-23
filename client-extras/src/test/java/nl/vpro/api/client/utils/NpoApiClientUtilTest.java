@@ -152,20 +152,25 @@ public class NpoApiClientUtilTest {
 
     @Test
     @Ignore("Takes long!")
-    public void testIterate() {
+    public void testIterate() throws Exception {
         Instant start = Instant.now();
-        Iterator<MediaObject> result = util.iterate(new MediaForm(), null);
-        long i = 0;
-        while (result.hasNext()) {
-            MediaObject next = result.next();
-            if (i++ % 100 == 0) {
-                System.out.println(i + " " + next +  " " + next.getLastPublishedInstant());
-                //Thread.sleep(10000);
+        try (CloseableIterator<MediaObject> result = util.iterate(new MediaForm(), null)) {
+            long i = 0;
+            while (result.hasNext()) {
+                MediaObject next = result.next();
+                if (i++ % 100 == 0) {
+                    log.info(i + " " + next + " " + next.getLastPublishedInstant());
+                    //Thread.sleep(10000);
+                }
+                if (i > 500) {
+                    log.info("Breaking");
+                    break;
+                }
             }
+            System.out.println("" + i + " " + Duration.between(start, Instant.now()));
+            // couchdb 57355 PT4M45.904S
+            // es      51013 PT1M5 .879 S
         }
-        System.out.println("" + i + " " + Duration.between(start, Instant.now()));
-        // couchdb 57355 PT4M45.904S
-        // es      51013 PT1M5 .879 S
     }
 
 

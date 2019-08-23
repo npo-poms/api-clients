@@ -1,6 +1,12 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.vpro.api.client.frontend.NpoApiClients;
+import nl.vpro.domain.page.Page;
+import nl.vpro.util.CloseableIterator;
+import nl.vpro.util.Env;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,14 +15,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
-import nl.vpro.api.client.frontend.NpoApiClients;
-import nl.vpro.domain.api.page.PageForm;
-import nl.vpro.domain.page.Page;
-import nl.vpro.util.Env;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,17 +61,26 @@ public class NpoApiPageUtilTest {
         File out = new File("/tmp/" + profile);
         try (BufferedWriter stream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(out)))) {
             AtomicLong count = new AtomicLong(0);
-            util.iterate(new PageForm(), profile).forEachRemaining((p) -> {
-                if (count.incrementAndGet() % 1000 == 0) {
-                    log.info("{} {}", count.get(), p.getUrl());
+            try (CloseableIterator<Page> i =  util.iterate(null, profile)) {
+                while(i.hasNext()) {
+                    Page p = i.next();
+                    if (count.incrementAndGet() % 1000 == 0) {
+                        log.info("{} {}", count.get(), p.getUrl());
+                    }
+                    if (count.get() > 500) {
+                        log.info("Breaking");
+                        break;
+                    }
+                    try {
+                        stream.write(p.getUrl() + "\n");
+                    } catch (IOException e) {
+                        log.error(e.getMessage(), e);
+                    }
                 }
-                try {
-                    stream.write(p.getUrl() + "\n");
-                } catch (IOException e) {
-                    log.error(e.getMessage(), e);
-                }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
 
-            });
         }
 
     }
