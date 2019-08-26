@@ -1,21 +1,7 @@
 package nl.vpro.api.client.utils;
 
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Supplier;
-
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-
-import org.apache.commons.io.IOUtils;
 import com.google.common.collect.Lists;
-
+import lombok.extern.slf4j.Slf4j;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.domain.api.*;
@@ -27,6 +13,14 @@ import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.util.CloseableIterator;
 import nl.vpro.util.FileCachingInputStream;
 import nl.vpro.util.LazyIterator;
+import org.apache.commons.io.IOUtils;
+
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
+import java.io.*;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * @author Michiel Meeuwissen
@@ -220,7 +214,7 @@ public class MediaRestClientUtils {
                 return JsonArrayIterator.<MediaObject>builder()
                         .inputStream(cacheToFile)
                         .valueClass(MediaObject.class)
-                        .callback(() -> IOUtils.closeQuietly(inputStream, cacheToFile))
+                        .callback(() -> closeQuietly(inputStream, cacheToFile))
                         .logger(log)
                         .build();
             } catch (IOException e) {
@@ -287,6 +281,20 @@ public class MediaRestClientUtils {
             id = urn;
         }
         return properties.getProperty(id);
+    }
+
+    static void closeQuietly(Closeable... closeables) {
+        for (Closeable c : closeables) {
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (Throwable e) {
+                    log.info(e.getMessage());
+                }
+            }
+        }
+
+
     }
 
 

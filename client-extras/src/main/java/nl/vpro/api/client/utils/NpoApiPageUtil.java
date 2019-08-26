@@ -1,15 +1,7 @@
 package nl.vpro.api.client.utils;
 
-import lombok.EqualsAndHashCode;
-
-import java.util.*;
-import java.util.function.Supplier;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.google.common.collect.Lists;
-
+import lombok.EqualsAndHashCode;
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.IdList;
 import nl.vpro.domain.api.MultiplePageResult;
@@ -18,6 +10,12 @@ import nl.vpro.domain.api.page.PageFormBuilder;
 import nl.vpro.domain.api.page.PageSearchResult;
 import nl.vpro.domain.page.Embed;
 import nl.vpro.domain.page.Page;
+import nl.vpro.util.CloseableIterator;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * @author Michiel Meeuwissen
@@ -116,10 +114,10 @@ public class NpoApiPageUtil  {
     }
 
 
-    public Iterator<Page> iterate(PageForm form, String profile) {
+    public CloseableIterator<Page> iterate(PageForm form, String profile) {
         limiter.acquire();
         try {
-            Iterator<Page> result = PageRestClientUtils.iterate(clients.getPageServiceNoTimeout(), form, profile);
+            CloseableIterator<Page> result = PageRestClientUtils.iterate(clients.getPageServiceNoTimeout(), form, profile);
             limiter.upRate();
             return result;
         } catch (Throwable e) {

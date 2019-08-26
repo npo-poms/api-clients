@@ -1,19 +1,16 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-
-import org.apache.commons.io.IOUtils;
-
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.domain.page.Page;
 import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.CloseableIterator;
 import nl.vpro.util.FileCachingInputStream;
 import nl.vpro.util.LazyIterator;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author Michiel Meeuwissen
@@ -23,10 +20,13 @@ import nl.vpro.util.LazyIterator;
 public class PageRestClientUtils {
 
 
-    public static Iterator<Page> iterate(PageRestService restService, PageForm form, String profile) {
+    public static CloseableIterator<Page> iterate(PageRestService restService, PageForm form, String profile) {
+
+        PageForm f = form == null ? new PageForm() : form;
         return new LazyIterator<>(() -> {
             try {
-                final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE, null,
+
+                final InputStream inputStream = restService.iterate(f, profile, null, 0L, Integer.MAX_VALUE, null,
                     null);
                 // Cache the stream to a file first.
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
@@ -40,7 +40,7 @@ public class PageRestClientUtils {
                 return JsonArrayIterator.<Page>builder()
                     .inputStream(cacheToFile)
                     .valueClass(Page.class)
-                    .callback(() -> IOUtils.closeQuietly(inputStream, cacheToFile))
+                    .callback(() -> MediaRestClientUtils.closeQuietly(inputStream, cacheToFile))
                     .logger(log)
                     .build();
             } catch (IOException e) {
@@ -48,5 +48,7 @@ public class PageRestClientUtils {
             }
         });
     }
+
+
 
 }

@@ -4,32 +4,8 @@
  */
 package nl.vpro.api.client.frontend;
 
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Locale;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.io.IOUtils;
-import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.google.common.io.ByteStreams;
-
+import lombok.extern.slf4j.Slf4j;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
@@ -47,6 +23,26 @@ import nl.vpro.i18n.Locales;
 import nl.vpro.logging.LoggerOutputStream;
 import nl.vpro.util.Env;
 import nl.vpro.util.Version;
+import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Locale;
 
 import static nl.vpro.domain.api.Constants.ASC;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -178,10 +174,11 @@ public class NpoApiClientsITest {
     @Test
     @Ignore("Takes very long")
     public void testIterate() throws IOException {
-        try (InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predcitions", null, 0L, Integer.MAX_VALUE, null, null)) {
+        try (InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predictions", null, 0L, Integer.MAX_VALUE, null, null)) {
             IOUtils.copy(response, ByteStreams.nullOutputStream());
         }
     }
+
 
 
     @Test(expected = NotFoundException.class)
