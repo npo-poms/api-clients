@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/npo-poms/api-clients.svg?)](https://travis-ci.org/npo-poms/api-clients)
 [![Maven Central](https://img.shields.io/maven-central/v/nl.vpro.poms.api-clients/api-client-parent.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22nl.vpro.poms.api-clients%22)
 [![codecov](https://codecov.io/gh/npo-poms/api-clients/branch/master/graph/badge.svg)](https://codecov.io/gh/npo-poms/api-clients)
-[![javadoc](http://www.javadoc.io/badge/nl.vpro.poms.api-clients/frontend-api-client.svg?color=blue)](http://www.javadoc.io/doc/nl.vpro.api-client/client-resteasy)
+[![javadoc](http://www.javadoc.io/badge/nl.vpro.poms.api-clients/frontend-api-client.svg?color=blue)](http://www.javadoc.io/doc/nl.vpro.poms.api-clients/frontend-api-client)
 [![snapshots](https://img.shields.io/nexus/s/https/oss.sonatype.org/nl.vpro.poms.api-clients/api-client-parent.svg)](https://oss.sonatype.org/content/repositories/staging/nl/vpro/poms/api-clients/)
 
 
