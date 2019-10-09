@@ -71,7 +71,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         builder.append(getPageUpdateRestService());
         builder.append("\n");
         try {
-            PageUpdate load = getPageUpdateRestService().load(arg);
+            PageUpdate load = getPageUpdateRestService().load(arg, true);
             builder.append("load(").append(arg).append(")").append(load);
         } catch (Exception e) {
             builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
