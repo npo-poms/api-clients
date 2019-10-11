@@ -71,7 +71,7 @@ public class PageUpdateApiUtil {
 
     public PageUpdate get(@NotNull String url) {
         limiter.acquire();
-        return Utils.wrapNotFound(() -> pageUpdateApiClient.getPageUpdateRestService().load(url)).orElse(null);
+        return Utils.wrapNotFound(() -> pageUpdateApiClient.getPageUpdateRestService().load(url, false)).orElse(null);
     }
 
     public Result<DeleteResult> delete(@NotNull String id) {
