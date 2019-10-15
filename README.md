@@ -33,7 +33,7 @@ There are also 'providers' available to configure them easily via spring XML's o
 
 ## Changes in 5.11
 
-In the 5.11 release we will make mayor changes in naming and structure. The groupId's will be changed and all the same, and the artifactIds will get better names. Also, we will change package names.
+In the 5.11 release we made mayor changes in naming and structure. The groupId's will be changed and all the same (`nl.vpro.poms.api-clients`), and the artifactIds will get better names. Also, we will change package names.
 
 See [#1](../../issues/1).
 
