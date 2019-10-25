@@ -378,8 +378,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     /**
      * The version of the rest-service we are talking too.
      *
-     * @return a float representing the major/minor version. The patch level is
-     *         added as thousands.
+     * @return An object representing the major/minor version.
      */
     public IntegerVersion getVersionNumber() {
         String version = getVersion();
