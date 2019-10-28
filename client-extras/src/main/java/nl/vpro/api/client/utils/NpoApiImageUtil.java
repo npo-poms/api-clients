@@ -60,7 +60,8 @@ public class NpoApiImageUtil implements ImageUrlService {
     }
 
     public Optional<Long> getSize(ImageUpdate iu) {
-        return getSize(getUrl(iu));
+        Optional<String> url = getUrl(iu);
+        return getSize(url);
     }
 
 
@@ -69,10 +70,10 @@ public class NpoApiImageUtil implements ImageUrlService {
         return url
             .map(u -> {
                 try (CloseableHttpClient client =  getClient()) {
+                    log.info("Getting size of image via {}", u);
                     HttpHead head = new HttpHead(u);
                     HttpResponse response = client.execute(head);
                     if (response.getStatusLine().getStatusCode() == 200) {
-
                         return Long.valueOf(response.getFirstHeader("Content-Length").getValue());
                     } else {
                         log.warn("Response {}", response.getStatusLine());
