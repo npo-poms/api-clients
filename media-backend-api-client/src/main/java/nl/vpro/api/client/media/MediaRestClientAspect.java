@@ -128,6 +128,11 @@ your request.</p>
                         } else if (MediaBackendRestService.VALIDATE_INPUT.equals(queryParam.value())) {
                             log.debug("Implicetely set validateInput to {}", client.isValidateInput());
                             args[i] = client.isValidateInput();
+                        } else if (MediaBackendRestService.OWNER.equals(queryParam.value())) {
+                            if (client.getOwner() != null) {
+                                log.debug("Implicetely set owner to {}", client.getOwner());
+                                args[i] = client.getOwner().name();
+                            }
                         }
                     }
                     if (annotations[i][j] instanceof PathParam && args[i] == null) {
