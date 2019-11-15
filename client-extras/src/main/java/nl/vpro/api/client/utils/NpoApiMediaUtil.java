@@ -1,33 +1,7 @@
 package nl.vpro.api.client.utils;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.UncheckedExecutionException;
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.api.client.frontend.NpoApiClients;
-import nl.vpro.domain.api.Deletes;
-import nl.vpro.domain.api.MediaChange;
-import nl.vpro.domain.api.Order;
-import nl.vpro.domain.api.media.MediaForm;
-import nl.vpro.domain.api.media.MediaResult;
-import nl.vpro.domain.api.media.ProgramResult;
-import nl.vpro.domain.api.media.RedirectList;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.media.MediaProvider;
-import nl.vpro.domain.media.MediaType;
-import nl.vpro.domain.media.Program;
-import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.CloseableIterator;
-import nl.vpro.util.TimeUtils;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -36,6 +10,25 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.Response;
+
+import com.google.common.cache.*;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+
+import nl.vpro.api.client.frontend.NpoApiClients;
+import nl.vpro.domain.api.*;
+import nl.vpro.domain.api.media.*;
+import nl.vpro.domain.media.*;
+import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.CloseableIterator;
+import nl.vpro.util.TimeUtils;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 
@@ -224,7 +217,9 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public MediaResult listMembers(String mid, Order order, Predicate<MediaObject> filter, int max) {
-        BiFunction<Integer, Long, MediaResult> members = (batch, offset) -> clients.getMediaService().listMembers(mid, null, null, order.toString(), offset, batch);
+        BiFunction<Integer, Long, MediaResult> members =
+            (batch, offset) -> clients.getMediaService().listMembers(mid, null, null,
+                order.toString(), offset, batch);
         return unPage(members, filter, max);
     }
 
