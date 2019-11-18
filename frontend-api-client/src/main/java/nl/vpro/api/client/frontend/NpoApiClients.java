@@ -241,7 +241,7 @@ public class NpoApiClients extends AbstractApiClient {
     private Supplier<VersionResult> version = null;
     public String getVersion() {
         if (version == null) {
-            version = Suppliers.memoizeWithExpiration(() -> Swagger.getVersionFromSwagger(baseUrl, "5.9"), 30, TimeUnit.MINUTES);
+            version = Suppliers.memoizeWithExpiration(() -> Swagger.getVersionFromSwagger(baseUrl, "5.10"), 30, TimeUnit.MINUTES);
         }
         return version.get().getVersion();
     }
