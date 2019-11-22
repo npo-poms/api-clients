@@ -2,7 +2,6 @@ package nl.vpro.api.client.frontend;
 
 import lombok.extern.slf4j.Slf4j;
 
-import nl.vpro.api.client.frontend.NpoApiClients;
 import org.junit.Test;
 
 import nl.vpro.api.client.utils.Config;
@@ -36,6 +35,18 @@ public class NpoApiClientsTest {
         log.info("{}", CONFIG.getProperties());*/
         NpoApiClients clients =
             NpoApiClients.configured(CONFIG.getProperties(Config.Prefix.npo_api))
+                .build();
+
+        assertThat(clients.getBaseUrl()).isEqualTo("https://rs-test.poms.omroep.nl/v1/api");
+
+    }
+
+
+    @Test
+    public void configuredInHome() {
+
+        NpoApiClients clients =
+            NpoApiClients.configured(Env.TEST)
                 .build();
 
         assertThat(clients.getBaseUrl()).isEqualTo("https://rs-test.poms.omroep.nl/v1/api");
