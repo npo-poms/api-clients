@@ -1,13 +1,6 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.util.*;
-
-import javax.inject.Inject;
-
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.Deletes;
 import nl.vpro.domain.api.MediaChange;
@@ -15,7 +8,13 @@ import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
+import nl.vpro.util.CloseableIterator;
 import nl.vpro.util.FilteringIterator;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.*;
 
 /**
  * @author Michiel Meeuwissen
@@ -55,7 +54,7 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
     }
 
     @Override
-    public Iterator<MediaChange> changes(Long since, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive) {
+    public CloseableIterator<MediaChange> changes(Long since, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive) {
         throw new UnsupportedOperationException();
     }
 
@@ -106,7 +105,7 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
 
 
     @Override
-    public Iterator<MediaChange> changes(Instant since, String mid, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive, Deletes deletes) {
+    public CloseableIterator<MediaChange> changes(Instant since, String mid, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive, Deletes deletes) {
         //clients.getMediaService().changes(current.getName(), null, since)
         throw new UnsupportedOperationException();
 
@@ -117,7 +116,7 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
 
     }
     @Override
-    public Iterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, long offset, Integer max, FilteringIterator.KeepAlive keepAlive) {
+    public CloseableIterator<MediaObject> iterate(ProfileDefinition<MediaObject> profile, MediaForm form, long offset, Integer max, FilteringIterator.KeepAlive keepAlive) {
         //InputStream i = clients.getMediaService().iterate(form, profile.getName(), null, offset, max, keepAlive, null, null);
         throw new UnsupportedOperationException();
 
