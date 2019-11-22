@@ -62,6 +62,12 @@
       <artifactId>httpclient</artifactId>
     </dependency>
     <dependency>
+      <!-- todo: drop this -->
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-validator-provider</artifactId>
     </dependency>
