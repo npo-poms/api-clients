@@ -1,20 +1,18 @@
 package nl.vpro.api.client.frontend;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.api.client.resteasy.CountAspect;
-import nl.vpro.api.rs.v3.media.MediaRestService;
-import nl.vpro.domain.api.Deletes;
 
-import javax.annotation.Priority;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientResponseContext;
-import javax.ws.rs.client.ClientResponseFilter;
-import javax.ws.rs.core.HttpHeaders;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.annotation.Priority;
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.*;
+
+import nl.vpro.api.client.resteasy.CountAspect;
+import nl.vpro.api.rs.v3.media.MediaRestService;
+import nl.vpro.domain.api.Deletes;
 
 /**
  * @author Michiel Meeuwissen
@@ -37,8 +35,8 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
                 Integer.class,
                 Boolean.class,
                 Deletes.class,
-                HttpServletRequest.class,
-                HttpServletResponse.class));
+                Request.class
+                ));
     }
 
     @Override

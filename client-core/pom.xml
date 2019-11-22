@@ -11,7 +11,7 @@
   <artifactId>client-core</artifactId>
   <name>client-core</name>
 
-  <description>Utils for the NPO api clients</description>
+  <description>Utils for tlhe NPO api clients</description>
 
   <dependencies>
     <dependency>

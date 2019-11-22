@@ -4,16 +4,14 @@ import java.net.URL;
 import java.time.Instant;
 import java.util.Iterator;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
-import nl.vpro.domain.api.Deletes;
-import nl.vpro.domain.api.MediaChange;
-import nl.vpro.domain.api.Order;
+import nl.vpro.domain.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -39,9 +37,9 @@ public class MediaRestClientUtilsTest {
             any(Integer.class),
             any(Boolean.class),
             any(Deletes.class),
-            any(HttpServletRequest.class),
-            any(HttpServletResponse.class)))
-            .thenReturn(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream());
+            any(Request.class)
+            )
+        ).thenReturn(Response.ok().entity(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream()).build());
         Iterator<MediaChange> i = MediaRestClientUtils.changes(mediaRestService, "vpro", true, Instant.ofEpochMilli(0), null, Order.ASC, Integer.MAX_VALUE, Deletes.ID_ONLY);
         int count = 0;
         while(i.hasNext()) {

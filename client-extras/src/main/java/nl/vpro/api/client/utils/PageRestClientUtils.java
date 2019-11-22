@@ -1,16 +1,15 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.domain.page.Page;
 import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.CloseableIterator;
-import nl.vpro.util.FileCachingInputStream;
-import nl.vpro.util.LazyIterator;
-
-import java.io.IOException;
-import java.io.InputStream;
+import nl.vpro.util.*;
 
 /**
  * @author Michiel Meeuwissen
@@ -26,8 +25,7 @@ public class PageRestClientUtils {
         return new LazyIterator<>(() -> {
             try {
 
-                final InputStream inputStream = restService.iterate(f, profile, null, 0L, Integer.MAX_VALUE, null,
-                    null);
+                final InputStream inputStream = restService.iterate(f, profile, null, 0L, Integer.MAX_VALUE, null).readEntity(InputStream.class);
                 // Cache the stream to a file first.
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
                 FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
