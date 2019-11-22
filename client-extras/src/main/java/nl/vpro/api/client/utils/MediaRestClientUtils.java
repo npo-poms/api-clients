@@ -1,7 +1,19 @@
 package nl.vpro.api.client.utils;
 
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Supplier;
+
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
+
+import org.apache.commons.io.IOUtils;
+
+import com.google.common.collect.Lists;
+
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.domain.api.*;
@@ -10,17 +22,7 @@ import nl.vpro.domain.media.*;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.CloseableIterator;
-import nl.vpro.util.FileCachingInputStream;
-import nl.vpro.util.LazyIterator;
-import org.apache.commons.io.IOUtils;
-
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-import java.io.*;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Supplier;
+import nl.vpro.util.*;
 
 /**
  * @author Michiel Meeuwissen
@@ -195,10 +197,13 @@ public class MediaRestClientUtils {
         return sinceString;
     }
 
+    public static CloseableIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) {
+        return iterate(restService, form, profile, true);
+    }
     /**
      *
      */
-    public static CloseableIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) {
+    public static CloseableIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile ,boolean progressLogging) {
         return new LazyIterator<>(() -> {
             try {
                 final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE, null,
@@ -206,17 +211,18 @@ public class MediaRestClientUtils {
                 // Cache the stream to a file first.
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
                 FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
-                        .filePrefix("iterate-" + profile + "-")
-                        .batchSize(1000000L)
-                        .logger(log)
-                        .input(inputStream)
-                        .build();
+                    .filePrefix("iterate-" + profile + "-")
+                    .batchSize(1000000L)
+                    .logger(log)
+                    .progressLogging(progressLogging)
+                    .input(inputStream)
+                    .build();
                 return JsonArrayIterator.<MediaObject>builder()
-                        .inputStream(cacheToFile)
-                        .valueClass(MediaObject.class)
-                        .callback(() -> closeQuietly(inputStream, cacheToFile))
-                        .logger(log)
-                        .build();
+                    .inputStream(cacheToFile)
+                    .valueClass(MediaObject.class)
+                    .callback(() -> closeQuietly(inputStream, cacheToFile))
+                    .logger(log)
+                    .build();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

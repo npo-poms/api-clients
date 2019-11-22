@@ -55,12 +55,29 @@ public class NpoApiMediaUtil implements MediaProvider {
     private int cacheSize = 500;
     private Duration cacheTTL = Duration.ofMinutes(5);
 
+    private boolean iterateLogProgress = true;
+
     LoadingCache<String, Optional<? extends MediaObject>> cache = buildCache();
 
     @Inject
     public NpoApiMediaUtil(@NotNull NpoApiClients clients, @NotNull NpoApiRateLimiter limiter) {
         this.clients = clients;
         this.limiter = limiter;
+    }
+
+
+    @lombok.Builder
+    private  NpoApiMediaUtil(
+        @NotNull NpoApiClients clients, @NotNull NpoApiRateLimiter limiter,
+        boolean iterateLogProgress,
+        int cacheSize,
+        Duration cacheTTL
+        ) {
+        this.clients = clients;
+        this.limiter = limiter;
+        this.cacheTTL = cacheTTL;
+        this.cacheSize = cacheSize;
+        this.iterateLogProgress = iterateLogProgress;
     }
 
     public NpoApiMediaUtil(NpoApiClients clients) {
@@ -324,7 +341,8 @@ public class NpoApiMediaUtil implements MediaProvider {
     public CloseableIterator<MediaObject> iterate(MediaForm form, String profile)  {
         limiter.acquire();
         try {
-            CloseableIterator<MediaObject> result = MediaRestClientUtils.iterate(clients.getMediaServiceNoTimeout(), form, profile);
+            CloseableIterator<MediaObject> result = MediaRestClientUtils
+                .iterate(clients.getMediaServiceNoTimeout(), form, profile, iterateLogProgress);
             limiter.upRate();
             return result;
         } catch (Throwable e) {
