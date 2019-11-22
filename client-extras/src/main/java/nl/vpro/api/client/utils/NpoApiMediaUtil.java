@@ -74,7 +74,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         Duration cacheTTL
         ) {
         this.clients = clients;
-        this.limiter = limiter;
+        this.limiter = limiter == null ? new NpoApiRateLimiter() : limiter;
         this.cacheTTL = cacheTTL;
         this.cacheSize = cacheSize;
         this.iterateLogProgress = iterateLogProgress;

@@ -21,4 +21,13 @@ public class NpoApiRateLimiter extends AbstractRateLimiter {
     public void setMinRate(@Named("npo-api.minrate") double minRate) {
         super.setMinRate(minRate);
     }
+
+    public NpoApiRateLimiter() {
+
+    }
+    @lombok.Builder
+    private NpoApiRateLimiter(double baseRate, double minRate) {
+        setBaseRate(baseRate);
+        setMinRate(minRate);
+    }
 }
