@@ -162,7 +162,7 @@ public class MediaRestClientUtils {
     @Deprecated
     public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
-            final InputStream inputStream = restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null, null).readEntity(InputStream.class);
+            final InputStream inputStream = restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null).readEntity(InputStream.class);
             return new JsonArrayIterator<>(inputStream, MediaChange.class, () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
@@ -174,7 +174,7 @@ public class MediaRestClientUtils {
     public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
         try {
 
-            final InputStream inputStream = restService.changes(profile, null, null, sinceString(since, mid), order.name().toLowerCase(), max, profileCheck, deletes, null).readEntity(InputStream.class);
+            final InputStream inputStream = restService.changes(profile, null, null, sinceString(since, mid), order.name().toLowerCase(), max, profileCheck, deletes).readEntity(InputStream.class);
             return new JsonArrayIterator<>(inputStream, MediaChange.class, () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
@@ -206,7 +206,7 @@ public class MediaRestClientUtils {
     public static CloseableIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile ,boolean progressLogging) {
         return new LazyIterator<>(() -> {
             try {
-                final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE, null).readEntity(InputStream.class);
+                final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE).readEntity(InputStream.class);
                 // Cache the stream to a file first.
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
                 FileCachingInputStream cacheToFile = FileCachingInputStream.builder()

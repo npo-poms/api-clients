@@ -7,9 +7,7 @@ import java.io.StringReader;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXB;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import nl.vpro.api.client.pages.PageUpdateApiClient;
 import nl.vpro.domain.page.PageType;
@@ -18,13 +16,13 @@ import nl.vpro.util.Env;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Ignore("This required running server at publish-dev")
+@Disabled("This required running server at publish-dev")
 @Slf4j
 public class PageUpdateApiClientUtilTest {
 
     private PageUpdateApiUtil util;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         PageUpdateApiClient clients = PageUpdateApiClient
             .configured(Env.LOCALHOST)

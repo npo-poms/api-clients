@@ -34,9 +34,8 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
                 String.class,
                 Integer.class,
                 Boolean.class,
-                Deletes.class,
-                Request.class
-                ));
+                Deletes.class
+            ));
     }
 
     @Override

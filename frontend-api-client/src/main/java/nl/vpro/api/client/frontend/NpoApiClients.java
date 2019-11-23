@@ -313,12 +313,18 @@ public class NpoApiClients extends AbstractApiClient {
         this.max.set(max);
     }
 
+    /**
+     * Creates a builder (see {@link #builder()}, and configures it the the given config file (using {@link ConfigUtils#configured(Object, String...)}
+     */
     public static NpoApiClients.Builder configured(String... configFiles)  {
         NpoApiClients.Builder builder = builder();
         ConfigUtils.configured(builder, configFiles);
         return builder;
     }
 
+    /**
+     * Creates a builder (see {@link #builder()}, and configures it the the given config file (using {@link ConfigUtils#configured(Object, String...)}
+     */
     public static NpoApiClients.Builder configured(Env env, String... configFiles) {
         NpoApiClients.Builder builder = builder();
         ConfigUtils.configured(env, builder, configFiles);
@@ -337,10 +343,17 @@ public class NpoApiClients extends AbstractApiClient {
         return builder;
     }
 
+    /**
+     * Creates {@link Builder}, which is configured using the defaults on the class path, the overrides in {@code ${USER.HOME}/conf/}{@link Config#CONFIG_FILE}, and perhaps the 'env' system setting.
+     * @return
+     */
     public static NpoApiClients.Builder configured() {
         return configured((Env) null);
     }
 
+   /**
+     * Creates {@link nl.vpro.api.client.frontend.NpoApiClients.Builder}, which is configured using the defaults on the class path, the overrides in {@code ${USER.HOME}/conf/}{@link Config#CONFIG_FILE}, but sets the environment explicitely
+    */
     public static NpoApiClients.Builder configured(Env env) {
         NpoApiClients.Builder builder = builder();
         Config config = new Config(CONFIG_FILE);

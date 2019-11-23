@@ -1,24 +1,23 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.page.Page;
 import nl.vpro.util.CloseableIterator;
 import nl.vpro.util.Env;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Ignore("This is an integration test")
+@Disabled("This is an integration test")
 @Slf4j
 public class NpoApiPageUtilTest {
 

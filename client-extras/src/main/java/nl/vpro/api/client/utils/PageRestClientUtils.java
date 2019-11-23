@@ -25,7 +25,7 @@ public class PageRestClientUtils {
         return new LazyIterator<>(() -> {
             try {
 
-                final InputStream inputStream = restService.iterate(f, profile, null, 0L, Integer.MAX_VALUE, null).readEntity(InputStream.class);
+                final InputStream inputStream = restService.iterate(f, profile, null, 0L, Integer.MAX_VALUE).readEntity(InputStream.class);
                 // Cache the stream to a file first.
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
                 FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
