@@ -1,8 +1,7 @@
 package nl.vpro.api.client.utils;
 
-import nl.vpro.api.client.utils.Swagger;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import nl.vpro.util.Version;
 

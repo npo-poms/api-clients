@@ -1,19 +1,15 @@
 package nl.vpro.api.client.pages;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 
 import javax.ws.rs.core.Response;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import nl.vpro.domain.page.update.ImageLocation;
-import nl.vpro.domain.page.update.ImageUpdate;
-import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.domain.page.update.*;
 import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 
@@ -21,7 +17,7 @@ import nl.vpro.rs.pages.update.PageUpdateRestService;
  * @author Michiel Meeuwissen
  * @since 4.8
  */
-@Ignore
+@Disabled
 public class ReindexFromCouchdb {
     static PageUpdateApiClient client;
     static {

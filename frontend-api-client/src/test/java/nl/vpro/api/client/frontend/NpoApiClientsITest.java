@@ -19,7 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import com.google.common.io.ByteStreams;
 
@@ -39,6 +39,7 @@ import nl.vpro.util.Version;
 
 import static nl.vpro.domain.api.Constants.ASC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 /**
@@ -50,10 +51,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 public class NpoApiClientsITest {
 
-    private static Env env = Env.DEV;
+    private static Env env = Env.LOCALHOST;
     private NpoApiClients clients;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         clients = NpoApiClients.configured(env)
             .accept(MediaType.APPLICATION_XML_TYPE)
@@ -66,26 +67,35 @@ public class NpoApiClientsITest {
         log.info("{}", clients);
     }
 
-    @Test(expected = NotAuthorizedException.class)
+    @Test
     public void testAccessForbidden() {
-        NpoApiClients wrongPassword = NpoApiClients
-            .configured(env)
-            .secret("WRONG PASSWORD")
-            .build();
+        assertThatThrownBy(() -> {
+            NpoApiClients wrongPassword = NpoApiClients
+                .configured(env)
+                .secret("WRONG PASSWORD")
+                .build();
 
-        MediaResult list = wrongPassword.getMediaService().list(null, null, null, null);
-        log.info("{}", list);
+            MediaResult list = wrongPassword.getMediaService().list(null, null, null, null);
+            log.info("{}", list);
+        }).isInstanceOf(NotAuthorizedException.class);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void testNotFound() {
-        clients.getMediaService().load("DOES_NOT_EXIST", null, null);
+        assertThatThrownBy(() -> {
+
+            clients.getMediaService().load("DOES_NOT_EXIST", null, null);
+        }).isInstanceOf(NotFoundException.class);
     }
 
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void testYoutubeNotFound() {
-        clients.getMediaService().load("https://www.youtube.com/watch?v=YWX2PSpy1TU", null, null);
+        assertThatThrownBy(() -> {
+
+            clients.getMediaService().load("https://www.youtube.com/watch?v=YWX2PSpy1TU", null, null);
+        }).isInstanceOf(NotFoundException.class);
+
     }
     @Test
     public void testPOW_01105929() {
@@ -159,26 +169,29 @@ public class NpoApiClientsITest {
 
     @Test
     public void testChanges() throws IOException {
-        InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null, null).readEntity(InputStream.class);
+        InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null).readEntity(InputStream.class);
         IOUtils.copy(response, LoggerOutputStream.info(log));
     }
 
 
     @Test
-    @Ignore("Takes very long")
+    @Disabled("Takes very long")
     public void testIterate() throws IOException {
-        try (InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predictions", null, 0L, Integer.MAX_VALUE, null).readEntity(InputStream.class)) {
+        try (InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predictions", null, 0L, Integer.MAX_VALUE).readEntity(InputStream.class)) {
             IOUtils.copy(response, ByteStreams.nullOutputStream());
         }
     }
 
 
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void testChangesError() throws IOException {
-        try (InputStream is = clients.getMediaService().changes("no profile", null, -1L, null, "ASC", 100, null, null, null).readEntity(InputStream.class)) {
-            log.info("{}", is);
-        }
+        assertThatThrownBy(() -> {
+
+            try (InputStream is = clients.getMediaService().changes("no profile", null, -1L, null, "ASC", 100, null, null).readEntity(InputStream.class)) {
+                log.info("{}", is);
+            }
+        }).isInstanceOf(NotFoundException.class);
     }
 
 
@@ -208,10 +221,13 @@ public class NpoApiClientsITest {
     }
 
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void testBadRequest() {
-        PageRestService pageService = clients.getPageService();
-        pageService.find(new PageForm(), null, "none", -1L, 1000);
+        assertThatThrownBy(() -> {
+
+            PageRestService pageService = clients.getPageService();
+            pageService.find(new PageForm(), null, "none", -1L, 1000);
+        }).isInstanceOf(BadRequestException.class);
     }
 
     @Test
@@ -279,26 +295,31 @@ public class NpoApiClientsITest {
     }
 
 
-    @Test(expected = javax.ws.rs.ProcessingException.class)
+    @Test
     public void testTimeout() {
-        String url = "https://httpbin.org/delay/11";
-        ClientHttpEngine httpClient = clients.getClientHttpEngine();
-        ResteasyClientBuilder builder = new ResteasyClientBuilderImpl()
-            .httpEngine(httpClient);
-        Response response = builder.build().target(url).request().get();
-        log.info("{}", response);
+        assertThatThrownBy(() -> {
+            String url = "https://httpbin.org/delay/11";
+            ClientHttpEngine httpClient = clients.getClientHttpEngine();
+            ResteasyClientBuilder builder = new ResteasyClientBuilderImpl()
+                .httpEngine(httpClient);
+            Response response = builder.build().target(url).request().get();
+            log.info("{}", response);
+        }).isInstanceOf(javax.ws.rs.ProcessingException.class);
     }
 
 
-    @Test(expected = javax.ws.rs.ProcessingException.class)
+    @Test
     public void testTimeoutSocket() {
-        String url = "https://httpbin.org/drip?duration=12&numbytes=5&code=200";
-        clients.setSocketTimeout("PT0.01S");
-        ClientHttpEngine httpClient = clients.getClientHttpEngine();
-        ResteasyClientBuilder builder = new ResteasyClientBuilderImpl().httpEngine(httpClient);
-        Response response = builder.build().target(url).request().get();
-        assertThat(response.getStatus()).isEqualTo(200);
-        log.info(response.readEntity(String.class));
+        assertThatThrownBy(() -> {
+            String url = "https://httpbin.org/drip?duration=12&numbytes=5&code=200";
+            clients.setSocketTimeout("PT0.01S");
+            ClientHttpEngine httpClient = clients.getClientHttpEngine();
+            ResteasyClientBuilder builder = new ResteasyClientBuilderImpl().httpEngine(httpClient);
+            Response response = builder.build().target(url).request().get();
+            assertThat(response.getStatus()).isEqualTo(200);
+            log.info(response.readEntity(String.class));
+        }).isInstanceOf(javax.ws.rs.ProcessingException.class);
+
     }
 
 

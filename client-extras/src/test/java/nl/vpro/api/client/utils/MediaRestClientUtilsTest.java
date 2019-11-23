@@ -4,11 +4,10 @@ import java.net.URL;
 import java.time.Instant;
 import java.util.Iterator;
 
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.*;
@@ -19,7 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-@Ignore
+@Disabled
 public class MediaRestClientUtilsTest {
 
     @Test
@@ -36,8 +35,7 @@ public class MediaRestClientUtilsTest {
             eq("asc"),
             any(Integer.class),
             any(Boolean.class),
-            any(Deletes.class),
-            any(Request.class)
+            any(Deletes.class)
             )
         ).thenReturn(Response.ok().entity(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream()).build());
         Iterator<MediaChange> i = MediaRestClientUtils.changes(mediaRestService, "vpro", true, Instant.ofEpochMilli(0), null, Order.ASC, Integer.MAX_VALUE, Deletes.ID_ONLY);

@@ -4,27 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.*;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXB;
 
-import nl.vpro.api.client.media.MediaRestClient;
-import nl.vpro.api.client.media.ResponseError;
-import nl.vpro.api.client.media.WithId;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import nl.vpro.domain.image.ImageType;
 import nl.vpro.domain.media.*;
-import nl.vpro.domain.media.search.MediaForm;
-import nl.vpro.domain.media.search.MediaListItem;
-import nl.vpro.domain.media.search.MediaPager;
-import nl.vpro.domain.media.search.TitleForm;
+import nl.vpro.domain.media.search.*;
 import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
 import nl.vpro.domain.media.update.*;
@@ -32,24 +21,25 @@ import nl.vpro.logging.LoggerOutputStream;
 import nl.vpro.util.Env;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
 /**
  * @author Michiel Meeuwissen
  */
-@Ignore("needs a running rest-service (TODO: make an integration test)")
+@Disabled("needs a running rest-service (TODO: make an integration test)")
 @Slf4j
 public class MediaRestClientTest {
 
     private MediaRestClient client;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         client = MediaRestClient.configured(Env.DEV).build();
         client.setWaitForRetry(true);
 
     }
-    @After
+    @AfterEach
     public void shutdown() {
         client.shutdown();
     }
@@ -121,14 +111,16 @@ public class MediaRestClientTest {
     }
 
 
-    @Test(expected = ResponseError.class)
+    @Test
     public void postInvalid() {
-        ProgramUpdate update = JAXB.unmarshal(getClass().getResourceAsStream("/POMS_VPRO_216532.xml"), ProgramUpdate.class);
-        update.getTitles().clear();
-        client.setLookupCrids(false);
-        String result = client.set(update);
+        assertThatThrownBy(() -> {
+            ProgramUpdate update = JAXB.unmarshal(getClass().getResourceAsStream("/POMS_VPRO_216532.xml"), ProgramUpdate.class);
+            update.getTitles().clear();
+            client.setLookupCrids(false);
+            String result = client.set(update);
 
-        assertThat(result).isEqualTo("POMS_VPRO_216532");
+            assertThat(result).isEqualTo("POMS_VPRO_216532");
+        }).isInstanceOf(ResponseError.class);
     }
 
 
@@ -330,14 +322,16 @@ public class MediaRestClientTest {
     }
 
 
-    @Test(expected = ResponseError.class)
+    @Test
     public void addImage404() {
-        String program = sampleProgram("addImage").id;
+        assertThatThrownBy(() -> {
+            String program = sampleProgram("addImage").id;
 
-        client.addImage(
-            new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/BESTAATNIET.png")),
+            client.addImage(
+                new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/BESTAATNIET.png")),
             program
-        );
+            );
+        }).isInstanceOf(ResponseError.class);
 
     }
 

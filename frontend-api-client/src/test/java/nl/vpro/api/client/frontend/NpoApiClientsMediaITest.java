@@ -6,15 +6,12 @@ package nl.vpro.api.client.frontend;
 
 import lombok.extern.slf4j.Slf4j;
 
-import nl.vpro.api.client.frontend.NpoApiClients;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import nl.vpro.domain.api.media.MediaForm;
-import nl.vpro.domain.api.media.MediaFormBuilder;
-import nl.vpro.domain.api.media.MediaSearchResult;
+import nl.vpro.domain.api.media.*;
 import nl.vpro.jackson2.Jackson2Mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +26,7 @@ public class NpoApiClientsMediaITest {
 
     private static NpoApiClients clients;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         clients = NpoApiClients.configured().trustAll(true).build();
         System.out.println("Testing with " + clients);

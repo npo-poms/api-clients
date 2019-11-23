@@ -9,7 +9,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.cache.BrowserCacheFeature;
 import org.jboss.resteasy.client.jaxrs.cache.MapCache;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Michiel Meeuwissen

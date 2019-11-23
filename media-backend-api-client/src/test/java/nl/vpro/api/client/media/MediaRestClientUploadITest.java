@@ -2,19 +2,12 @@ package nl.vpro.api.client.media;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import javax.ws.rs.core.Response;
 
-import nl.vpro.api.client.media.MediaRestClient;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import nl.vpro.domain.media.Encryption;
 import nl.vpro.domain.media.update.TranscodeRequest;
@@ -27,17 +20,17 @@ import nl.vpro.util.FileCachingInputStream;
  * @author Michiel Meeuwissen
  */
 @Slf4j
-@Ignore
+@Disabled
 public class MediaRestClientUploadITest {
 
     private MediaRestClient client;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         client = MediaRestClient.configured(Env.TEST).build();
 
     }
-    @After
+    @AfterEach
     public void shutdown() {
         client.shutdown();
     }

@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.google.inject.*;
 import com.google.inject.name.Names;
 
 import nl.vpro.api.client.pages.PageUpdateApiClient;
@@ -29,7 +28,7 @@ public class NpoApiClientsGuiceTest {
 
     private Injector injector;
 
-    @Before
+    @BeforeEach
     public void setup() {
         injector = Guice.createInjector(
             new AbstractModule() {

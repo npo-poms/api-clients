@@ -1,40 +1,7 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.api.client.frontend.ApiAuthenticationRequestFilter;
-import nl.vpro.api.client.frontend.NpoApiClients;
-import nl.vpro.domain.api.MediaChange;
-import nl.vpro.domain.api.Order;
-import nl.vpro.domain.api.media.MediaForm;
-import nl.vpro.domain.api.media.MediaFormBuilder;
-import nl.vpro.domain.api.media.MediaResult;
-import nl.vpro.domain.api.media.MediaSearchResult;
-import nl.vpro.domain.api.profile.Profile;
-import nl.vpro.domain.media.DescendantRef;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.media.MediaType;
-import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.CloseableIterator;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.StopWatch;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
-import org.jboss.resteasy.client.jaxrs.internal.ClientConfiguration;
-import org.jboss.resteasy.client.jaxrs.internal.ClientInvocation;
-import org.jboss.resteasy.client.jaxrs.internal.ClientRequestHeaders;
-import org.jboss.resteasy.core.providerfactory.ResteasyProviderFactoryImpl;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,9 +9,36 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 
-@Ignore("This is an integration test")
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.StopWatch;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
+import org.jboss.resteasy.client.jaxrs.internal.*;
+import org.jboss.resteasy.core.providerfactory.ResteasyProviderFactoryImpl;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.junit.jupiter.api.*;
+
+import nl.vpro.api.client.frontend.ApiAuthenticationRequestFilter;
+import nl.vpro.api.client.frontend.NpoApiClients;
+import nl.vpro.domain.api.MediaChange;
+import nl.vpro.domain.api.Order;
+import nl.vpro.domain.api.media.*;
+import nl.vpro.domain.api.profile.Profile;
+import nl.vpro.domain.media.*;
+import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.CloseableIterator;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@Disabled("This is an integration test")
 @Slf4j
 public class NpoApiClientUtilTest {
 
@@ -55,7 +49,7 @@ public class NpoApiClientUtilTest {
     private Instant start;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
 
         util = new NpoApiMediaUtil(NpoApiClients.configured().warnThreshold(Duration.ofMillis(1)).build(), new NpoApiRateLimiter());
@@ -66,7 +60,7 @@ public class NpoApiClientUtilTest {
         start = Instant.now();
         System.out.println("Testing " + util);
     }
-    @After
+    @AfterEach
     public void after() {
         System.out.println("Test took "  + Duration.between(start, Instant.now()));
     }
@@ -86,10 +80,12 @@ public class NpoApiClientUtilTest {
 
 
 
-    @Test(expected = IOException.class)
+    @Test
     public void testLoadMultipleWithTimeout() throws Exception {
-        MediaObject[] result = utilShortTimeout.load("AVRO_1656037", "AVRO_1656037", "POMS_VPRO_487567");
-        System.out.println(Arrays.asList(result));
+        assertThatThrownBy(() -> {
+            MediaObject[] result = utilShortTimeout.load("AVRO_1656037", "AVRO_1656037", "POMS_VPRO_487567");
+            System.out.println(Arrays.asList(result));
+        }).isInstanceOf(IOException.class);
     }
 
 
@@ -107,17 +103,20 @@ public class NpoApiClientUtilTest {
     }
 
 
-    @Test(expected = IOException.class)
+    @Test
     public void testLoadWithTimeout() throws Exception {
-        MediaObject result = utilShortTimeout.loadOrNull("AVRO_1656037");
-        // it doesn't
-        System.out.println("Didn't time out!");
-        System.out.println(result.getMid());
+        assertThatThrownBy(() -> {
+
+            MediaObject result = utilShortTimeout.loadOrNull("AVRO_1656037");
+            // it doesn't
+            System.out.println("Didn't time out!");
+            System.out.println(result.getMid());
+        }).isInstanceOf(IOException.class);
     }
 
 
     @Test
-    @Ignore("Takes long!!")
+    @Disabled("Takes long!!")
     public void testChanges() {
         CloseableIterator<MediaChange> result = util.changes("woord", 1433329965809L, Order.ASC, Integer.MAX_VALUE);
         long i = 0;
@@ -134,7 +133,7 @@ public class NpoApiClientUtilTest {
 
 
     @Test
-    @Ignore("Takes long!!")
+    @Disabled("Takes long!!")
     public void testChangesEpoch() {
         JsonArrayIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, Integer.MAX_VALUE);
         long i = 0;
@@ -151,7 +150,7 @@ public class NpoApiClientUtilTest {
 
 
     @Test
-    @Ignore("Takes long!")
+    @Disabled("Takes long!")
     public void testIterate() throws Exception {
         Instant start = Instant.now();
         try (CloseableIterator<MediaObject> result = util.iterate(new MediaForm(), null)) {
@@ -190,44 +189,46 @@ public class NpoApiClientUtilTest {
 
 
 
-    @Test(expected = IOException.class)
+    @Test
     //@Test
-    @Ignore("This doesn't test the api, but httpclient")
+    @Disabled("This doesn't test the api, but httpclient")
     // this does indeed timeout
     public void timeout() throws IOException, URISyntaxException {
-        HttpClient client;
-        {
-            ApacheHttpClient43Engine  engine = (ApacheHttpClient43Engine ) utilShortTimeout.getClients().getClientHttpEngine();
-            client = engine.getHttpClient();
-        }
+        assertThatThrownBy(() -> {
+            HttpClient client;
+            {
+                ApacheHttpClient43Engine  engine = (ApacheHttpClient43Engine ) utilShortTimeout.getClients().getClientHttpEngine();
+                client = engine.getHttpClient();
+            }
 
-        String host = utilShortTimeout.getClients().getBaseUrl() + "/media/AVRO_1656037";
-        URI uri = new URI(host);
-        HttpGet get = getAuthenticatedRequest(uri);
+            String host = utilShortTimeout.getClients().getBaseUrl() + "/media/AVRO_1656037";
+            URI uri = new URI(host);
+            HttpGet get = getAuthenticatedRequest(uri);
 
-        StopWatch sw = new StopWatch();
-        try {
-            sw.start();
-            HttpResponse response = client.execute(get, (org.apache.http.protocol.HttpContext) null);
+            StopWatch sw = new StopWatch();
+            try {
+                sw.start();
+                HttpResponse response = client.execute(get, (org.apache.http.protocol.HttpContext) null);
 
-            System.out.println("Didn't time out!");
-            System.out.println(response.getProtocolVersion());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(response.getStatusLine().getReasonPhrase());
-            System.out.println(response.getStatusLine().toString());
-            IOUtils.copy(response.getEntity().getContent(), System.out);
+                System.out.println("Didn't time out!");
+                System.out.println(response.getProtocolVersion());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(response.getStatusLine().getReasonPhrase());
+                System.out.println(response.getStatusLine().toString());
+                IOUtils.copy(response.getEntity().getContent(), System.out);
 
-        } finally {
-            sw.stop();
-            System.out.println(sw);
+            } finally {
+                sw.stop();
+                System.out.println(sw);
 
-        }
+            }
+        }).isInstanceOf(IOException.class);
 
     }
 
     //@Test(expected = IOException.class)
     @Test
-    @Ignore("Doesn't test api, but httpclient")
+    @Disabled("Doesn't test api, but httpclient")
     public void timeoutWithInvoke() throws URISyntaxException {
         ApacheHttpClient43Engine  engine = (ApacheHttpClient43Engine ) utilShortTimeout.getClients().getClientHttpEngine();
         String host = utilShortTimeout.getClients().getBaseUrl() + "/media/AVRO_1656037";
@@ -257,13 +258,15 @@ public class NpoApiClientUtilTest {
         System.out.println(profile.getMediaProfile());
     }
 
-    @Test(expected = javax.ws.rs.NotFoundException.class)
+    @Test
     public void badRequest() {
+        assertThatThrownBy(() -> {
+
         //MediaForm form = Jackson2Mapper.getInstance().readValue("{\"searches\":{\"mediaIds\":[{\"value\":\"VPWON_1181924\",\"match\":\"not\"}],\"types\":[{\"value\":\"BROADCAST\",\"match\":\"should\"},{\"value\":\"CLIP\",\"match\":\"should\"},{\"value\":\"SEGMENT\",\"match\":\"should\"},{\"value\":\"TRACK\",\"match\":\"should\"}]}}", MediaForm.class);
         /*String seriesRef = getSeriesRef(util.getClients().getMediaService().load("VPWON_1229797", null));
         System.out.println("" + seriesRef);*/
-        System.out.println(util.getClients().getMediaService().findDescendants(new MediaForm(), "POMS_S_VPRO_522965", "vpro", "title,description,image", 0L, 1000).asList());
-
+            System.out.println(util.getClients().getMediaService().findDescendants(new MediaForm(), "POMS_S_VPRO_522965", "vpro", "title,description,image", 0L, 1000).asList());
+        }).isInstanceOf(javax.ws.rs.NotFoundException.class);
     }
 
     @Test
