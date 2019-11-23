@@ -38,6 +38,11 @@ import nl.vpro.util.*;
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 
 
+/**
+ * Collects clients for all services on the <a href="https://rs.poms.omroep.nl/v1">NPO Frontend Rest API</a>
+ *
+ * This is implemented by proxying the actual service interfaces used on the server. Most noticably {@link MediaRestService} and {@link PageRestService}
+ */
 public class NpoApiClients extends AbstractApiClient {
 
 
