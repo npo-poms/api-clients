@@ -1,12 +1,13 @@
 package nl.vpro.api.client.frontend;
 
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import nl.vpro.api.client.utils.Util;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+
+import nl.vpro.api.client.utils.Util;
 
 /**
  * @author Michiel Meeuwissen
@@ -60,18 +61,15 @@ public class NpoApiAuthentication {
         String q = uri.getQuery();
         final List<NameValuePair> query;
         if (q != null) {
-            query = URLEncodedUtils.parse(uri.getQuery(), Charset.forName("utf-8"));
+            query = URLEncodedUtils.parse(uri.getQuery(), StandardCharsets.UTF_8);
         } else {
             query = new ArrayList<>();
         }
 
-        SortedSet<NameValuePair> sortedQuery = new TreeSet<>((o1, o2) -> {
-            int i = o1.getName().compareTo(o2.getName());
-            if (i != 0) {
-                return i;
-            }
-            return o1.getValue().compareTo(o2.getValue());
-        });
+        SortedSet<NameValuePair> sortedQuery = new TreeSet<>(
+            Comparator.comparing(NameValuePair::getName)
+                .thenComparing(NameValuePair::getValue)
+        );
 
         sortedQuery.addAll(query);
 

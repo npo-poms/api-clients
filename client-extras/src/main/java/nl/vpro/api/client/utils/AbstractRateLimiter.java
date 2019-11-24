@@ -18,6 +18,7 @@ public class AbstractRateLimiter {
     private double minRate = 0.01;
 
 
+    @SuppressWarnings("UnstableApiUsage")
     private final RateLimiter limiter = RateLimiter.create(baseRate);
 
     public double getBaseRate() {

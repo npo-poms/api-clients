@@ -12,7 +12,10 @@ import javax.ws.rs.core.*;
 
 import nl.vpro.api.client.resteasy.CountAspect;
 import nl.vpro.api.rs.v3.media.MediaRestService;
+import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.domain.api.Deletes;
+import nl.vpro.domain.api.media.MediaForm;
+import nl.vpro.domain.api.page.PageForm;
 
 /**
  * @author Michiel Meeuwissen
@@ -36,6 +39,22 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
                 Boolean.class,
                 Deletes.class
             ));
+        nocachingMethod.add(
+            MediaRestService.class.getMethod("iterate",
+                MediaForm.class,
+                String.class,
+                String.class,
+                Long.class,
+                Integer.class)
+        );
+        nocachingMethod.add(
+            PageRestService.class.getMethod("iterate",
+                PageForm.class,
+                String.class,
+                String.class,
+                Long.class,
+                Integer.class)
+        );
     }
 
     @Override
@@ -43,7 +62,8 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
         CountAspect.Local local = CountAspect.currentThreadLocal.get();
         if (nocachingMethod.contains(local.getMethod())) {
             log.debug("explicitely not caching call to {}", local);
-            responseContext.getHeaders().putSingle(HttpHeaders.CACHE_CONTROL, "no-cache");
+            responseContext.getHeaders()
+                .putSingle(HttpHeaders.CACHE_CONTROL, "no-cache");
         }
 
     }

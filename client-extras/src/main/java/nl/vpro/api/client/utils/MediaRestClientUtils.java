@@ -139,7 +139,7 @@ public class MediaRestClientUtils {
                 result.addAll(Lists.transform(mediaResult.getItems(), MultipleEntry::getResult));
             }
         }
-        return result.toArray(new MediaObject[result.size()]);
+        return result.toArray(new MediaObject[0]);
     }
     // unused for now
     private static MediaObject[] loadWithSearch(MediaRestService restService, String... ids) {
@@ -150,13 +150,13 @@ public class MediaRestClientUtils {
          * so the list of ids is partitioned first and if needed multiple find calls are executed...
          */
         for (List<String> idList : Lists.partition(Arrays.asList(ids), Constants.MAX_RESULTS)) {
-            String[] partitionedIds = idList.toArray(new String[idList.size()]);
+            String[] partitionedIds = idList.toArray(new String[0]);
             MediaForm mediaForm = MediaFormBuilder.form().mediaIds(partitionedIds).build();
             MediaSearchResult mediaSearchResult = restService.find(mediaForm, null, null, 0L, idList.size());
             result.addAll(adapt(mediaSearchResult));
         }
 
-        return result.toArray(new MediaObject[result.size()]);
+        return result.toArray(new MediaObject[0]);
     }
 
     @Deprecated
@@ -177,7 +177,7 @@ public class MediaRestClientUtils {
             final Response response = restService.changes(profile, null, null, sinceString(since, mid), order.name().toLowerCase(), max, profileCheck, deletes);
             InputStream inputStream = toInputStream(response);
             return new JsonArrayIterator<>(inputStream, MediaChange.class,
-                () -> IOUtils.closeQuietly(inputStream));
+                () -> closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
             if (t instanceof RuntimeException) {
@@ -306,8 +306,6 @@ public class MediaRestClientUtils {
 
     /**
      * Converts response to inputstream
-     * @param response
-     * @return
      */
     public static InputStream toInputStream(Response response) {
         // I would rather use some utility to map response status codes to proper exceptions, but I can't find one.

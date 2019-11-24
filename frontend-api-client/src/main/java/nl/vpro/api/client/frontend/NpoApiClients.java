@@ -350,7 +350,6 @@ public class NpoApiClients extends AbstractApiClient {
 
     /**
      * Creates {@link Builder}, which is configured using the defaults on the class path, the overrides in {@code ${USER.HOME}/conf/}{@link Config#CONFIG_FILE}, and perhaps the 'env' system setting.
-     * @return
      */
     public static NpoApiClients.Builder configured() {
         return configured((Env) null);

@@ -1,21 +1,22 @@
 package nl.vpro.api.client.utils;
 
-import com.google.common.collect.Lists;
 import lombok.EqualsAndHashCode;
-import nl.vpro.api.client.frontend.NpoApiClients;
-import nl.vpro.domain.api.IdList;
-import nl.vpro.domain.api.MultiplePageResult;
-import nl.vpro.domain.api.page.PageForm;
-import nl.vpro.domain.api.page.PageFormBuilder;
-import nl.vpro.domain.api.page.PageSearchResult;
-import nl.vpro.domain.page.Embed;
-import nl.vpro.domain.page.Page;
-import nl.vpro.util.CloseableIterator;
+
+import java.util.*;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.*;
-import java.util.function.Supplier;
+
+import com.google.common.collect.Lists;
+
+import nl.vpro.api.client.frontend.NpoApiClients;
+import nl.vpro.domain.api.IdList;
+import nl.vpro.domain.api.MultiplePageResult;
+import nl.vpro.domain.api.page.*;
+import nl.vpro.domain.page.Embed;
+import nl.vpro.domain.page.Page;
+import nl.vpro.util.CloseableIterator;
 
 /**
  * @author Michiel Meeuwissen
@@ -53,7 +54,7 @@ public class NpoApiPageUtil  {
     }
 
     @EqualsAndHashCode
-    private class SupplyKey {
+    private static class SupplyKey {
         private final List<String> profiles;
         private final String props;
 

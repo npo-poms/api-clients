@@ -27,7 +27,7 @@ public class Config {
 
     private final Map<Key, String> properties;
     private final String[] configFiles;
-    private Env env = null;
+    private Env env;
     private final Map<Prefix, Map<String, String>> mappedProperties = new HashMap<>();
 
 

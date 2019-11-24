@@ -19,6 +19,7 @@ import nl.vpro.util.*;
 public class PageRestClientUtils {
 
 
+    @SuppressWarnings("deprecation")
     public static CloseableIterator<Page> iterate(PageRestService restService, PageForm form, String profile) {
 
         PageForm f = form == null ? new PageForm() : form;

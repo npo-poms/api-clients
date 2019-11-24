@@ -191,7 +191,7 @@ public class PageUpdateApiUtil {
                                 String string = response.readEntity(String.class);
                                 return returnResult(Result.invalid(pageUpdateApiClient + ":" + string));
                             } catch (Exception ex) {
-                                return returnResult(Result.invalid(pageUpdateApiClient + ":" + String.valueOf(new HashMap<>(headers)) + "(" + ex.getMessage() + ")"));
+                                return returnResult(Result.invalid(pageUpdateApiClient + ":" + new HashMap<>(headers) + "(" + ex.getMessage() + ")"));
                             }
                         }
                     } else {
