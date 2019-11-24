@@ -7,8 +7,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 
@@ -162,7 +162,7 @@ public class MediaRestClientUtils {
     @Deprecated
     public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
-            final InputStream inputStream = restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null).readEntity(InputStream.class);
+            final InputStream inputStream = toInputStream(restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null));
             return new JsonArrayIterator<>(inputStream, MediaChange.class, () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
@@ -174,8 +174,10 @@ public class MediaRestClientUtils {
     public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
         try {
 
-            final InputStream inputStream = restService.changes(profile, null, null, sinceString(since, mid), order.name().toLowerCase(), max, profileCheck, deletes).readEntity(InputStream.class);
-            return new JsonArrayIterator<>(inputStream, MediaChange.class, () -> IOUtils.closeQuietly(inputStream));
+            final Response response = restService.changes(profile, null, null, sinceString(since, mid), order.name().toLowerCase(), max, profileCheck, deletes);
+            InputStream inputStream = toInputStream(response);
+            return new JsonArrayIterator<>(inputStream, MediaChange.class,
+                () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
             if (t instanceof RuntimeException) {
@@ -206,7 +208,7 @@ public class MediaRestClientUtils {
     public static CloseableIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile ,boolean progressLogging) {
         return new LazyIterator<>(() -> {
             try {
-                final InputStream inputStream = restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE).readEntity(InputStream.class);
+                final InputStream inputStream = toInputStream(restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE));
                 // Cache the stream to a file first.
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
                 FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
@@ -288,7 +290,7 @@ public class MediaRestClientUtils {
         return properties.getProperty(id);
     }
 
-    static void closeQuietly(Closeable... closeables) {
+    public static void closeQuietly(Closeable... closeables) {
         for (Closeable c : closeables) {
             if (c != null) {
                 try {
@@ -300,6 +302,28 @@ public class MediaRestClientUtils {
         }
 
 
+    }
+
+    /**
+     * Converts response to inputstream
+     * @param response
+     * @return
+     */
+    public static InputStream toInputStream(Response response) {
+        // I would rather use some utility to map response status codes to proper exceptions, but I can't find one.
+        // This seems incomplete now
+        if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
+            InputStream inputStream = response.readEntity(InputStream.class);
+            return inputStream;
+        } else if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+            throw new NotFoundException(response);
+        } else if (response.getStatusInfo().getFamily() == Response.Status.Family.CLIENT_ERROR) {
+            throw new BadRequestException(response);
+        } else if (response.getStatusInfo().getFamily() == Response.Status.Family.SERVER_ERROR) {
+            throw new ServerErrorException(response);
+        } else {
+            throw new RuntimeException(response.readEntity(String.class));
+        }
     }
 
 
