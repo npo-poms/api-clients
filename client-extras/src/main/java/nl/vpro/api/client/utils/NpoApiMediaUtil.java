@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.*;
+import nl.vpro.domain.api.Result;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.jackson2.JsonArrayIterator;
@@ -181,7 +182,7 @@ public class NpoApiMediaUtil implements MediaProvider {
             } while (found < total && result.size() < max);
 
             limiter.upRate();
-            return new MediaResult(result, 0L, max, total);
+            return new MediaResult(result, 0L, max, total, Result.TotalQualifier.EQUAL_TO);
         } catch (Exception e) {
             limiter.downRate();
             throw e;
@@ -217,7 +218,7 @@ public class NpoApiMediaUtil implements MediaProvider {
             } while (found < total && result.size() < max);
 
             limiter.upRate();
-            return new ProgramResult(result, 0L, max, total);
+            return new ProgramResult(result, 0L, max, total, Result.TotalQualifier.EQUAL_TO);
         } catch (Exception e) {
             limiter.downRate();
             throw e;
@@ -338,7 +339,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     /**
-     * Calls {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer, javax.ws.rs.core.Request)}, and wraps the resulting {@link java.io.InputStream} in an {@link Iterator} of {@link MediaObject}}
+     * Calls {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer)}, and wraps the resulting {@link java.io.InputStream} in an {@link Iterator} of {@link MediaObject}}
      */
     public CloseableIterator<MediaObject> iterate(MediaForm form, String profile)  {
         limiter.acquire();
