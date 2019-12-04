@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -18,9 +19,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import com.google.common.base.Suppliers;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
-import nl.vpro.api.client.utils.Config;
-import nl.vpro.api.client.utils.Swagger;
-import nl.vpro.api.client.utils.VersionResult;
+import nl.vpro.api.client.utils.*;
 import nl.vpro.api.rs.subtitles.VTTSubtitlesReader;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
@@ -31,6 +30,7 @@ import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.api.rs.v3.thesaurus.ThesaurusRestService;
 import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
+import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.jackson2.Jackson2Mapper;
 import nl.vpro.util.*;
@@ -60,9 +60,14 @@ public class NpoApiClients extends AbstractApiClient {
     private String secret;
     private String origin;
 
-    private ThreadLocal<String> properties = ThreadLocal.withInitial(() -> null);
-    private ThreadLocal<String> profile = ThreadLocal.withInitial(() -> null);
-    private ThreadLocal<Integer> max = ThreadLocal.withInitial(() -> null);
+    private ThreadLocal<String> propertiesThreadLocal = ThreadLocal.withInitial(() -> null);
+    protected String properties;
+    private ThreadLocal<String> profileThreadLocal = ThreadLocal.withInitial(() -> null);
+    protected String profile;
+    private ThreadLocal<Integer> maxThreadLocal = ThreadLocal.withInitial(() -> null);
+    protected Integer max;
+
+    protected Function<NpoApiClients, String> toString;
 
    @Override
     protected void appendTestResult(StringBuilder builder, String arg) {
@@ -172,7 +177,7 @@ public class NpoApiClients extends AbstractApiClient {
     }
 
 
-    @lombok.Builder(builderClassName = "Builder", buildMethodName = "_build")
+    @lombok.Builder(builderClassName = "Builder", buildMethodName = "_build", toBuilder = true)
     protected NpoApiClients(
         String baseUrl,
         Duration connectionRequestTimeout,
@@ -200,9 +205,10 @@ public class NpoApiClients extends AbstractApiClient {
         String mbeanName,
         ClassLoader classLoader,
         String userAgent,
-        Boolean registerMBean
+        Boolean registerMBean,
+        Function<NpoApiClients, String> toString
     ) {
-        super((baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl) + "/api",
+        super(withApiPostFix(baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl),
             connectionRequestTimeout,
             connectTimeout,
             socketTimeout,
@@ -228,9 +234,12 @@ public class NpoApiClients extends AbstractApiClient {
 
         this.secret = secret;
         this.origin = origin;
-        this.properties = ThreadLocal.withInitial(() -> properties);
-        this.profile = ThreadLocal.withInitial(() -> profile);
-        this.max = ThreadLocal.withInitial(() -> max);
+        this.properties = properties;
+        this.propertiesThreadLocal = ThreadLocal.withInitial(() -> this.properties);
+        this.profile = profile;
+        this.profileThreadLocal = ThreadLocal.withInitial(() -> this.profile);
+        this.max = max;
+        this.maxThreadLocal = ThreadLocal.withInitial(() -> this.max);
         if (this.apiKey == null) {
             log.warn("No api key configured for {}",  this);
         }
@@ -240,7 +249,11 @@ public class NpoApiClients extends AbstractApiClient {
         if (this.origin == null) {
             log.warn("No api origin configured for {}", this);
         }
+        this.toString = toString;
+    }
 
+    private static String withApiPostFix(String baseUrl) {
+       return baseUrl.endsWith("/api") ? baseUrl : baseUrl + "/api";
     }
 
     private Supplier<VersionResult> version = null;
@@ -291,31 +304,34 @@ public class NpoApiClients extends AbstractApiClient {
     }
 
     public String getProperties() {
-        return properties.get();
+        return propertiesThreadLocal.get();
     }
 
     public void setProperties(String properties) {
-        this.properties.set(properties);
+        this.propertiesThreadLocal.set(properties);
     }
     public boolean hasAllProperties() {
-        String p = properties.get();
+        String p = propertiesThreadLocal.get();
         return p == null || p .equals("all");
     }
 
     public String getProfile() {
-        return profile.get();
+        return profileThreadLocal.get();
+    }
+    public Optional<Profile> getAssociatedProfile() {
+        return Optional.ofNullable(profileThreadLocal.get()).map(p -> getProfileService().load(p, null));
     }
 
     public void setProfile(String profile) {
-        this.profile.set(profile);
+        this.profileThreadLocal.set(profile);
     }
 
     public Integer getMax() {
-        return max.get();
+        return maxThreadLocal.get();
     }
 
     public void setMax(Integer max) {
-        this.max.set(max);
+        this.maxThreadLocal.set(max);
     }
 
     /**
@@ -452,7 +468,11 @@ public class NpoApiClients extends AbstractApiClient {
 
     @Override
     public String toString() {
-        return getApiKey() + "@" + baseUrl;
+        if (toString == null) {
+            return getApiKey() + "@" + baseUrl;
+        } else {
+            return toString.apply(this);
+        }
     }
 
     @Override
