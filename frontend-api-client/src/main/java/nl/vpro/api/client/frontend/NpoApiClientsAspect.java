@@ -2,14 +2,10 @@ package nl.vpro.api.client.frontend;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
+
+import javax.ws.rs.*;
 
 import static nl.vpro.domain.api.Constants.*;
 
@@ -42,9 +38,6 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
             fillImplicitParameters(method, args);
-            if (method.getName().equals("changes")) {
-
-            }
             return method.invoke(proxied, args);
         } catch (InvocationTargetException itc) {
             throw itc.getCause();
