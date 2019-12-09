@@ -1,27 +1,28 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.api.client.frontend.NpoApiClients;
-import nl.vpro.domain.api.Deletes;
-import nl.vpro.domain.api.MediaChange;
-import nl.vpro.domain.api.Order;
-import nl.vpro.domain.api.media.*;
-import nl.vpro.domain.api.profile.ProfileDefinition;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.util.CloseableIterator;
-import nl.vpro.util.FilteringIterator;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
+
+import javax.inject.Inject;
+
+import nl.vpro.api.client.frontend.NpoApiClients;
+import nl.vpro.domain.api.*;
+import nl.vpro.domain.api.media.*;
+import nl.vpro.domain.api.profile.ProfileDefinition;
+import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.MediaRedirector;
+import nl.vpro.util.CloseableIterator;
+import nl.vpro.util.FilteringIterator;
 
 /**
  * @author Michiel Meeuwissen
  * @since 1.1
  */
 @Slf4j
-public abstract class AbstractApiClientMediaRepository implements MediaRepository {
+public abstract class AbstractApiClientMediaRepository implements MediaRepository, MediaRedirector {
 
     final NpoApiClients clients;
     final NpoApiMediaUtil util;
