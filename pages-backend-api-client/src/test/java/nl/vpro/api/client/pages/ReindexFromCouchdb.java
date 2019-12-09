@@ -63,7 +63,7 @@ public class ReindexFromCouchdb {
                         url = url.replaceAll("/cinema/persoon~", "/cinema/personen/persoon~");
                         pu.setUrl(url);
                         pu.getPortal().setUrl("http://www.vpro.nl/cinema.html");
-                        pu.setRevision(null);
+                        //pu.setRevision(null);
                         pu.setLastPublished(null);
                         for (ImageUpdate u : pu.getImages()) {
                             ImageLocation il = (ImageLocation) u.getImage();
