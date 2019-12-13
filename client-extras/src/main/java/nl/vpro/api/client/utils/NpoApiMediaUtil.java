@@ -22,7 +22,6 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.*;
-import nl.vpro.domain.api.Result;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.jackson2.JsonArrayIterator;
@@ -30,6 +29,7 @@ import nl.vpro.util.CloseableIterator;
 import nl.vpro.util.TimeUtils;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
+import static nl.vpro.domain.api.Result.Total.equalsTo;
 
 /**
  * Wrapper around {@link NpoApiClients}, that provides things like:
@@ -182,7 +182,7 @@ public class NpoApiMediaUtil implements MediaProvider {
             } while (found < total && result.size() < max);
 
             limiter.upRate();
-            return new MediaResult(result, 0L, max, total, Result.TotalQualifier.EQUAL_TO);
+            return new MediaResult(result, 0L, max, equalsTo(total));
         } catch (Exception e) {
             limiter.downRate();
             throw e;
@@ -218,7 +218,7 @@ public class NpoApiMediaUtil implements MediaProvider {
             } while (found < total && result.size() < max);
 
             limiter.upRate();
-            return new ProgramResult(result, 0L, max, total, Result.TotalQualifier.EQUAL_TO);
+            return new ProgramResult(result, 0L, max, equalsTo(total));
         } catch (Exception e) {
             limiter.downRate();
             throw e;
@@ -260,7 +260,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         if (!toRequest.isEmpty()) {
             limiter.acquire();
             try {
-                String[] array = toRequest.toArray(new String[toRequest.size()]);
+                String[] array = toRequest.toArray(new String[0]);
                 MediaObject[] requested = MediaRestClientUtils.load(clients.getMediaService(), array);
                 for (int j = 0 ; j < array.length; j++) {
                     Optional<MediaObject> optional = Optional.ofNullable(requested[j]);
