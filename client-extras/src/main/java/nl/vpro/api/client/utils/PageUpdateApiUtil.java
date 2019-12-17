@@ -60,9 +60,20 @@ public class PageUpdateApiUtil {
     }
 
     public Result<Void> save(@NotNull @Valid PageUpdate update) {
+        return save(update, false);
+    }
+
+    public Result<Void> saveAndWait(@NotNull @Valid PageUpdate update) {
+        return save(update, true);
+    }
+
+    protected Result<Void> save(@NotNull @Valid PageUpdate update, boolean wait) {
         limiter.acquire();
         try {
-            return handleResponse(pageUpdateApiClient.getPageUpdateRestService().save(update), update, JACKSON, Void.class);
+            return handleResponse(
+                pageUpdateApiClient.getPageUpdateRestService().save(update, wait),
+                update, JACKSON, Void.class
+            );
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }

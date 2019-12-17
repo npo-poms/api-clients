@@ -35,11 +35,10 @@ public class PageUpdateApiClientITest {
         PageUpdateRestService client2 = clients.getPageUpdateRestService();
 
         assertThat(client).isSameAs(client2);
-
         PageUpdate instance = PageUpdateBuilder.article("http://www.meeuw.org/test/1234")
             .title("my title " + Instant.now())
             .broadcasters("VPRO").build();
-        Response response = client.save(instance);
+        Response response = client.save(instance, null);
         if (response.getStatus() == 400) {
             ViolationReport report = response.readEntity(ViolationReport.class);
             JAXB.marshal(report, System.out);
@@ -60,7 +59,7 @@ public class PageUpdateApiClientITest {
             .build();
         JAXB.marshal(page, System.out);
 
-        Response response = client.save(page);
+        Response response = client.save(page, null);
         if (response.getStatus() == 400) {
             ViolationReport report = response.readEntity(ViolationReport.class);
             JAXB.marshal(report, System.out);
@@ -80,7 +79,7 @@ public class PageUpdateApiClientITest {
             .title("Page with topstory (" + Instant.now() + ")")
             .links(LinkUpdate.topStory("http://www.meeuw.org/test/topstory", "heel goed artikel"))
             .build();
-        Response response = client.save(page);
+        Response response = client.save(page, null);
         JAXB.marshal(page, System.out);
 
         if (response.getStatus() == 400) {

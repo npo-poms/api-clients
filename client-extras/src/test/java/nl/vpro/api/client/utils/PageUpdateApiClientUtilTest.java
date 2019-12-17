@@ -11,6 +11,7 @@ import org.junit.jupiter.api.*;
 
 import nl.vpro.api.client.pages.PageUpdateApiClient;
 import nl.vpro.domain.page.PageType;
+import nl.vpro.domain.page.update.DeleteResult;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.util.Env;
 
@@ -34,7 +35,7 @@ public class PageUpdateApiClientUtilTest {
     @Test
     public void testSaveInvalid() {
         PageUpdate instance = new PageUpdate(PageType.ARTICLE, "http://vpro.nl/test");
-        Result result = util.save(instance);
+        Result<Void> result = util.saveAndWait(instance);
         assertThat(result.getStatus()).isEqualTo(Result.Status.INVALID);
         assertThat(result.getErrors()).contains("may not be null");
     }
@@ -42,7 +43,7 @@ public class PageUpdateApiClientUtilTest {
     @Test
     public void testDelete() {
         String id  = "http://BESTAATNIET";
-        Result result = util.delete(id);
+        Result<DeleteResult> result = util.delete(id);
         assertThat(result.getStatus()).isEqualTo(Result.Status.SUCCESS);
         assertThat(result.getErrors()).isNull();
     }
@@ -70,7 +71,7 @@ public class PageUpdateApiClientUtilTest {
             "</pageUpdate:page>\n";
         //System.out.println(willCauseError);
         PageUpdate update = JAXB.unmarshal(new StringReader(willCauseDeny), PageUpdate.class);
-        Result result = util.save(update);
+        Result<Void> result = util.save(update);
         assertThat(result.getStatus()).isEqualTo(Result.Status.DENIED);
         assertThat(result.getErrors()).contains("Access is denied");
     }
@@ -78,7 +79,7 @@ public class PageUpdateApiClientUtilTest {
     @Test
     public void deleteWhereStartsWith() {
         log.info("{}", util);
-        Result result = util.deleteWhereStartsWith("http://bla/bloe");
+        Result<DeleteResult> result = util.deleteWhereStartsWith("http://bla/bloe");
         log.info("{}", result.getEntity());
     }
 }

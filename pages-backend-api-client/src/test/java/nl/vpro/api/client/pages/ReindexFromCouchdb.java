@@ -74,7 +74,7 @@ public class ReindexFromCouchdb {
                         }
                         count++;
                         System.out.println(url);
-                        Response response = restService.save(pu);
+                        Response response = restService.save(pu, false);
                         response.close();
                         if (response.getStatus() != 202) {
                             System.out.println("" + response);
