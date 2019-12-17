@@ -52,6 +52,9 @@ public class NpoApiPageUtil  {
         }
         return result;
     }
+    public Page get(String id) {
+        return load(id)[0];
+    }
 
     @EqualsAndHashCode
     private static class SupplyKey {
