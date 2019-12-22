@@ -16,7 +16,7 @@ import nl.vpro.api.client.utils.Config;
 import nl.vpro.guice.Convertors;
 import nl.vpro.guice.OptionalModule;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michiel Meeuwissen
