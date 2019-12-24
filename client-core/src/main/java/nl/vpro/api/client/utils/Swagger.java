@@ -54,7 +54,7 @@ public class Swagger {
             Matcher matcher = BRANCH_VERSION.matcher(versionString);
             if (matcher.find()) {
                 result = matcher.group(1);
-                log.info("Version found from {} -> result", versionString, result);
+                log.info("Version found from {} -> {}", versionString, result);
             }
         }
         if (result == null) {
