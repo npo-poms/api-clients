@@ -172,7 +172,11 @@ public class NpoApiMediaUtil implements MediaProvider {
             do {
                 MediaResult list = supplier.apply(batch, offset);
                 total = list.getTotal();
-                list.getItems().stream().filter(filter).forEach(o -> {
+                if (list.getSize() == 0) {
+                    break;
+                }
+                list.getItems().stream()
+                    .filter(filter).forEach(o -> {
                     if (result.size() < max) {
                         result.add(o);
                     }
@@ -248,6 +252,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         return unPageProgramResult(members, filter, max);
     }
 
+    @SuppressWarnings({"unchecked", "OptionalAssignedToNull"})
     public MediaObject[] load(String... id) throws IOException {
         Optional<? extends MediaObject>[] result = new Optional[id.length];
         Set<String> toRequest = new LinkedHashSet<>();
