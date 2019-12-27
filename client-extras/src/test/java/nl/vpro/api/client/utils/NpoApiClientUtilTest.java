@@ -32,8 +32,8 @@ import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.*;
-import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.util.CloseableIterator;
+import nl.vpro.util.CountedIterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -135,7 +135,7 @@ public class NpoApiClientUtilTest {
     @Test
     @Disabled("Takes long!!")
     public void testChangesEpoch() {
-        JsonArrayIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, Integer.MAX_VALUE);
+        CountedIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, Integer.MAX_VALUE);
         long i = 0;
         while (result.hasNext()) {
             MediaChange next = result.next();

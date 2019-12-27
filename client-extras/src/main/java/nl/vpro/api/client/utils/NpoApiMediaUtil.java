@@ -25,8 +25,7 @@ import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.CloseableIterator;
-import nl.vpro.util.TimeUtils;
+import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 import static nl.vpro.domain.api.Result.Total.equalsTo;
@@ -293,14 +292,14 @@ public class NpoApiMediaUtil implements MediaProvider {
         return resultArray;
     }
 
-    public JsonArrayIterator<MediaChange> changes(String profile, Instant since, Order order, Integer max) {
+    public CountedIterator<MediaChange> changes(String profile, Instant since, Order order, Integer max) {
         return changes(profile, since, null, order, max);
     }
-    public JsonArrayIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max) {
+    public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max) {
         return changes(profile, true, null, since, mid, order, max, Deletes.ID_ONLY);
     }
 
-    public JsonArrayIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
+    public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
         return changes(profile, profileCheck, null, since, mid, order, max, deletes);
     }
 

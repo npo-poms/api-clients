@@ -199,20 +199,29 @@ public class MediaRestClientUtils {
         return sinceString;
     }
 
-    public static CloseableIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) {
+    public static CountedIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile) {
         return iterate(restService, form, profile, true);
     }
+
+    public static CountedIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile , boolean progressLogging) {
+        return iterate(restService, form, profile, progressLogging, Integer.MAX_VALUE);
+    }
+
     /**
      *
      */
-    public static CloseableIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile ,boolean progressLogging) {
+    public static CountedIterator<MediaObject> iterate(MediaRestService restService, MediaForm form, String profile , boolean progressLogging, int max) {
+        return iterate(() -> restService.iterate(form, profile, null, 0L, max), progressLogging, "iterate-" + profile + "-");
+    }
+
+    public static CountedIterator<MediaObject> iterate(Supplier<Response> response, boolean progressLogging, String filePrefix) {
         return new LazyIterator<>(() -> {
             try {
-                final InputStream inputStream = toInputStream(restService.iterate(form, profile, null, 0L, Integer.MAX_VALUE));
+                final InputStream inputStream = toInputStream(response.get());
                 // Cache the stream to a file first.
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
                 FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
-                    .filePrefix("iterate-" + profile + "-")
+                    .filePrefix(filePrefix)
                     .batchSize(1000000L)
                     .logger(log)
                     .progressLogging(progressLogging)
