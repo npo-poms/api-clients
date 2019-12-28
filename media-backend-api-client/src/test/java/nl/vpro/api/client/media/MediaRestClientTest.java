@@ -35,7 +35,7 @@ public class MediaRestClientTest {
 
     @BeforeEach
     public void setUp() {
-        client = MediaRestClient.configured(Env.DEV).build();
+        client = MediaRestClient.configured(Env.LOCALHOST).build();
         client.setWaitForRetry(true);
 
     }
@@ -396,7 +396,7 @@ public class MediaRestClientTest {
 
     @Test
     public void version() {
-        System.out.println(client.getVersionNumber());
+        log.info("{} {}", client, client.getVersionNumber());
     }
 
     @Test

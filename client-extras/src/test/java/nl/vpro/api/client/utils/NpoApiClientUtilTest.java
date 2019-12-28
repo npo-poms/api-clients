@@ -32,8 +32,8 @@ import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.*;
-import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.util.CloseableIterator;
+import nl.vpro.util.CountedIterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -58,11 +58,11 @@ public class NpoApiClientUtilTest {
             NpoApiClients.configured()
                 .connectTimeout(Duration.ofMillis(1)).build(), new NpoApiRateLimiter());
         start = Instant.now();
-        System.out.println("Testing " + util);
+        log.info("Testing {}", util);
     }
     @AfterEach
     public void after() {
-        System.out.println("Test took "  + Duration.between(start, Instant.now()));
+        log.info("Test took {}", Duration.between(start, Instant.now()));
     }
 
     @Test
@@ -81,10 +81,10 @@ public class NpoApiClientUtilTest {
 
 
     @Test
-    public void testLoadMultipleWithTimeout() throws Exception {
+    public void testLoadMultipleWithTimeout() {
         assertThatThrownBy(() -> {
             MediaObject[] result = utilShortTimeout.load("AVRO_1656037", "AVRO_1656037", "POMS_VPRO_487567");
-            System.out.println(Arrays.asList(result));
+            log.info("{}", Arrays.asList(result));
         }).isInstanceOf(IOException.class);
     }
 
@@ -104,17 +104,18 @@ public class NpoApiClientUtilTest {
 
 
     @Test
-    public void testLoadWithTimeout() throws Exception {
+    public void testLoadWithTimeout() {
         assertThatThrownBy(() -> {
 
             MediaObject result = utilShortTimeout.loadOrNull("AVRO_1656037");
             // it doesn't
-            System.out.println("Didn't time out!");
-            System.out.println(result.getMid());
+            log.info("Didn't time out!");
+            log.info(result.getMid());
         }).isInstanceOf(IOException.class);
     }
 
 
+    @SuppressWarnings("deprecation")
     @Test
     @Disabled("Takes long!!")
     public void testChanges() {
@@ -123,7 +124,7 @@ public class NpoApiClientUtilTest {
         while (result.hasNext()) {
             MediaChange next = result.next();
             if (i++ % 10 == 0) {
-                System.out.println(next);
+                log.info("{}", next);
                 //Thread.sleep(10000);
             }
         }
@@ -135,7 +136,7 @@ public class NpoApiClientUtilTest {
     @Test
     @Disabled("Takes long!!")
     public void testChangesEpoch() {
-        JsonArrayIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, Integer.MAX_VALUE);
+        CountedIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, Integer.MAX_VALUE);
         long i = 0;
         while (result.hasNext()) {
             MediaChange next = result.next();
@@ -184,7 +185,7 @@ public class NpoApiClientUtilTest {
     @Test
     public void testListRelated() {
         MediaSearchResult result = util.getClients().getMediaService().findRelated(MediaFormBuilder.emptyForm(), "VPWON_1174495", "vpro", null, 10, null);
-        System.out.println(result.asList().get(0).getDescendantOf().iterator().next().getMidRef());
+        log.info("{}", result.asList().get(0).getDescendantOf().iterator().next().getMidRef());
     }
 
 
@@ -193,7 +194,7 @@ public class NpoApiClientUtilTest {
     //@Test
     @Disabled("This doesn't test the api, but httpclient")
     // this does indeed timeout
-    public void timeout() throws IOException, URISyntaxException {
+    public void timeout() {
         assertThatThrownBy(() -> {
             HttpClient client;
             {

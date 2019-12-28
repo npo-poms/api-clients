@@ -25,8 +25,7 @@ import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.CloseableIterator;
-import nl.vpro.util.TimeUtils;
+import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 import static nl.vpro.domain.api.Result.Total.equalsTo;
@@ -172,7 +171,11 @@ public class NpoApiMediaUtil implements MediaProvider {
             do {
                 MediaResult list = supplier.apply(batch, offset);
                 total = list.getTotal();
-                list.getItems().stream().filter(filter).forEach(o -> {
+                if (list.getSize() == 0) {
+                    break;
+                }
+                list.getItems().stream()
+                    .filter(filter).forEach(o -> {
                     if (result.size() < max) {
                         result.add(o);
                     }
@@ -248,6 +251,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         return unPageProgramResult(members, filter, max);
     }
 
+    @SuppressWarnings({"unchecked", "OptionalAssignedToNull"})
     public MediaObject[] load(String... id) throws IOException {
         Optional<? extends MediaObject>[] result = new Optional[id.length];
         Set<String> toRequest = new LinkedHashSet<>();
@@ -288,14 +292,14 @@ public class NpoApiMediaUtil implements MediaProvider {
         return resultArray;
     }
 
-    public JsonArrayIterator<MediaChange> changes(String profile, Instant since, Order order, Integer max) {
+    public CountedIterator<MediaChange> changes(String profile, Instant since, Order order, Integer max) {
         return changes(profile, since, null, order, max);
     }
-    public JsonArrayIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max) {
+    public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max) {
         return changes(profile, true, null, since, mid, order, max, Deletes.ID_ONLY);
     }
 
-    public JsonArrayIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
+    public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
         return changes(profile, profileCheck, null, since, mid, order, max, deletes);
     }
 
