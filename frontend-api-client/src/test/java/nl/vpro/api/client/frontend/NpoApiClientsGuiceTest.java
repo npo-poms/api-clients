@@ -34,9 +34,10 @@ public class NpoApiClientsGuiceTest {
             new AbstractModule() {
                 @Override
                 protected void configure() {
+                    Config configFile = new Config("apiclient-test.properties");
                     Map<String, String> config = new HashMap<>();
-                    config.putAll(new Config("apiclient-test.properties").getPrefixedProperties(Config.Prefix.npo_api));
-                    config.putAll(new Config("apiclient-test.properties").getPrefixedProperties(Config.Prefix.npo_pageupdate_api));
+                    config.putAll(configFile.getPrefixedProperties(Config.Prefix.npo_api));
+                    config.putAll(configFile.getPrefixedProperties(Config.Prefix.npo_pageupdate_api));
                     Names.bindProperties(binder(), config);
 
                     binder().bind(NpoApiClients.class).toProvider(NpoApiClients.Provider.class);
