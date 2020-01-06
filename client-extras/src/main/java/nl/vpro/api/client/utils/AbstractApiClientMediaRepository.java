@@ -35,7 +35,10 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
     }
 
     @Override
-    public MediaObject load(String id)  {
+    public MediaObject load(boolean loadDeleted, String id)  {
+        if (! loadDeleted) {
+            throw new UnsupportedOperationException();
+        }
         try {
             return util.loadOrNull(id);
         } catch (IOException e) {
@@ -45,7 +48,10 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
     }
 
     @Override
-    public List<MediaObject> loadAll(List<String> ids) {
+    public List<MediaObject> loadAll(boolean loadDeleted, List<String> ids) {
+        if (! loadDeleted) {
+            throw new UnsupportedOperationException();
+        }
         try {
             return Arrays.asList(util.load(ids.toArray(new String[0])));
         } catch (IOException e) {
