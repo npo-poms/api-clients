@@ -1,8 +1,6 @@
 package nl.vpro.api.client.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -27,7 +25,7 @@ public class Config {
 
     private final Map<Key, String> properties;
     private final String[] configFiles;
-    private Env env;
+    private Env env = null;
     private final Map<Prefix, Map<String, String>> mappedProperties = new HashMap<>();
 
 
@@ -37,8 +35,11 @@ public class Config {
         npo_backend_api,
         parkpost,
         npo_pageupdate_api,
+        npo_publisher,
         poms,
-        images;
+        images,
+        nep
+        ;
 
         public String getKey() {
             return name().replace('_', '-');
@@ -60,7 +61,7 @@ public class Config {
         this(null, configFiles);
     }
 
-    public Config (Env env, String... configFiles) {
+    public Config(Env env, String... configFiles) {
         properties = new HashMap<>();
         this.configFiles = configFiles;
         this.env = env;
@@ -109,9 +110,17 @@ public class Config {
 
     }
 
-    public Map<String, String> getProperties() {
+    private Map<String, String> getProperties() {
         return properties.entrySet().stream()
             .collect(Collectors.toMap((e) -> e.getKey().toString(), Map.Entry::getValue));
+    }
+
+    public String getProperty(String key) {
+        String value = getProperties().get(key);
+        if (value == null) {
+            throw new IllegalArgumentException("No such key " + key);
+        }
+        return value;
     }
 
     public  Map<String, String> getProperties(Prefix prefix) {
