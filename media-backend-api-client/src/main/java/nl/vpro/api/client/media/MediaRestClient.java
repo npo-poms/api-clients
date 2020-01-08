@@ -22,6 +22,7 @@ import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
 import nl.vpro.api.client.utils.VersionResult;
@@ -82,7 +83,7 @@ import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
  * @author Michiel Meeuwissen
  */
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "UnnecessaryLocalVariable", "UnstableApiUsage"})
 public class MediaRestClient extends AbstractApiClient implements MediaRestClientMXBean {
 
     private int defaultMax = 50;
@@ -92,7 +93,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     @Getter
     @Setter
-    private boolean followMerges = true;
+    private boolean followMerges;
 
     private MediaBackendRestService proxy;
 
@@ -138,7 +139,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     private OwnerType owner = OwnerType.BROADCASTER;
 
 
-
+    @CanIgnoreReturnValue
     public <T> T doValidated(Callable<T> callable) throws Exception {
         boolean was = validateInput;
         try {
@@ -579,12 +580,12 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
-    protected String set(final EntityType type, final MediaUpdate update) {
+    protected String set(final EntityType type, final MediaUpdate<?> update) {
         return set(type, update, null);
     }
 
     @SneakyThrows
-    protected String set(final EntityType type, final MediaUpdate update, String errors) {
+    protected String set(final EntityType type, final MediaUpdate<?> update, String errors) {
         if (errors == null) {
             errors = this.errors;
         }
@@ -597,6 +598,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     @SneakyThrows
+    @CanIgnoreReturnValue
     public String removeSegment(String program, String segment) {
         try (Response response = getBackendRestService().removeSegment(program, segment, followMerges, errors)) {
             String result = response.readEntity(String.class);
@@ -655,15 +657,15 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return set(EntityType.AllMedia.segment, group);
     }
 
-    public String set(MediaUpdate mediaUpdate) {
+    public String set(MediaUpdate<?> mediaUpdate) {
         return set(EntityType.AllMedia.media, mediaUpdate);
     }
 
-    public String set(MediaUpdate mediaUpdate, String errors) {
+    public String set(MediaUpdate<?> mediaUpdate, String errors) {
         return set(EntityType.AllMedia.media, mediaUpdate, errors);
     }
 
-    public Iterator<MemberUpdate> getAllMembers(String mid) throws IOException {
+    public Iterator<MemberUpdate> getAllMembers(String mid) {
         return BatchedReceiver.<MemberUpdate>builder()
             .batchSize(240)
             .batchGetter((offset, max) -> {
@@ -738,8 +740,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         try(Response response = getBackendRestService()
             .deleteSubtitles(id.getMid(), id.getLanguage(), id.getType(), true, errors)) {
             log.debug("{}", response);
-        };
-
+        }
     }
 
     public void setDefaultMax(int max) {
