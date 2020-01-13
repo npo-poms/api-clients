@@ -401,7 +401,11 @@ public class NpoApiClients extends AbstractApiClient {
     public ScheduleRestServiceWithDefaults getScheduleService() {
         return scheduleRestServiceProxy = produceIfNull(
             () -> scheduleRestServiceProxy,
-            () -> buildWithErrorClass(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class, Error.class));
+            () -> wrapClientAspect(
+                buildWithErrorClass(getClientHttpEngine(), ScheduleRestServiceWithDefaults.class, ScheduleRestService.class, Error.class),
+                ScheduleRestServiceWithDefaults.class
+            )
+        );
 
     }
 

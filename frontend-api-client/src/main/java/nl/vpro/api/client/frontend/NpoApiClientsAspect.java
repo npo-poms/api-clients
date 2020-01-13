@@ -41,13 +41,9 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
             return method.invoke(proxied, args);
         } catch (InvocationTargetException itc) {
             throw itc.getCause();
-        } catch(InternalServerErrorException ise) {
+        } catch(WebApplicationException ise) {
             log.error(ise.getResponse().getEntity().toString(), ise);
             throw ise;
-        } catch (WebApplicationException wae) {
-            log.error(wae.getResponse().getEntity().toString(), wae);
-            throw wae;
-
         }
     }
 
