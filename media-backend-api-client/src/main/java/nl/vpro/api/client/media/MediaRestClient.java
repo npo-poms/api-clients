@@ -138,6 +138,10 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Setter
     private OwnerType owner = OwnerType.BROADCASTER;
 
+    @Getter
+    @Setter
+    private Queue<String> warnings = new ArrayDeque<>(100);
+
 
     @CanIgnoreReturnValue
     public <T> T doValidated(Callable<T> callable) throws Exception {

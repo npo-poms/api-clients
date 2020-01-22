@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
@@ -60,6 +61,15 @@ class MediaRestClientAspect<T> implements InvocationHandler {
                                 response.close();
                                 continue;
                             }
+                            List<Object> warnings = response.getHeaders().get(MediaBackendRestService.VALIDATION_WARNING_HEADER);
+                            if (warnings != null) {
+                                String methodString = methodCall(method, args);
+                                for (Object w : warnings) {
+                                    String asString = w + " (" + methodString + ")";
+                                    log.warn(asString);
+                                    client.getWarnings().add(asString);
+                                }
+                            }
                             if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
 
                                 ResponseError error = new ResponseError(
@@ -110,6 +120,40 @@ your request.</p>
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private String methodCall(Method method, Object[] args) {
+        StringBuilder builder = new StringBuilder();
+        {
+            Path classPath = method.getClass().getAnnotation(Path.class);
+            if ( classPath != null) {
+                builder.append(classPath.value());
+            }
+        }
+        {
+            Path path = method.getAnnotation(Path.class);
+            if ( path != null) {
+                builder.append(path.value());
+            }
+        }
+        {
+            Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+            for (int i = 0; i <  parameterAnnotations.length; i++) {
+                for (int j = 0 ; j < parameterAnnotations[i].length; j++) {
+                    Annotation a = parameterAnnotations[i][j];
+                    if (a instanceof PathParam) {
+                        builder.append('/').append(args[i]).append('/');
+                    }
+                    if (a instanceof QueryParam) {
+                        if (args[i] != null) {
+                            builder.append('&').append(((QueryParam) a).value()).append('=').append(args[i]);
+                        }
+                    }
+                }
+
+            }
+        }
+        return builder.toString();
     }
 
     protected void fillParametersIfEmpty(Method method, Object[] args) {
