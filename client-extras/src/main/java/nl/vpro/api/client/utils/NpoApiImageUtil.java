@@ -52,7 +52,7 @@ public class NpoApiImageUtil implements ImageUrlService {
     }
 
     public Optional<String> getUrl(ImageUpdate iu) {
-        return getUrl(iu.getImageUri());
+        return iu == null ? Optional.empty() : getUrl(iu.getImageUri());
     }
 
     public Optional<Long> getSize(String imageUri) {
