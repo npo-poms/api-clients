@@ -26,7 +26,6 @@ import nl.vpro.domain.media.update.ImageUpdate;
 @Slf4j
 public class NpoApiImageUtil implements ImageUrlService {
 
-
     @Setter
     @Getter
     private String baseUrl;
@@ -94,7 +93,7 @@ public class NpoApiImageUtil implements ImageUrlService {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "@" + getBaseUrl();
+        return getClass().getSimpleName() + ":" + getBaseUrl();
     }
 
     @Override
