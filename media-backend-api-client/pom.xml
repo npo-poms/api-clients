@@ -22,7 +22,7 @@
     </dependency>
     <dependency>
       <groupId>nl.vpro.shared</groupId>
-      <artifactId>vpro-shared-client-resteasy</artifactId>
+      <artifactId>vpro-shared-client-resteasy-3</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
