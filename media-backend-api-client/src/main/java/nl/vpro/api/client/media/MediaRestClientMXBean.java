@@ -2,7 +2,7 @@ package nl.vpro.api.client.media;
 
 import javax.management.MXBean;
 
-import nl.vpro.api.client.resteasy.AbstractApiClientMXBean;
+import nl.vpro.rs.client.AbstractApiClientMXBean;
 
 /**
  * @author Michiel Meeuwissen

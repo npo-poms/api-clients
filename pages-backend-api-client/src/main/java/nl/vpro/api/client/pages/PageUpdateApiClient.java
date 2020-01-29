@@ -6,9 +6,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -23,16 +21,17 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
 import com.google.common.base.Suppliers;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
 import nl.vpro.api.client.utils.Config;
 import nl.vpro.api.client.utils.Swagger;
-import nl.vpro.api.client.utils.VersionResult;
 import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.resteasy.ConditionalBasicAuthentication;
+import nl.vpro.rs.client.VersionResult;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
 import nl.vpro.rs.provider.ApiProviderRestService;
 import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;

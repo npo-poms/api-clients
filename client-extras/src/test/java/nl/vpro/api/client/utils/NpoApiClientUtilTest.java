@@ -4,12 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -18,11 +16,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
-import org.jboss.resteasy.client.jaxrs.internal.*;
-import org.jboss.resteasy.core.providerfactory.ResteasyProviderFactoryImpl;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.jupiter.api.*;
 
 import nl.vpro.api.client.frontend.ApiAuthenticationRequestFilter;
@@ -225,31 +219,6 @@ public class NpoApiClientUtilTest {
             }
         }).isInstanceOf(IOException.class);
 
-    }
-
-    //@Test(expected = IOException.class)
-    @Test
-    @Disabled("Doesn't test api, but httpclient")
-    public void timeoutWithInvoke() throws URISyntaxException {
-        ApacheHttpClient43Engine  engine = (ApacheHttpClient43Engine ) utilShortTimeout.getClients().getClientHttpEngine();
-        String host = utilShortTimeout.getClients().getBaseUrl() + "/media/AVRO_1656037";
-        URI uri = new URI(host);
-        System.out.println("Testing " + uri);
-        //HttpGet get = getAuthenticatedRequest(uri);
-        //HttpResponse response = engine.getHttpClient().execute(get, (org.apache.http.protocol.HttpContext) null);
-
-        //engine.getHttpClient().execute(getAuthenticatedRequest(), null);
-
-        ResteasyProviderFactory providerFactory = new ResteasyProviderFactoryImpl();
-        ClientConfiguration config = new ClientConfiguration(providerFactory);
-        ClientRequestHeaders headers = new ClientRequestHeaders(config);
-        Client client = ResteasyClientBuilder.newClient(config);
-        ClientInvocation invocation = new ClientInvocation((org.jboss.resteasy.client.jaxrs.ResteasyClient) client, uri, headers, config);
-        invocation.setMethod("GET");
-        //ClientInvocation invocation = new ClientInvocation(, uri, new ClientRequestHeaders(configuration), null);
-
-
-        engine.invoke(invocation);
     }
 
 
