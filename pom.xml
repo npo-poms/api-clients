@@ -22,7 +22,8 @@
   </modules>
 
   <properties>
-    <poms.shared.version>5.12.0</poms.shared.version>
+    <poms.shared.version>5.12.2-SNAPSHOT</poms.shared.version>
+    <vpro.shared.version>2.10.1-SNAPSHOT</vpro.shared.version>
   </properties>
   <scm>
     <connection>scm:git:git://git@github.com/npo-poms/api-clients.git</connection>
