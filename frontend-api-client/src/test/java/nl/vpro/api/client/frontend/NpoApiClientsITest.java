@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.junit.jupiter.api.*;
 
 import com.google.common.io.ByteStreams;
@@ -272,7 +271,7 @@ public class NpoApiClientsITest {
         Instant start = Instant.now();
         String url = "https://httpbin.org/delay/10";
         ClientHttpEngine httpClient = clients.getClientHttpEngineNoTimeout();
-        ResteasyClientBuilder builder = new ResteasyClientBuilderImpl().httpEngine(httpClient);
+        ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
         Response response = builder.build().target(url).request().get();
         Duration duration = Duration.between(start, Instant.now());
         assertThat(duration.getSeconds()).isGreaterThanOrEqualTo(10);
@@ -285,7 +284,7 @@ public class NpoApiClientsITest {
         Instant start = Instant.now();
         String url = "https://httpbin.org/drip?duration=5&numbytes=5&code=200";
         ClientHttpEngine httpClient = clients.getClientHttpEngineNoTimeout();
-        ResteasyClientBuilder builder = new ResteasyClientBuilderImpl().httpEngine(httpClient);
+        ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
         Response response = builder.build().target(url).request().get();
         assertThat(response.getStatus()).isEqualTo(200);
         log.info(response.readEntity(String.class));
@@ -300,7 +299,7 @@ public class NpoApiClientsITest {
         assertThatThrownBy(() -> {
             String url = "https://httpbin.org/delay/11";
             ClientHttpEngine httpClient = clients.getClientHttpEngine();
-            ResteasyClientBuilder builder = new ResteasyClientBuilderImpl()
+            ResteasyClientBuilder builder = new ResteasyClientBuilder()
                 .httpEngine(httpClient);
             Response response = builder.build().target(url).request().get();
             log.info("{}", response);
@@ -314,7 +313,7 @@ public class NpoApiClientsITest {
             String url = "https://httpbin.org/drip?duration=12&numbytes=5&code=200";
             clients.setSocketTimeout("PT0.01S");
             ClientHttpEngine httpClient = clients.getClientHttpEngine();
-            ResteasyClientBuilder builder = new ResteasyClientBuilderImpl().httpEngine(httpClient);
+            ResteasyClientBuilder builder = new ResteasyClientBuilder().httpEngine(httpClient);
             Response response = builder.build().target(url).request().get();
             assertThat(response.getStatus()).isEqualTo(200);
             log.info(response.readEntity(String.class));

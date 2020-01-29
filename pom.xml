@@ -9,7 +9,7 @@
   </parent>
   <groupId>nl.vpro.poms.api-clients</groupId>
   <artifactId>api-client-parent</artifactId>
-  <version>5.12.1-SNAPSHOT</version>
+  <version>5.12.RE3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Clients for NPO API's</description>
 
@@ -22,7 +22,11 @@
   </modules>
 
   <properties>
-    <poms.shared.version>5.12.0</poms.shared.version>
+    <poms.shared.version>5.12.2-SNAPSHOT</poms.shared.version>
+    <vpro.shared.version>2.11-SNAPSHOT</vpro.shared.version>
+    <resteasy.version>3.10.0.Final</resteasy.version>
+
+
   </properties>
   <scm>
     <connection>scm:git:git://git@github.com/npo-poms/api-clients.git</connection>
