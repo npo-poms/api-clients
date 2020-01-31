@@ -122,6 +122,15 @@ public class NpoApiClients extends AbstractApiClient {
         @Inject
         @Named("npo-api.maxConnectionsPerRoute")
         Optional<Integer> maxConnectionsPerRoute;
+
+        @Inject
+        @Named("npo-api.maxConnectionsNoTimeout")
+        Optional<Integer> maxConnectionsNoTimeout;
+
+         @Inject
+        @Named("npo-api.maxConnectionsPerRouteNoTimeout")
+        Optional<Integer> maxConnectionsPerRouteNoTimeout;
+
         @Inject
         @Named("npo-api.trustAll")
         Optional<Boolean> trustAll;
@@ -261,7 +270,7 @@ public class NpoApiClients extends AbstractApiClient {
     private Supplier<VersionResult> version = null;
     public String getVersion() {
         if (version == null) {
-            version = Suppliers.memoizeWithExpiration(() -> Swagger.getVersionFromSwagger(baseUrl, "5.10"), 30, TimeUnit.MINUTES);
+            version = Suppliers.memoizeWithExpiration(() -> Swagger.getVersionFromSwagger(baseUrl, "5.11"), 30, TimeUnit.MINUTES);
         }
         return version.get().getVersion();
     }
