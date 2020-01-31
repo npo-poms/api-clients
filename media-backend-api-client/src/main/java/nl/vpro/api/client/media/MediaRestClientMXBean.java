@@ -1,8 +1,8 @@
 package nl.vpro.api.client.media;
 
-import javax.management.MXBean;
+import nl.vpro.rs.client.AbstractApiClientMXBean;
 
-import nl.vpro.api.client.resteasy.AbstractApiClientMXBean;
+import javax.management.MXBean;
 
 /**
  * @author Michiel Meeuwissen

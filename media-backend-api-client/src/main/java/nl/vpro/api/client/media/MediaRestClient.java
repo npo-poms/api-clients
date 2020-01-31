@@ -1,31 +1,12 @@
 package nl.vpro.api.client.media;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.Response;
-
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
-
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import nl.vpro.api.client.resteasy.AbstractApiClient;
-import nl.vpro.api.client.utils.VersionResult;
 import nl.vpro.api.rs.subtitles.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.MediaForm;
@@ -37,9 +18,24 @@ import nl.vpro.domain.media.update.collections.XmlCollection;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.rs.VersionRestService;
+import nl.vpro.rs.client.VersionResult;
 import nl.vpro.rs.media.FrameCreatorRestService;
 import nl.vpro.rs.media.MediaBackendRestService;
 import nl.vpro.util.*;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
 

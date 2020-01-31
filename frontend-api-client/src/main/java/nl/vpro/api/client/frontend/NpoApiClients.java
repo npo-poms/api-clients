@@ -1,25 +1,12 @@
 package nl.vpro.api.client.frontend;
 
 
+import com.google.common.base.Suppliers;
 import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
-
-import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-
-import com.google.common.base.Suppliers;
-
 import nl.vpro.api.client.resteasy.AbstractApiClient;
-import nl.vpro.api.client.utils.*;
+import nl.vpro.api.client.utils.Config;
+import nl.vpro.api.client.utils.Swagger;
 import nl.vpro.api.rs.subtitles.VTTSubtitlesReader;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
@@ -33,7 +20,18 @@ import nl.vpro.domain.api.Error;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.jackson2.Jackson2Mapper;
+import nl.vpro.rs.client.VersionResult;
 import nl.vpro.util.*;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 
