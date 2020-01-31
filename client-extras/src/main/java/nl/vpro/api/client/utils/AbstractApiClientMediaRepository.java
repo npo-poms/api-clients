@@ -36,8 +36,8 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
 
     @Override
     public MediaObject load(boolean loadDeleted, String id)  {
-        if (! loadDeleted) {
-            throw new UnsupportedOperationException();
+        if (loadDeleted) {
+            throw new UnsupportedOperationException("We don't support loading deleted objects");
         }
         try {
             return util.loadOrNull(id);
@@ -49,8 +49,8 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
 
     @Override
     public List<MediaObject> loadAll(boolean loadDeleted, List<String> ids) {
-        if (! loadDeleted) {
-            throw new UnsupportedOperationException();
+        if (loadDeleted) {
+            throw new UnsupportedOperationException("We don't support loading deleted objects");
         }
         try {
             return Arrays.asList(util.load(ids.toArray(new String[0])));
