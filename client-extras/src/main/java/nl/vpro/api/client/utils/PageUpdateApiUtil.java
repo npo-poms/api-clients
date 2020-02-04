@@ -21,13 +21,13 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.impl.execchain.RequestAbortedException;
 
 import nl.vpro.api.client.pages.PageUpdateApiClient;
-import nl.vpro.api.client.resteasy.Utils;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.page.Page;
 import nl.vpro.domain.page.update.DeleteResult;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.jackson2.Jackson2Mapper;
+import nl.vpro.rs.client.Utils;
 
 /**
  * @author Michiel Meeuwissen

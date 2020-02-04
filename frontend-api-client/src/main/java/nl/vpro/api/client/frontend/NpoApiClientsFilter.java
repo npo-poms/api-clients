@@ -8,14 +8,14 @@ import java.util.Set;
 
 import javax.annotation.Priority;
 import javax.ws.rs.client.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.HttpHeaders;
 
-import nl.vpro.api.client.resteasy.CountAspect;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.domain.api.Deletes;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.page.PageForm;
+import nl.vpro.jmx.CountAspect;
 
 /**
  * @author Michiel Meeuwissen

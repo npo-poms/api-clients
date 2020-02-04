@@ -19,7 +19,8 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import com.google.common.base.Suppliers;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
-import nl.vpro.api.client.utils.*;
+import nl.vpro.api.client.utils.Config;
+import nl.vpro.api.client.utils.Swagger;
 import nl.vpro.api.rs.subtitles.VTTSubtitlesReader;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
@@ -33,6 +34,7 @@ import nl.vpro.domain.api.Error;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.jackson2.Jackson2Mapper;
+import nl.vpro.rs.client.VersionResult;
 import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
