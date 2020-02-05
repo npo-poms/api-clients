@@ -49,6 +49,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @since 3.0
  */
 @Slf4j
+@Disabled
 public class NpoApiClientsITest {
 
     private static Env env = Env.LOCALHOST;
