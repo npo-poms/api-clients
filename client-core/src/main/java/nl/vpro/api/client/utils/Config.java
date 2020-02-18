@@ -9,6 +9,8 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import nl.vpro.util.ConfigUtils;
 import nl.vpro.util.Env;
 
@@ -25,12 +27,11 @@ public class Config {
 
     private final Map<Key, String> properties;
     private final String[] configFiles;
-    private Env env = null;
+    private final Map<Prefix, Env> envs= new HashMap<>();
     private final Map<Prefix, Map<String, String>> mappedProperties = new HashMap<>();
 
 
     public enum Prefix {
-
         npo_api,
         npo_backend_api,
         parkpost,
@@ -58,15 +59,8 @@ public class Config {
     }
 
     public Config(String... configFiles) {
-        this(null, configFiles);
-    }
-
-    public Config(Env env, String... configFiles) {
         properties = new HashMap<>();
         this.configFiles = configFiles;
-        this.env = env;
-
-
 
         try {
             Map<Key, String> initial = new HashMap<>();
@@ -130,7 +124,7 @@ public class Config {
             final Map<String, Integer> strengths = new HashMap<>();
             result = r;
             mappedProperties.put(prefix, result);
-            Env env = env();
+            Env env = env(prefix);
             properties.forEach((key, value) -> {
                 if (key.getPrefix() == null || prefix.equals(key.getPrefix())) {
                     if (key.getEnv() == null || env.equals(key.getEnv())) {
@@ -167,25 +161,53 @@ public class Config {
         return () -> new RuntimeException(prop + " is not set in " + Arrays.asList(configFiles));
     }
 
-    public void setEnv(Env env) {
-        if (this.env != env) {
+    public void setEnv(Prefix prefix, Env env) {
+        if (! Objects.equals(envs.put(prefix, env), env)) {
             mappedProperties.clear();
-            this.env = env;
         }
     }
+
+    public void setEnv(Env env) {
+        if (! Objects.equals(envs.put(null, env), env)) {
+            mappedProperties.clear();
+        }
+    }
+
+    @NonNull
     public Env env() {
+        Env env = envs.get(null);
         if (env == null) {
             String pref = System.getProperty("env");
             if (pref == null) {
-                return Env.valueOf(properties.getOrDefault(ENV, "test").toUpperCase());
+                env =  Env.valueOf(properties.getOrDefault(ENV, "test").toUpperCase());
             } else {
-                return Env.valueOf(pref.toUpperCase());
+                env = Env.valueOf(pref.toUpperCase());
             }
-        } else {
-            return env;
+            envs.put(null, env);
         }
+        return env;
     }
-    private static Key ENV = new Key(null, "env", null, 1);
+
+    @NonNull
+    public Env env(Prefix prefix) {
+        Env env = envs.get(prefix);
+        if (env == null) {
+            String pref = System.getProperty(prefix.name() + ".env");
+            if (pref != null) {
+                env = Env.valueOf(pref.toUpperCase());
+            } else {
+                Key keyForPrefix = ENV.copyFor(prefix);
+                String envString  = properties.getOrDefault(keyForPrefix, env().name());
+                env = Env.valueOf(envString.toUpperCase());
+            }
+            if (envs.put(prefix, env) != null) {
+                log.warn("Replaced{}", prefix);
+            }
+        }
+        return env;
+
+    }
+    private static final Key ENV = new Key(null, "env", null, 1);
 
     @AllArgsConstructor
     @Data
@@ -239,6 +261,10 @@ public class Config {
                 builder.append('.').append(env.name().toLowerCase());
             }
             return builder.toString();
+        }
+
+        public  Key copyFor(Prefix prefix) {
+            return new Key(prefix, key, env, 2);
         }
     }
 
