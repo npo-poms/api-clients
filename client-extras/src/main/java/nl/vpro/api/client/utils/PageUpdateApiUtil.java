@@ -1,16 +1,13 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.api.client.pages.PageUpdateApiClient;
-import nl.vpro.domain.classification.ClassificationService;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.page.Page;
-import nl.vpro.domain.page.update.DeleteResult;
-import nl.vpro.domain.page.update.PageUpdate;
-import nl.vpro.jackson2.Jackson2Mapper;
-import nl.vpro.rs.client.Utils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.http.impl.execchain.RequestAbortedException;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -19,12 +16,18 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.SocketException;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.function.Function;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.impl.execchain.RequestAbortedException;
+
+import nl.vpro.api.client.pages.PageUpdateApiClient;
+import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.page.Page;
+import nl.vpro.domain.page.update.DeleteResult;
+import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.jackson2.Jackson2Mapper;
+import nl.vpro.rs.client.Utils;
 
 /**
  * @author Michiel Meeuwissen
@@ -67,10 +70,13 @@ public class PageUpdateApiUtil {
     protected Result<Void> save(@NotNull @Valid PageUpdate update, boolean wait) {
         limiter.acquire();
         try {
-            return handleResponse(
+            Result<String> result = handleResponse(
                 pageUpdateApiClient.getPageUpdateRestService().save(update, wait),
-                update, JACKSON, Void.class
+                update, STRING, String.class
             );
+            // temporary, later we may do Result<SaveResult>
+            log.info(result.getEntity());
+            return Result.<Void>builder().status(result.getStatus()).build();
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
