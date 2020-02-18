@@ -23,7 +23,7 @@ import nl.vpro.util.Env;
 @Slf4j
 public class Config {
 
-    public static String CONFIG_FILE = "apiclient.properties";
+    public static final String CONFIG_FILE = "apiclient.properties";
 
     private final Map<Key, String> properties;
     private final String[] configFiles;
