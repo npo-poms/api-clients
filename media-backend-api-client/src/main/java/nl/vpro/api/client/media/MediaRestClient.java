@@ -794,6 +794,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             log.warn(userName + "@" + baseUrl + " " + cause + ", retrying after 30 s");
             Thread.sleep(30000);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
