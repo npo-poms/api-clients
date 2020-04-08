@@ -3,10 +3,13 @@ package nl.vpro.api.client.utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXB;
 
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.*;
@@ -98,15 +101,19 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
         if (got == null) {
             return Optional.empty();
         }
-        if (got.getMid().equals(s)) {
+        if (Objects.equals(got.getMid(), s)) {
             return Optional.empty();
         }
-        return Optional.of(got.getMid());
+        return Optional.ofNullable(got.getMid());
     }
 
     @Override
     public RedirectList redirects() {
-        return new RedirectList();
+
+        try (Response r = clients.getMediaService().redirects(null)) {
+            InputStream is = (InputStream) r.getEntity();
+            return JAXB.unmarshal(is, RedirectList.class);
+        }
 
     }
 
