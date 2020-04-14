@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import nl.vpro.domain.api.media.MediaRepository;
+import nl.vpro.domain.media.MediaObject;
 
 /**
  * @author Michiel Meeuwissen
@@ -18,4 +19,9 @@ public class ApiClientMediaRepository extends AbstractApiClientMediaRepository i
     }
 
 
+    @Override
+    public <T extends MediaObject> T findByMid(String mid, boolean loadDeleted) {
+        return null;
+
+    }
 }

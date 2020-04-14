@@ -109,12 +109,10 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
 
     @Override
     public RedirectList redirects() {
-
         try (Response r = clients.getMediaService().redirects(null)) {
             InputStream is = (InputStream) r.getEntity();
             return JAXB.unmarshal(is, RedirectList.class);
         }
-
     }
 
 
