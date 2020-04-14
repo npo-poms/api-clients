@@ -359,8 +359,11 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     @Override
-    public <T extends MediaObject> T findByMid(String mid) {
+    public <T extends MediaObject> T findByMid(boolean loadDeleted, String mid) {
         try {
+            if (loadDeleted) {
+                throw new UnsupportedOperationException();
+            }
             return (T) load(mid)[0];
         } catch (IOException e) {
             return null;
