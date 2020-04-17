@@ -370,6 +370,15 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
+    /**
+     * It is (currently?) not possible to load deleted objects from the frontend api, so
+     * this defaults to <code>findByMid(false, mid)}</code>
+     */
+    @Override
+    public  <T extends MediaObject> T  findByMid(String mid) {
+        return findByMid(false, mid);
+    }
+
 
     public MediaType getType(String mid) throws IOException {
         MediaObject object = load(mid)[0];
