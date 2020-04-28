@@ -60,6 +60,8 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     LoadingCache<String, Optional<? extends MediaObject>> cache = buildCache();
 
+    private static long maxWindow = 10000;
+
     @Inject
     public NpoApiMediaUtil(@NotNull NpoApiClients clients, @NotNull NpoApiRateLimiter limiter) {
         this.clients = clients;
@@ -156,7 +158,14 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
-    public MediaResult unPage(BiFunction<Integer, Long, MediaResult> supplier, Predicate<MediaObject> filter, int max) {
+    /**
+     * Given an api with offset/max formalism, unpage this. The 'maximal' match of NPO API is
+     * 240, this allows for large max sizes.
+     */
+    public MediaResult unPage(
+        BiFunction<Integer, Long, MediaResult> supplier,
+        Predicate<MediaObject> filter,
+        int max) {
         limiter.acquire();
         if (filter == null) {
             filter = mediaObject -> true;
@@ -169,6 +178,7 @@ public class NpoApiMediaUtil implements MediaProvider {
             long total;
             long found = 0;
             do {
+
                 MediaResult list = supplier.apply(batch, offset);
                 total = list.getTotal();
                 if (list.getSize() == 0) {
@@ -182,6 +192,10 @@ public class NpoApiMediaUtil implements MediaProvider {
                 });
                 offset += batch;
                 found += list.getSize();
+                if (offset > maxWindow - batch) {
+                    log.info("Offset is getting to big. Breaking");
+                    break;
+                }
             } while (found < total && result.size() < max);
 
             limiter.upRate();
@@ -209,8 +223,12 @@ public class NpoApiMediaUtil implements MediaProvider {
             long total;
             long found = 0;
             do {
+
                 ProgramResult list = supplier.apply(batch, offset);
                 total = list.getTotal();
+                if (list.getSize() == 0) {
+                    break;
+                }
                 list.getItems().stream().filter(filter).forEach(o -> {
                     if (result.size() < max) {
                         result.add(o);
@@ -218,6 +236,10 @@ public class NpoApiMediaUtil implements MediaProvider {
                 });
                 offset += batch;
                 found += list.getSize();
+                if (offset > maxWindow - batch) {
+                    log.info("Offset is getting to big. Breaking");
+                    break;
+                }
             } while (found < total && result.size() < max);
 
             limiter.upRate();
