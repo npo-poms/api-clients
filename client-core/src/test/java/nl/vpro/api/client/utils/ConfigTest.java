@@ -68,7 +68,7 @@ public class ConfigTest {
     public void withSubst() {
 
         Config config = new Config("with-subst.properties");
-        assertThat(config.requiredOption(npo_api, "es.env")).isEqualTo(Env.PROD);
+        assertThat(config.requiredOption(npo_api, "es.env")).isEqualTo("prod");
 
     }
 
