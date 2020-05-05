@@ -242,7 +242,13 @@ public class Config {
                 } else {
                     prefix = Prefix.ofKey(split[0]);
                     key = split[1];
-                    env = Env.valueOf(split[2].toUpperCase());
+                    try {
+                        env = Env.valueOf(split[2].toUpperCase());
+                    } catch(IllegalArgumentException ia) {
+                        key += "." + split[2];
+                        env = null;
+
+                    }
                 }
                 return new Key(prefix, key, env, split.length);
             } catch (IllegalArgumentException iae) {
