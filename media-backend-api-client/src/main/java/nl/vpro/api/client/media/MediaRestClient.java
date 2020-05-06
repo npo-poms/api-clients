@@ -139,6 +139,11 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Setter
     private Queue<String> warnings = new ArrayDeque<>(100);
 
+    @lombok.Builder.Default
+    @Getter
+    @Setter
+    private boolean publishImmediately = false;
+
 
     @CanIgnoreReturnValue
     public <T> T doValidated(Callable<T> callable) throws Exception {
@@ -504,7 +509,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     public String addImage(ImageUpdate update, String mid) {
-        try (Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors, validateInput, imageMetaData, owner)) {
+        try (Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors, validateInput, imageMetaData, owner, publishImmediately)) {
             String result = response.readEntity(String.class);
             return result;
         }
@@ -592,7 +597,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
         try (Response response = getBackendRestService().update(
             EntityType.AllMedia.valueOf(type.name()), update, followMerges, errors,
-                    lookupCrids, stealCrids, validateInput, imageMetaData, owner)) {
+                    lookupCrids, stealCrids, validateInput, imageMetaData, owner, publishImmediately)) {
             String result = response.readEntity(String.class);
             return result;
         }

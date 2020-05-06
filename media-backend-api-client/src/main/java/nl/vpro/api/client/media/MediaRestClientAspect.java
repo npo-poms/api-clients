@@ -177,6 +177,11 @@ your request.</p>
                                 log.debug("Implicetely set owner to {}", client.getOwner());
                                 args[i] = client.getOwner().name();
                             }
+                        } else if (MediaBackendRestService.PUBLISH.equals(queryParam.value())) {
+                            if (client.isPublishImmediately()) {
+                                log.debug("Implicetely set publish to {}", client.isPublishImmediately());
+                                args[i] = client.isPublishImmediately();
+                            }
                         }
                     }
                     if (annotations[i][j] instanceof PathParam && args[i] == null) {
