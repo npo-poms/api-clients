@@ -228,7 +228,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         String mbeanName,
         ClassLoader classLoader,
         String userAgent,
-        Boolean registerMBean) {
+        Boolean registerMBean,
+        boolean publishImmediately) {
         super(
             baseUrl,
             connectionRequestTimeout,
@@ -283,6 +284,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
         this.validateInput = validateInput;
         this.owner = owner;
+        this.publishImmediately = publishImmediately;
     }
 
 
