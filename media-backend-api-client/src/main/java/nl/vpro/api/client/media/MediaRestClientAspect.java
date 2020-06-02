@@ -4,7 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
@@ -12,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import org.slf4j.event.Level;
 
+import nl.vpro.api.client.Utils;
 import nl.vpro.domain.media.EntityType;
 import nl.vpro.logging.Slf4jHelper;
 import nl.vpro.poms.shared.Headers;
@@ -31,10 +35,10 @@ class MediaRestClientAspect<T> implements InvocationHandler {
 
     private final MediaRestClient client;
     private final T proxied;
-    private final Level headerLevel;
+    private final BiFunction<Method, Object[], Level> headerLevel;
 
 
-    MediaRestClientAspect(MediaRestClient client, T proxied, Level headerLevel) {
+    MediaRestClientAspect(MediaRestClient client, T proxied, BiFunction<Method, Object[], Level> headerLevel) {
         this.client = client;
         this.proxied = proxied;
         this.headerLevel = headerLevel;
@@ -67,17 +71,19 @@ class MediaRestClientAspect<T> implements InvocationHandler {
                             }
                             List<Object> warnings = response.getHeaders().get(Headers.NPO_VALIDATION_WARNING_HEADER);
                             if (warnings != null) {
-                                String methodString = methodCall(method, args);
+                                String methodString =  Utils.methodCall(method, args);
                                 for (Object w : warnings) {
                                     String asString = w + " (" + methodString + ")";
                                     log.warn(asString);
                                     client.getWarnings().add(asString);
                                 }
                             }
-
-                            for (Map.Entry<String, List<Object>>  e : response.getHeaders().entrySet()) {
-                                if (e.getKey().startsWith(Headers.X_NPO)) {
-                                    Slf4jHelper.log(log, headerLevel, "{}: {}", e.getKey(), e.getValue());
+                            Level level = headerLevel.apply(method, args);
+                            if (Slf4jHelper.isEnabled(log, level)) {
+                                for (Map.Entry<String, List<Object>> e : response.getHeaders().entrySet()) {
+                                    if (e.getKey().startsWith(Headers.X_NPO)) {
+                                        Slf4jHelper.log(log, level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
+                                    }
                                 }
                             }
                             if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
@@ -130,40 +136,6 @@ your request.</p>
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    private String methodCall(Method method, Object[] args) {
-        StringBuilder builder = new StringBuilder();
-        {
-            Path classPath = method.getClass().getAnnotation(Path.class);
-            if ( classPath != null) {
-                builder.append(classPath.value());
-            }
-        }
-        {
-            Path path = method.getAnnotation(Path.class);
-            if ( path != null) {
-                builder.append(path.value());
-            }
-        }
-        {
-            Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-            for (int i = 0; i <  parameterAnnotations.length; i++) {
-                for (int j = 0 ; j < parameterAnnotations[i].length; j++) {
-                    Annotation a = parameterAnnotations[i][j];
-                    if (a instanceof PathParam) {
-                        builder.append('/').append(args[i]).append('/');
-                    }
-                    if (a instanceof QueryParam) {
-                        if (args[i] != null) {
-                            builder.append('&').append(((QueryParam) a).value()).append('=').append(args[i]);
-                        }
-                    }
-                }
-
-            }
-        }
-        return builder.toString();
     }
 
     protected void fillParametersIfEmpty(Method method, Object[] args) {

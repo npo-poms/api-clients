@@ -3,10 +3,12 @@ package nl.vpro.api.client.media;
 import lombok.*;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -148,7 +150,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @lombok.Builder.Default
     @Getter
     @Setter
-    private Level headerLevel = Level.DEBUG;
+    private BiFunction<Method, Object[], Level> headerLevel = (m, a) -> Level.DEBUG;
 
 
     @CanIgnoreReturnValue
@@ -236,7 +238,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         String userAgent,
         Boolean registerMBean,
         boolean publishImmediately,
-        Level headerLevel) {
+        BiFunction<Method, Object[], Level> headerLevel) {
         super(
             baseUrl,
             connectionRequestTimeout,
