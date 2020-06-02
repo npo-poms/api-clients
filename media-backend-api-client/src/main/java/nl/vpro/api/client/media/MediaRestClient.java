@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
+import org.slf4j.event.Level;
 
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
@@ -144,6 +145,11 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Setter
     private boolean publishImmediately = false;
 
+    @lombok.Builder.Default
+    @Getter
+    @Setter
+    private Level headerLevel = Level.DEBUG;
+
 
     @CanIgnoreReturnValue
     public <T> T doValidated(Callable<T> callable) throws Exception {
@@ -229,7 +235,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         ClassLoader classLoader,
         String userAgent,
         Boolean registerMBean,
-        boolean publishImmediately) {
+        boolean publishImmediately,
+        Level headerLevel) {
         super(
             baseUrl,
             connectionRequestTimeout,
@@ -285,6 +292,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         this.validateInput = validateInput;
         this.owner = owner;
         this.publishImmediately = publishImmediately;
+        this.headerLevel = headerLevel;
     }
 
 

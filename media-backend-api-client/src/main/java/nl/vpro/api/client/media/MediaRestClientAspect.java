@@ -3,17 +3,18 @@ package nl.vpro.api.client.media;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.List;
+import java.lang.reflect.*;
+import java.util.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.event.Level;
+
 import nl.vpro.domain.media.EntityType;
+import nl.vpro.logging.Slf4jHelper;
+import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.media.MediaBackendRestService;
 
 /**
@@ -30,15 +31,18 @@ class MediaRestClientAspect<T> implements InvocationHandler {
 
     private final MediaRestClient client;
     private final T proxied;
+    private final Level headerLevel;
 
-    MediaRestClientAspect(MediaRestClient client, T proxied) {
+
+    MediaRestClientAspect(MediaRestClient client, T proxied, Level headerLevel) {
         this.client = client;
         this.proxied = proxied;
+        this.headerLevel = headerLevel;
     }
 
     public static <T> T proxy(MediaRestClient client, T restController, Class<T> service) {
         return (T) Proxy.newProxyInstance(MediaRestClient.class.getClassLoader(),
-            new Class[]{service}, new MediaRestClientAspect(client, restController));
+            new Class[]{service}, new MediaRestClientAspect(client, restController, client.getHeaderLevel()));
     }
 
 
@@ -61,13 +65,19 @@ class MediaRestClientAspect<T> implements InvocationHandler {
                                 response.close();
                                 continue;
                             }
-                            List<Object> warnings = response.getHeaders().get(MediaBackendRestService.VALIDATION_WARNING_HEADER);
+                            List<Object> warnings = response.getHeaders().get(Headers.NPO_VALIDATION_WARNING_HEADER);
                             if (warnings != null) {
                                 String methodString = methodCall(method, args);
                                 for (Object w : warnings) {
                                     String asString = w + " (" + methodString + ")";
                                     log.warn(asString);
                                     client.getWarnings().add(asString);
+                                }
+                            }
+
+                            for (Map.Entry<String, List<Object>>  e : response.getHeaders().entrySet()) {
+                                if (e.getKey().startsWith(Headers.X_NPO)) {
+                                    Slf4jHelper.log(log, headerLevel, "{}: {}", e.getKey(), e.getValue());
                                 }
                             }
                             if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
