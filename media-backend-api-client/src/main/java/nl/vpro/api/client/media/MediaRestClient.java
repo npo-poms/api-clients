@@ -294,7 +294,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         this.validateInput = validateInput;
         this.owner = owner;
         this.publishImmediately = publishImmediately;
-        this.headerLevel = headerLevel;
+        this.headerLevel = headerLevel == null ? (m, c) -> Level.DEBUG : headerLevel;
     }
 
 
