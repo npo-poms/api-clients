@@ -1,7 +1,33 @@
 package nl.vpro.api.client.utils;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import lombok.extern.slf4j.Slf4j;
+import nl.vpro.api.client.frontend.NpoApiClients;
+import nl.vpro.domain.api.Deletes;
+import nl.vpro.domain.api.MediaChange;
+import nl.vpro.domain.api.Order;
+import nl.vpro.domain.api.Tail;
+import nl.vpro.domain.api.media.MediaForm;
+import nl.vpro.domain.api.media.MediaResult;
+import nl.vpro.domain.api.media.ProgramResult;
+import nl.vpro.domain.api.media.RedirectList;
+import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.MediaProvider;
+import nl.vpro.domain.media.MediaType;
+import nl.vpro.domain.media.Program;
+import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.CloseableIterator;
+import nl.vpro.util.CountedIterator;
+import nl.vpro.util.TimeUtils;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -10,22 +36,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Response;
-
-import com.google.common.cache.*;
-import com.google.common.util.concurrent.UncheckedExecutionException;
-
-import nl.vpro.api.client.frontend.NpoApiClients;
-import nl.vpro.domain.api.*;
-import nl.vpro.domain.api.media.*;
-import nl.vpro.domain.media.*;
-import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
 import static nl.vpro.domain.api.Result.Total.equalsTo;
@@ -318,11 +328,16 @@ public class NpoApiMediaUtil implements MediaProvider {
         return changes(profile, since, null, order, max);
     }
     public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max) {
-        return changes(profile, true, null, since, mid, order, max, Deletes.ID_ONLY);
+        return changes(profile, true, null, since, mid, order, max, Deletes.ID_ONLY, Tail.IF_EMPTY);
     }
 
     public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
-        return changes(profile, profileCheck, null, since, mid, order, max, deletes);
+        return changes(profile, profileCheck, since, mid, order, max, deletes, Tail.IF_EMPTY);
+
+    }
+
+    public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) {
+        return changes(profile, profileCheck, null, since, mid, order, max, deletes, tail);
     }
 
 
@@ -333,7 +348,7 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     }
 
-    protected  JsonArrayIterator<MediaChange> changes(String profile, boolean profileCheck, Long sinceSequence, Instant since,  String mid, Order order, Integer max, Deletes deletes) {
+    protected  JsonArrayIterator<MediaChange> changes(String profile, boolean profileCheck, Long sinceSequence, Instant since,  String mid, Order order, Integer max, Deletes deletes, Tail tail) {
         limiter.acquire();
         try {
 
