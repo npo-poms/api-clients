@@ -4,31 +4,18 @@
  */
 package nl.vpro.api.client.frontend;
 
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.*;
-import java.util.Locale;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.io.IOUtils;
-import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
-import org.junit.jupiter.api.*;
-
 import com.google.common.io.ByteStreams;
-
+import lombok.extern.slf4j.Slf4j;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
-import nl.vpro.domain.api.*;
+import nl.vpro.domain.api.ApiScheduleEvent;
+import nl.vpro.domain.api.IdList;
+import nl.vpro.domain.api.MultipleMediaResult;
 import nl.vpro.domain.api.media.*;
-import nl.vpro.domain.api.page.*;
+import nl.vpro.domain.api.page.PageForm;
+import nl.vpro.domain.api.page.PageFormBuilder;
+import nl.vpro.domain.api.page.PageSearchResult;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.page.Page;
@@ -36,6 +23,26 @@ import nl.vpro.i18n.Locales;
 import nl.vpro.logging.LoggerOutputStream;
 import nl.vpro.util.Env;
 import nl.vpro.util.Version;
+import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Locale;
 
 import static nl.vpro.domain.api.Constants.ASC;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -170,7 +177,7 @@ public class NpoApiClientsITest {
 
     @Test
     public void testChanges() throws IOException {
-        InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null).readEntity(InputStream.class);
+        InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null, null).readEntity(InputStream.class);
         IOUtils.copy(response, LoggerOutputStream.info(log));
     }
 
@@ -189,7 +196,7 @@ public class NpoApiClientsITest {
     public void testChangesError() throws IOException {
         assertThatThrownBy(() -> {
 
-            try (InputStream is = clients.getMediaService().changes("no profile", null, -1L, null, "ASC", 100, null, null).readEntity(InputStream.class)) {
+            try (InputStream is = clients.getMediaService().changes("no profile", null, -1L, null, "ASC", 100, null, null, null).readEntity(InputStream.class)) {
                 log.info("{}", is);
             }
         }).isInstanceOf(NotFoundException.class);
