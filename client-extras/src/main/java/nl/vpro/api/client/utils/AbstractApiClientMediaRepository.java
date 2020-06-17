@@ -1,24 +1,25 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Instant;
-import java.util.*;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXB;
-
 import nl.vpro.api.client.frontend.NpoApiClients;
-import nl.vpro.domain.api.*;
+import nl.vpro.domain.api.Deletes;
+import nl.vpro.domain.api.MediaChange;
+import nl.vpro.domain.api.Order;
+import nl.vpro.domain.api.Tail;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaRedirector;
 import nl.vpro.util.CloseableIterator;
 import nl.vpro.util.FilteringIterator;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXB;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Instant;
+import java.util.*;
 
 /**
  * @author Michiel Meeuwissen
@@ -117,7 +118,7 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
 
 
     @Override
-    public CloseableIterator<MediaChange> changes(Instant since, String mid, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive, Deletes deletes) {
+    public CloseableIterator<MediaChange> changes(Instant since, String mid, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive, Deletes deletes, Tail tail) {
         //clients.getMediaService().changes(current.getName(), null, since)
         throw new UnsupportedOperationException();
 
