@@ -1,19 +1,7 @@
 package nl.vpro.api.client.utils;
 
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.*;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Supplier;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.io.IOUtils;
-
 import com.google.common.collect.Lists;
-
+import lombok.extern.slf4j.Slf4j;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.domain.api.*;
@@ -22,7 +10,20 @@ import nl.vpro.domain.media.*;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.*;
+import nl.vpro.util.CountedIterator;
+import nl.vpro.util.FileCachingInputStream;
+import nl.vpro.util.LazyIterator;
+import org.apache.commons.io.IOUtils;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.core.Response;
+import java.io.*;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * @author Michiel Meeuwissen
@@ -162,7 +163,7 @@ public class MediaRestClientUtils {
     @Deprecated
     public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
-            final InputStream inputStream = toInputStream(restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null));
+            final InputStream inputStream = toInputStream(restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null, Tail.ALWAYS));
             return new JsonArrayIterator<>(inputStream, MediaChange.class, () -> IOUtils.closeQuietly(inputStream));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
@@ -171,13 +172,13 @@ public class MediaRestClientUtils {
 
     }
 
-    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
+    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) throws IOException {
         try {
 
-            final Response response = restService.changes(profile, null, null, sinceString(since, mid), order.name().toLowerCase(), max, profileCheck, deletes);
+            final Response response = restService.changes(profile, null, null, sinceString(since, mid), order.name().toLowerCase(), max, profileCheck, deletes, tail);
             InputStream inputStream = toInputStream(response);
             return new JsonArrayIterator<>(inputStream, MediaChange.class,
-                () -> closeQuietly(inputStream));
+                () -> closeQuietly(inputStream, response));
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
             if (t instanceof RuntimeException) {
@@ -189,6 +190,9 @@ public class MediaRestClientUtils {
             }
         }
 
+    }
+    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
+        return changes(restService, profile, profileCheck, since, mid, order, max, deletes, Tail.IF_EMPTY);
     }
 
     public static String sinceString(Instant since, String mid) {
@@ -217,7 +221,8 @@ public class MediaRestClientUtils {
     public static CountedIterator<MediaObject> iterate(Supplier<Response> response, boolean progressLogging, String filePrefix) {
         return new LazyIterator<>(() -> {
             try {
-                final InputStream inputStream = toInputStream(response.get());
+                Response res = response.get();
+                final InputStream inputStream = toInputStream(res);
                 // Cache the stream to a file first.
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
                 FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
@@ -230,7 +235,7 @@ public class MediaRestClientUtils {
                 return JsonArrayIterator.<MediaObject>builder()
                     .inputStream(cacheToFile)
                     .valueClass(MediaObject.class)
-                    .callback(() -> closeQuietly(inputStream, cacheToFile))
+                    .callback(() -> closeQuietly(inputStream, cacheToFile, res))
                     .logger(log)
                     .build();
             } catch (IOException e) {
@@ -299,8 +304,8 @@ public class MediaRestClientUtils {
         return properties.getProperty(id);
     }
 
-    public static void closeQuietly(Closeable... closeables) {
-        for (Closeable c : closeables) {
+    public static void closeQuietly(AutoCloseable... closeables) {
+        for (AutoCloseable c : closeables) {
             if (c != null) {
                 try {
                     c.close();
