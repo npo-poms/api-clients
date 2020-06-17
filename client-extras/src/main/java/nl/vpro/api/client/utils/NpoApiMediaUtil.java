@@ -354,7 +354,7 @@ public class NpoApiMediaUtil implements MediaProvider {
 
             JsonArrayIterator<MediaChange> result;
             if (sinceSequence == null) {
-                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, profileCheck, since, mid, order, max, deletes);
+                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, profileCheck, since, mid, order, max, deletes, tail);
             } else {
                 result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, sinceSequence, order, max);
             }
