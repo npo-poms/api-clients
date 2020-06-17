@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.domain.api.Deletes;
+import nl.vpro.domain.api.Tail;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.jmx.CountAspect;
@@ -30,14 +31,15 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
     public NpoApiClientsFilter() throws NoSuchMethodException {
         nocachingMethod.add(
             MediaRestService.class.getMethod("changes",
-                String.class,
-                String.class,
-                Long.class,
-                String.class,
-                String.class,
-                Integer.class,
-                Boolean.class,
-                Deletes.class
+                    String.class,
+                    String.class,
+                    Long.class,
+                    String.class,
+                    String.class,
+                    Integer.class,
+                    Boolean.class,
+                    Deletes.class,
+                    Tail.class
             ));
         nocachingMethod.add(
             MediaRestService.class.getMethod("iterate",
