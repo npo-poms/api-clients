@@ -182,7 +182,7 @@ public class NpoApiClientsITest {
     }
 
 
-    @TestApiClientMediaSearchRepository.javaApiClientMediaSearchRepository.javaApiClientMediaSearchRepository.java
+    @Test
     @Disabled("Takes very long")
     public void testIterate() throws IOException {
         try (InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predictions", null, 0L, Integer.MAX_VALUE).readEntity(InputStream.class)) {
