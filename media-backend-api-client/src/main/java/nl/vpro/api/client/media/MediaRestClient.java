@@ -592,7 +592,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     public String transcode(TranscodeRequest request) {
-        try (Response response = getBackendRestService().transcode(null, request)) {
+        try (Response response = getBackendRestService().transcode(null, null, request)) {
             String result = response.readEntity(String.class);
             return  result;
         }
