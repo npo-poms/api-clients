@@ -10,7 +10,7 @@ Java API clients for the POMS Rest API's (Frontend API, Backend API, Pages Publi
 
 It is split up in several modules. These are the important ones:
 
-* [`frontend-api-client`](frontend-api-client) Provides clients for the [NPO Frontend API](https://rs.poms.omroep.nl) and Pages Update API, implemented using resteasy, which creates proxies for the actuall java rest interfaces
+* [`frontend-api-client`](frontend-api-client) Provides clients for the [NPO Frontend API](https://rs.poms.omroep.nl) and Pages Update API, implemented using resteasy, which creates proxies for the actual java rest interfaces
 
 * [`client-extras`](client-extras) Provides some utilities which will make interaction with some of the calls simpler.
 
