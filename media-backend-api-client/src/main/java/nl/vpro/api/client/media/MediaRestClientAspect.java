@@ -164,6 +164,11 @@ your request.</p>
                                 log.debug("Implicetely set publish to {}", client.isPublishImmediately());
                                 args[i] = client.isPublishImmediately();
                             }
+                        } else if (MediaBackendRestService.DELETES.equals(queryParam.value())) {
+                            if (client.isDeletes()) {
+                                log.debug("Implicetely set deletes to {}", client.isDeletes());
+                                args[i] = client.isDeletes();
+                            }
                         }
                     }
                     if (annotations[i][j] instanceof PathParam && args[i] == null) {
