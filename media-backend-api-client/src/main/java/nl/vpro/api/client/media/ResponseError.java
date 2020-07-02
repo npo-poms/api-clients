@@ -1,13 +1,18 @@
 package nl.vpro.api.client.media;
 
+import lombok.Getter;
+
 import java.lang.reflect.Method;
 
 import javax.ws.rs.core.Response;
+
+import com.google.common.base.MoreObjects;
 
 /**
  * @author Michiel Meeuwissen
  * @since 4.3.2
  */
+@Getter
 public class ResponseError extends RuntimeException {
 
     private final int status;
@@ -25,24 +30,15 @@ public class ResponseError extends RuntimeException {
         this.description = description;
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public Response.StatusType getStatusInfo() {
-        return statusInfo;
-    }
-
-    public String getEntity() {
-        return entity;
-    }
-
-
-    public Method getMethod() {
-        return method;
-    }
-
-    public String getDescription() {
-        return description;
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .omitNullValues()
+            .add("status", status)
+            .add("statusInfo", statusInfo)
+            .add("entity", entity)
+            .add("method", method)
+            .add("description", description)
+            .toString();
     }
 }
