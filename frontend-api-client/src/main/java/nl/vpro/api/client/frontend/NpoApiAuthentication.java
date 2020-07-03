@@ -9,6 +9,8 @@ import org.apache.http.client.utils.URLEncodedUtils;
 
 import nl.vpro.api.client.utils.Util;
 
+import static nl.vpro.poms.shared.Headers.NPO_DATE;
+
 /**
  * @author Michiel Meeuwissen
  * @since 1.11
@@ -44,7 +46,7 @@ public class NpoApiAuthentication {
         }
         headers.put("Authorization", "NPO " + apiKey + ':' + Util.hmacSHA256(secret, message));
         headers.put("Origin", origin);
-        headers.put("X-NPO-Date", now);
+        headers.put(NPO_DATE, now);
         return headers;
     }
 
