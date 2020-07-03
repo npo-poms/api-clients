@@ -112,5 +112,9 @@
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>nl.vpro.poms</groupId>
+      <artifactId>poms-shared</artifactId>
+    </dependency>
   </dependencies>
 </project>
