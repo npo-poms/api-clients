@@ -4,22 +4,22 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 
 import org.slf4j.event.Level;
 
 import nl.vpro.api.client.Utils;
+import nl.vpro.domain.Roles;
 import nl.vpro.domain.media.EntityType;
 import nl.vpro.logging.Slf4jHelper;
 import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.media.MediaBackendRestService;
+import nl.vpro.util.TriFunction;
 
 /**
  * This Proxy:
@@ -35,10 +35,10 @@ class MediaRestClientAspect<T> implements InvocationHandler {
 
     private final MediaRestClient client;
     private final T proxied;
-    private final BiFunction<Method, Object[], Level> headerLevel;
+    private final TriFunction<Method, Object[], String, Level> headerLevel;
 
 
-    MediaRestClientAspect(MediaRestClient client, T proxied, BiFunction<Method, Object[], Level> headerLevel) {
+    MediaRestClientAspect(MediaRestClient client, T proxied, TriFunction<Method, Object[], String,  Level> headerLevel) {
         this.client = client;
         this.proxied = proxied;
         this.headerLevel = headerLevel;
@@ -59,50 +59,11 @@ class MediaRestClientAspect<T> implements InvocationHandler {
                 try {
                     fillParametersIfEmpty(method, args);
                     Object result = method.invoke(proxied, args);
-                    if (result instanceof Response) {
-                        Response response = (Response) result;
-                        try {
-                            if (response.getStatusInfo() == Response.Status.SERVICE_UNAVAILABLE) {
-                                String message = response.readEntity(String.class);
-                                // retry
-                                client.retryAfterWaitOrException(method.getName() + " " + message, new ServiceUnavailableException(message));
-                                response.close();
-                                continue;
-                            }
-                            List<Object> warnings = response.getHeaders().get(Headers.NPO_VALIDATION_WARNING_HEADER);
-                            if (warnings != null) {
-                                String methodString =  Utils.methodCall(method, args);
-                                for (Object w : warnings) {
-                                    String asString = w + " (" + methodString + ")";
-                                    log.warn(asString);
-                                    client.getWarnings().add(asString);
-                                }
-                            }
-                            Level level = headerLevel.apply(method, args);
-                            if (Slf4jHelper.isEnabled(log, level)) {
-                                for (Map.Entry<String, List<Object>> e : response.getHeaders().entrySet()) {
-                                    if (e.getKey().startsWith(Headers.X_NPO)) {
-                                        Slf4jHelper.log(log, level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
-                                    }
-                                }
-                            }
-                            if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-
-                                ResponseError error = new ResponseError(
-                                    client.toString(),
-                                    method,
-                                    response.getStatus(),
-                                    response.getStatusInfo(),
-                                    response.readEntity(String.class)
-                                );
-                                response.close();
-                                throw error;
-                            }
-                        } finally {
-
+                    dealWithHeaders(method, args);
+                    if (result instanceof Response){
+                        if (dealWithResponse((Response) result, method)) {
+                            continue;
                         }
-
-
                     }
                     return result;
                 } catch (InvocationTargetException itc) {
@@ -165,9 +126,9 @@ your request.</p>
                                 args[i] = client.isPublishImmediately();
                             }
                         } else if (MediaBackendRestService.DELETES.equals(queryParam.value())) {
-                            if (client.isDeletes()) {
-                                log.debug("Implicetely set deletes to {}", client.isDeletes());
-                                args[i] = client.isDeletes();
+                            if (client.getDeletes() != null) {
+                                log.debug("Implicetely set deletes to {}", client.getDeletes());
+                                args[i] = client.getDeletes();
                             }
                         }
                     }
@@ -200,5 +161,64 @@ your request.</p>
             }
         }
 
+    }
+
+    protected void dealWithHeaders(Method method, Object[] args) {
+        MultivaluedMap<String, String> headers = HeaderInterceptor.HEADERS.get();
+        List<String> warnings = headers.get(Headers.NPO_VALIDATION_WARNING_HEADER);
+        if (warnings != null) {
+            String methodString =  Utils.methodCall(method, args);
+            for (Object w : warnings) {
+                String asString = w + " (" + methodString + ")";
+                log.warn(asString);
+                client.getWarnings().add(asString);
+            }
+        }
+
+        for (Map.Entry<String, List<String>> e : headers.entrySet()) {
+            if (e.getKey().startsWith(Headers.X_NPO)) {
+                Level level = headerLevel.apply(method, args, e.getKey());
+                Slf4jHelper.log(log, level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
+            }
+            if (e.getKey().equals(Headers.NPO_ROLES)) {
+                Set<String> copyOfRoles = new HashSet<>(client.roles);
+                client.roles.clear();
+                Stream.of(((String) e.getValue().get(0))
+                    .split("\\s*,\\s"))
+                    .map(r -> r.substring(Roles.ROLE.length()))
+                    .forEach(r -> client.roles.add(r));
+                if (! Objects.equals(copyOfRoles, client.roles)) {
+                    log.info("Roles for client {}: {}", client, client.roles);
+                }
+            }
+        }
+    }
+
+
+    protected boolean dealWithResponse(Response response, Method method) {
+        try {
+            if (response.getStatusInfo() == Response.Status.SERVICE_UNAVAILABLE) {
+                String message = response.readEntity(String.class);
+                // retry
+                client.retryAfterWaitOrException(method.getName() + " " + message, new ServiceUnavailableException(message));
+                response.close();
+                return  true;
+            }
+            if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+
+                ResponseError error = new ResponseError(
+                    client.toString(),
+                    method,
+                    response.getStatus(),
+                    response.getStatusInfo(),
+                    response.readEntity(String.class)
+                );
+                response.close();
+                throw error;
+            }
+        } finally {
+
+        }
+        return false;
     }
 }

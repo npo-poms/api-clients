@@ -8,7 +8,6 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -152,12 +151,15 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @lombok.Builder.Default
     @Getter
     @Setter
-    private boolean deletes = false;
+    private Boolean deletes = null;
 
     @lombok.Builder.Default
     @Getter
     @Setter
-    private BiFunction<Method, Object[], Level> headerLevel = (m, a) -> Level.DEBUG;
+    private TriFunction<Method, Object[],String, Level> headerLevel = (m, a, s) -> Level.DEBUG;
+
+
+    Set<String> roles = new HashSet<>();
 
 
     @CanIgnoreReturnValue
@@ -244,8 +246,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         String userAgent,
         Boolean registerMBean,
         boolean publishImmediately,
-        boolean deletes,
-        BiFunction<Method, Object[], Level> headerLevel) {
+        Boolean deletes,
+        TriFunction<Method, Object[], String, Level> headerLevel) {
         super(
             baseUrl,
             connectionRequestTimeout,
@@ -302,7 +304,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         this.owner = owner;
         this.publishImmediately = publishImmediately;
         this.deletes = deletes;
-        this.headerLevel = headerLevel == null ? (m, c) -> Level.DEBUG : headerLevel;
+        this.headerLevel = headerLevel == null ? (m, c, s) -> Level.DEBUG : headerLevel;
     }
 
 
@@ -428,6 +430,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             .register(VTTWriter.class)
             .register(VTTSubtitlesWriter.class)
             .register(ContentTypeInterceptor.class)
+            .register(new HeaderInterceptor(this))
 
         ;
     }
@@ -791,6 +794,10 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public void setAsynchronousThrottleRate(double rate) {
         this.asynchronousThrottle.setRate(rate);
+    }
+
+    public Set<String> getRoles() {
+        return Collections.unmodifiableSet(roles);
     }
 
     @Override
