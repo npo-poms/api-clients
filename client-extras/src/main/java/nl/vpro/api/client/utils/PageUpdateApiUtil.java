@@ -1,25 +1,6 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.SocketException;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.function.Function;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.http.impl.execchain.RequestAbortedException;
-
 import nl.vpro.api.client.pages.PageUpdateApiClient;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.media.MediaObject;
@@ -28,6 +9,22 @@ import nl.vpro.domain.page.update.DeleteResult;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.jackson2.Jackson2Mapper;
 import nl.vpro.rs.client.Utils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.impl.execchain.RequestAbortedException;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * @author Michiel Meeuwissen
@@ -119,7 +116,6 @@ public class PageUpdateApiUtil {
                 if (r.isOk()) {
                     if (r.getEntity().getCount() == 0) {
                         return Result.<DeleteResult>builder()
-                            .status(Result.Status.SUCCESS)
                             .entity(result)
                             .status(Result.Status.SUCCESS)
                             .build();
