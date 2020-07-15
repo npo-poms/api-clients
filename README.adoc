@@ -30,10 +30,11 @@ The clients can be configured by code and/or a configuration file in `${user.hom
 ----
     NpoApiClients clients = NpoApiClients.configured(nl.vpro.util.Env.TEST).build();
     NpoApiMediaUtil util = new NpoApiMediaUtil(clients);
-    Iterator<MediaObject> i = util.iterate(null, "vpro-predictions");
-    i.forEachRemaining(mediaObject -> {
-       log.info("{}", i.next());
-    });
+    try(CloseableIterator<MediaObject> i = util.iterate(null, "vpro-predictions")) {
+      i.forEachRemaining(mediaObject -> {
+         log.info("{}", i.next());
+      });
+    }
 
 ----
 
