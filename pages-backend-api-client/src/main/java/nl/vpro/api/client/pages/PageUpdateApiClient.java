@@ -1,23 +1,17 @@
 package nl.vpro.api.client.pages;
 
-import com.google.common.base.Suppliers;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.api.client.resteasy.AbstractApiClient;
-import nl.vpro.api.client.utils.Config;
-import nl.vpro.api.client.utils.Swagger;
-import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
-import nl.vpro.domain.classification.ClassificationService;
-import nl.vpro.domain.page.update.PageUpdate;
-import nl.vpro.rs.client.VersionResult;
-import nl.vpro.rs.converters.ConditionalBasicAuthentication;
-import nl.vpro.rs.pages.update.PageUpdateRestService;
-import nl.vpro.rs.provider.ApiProviderRestService;
-import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
-import nl.vpro.util.*;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import javax.crypto.SecretKey;
 import javax.inject.Inject;
@@ -25,15 +19,24 @@ import javax.inject.Named;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
+import com.google.common.base.Suppliers;
+
+import nl.vpro.api.client.resteasy.AbstractApiClient;
+import nl.vpro.api.client.utils.Config;
+import nl.vpro.api.client.utils.Swagger;
+import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
+import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.page.PageIdMatch;
+import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.rs.client.VersionResult;
+import nl.vpro.rs.converters.ConditionalBasicAuthentication;
+import nl.vpro.rs.pages.update.PageUpdateRestService;
+import nl.vpro.rs.provider.ApiProviderRestService;
+import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
+import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 
@@ -68,7 +71,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         builder.append(getPageUpdateRestService());
         builder.append("\n");
         try {
-            PageUpdate load = getPageUpdateRestService().load(arg, true);
+            PageUpdate load = getPageUpdateRestService().load(arg, true, PageIdMatch.BOTH);
             builder.append("load(").append(arg).append(")").append(load);
         } catch (Exception e) {
             builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
