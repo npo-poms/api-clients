@@ -1,16 +1,13 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.api.client.pages.PageUpdateApiClient;
-import nl.vpro.domain.classification.ClassificationService;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.page.Page;
-import nl.vpro.domain.page.update.DeleteResult;
-import nl.vpro.domain.page.update.PageUpdate;
-import nl.vpro.jackson2.Jackson2Mapper;
-import nl.vpro.rs.client.Utils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.http.impl.execchain.RequestAbortedException;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -19,12 +16,19 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.SocketException;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.function.Function;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.impl.execchain.RequestAbortedException;
+
+import nl.vpro.api.client.pages.PageUpdateApiClient;
+import nl.vpro.domain.classification.ClassificationService;
+import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.page.Page;
+import nl.vpro.domain.page.PageIdMatch;
+import nl.vpro.domain.page.update.DeleteResult;
+import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.jackson2.Jackson2Mapper;
+import nl.vpro.rs.client.Utils;
 
 /**
  * @author Michiel Meeuwissen
@@ -82,7 +86,8 @@ public class PageUpdateApiUtil {
 
     public PageUpdate get(@NotNull String url) {
         limiter.acquire();
-        return Utils.wrapNotFound(() -> pageUpdateApiClient.getPageUpdateRestService().load(url, false)).orElse(null);
+        PageIdMatch match = url.startsWith("crid:") ? PageIdMatch.CRID : PageIdMatch.URL;
+        return Utils.wrapNotFound(() -> pageUpdateApiClient.getPageUpdateRestService().load(url, false, match)).orElse(null);
     }
 
     public Result<DeleteResult> delete(@NotNull String id) {
@@ -90,7 +95,7 @@ public class PageUpdateApiUtil {
         try {
             return handleResponse(
                 pageUpdateApiClient.getPageUpdateRestService()
-                    .delete(id, false, 1, false), id, STRING, DeleteResult.class
+                    .delete(id, false, 1, false, null), id, STRING, DeleteResult.class
             );
         } catch (ProcessingException e) {
             return exceptionToResult(e);
@@ -99,13 +104,15 @@ public class PageUpdateApiUtil {
 
     public Result<DeleteResult> deleteWhereStartsWith(@NotNull String prefix) {
         limiter.acquire();
+        PageIdMatch match = prefix.startsWith("crid:") ? PageIdMatch.CRID : PageIdMatch.URL;
+
         int batchSize = 10000;
         try {
             DeleteResult result = null;
             while (true) {
                 Result<DeleteResult> r = handleResponse(
                     pageUpdateApiClient.getPageUpdateRestService()
-                        .delete(prefix, true, batchSize, true), prefix, STRING, DeleteResult.class
+                        .delete(prefix, true, batchSize, true, match), prefix, STRING, DeleteResult.class
                 );
                 log.info("Batch deleted {}", r);
                 if (result == null) {
