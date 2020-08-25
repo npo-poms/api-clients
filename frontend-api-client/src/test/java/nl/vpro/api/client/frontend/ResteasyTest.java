@@ -8,12 +8,13 @@ import javax.ws.rs.core.MediaType;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.cache.BrowserCacheFeature;
 import org.jboss.resteasy.client.jaxrs.cache.MapCache;
-import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.junit.jupiter.api.Test;
 
+import nl.vpro.api.client.resteasy.ResteasyHelper;
+
 /**
+ *
  * @author Michiel Meeuwissen
- * @since ...
  */
 @Slf4j
 public class ResteasyTest {
@@ -21,7 +22,7 @@ public class ResteasyTest {
 
     @Test
     public void testAcceptHeader() {
-        ResteasyClientBuilder builder = new ResteasyClientBuilderImpl();
+        ResteasyClientBuilder builder = ResteasyHelper.clientBuilder();
         BrowserCacheFeature browserCacheFeature = new BrowserCacheFeature();
         browserCacheFeature.setCache(new MapCache());
         builder.register(browserCacheFeature);

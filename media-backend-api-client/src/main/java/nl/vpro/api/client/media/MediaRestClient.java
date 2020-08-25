@@ -18,7 +18,6 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 import org.slf4j.event.Level;
 
 import com.google.common.base.Suppliers;
@@ -26,6 +25,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
+import nl.vpro.api.client.resteasy.ResteasyHelper;
 import nl.vpro.api.rs.subtitles.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.*;
@@ -422,7 +422,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
 
         builder.httpEngine(getClientHttpEngine())
-            .register(new BasicAuthentication(userName, password))
+            .register(ResteasyHelper.getBasicAuthentication(userName, password, log))
             .register(new AddRequestHeadersFilter())
             .register(VTTSubtitlesReader.class)
             .register(EBUSubtitlesReader.class)
@@ -434,6 +434,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
         ;
     }
+
+
 
     /**
      * returns the proxied interface as is actually used on the POMS backend. This

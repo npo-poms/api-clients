@@ -4,18 +4,31 @@
  */
 package nl.vpro.api.client.frontend;
 
-import com.google.common.io.ByteStreams;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.*;
+import java.util.Locale;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.junit.jupiter.api.*;
+
+import com.google.common.io.ByteStreams;
+
+import nl.vpro.api.client.resteasy.ResteasyHelper;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
-import nl.vpro.domain.api.ApiScheduleEvent;
-import nl.vpro.domain.api.IdList;
-import nl.vpro.domain.api.MultipleMediaResult;
+import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.*;
-import nl.vpro.domain.api.page.PageForm;
-import nl.vpro.domain.api.page.PageFormBuilder;
-import nl.vpro.domain.api.page.PageSearchResult;
+import nl.vpro.domain.api.page.*;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.page.Page;
@@ -23,26 +36,6 @@ import nl.vpro.i18n.Locales;
 import nl.vpro.logging.LoggerOutputStream;
 import nl.vpro.util.Env;
 import nl.vpro.util.Version;
-import org.apache.commons.io.IOUtils;
-import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Locale;
 
 import static nl.vpro.domain.api.Constants.ASC;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,10 +49,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @since 3.0
  */
 @Slf4j
-@Disabled
+//@Disabled
 public class NpoApiClientsITest {
 
-    private static Env env = Env.LOCALHOST;
+    private static Env env = Env.TEST;
     private NpoApiClients clients;
 
     @BeforeEach
@@ -280,7 +273,7 @@ public class NpoApiClientsITest {
         Instant start = Instant.now();
         String url = "https://httpbin.org/delay/10";
         ClientHttpEngine httpClient = clients.getClientHttpEngineNoTimeout();
-        ResteasyClientBuilder builder = new ResteasyClientBuilderImpl().httpEngine(httpClient);
+        ResteasyClientBuilder builder = ResteasyHelper.clientBuilder().httpEngine(httpClient);
         Response response = builder.build().target(url).request().get();
         Duration duration = Duration.between(start, Instant.now());
         assertThat(duration.getSeconds()).isGreaterThanOrEqualTo(10);
@@ -293,7 +286,7 @@ public class NpoApiClientsITest {
         Instant start = Instant.now();
         String url = "https://httpbin.org/drip?duration=5&numbytes=5&code=200";
         ClientHttpEngine httpClient = clients.getClientHttpEngineNoTimeout();
-        ResteasyClientBuilder builder = new ResteasyClientBuilderImpl().httpEngine(httpClient);
+        ResteasyClientBuilder builder = ResteasyHelper.clientBuilder().httpEngine(httpClient);
         Response response = builder.build().target(url).request().get();
         assertThat(response.getStatus()).isEqualTo(200);
         log.info(response.readEntity(String.class));
@@ -308,7 +301,7 @@ public class NpoApiClientsITest {
         assertThatThrownBy(() -> {
             String url = "https://httpbin.org/delay/11";
             ClientHttpEngine httpClient = clients.getClientHttpEngine();
-            ResteasyClientBuilder builder = new ResteasyClientBuilderImpl()
+            ResteasyClientBuilder builder = ResteasyHelper.clientBuilder()
                 .httpEngine(httpClient);
             Response response = builder.build().target(url).request().get();
             log.info("{}", response);
@@ -322,7 +315,7 @@ public class NpoApiClientsITest {
             String url = "https://httpbin.org/drip?duration=12&numbytes=5&code=200";
             clients.setSocketTimeout("PT0.01S");
             ClientHttpEngine httpClient = clients.getClientHttpEngine();
-            ResteasyClientBuilder builder = new ResteasyClientBuilderImpl().httpEngine(httpClient);
+            ResteasyClientBuilder builder = ResteasyHelper.clientBuilder().httpEngine(httpClient);
             Response response = builder.build().target(url).request().get();
             assertThat(response.getStatus()).isEqualTo(200);
             log.info(response.readEntity(String.class));
