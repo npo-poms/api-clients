@@ -71,13 +71,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-bom</artifactId>
-        <version>3.13.0.Final</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>nl.vpro.poms.api-clients</groupId>
         <artifactId>frontend-api-client</artifactId>
         <version>${project.version}</version>
