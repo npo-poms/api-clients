@@ -45,16 +45,18 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
-     <dependency>
-       <!-- TODO: drop this too -->
+    <dependency>
+      <!-- TODO: drop this too -->
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!-- optional? re3/re4?
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client-api</artifactId>
     </dependency>
+    -->
 
   </dependencies>
 
