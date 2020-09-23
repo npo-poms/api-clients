@@ -9,7 +9,7 @@
   </parent>
   <groupId>nl.vpro.poms.api-clients</groupId>
   <artifactId>api-client-parent</artifactId>
-  <version>5.15.1-SNAPSHOT</version>
+  <version>5.16-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Clients for NPO API's</description>
 
