@@ -22,7 +22,9 @@
   </modules>
 
   <properties>
+    <vpro.shared.version>2.16-SNAPSHOT</vpro.shared.version>
   </properties>
+
   <scm>
     <connection>scm:git:git://git@github.com/npo-poms/api-clients.git</connection>
     <developerConnection>scm:git:git@github.com:npo-poms/api-clients.git</developerConnection>
