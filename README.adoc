@@ -1,7 +1,7 @@
 = api-clients
 :toc:
 
-image:https://travis-ci.org/npo-poms/api-clients.svg?[Build Status,link=https://travis-ci.org/npo-poms/api-clients]
+image:https://travis-ci.com/npo-poms/api-clients.svg?[Build Status,link=https://travis-ci.com/npo-poms/api-clients]
 image:https://img.shields.io/maven-central/v/nl.vpro.poms.api-clients/api-client-parent.svg?label=Maven%20Central[Maven Central,link=https://search.maven.org/search?q=g:%22nl.vpro.poms.api-clients%22]
 image:https://codecov.io/gh/npo-poms/api-clients/branch/master/graph/badge.svg[codecov,link=https://codecov.io/gh/npo-poms/api-clients]
 image:http://www.javadoc.io/badge/nl.vpro.poms.api-clients/frontend-api-client.svg?color=blue[javadoc,link=http://www.javadoc.io/doc/nl.vpro.poms.api-clients/frontend-api-client]
