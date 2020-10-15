@@ -40,11 +40,6 @@ The clients can be configured by code and/or a configuration file in `${user.hom
 
 There are also 'providers' available to configure them easily via spring XML's or for example XML's of magnolia CMS (which uses guice)
 
-== Changes in 5.11
-
-In the 5.11 release we made mayor changes in naming and structure. The groupId's will be changed and all the same (https://search.maven.org/search?q=g:nl.vpro.poms.api-clients[`nl.vpro.poms.api-clients`]), and the artifactIds will get better names. Also, we will change package names.
-
-See link:../../issues/1[#1].
 
 == TODO
 
