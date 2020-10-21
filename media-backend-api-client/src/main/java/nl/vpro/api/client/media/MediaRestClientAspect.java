@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.net.SocketException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -74,7 +75,6 @@ class MediaRestClientAspect<T> implements InvocationHandler {
             } catch (ServiceUnavailableException sue) {
                 client.retryAfterWaitOrException(method.getName() + ": Service unavailable:" + sue.getMessage(), sue);
                 // retry
-                continue;
             } catch (InternalServerErrorException isee) {
                 // odd, should not happen.
 /*
@@ -88,14 +88,21 @@ misconfiguration and was unable to complete
 your request.</p>
 */
                 client.retryAfterWaitOrException(method.getName() + ": Internal Server error: " + isee.getMessage(), isee);
-                // retry
-                continue;
+                // lets rretry retry
 
+            } catch (javax.ws.rs.ProcessingException pe) {
+                Throwable t = pe.getCause();
+                if (t instanceof SocketException) {
+                    client.retryAfterWaitOrException(method.getName() + ": SocketException: " + t.getMessage(), pe);// retry
+                } else {
+                    throw pe;
+                }
             } catch (RuntimeException re) {
                 throw re;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+            // exception not rethrown, next iteration will try again
         }
     }
 
@@ -183,7 +190,7 @@ your request.</p>
             if (e.getKey().equals(Headers.NPO_ROLES)) {
                 Set<String> copyOfRoles = new HashSet<>(client.roles);
                 client.roles.clear();
-                Stream.of(((String) e.getValue().get(0))
+                Stream.of(e.getValue().get(0)
                     .split("\\s*,\\s"))
                     .map(r -> r.substring(Roles.ROLE.length()))
                     .forEach(r -> client.roles.add(r));
