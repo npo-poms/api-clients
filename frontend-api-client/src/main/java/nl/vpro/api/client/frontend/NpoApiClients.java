@@ -387,13 +387,13 @@ public class NpoApiClients extends AbstractApiClient {
    /**
      * Creates {@link nl.vpro.api.client.frontend.NpoApiClients.Builder}, which is configured using the defaults on the class path, the overrides in {@code ${USER.HOME}/conf/}{@link Config#CONFIG_FILE}, but sets the environment explicitely
     */
-    public static NpoApiClients.Builder configured(Env env) {
-        NpoApiClients.Builder builder = builder();
-        Config config = new Config(CONFIG_FILE);
-        config.setEnv(env);
-        ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.npo_api));
-        return builder;
-    }
+   public static NpoApiClients.Builder configured(Env env) {
+       NpoApiClients.Builder builder = builder();
+       Config config = new Config(CONFIG_FILE);
+       config.setEnv(env);
+       ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.npo_api));
+       return builder;
+   }
 
     public MediaRestService getMediaService() {
         return mediaRestServiceProxy = produceIfNull(
@@ -498,5 +498,13 @@ public class NpoApiClients extends AbstractApiClient {
             .register(VTTSubtitlesReader.class)
             .register(NpoApiClientsFilter.class)
         ;
+    }
+
+    @Override
+    public synchronized void close() {
+        super.close();
+        propertiesThreadLocal.remove();
+        profileThreadLocal.remove();
+        maxThreadLocal.remove();
     }
 }
