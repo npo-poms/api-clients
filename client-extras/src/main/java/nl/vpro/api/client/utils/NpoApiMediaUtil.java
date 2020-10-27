@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
+import java.util.concurrent.*;
+import java.util.function.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,6 +28,7 @@ import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
+import static nl.vpro.domain.api.Order.ASC;
 import static nl.vpro.domain.api.Result.Total.equalsTo;
 
 /**
@@ -48,6 +47,10 @@ import static nl.vpro.domain.api.Result.Total.equalsTo;
 @Named
 @Slf4j
 public class NpoApiMediaUtil implements MediaProvider {
+
+
+    protected static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(1);
+
 
     final NpoApiClients clients;
     final NpoApiRateLimiter limiter;
@@ -320,16 +323,71 @@ public class NpoApiMediaUtil implements MediaProvider {
         return changes(profile, since, null, order, max);
     }
     public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max) {
-        return changes(profile, true, null, since, mid, order, max, Deletes.ID_ONLY, Tail.IF_EMPTY);
+        return changes(profile, false, null, since, mid, order, max, Deletes.ID_ONLY, Tail.IF_EMPTY);
     }
 
     public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
         return changes(profile, profileCheck, since, mid, order, max, deletes, Tail.IF_EMPTY);
-
     }
+
+    public CountedIterator<MediaChange> changes(String profile, Instant since) {
+        return changes(profile, false, null, since, null, ASC, null, Deletes.ID_ONLY, Tail.IF_EMPTY);
+    }
+
+    public CountedIterator<MediaChange> changes(Instant since) {
+        return changes(null, false, null, since, null, ASC, null, Deletes.ID_ONLY, Tail.IF_EMPTY);
+    }
+
+
 
     public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) {
         return changes(profile, profileCheck, null, since, mid, order, max, deletes, tail);
+    }
+
+    private static final Duration  waitBetweenChangeListening = Duration.ofSeconds(2);
+
+    public Future<Instant> subscribeToChanges(String profile, Instant since, BooleanSupplier until, final Consumer<MediaChange> listener) {
+        return subscribeToChanges(profile, since, Deletes.ID_ONLY, until, listener);
+    }
+
+    public Future<Instant> subscribeToChanges(Instant since, BooleanSupplier until, final Consumer<MediaChange> listener) {
+        return subscribeToChanges(null, since, until, listener);
+    }
+
+    public Future<Instant> subscribeToChanges(String profile, Instant since, Deletes deletes, BooleanSupplier until, final Consumer<MediaChange> listener) {
+        return EXECUTOR_SERVICE.submit(new Callable<Instant>() {
+            @Override
+            public Instant call() {
+                Instant start = since;
+                String mid = null;
+                while (until.getAsBoolean() && ! Thread.currentThread().isInterrupted()) {
+                    try (CountedIterator<MediaChange> changes = changes(profile, false, start, mid, ASC, null, deletes, Tail.ALWAYS)) {
+                        while (changes.hasNext()) {
+                            MediaChange change = changes.next();
+                            listener.accept(change);
+                            start = change.getPublishDate();
+                            mid = change.getMid();
+                        }
+                    } catch (Exception e) {
+                        log.info(e.getMessage());
+                    }
+                    try {
+                        synchronized (listener) {
+                            listener.wait(waitBetweenChangeListening.toMillis());
+                        }
+                    } catch (InterruptedException iae) {
+                        log.info("Interrupted");
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                log.info("Ready listening for changes");
+                synchronized (listener) {
+                    listener.notifyAll();
+                }
+                return start;
+            }
+        });
+
     }
 
 
