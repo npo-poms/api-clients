@@ -1,17 +1,17 @@
 package nl.vpro.api.client.utils;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.ws.rs.core.Response;
+
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.domain.page.Page;
 import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.CloseableIterator;
-import nl.vpro.util.FileCachingInputStream;
-import nl.vpro.util.LazyIterator;
-
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
+import nl.vpro.util.*;
 
 /**
  * @author Michiel Meeuwissen
@@ -33,7 +33,7 @@ public class PageRestClientUtils {
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
                 FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
                     .filePrefix("iterate-" + profile + "-")
-                    .batchConsumer((t, c) -> log.debug("Creating {} ({} bytes written)", t.getTempFile(), c.getCount()))
+                    .batchConsumer((t) -> log.debug("Creating {} ({} bytes written)", t.getTempFile(), t.getCount()))
                     .batchSize(5000000L)
                     .logger(log)
                     .input(inputStream)
