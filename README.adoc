@@ -22,9 +22,9 @@ It is split up in several modules. These are the important ones:
 
 * link:pages-backend-api-client[`pages-backend-api-client`] Provides clients for the https://publish.pages.omroep.nl[Pages Publisher API]
 
-* link:client-extras[`client-extras`] Provides some utilities which will make interaction with some of the calls simpler.
+* link:client-extras[`client-extras`] Provides some utilities which will make interaction with some calls simpler.
 
-The clients can be configured by code and/or a configuration file in `${user.home}/conf/apiclient.properties`
+The clients can be configured by code and/or a configuration file in `${user.home}/conf/apiclient.properties`.
 
 [source,java]
 ----

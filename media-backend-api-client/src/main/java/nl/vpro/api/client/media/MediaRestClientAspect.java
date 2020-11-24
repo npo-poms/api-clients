@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import org.meeuw.functional.TriFunction;
 import org.slf4j.event.Level;
 
 import nl.vpro.api.client.Utils;
@@ -20,7 +21,6 @@ import nl.vpro.domain.media.EntityType;
 import nl.vpro.logging.Slf4jHelper;
 import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.media.MediaBackendRestService;
-import nl.vpro.util.TriFunction;
 
 /**
  * This Proxy:

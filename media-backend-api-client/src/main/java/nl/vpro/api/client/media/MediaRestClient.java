@@ -18,6 +18,7 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.meeuw.functional.TriFunction;
 import org.slf4j.event.Level;
 
 import com.google.common.base.Suppliers;
@@ -535,6 +536,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public String addImage(ImageUpdate update, String mid) {
         try (Response response = getBackendRestService().addImage(update, null, mid, followMerges, errors, validateInput, imageMetaData, owner, publishImmediately)) {
             String result = response.readEntity(String.class);
