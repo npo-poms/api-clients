@@ -31,6 +31,7 @@ import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.page.*;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.Schedule;
 import nl.vpro.domain.page.Page;
 import nl.vpro.i18n.Locales;
 import nl.vpro.logging.LoggerOutputStream;
@@ -52,7 +53,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Disabled
 public class NpoApiClientsITest {
 
-    private static Env env = Env.TEST;
+    private static Env env = Env.LOCALHOST;
     private NpoApiClients clients;
 
     @BeforeEach
@@ -61,8 +62,8 @@ public class NpoApiClientsITest {
             .accept(MediaType.APPLICATION_XML_TYPE)
             .clearAcceptableLanguages()
             .acceptableLanguage(Locale.ENGLISH)
-            .socketTimeout(Duration.ofSeconds(5))
-            .connectTimeout(Duration.ofSeconds(5))
+            .socketTimeout(Duration.ofSeconds(15))
+            .connectTimeout(Duration.ofSeconds(15))
             .acceptableLanguage(Locales.DUTCH)
             .build();
         log.info("{}", clients);
@@ -163,7 +164,7 @@ public class NpoApiClientsITest {
 
             assertThat(mediaService.findDescendants(form, mid, null, null, null, null)).isNotNull();
         } catch (InternalServerErrorException iae) {
-            log.error("{}", iae.getCause());
+            log.error("{}", iae.getMessage(), iae.getCause());
         }
         // TODO enable        assertThat(mediaService.findRelated(form, mid, null, null, null)).isNotNull();
     }
@@ -320,6 +321,16 @@ public class NpoApiClientsITest {
             assertThat(response.getStatus()).isEqualTo(200);
             log.info(response.readEntity(String.class));
         }).isInstanceOf(javax.ws.rs.ProcessingException.class);
+
+    }
+
+    @Test
+    public void thesaurus() throws IOException {
+        Instant start = LocalDateTime.of(2020, 1, 1, 0, 0).atZone(Schedule.ZONE_ID).toInstant();
+        try (Response response = clients.getThesaurusRestService().listConceptUpdates(start, start.plus(Duration.ofDays(30)))) {
+            InputStream ia = response.readEntity(InputStream.class);
+            IOUtils.copy(ia, System.out);
+        }
 
     }
 
