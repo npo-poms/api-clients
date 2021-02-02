@@ -136,7 +136,7 @@ public class NpoApiClientUtilTest {
     @Test
     @Disabled("Takes long!!")
     public void testChangesEpoch() {
-        CountedIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, Integer.MAX_VALUE);
+        CountedIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, null);
         long i = 0;
         while (result.hasNext()) {
             MediaChange next = result.next();
@@ -145,9 +145,21 @@ public class NpoApiClientUtilTest {
                 //Thread.sleep(10000);
             }
         }
-
-
     }
+
+
+
+    @Test
+    @Disabled("Takes long!!")
+    public void testChangesVpronl() {
+        CountedIterator<MediaChange> result = util.changes("vpro-predictions", Instant.now().minus(Duration.ofHours(6)), Order.ASC, null);
+        long i = 0;
+        while (result.hasNext()) {
+            MediaChange next = result.next();
+            log.info("{} {}", result.getCount(), next);
+        }
+    }
+
 
 
     @Test
