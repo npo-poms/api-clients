@@ -124,15 +124,18 @@ public class Config {
             final Map<String, Integer> strengths = new HashMap<>();
             result = r;
             mappedProperties.put(prefix, result);
-            Env env = env(prefix);
+            final Env env = env(prefix);
+            log.info("Env for {}: {}", prefix, env);
             properties.forEach((key, value) -> {
                 if (key.getPrefix() == null || prefix.equals(key.getPrefix())) {
-                    if (key.getEnv() == null || env.equals(key.getEnv())) {
-                        Integer existing = strengths.get(key.getKey());
-                        if (existing != null && existing == key.getStrength()) {
-                            log.warn("Found the same property twice");
+                    Env.Match matches = env.matches(key.getEnv());
+                    if (matches.getAsBoolean()) {
+                        Integer existingStrength = strengths.get(key.getKey());
+                        int strength = key.getStrength() + matches.getStrength();
+                        if (existingStrength != null && existingStrength == strength) {
+                            log.warn("Found the same property twice {} {}", existingStrength, key);
                         }
-                        if (existing == null || existing <= key.getStrength()) {
+                        if (existingStrength == null || existingStrength <= strength) {
                             r.put(key.getKey(), value);
                             strengths.put(key.getKey(), key.getStrength());
                             log.debug("Put {} -> {}", key, value);
