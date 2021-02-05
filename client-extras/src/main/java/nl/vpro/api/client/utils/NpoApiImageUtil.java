@@ -30,24 +30,18 @@ public class NpoApiImageUtil implements ImageUrlService {
     @Getter
     private String baseUrl;
 
-    boolean supportsOriginal;
+
 
     @Inject
     public NpoApiImageUtil(
         @NotNull
         @Named("image.baseUrl") String baseUrl) {
         this.baseUrl = baseUrl;
-        this.supportsOriginal = baseUrl.contains("dev") || baseUrl.contains("test");
     }
 
 
     public Optional<String> getUrl(String imageUri) {
-        if (supportsOriginal) {
-            return Optional.of(getOriginalUrlFromImageUri(imageUri));
-        } else {
-            return Optional.of(baseUrl + "/image/" + getIdFromImageUri(imageUri) + ".jpg");
-
-        }
+        return Optional.of(getOriginalUrlFromImageUri(imageUri));
     }
 
     public Optional<String> getUrl(ImageUpdate iu) {
