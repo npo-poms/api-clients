@@ -35,6 +35,7 @@ import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
+import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.VersionRestService;
 import nl.vpro.rs.client.VersionResult;
 import nl.vpro.rs.media.FrameCreatorRestService;
@@ -87,6 +88,8 @@ import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
 
 @SuppressWarnings({"WeakerAccess", "UnnecessaryLocalVariable", "UnstableApiUsage"})
 public class MediaRestClient extends AbstractApiClient implements MediaRestClientMXBean {
+
+    public static TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL = (m, a, s) -> s.equals(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG;
 
     private int defaultMax = 50;
 
@@ -157,7 +160,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @lombok.Builder.Default
     @Getter
     @Setter
-    private TriFunction<Method, Object[],String, Level> headerLevel = (m, a, s) -> Level.DEBUG;
+    private TriFunction<Method, Object[], String, Level> headerLevel = DEFAULT_HEADER_LEVEL;
 
 
     Set<String> roles = new HashSet<>();
@@ -307,7 +310,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         this.owner = owner;
         this.publishImmediately = publishImmediately;
         this.deletes = deletes;
-        this.headerLevel = headerLevel == null ? (m, c, s) -> Level.DEBUG : headerLevel;
+        this.headerLevel = headerLevel == null ? DEFAULT_HEADER_LEVEL : headerLevel;
     }
 
 
