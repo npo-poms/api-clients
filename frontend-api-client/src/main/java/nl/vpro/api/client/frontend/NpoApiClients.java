@@ -1,9 +1,11 @@
 package nl.vpro.api.client.frontend;
 
 
+import lombok.Getter;
 import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +17,8 @@ import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.meeuw.functional.TriFunction;
+import org.slf4j.event.Level;
 
 import com.google.common.base.Suppliers;
 
@@ -34,6 +38,7 @@ import nl.vpro.domain.api.Error;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.jackson2.Jackson2Mapper;
+import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.client.VersionResult;
 import nl.vpro.util.*;
 
@@ -47,6 +52,7 @@ import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
  */
 public class NpoApiClients extends AbstractApiClient {
 
+    public static TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL = (m, a, s) -> s.equals(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG;
 
     private MediaRestService mediaRestServiceProxy;
     private MediaRestService mediaRestServiceProxyNoTimeout;
@@ -62,14 +68,18 @@ public class NpoApiClients extends AbstractApiClient {
     private String secret;
     private String origin;
 
-    private ThreadLocal<String> propertiesThreadLocal = ThreadLocal.withInitial(() -> null);
+    private final ThreadLocal<String> propertiesThreadLocal;
     protected String properties;
-    private ThreadLocal<String> profileThreadLocal = ThreadLocal.withInitial(() -> null);
+    private final ThreadLocal<String> profileThreadLocal;
     protected String profile;
-    private ThreadLocal<Integer> maxThreadLocal = ThreadLocal.withInitial(() -> null);
+    private final ThreadLocal<Integer> maxThreadLocal;
     protected Integer max;
 
     protected Function<NpoApiClients, String> toString;
+
+    @Getter
+    private final TriFunction<Method, Object[], String, Level> headerLevel;
+
 
    @Override
     protected void appendTestResult(StringBuilder builder, String arg) {
@@ -147,9 +157,7 @@ public class NpoApiClients extends AbstractApiClient {
         @Named("npo-api.bucketCount")
         Optional<Integer> bucketCount;
 
-
-        private ClassLoader classLoader = NpoApiClients.class.getClassLoader();
-
+        private final ClassLoader classLoader = NpoApiClients.class.getClassLoader();
 
         public Builder builder = builder();
 
@@ -218,7 +226,9 @@ public class NpoApiClients extends AbstractApiClient {
         ClassLoader classLoader,
         String userAgent,
         Boolean registerMBean,
-        Function<NpoApiClients, String> toString
+        Function<NpoApiClients, String> toString,
+        TriFunction<Method, Object[], String, Level> headerLevel
+
     ) {
         super(withApiPostFix(baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl),
             connectionRequestTimeout,
@@ -263,6 +273,7 @@ public class NpoApiClients extends AbstractApiClient {
             log.warn("No api origin configured for {}", this);
         }
         this.toString = toString;
+        this.headerLevel = headerLevel == null ? DEFAULT_HEADER_LEVEL : headerLevel;
     }
 
     private static String withApiPostFix(String baseUrl) {

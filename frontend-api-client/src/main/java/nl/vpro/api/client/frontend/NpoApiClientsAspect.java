@@ -4,8 +4,19 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import javax.ws.rs.*;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MultivaluedMap;
+
+import org.slf4j.event.Level;
+
+import nl.vpro.logging.Slf4jHelper;
+import nl.vpro.poms.shared.Headers;
+import nl.vpro.rs.client.HeaderInterceptor;
 
 import static nl.vpro.domain.api.Constants.*;
 
@@ -23,6 +34,7 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
     private final T proxied;
     private final NpoApiClients clients;
 
+
     NpoApiClientsAspect(NpoApiClients clients, T proxied) {
         this.proxied = proxied;
         this.clients = clients;
@@ -38,7 +50,9 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
             fillImplicitParameters(method, args);
-            return method.invoke(proxied, args);
+            Object invoke = method.invoke(proxied, args);
+            dealWithHeaders(method, args);
+            return invoke;
         } catch (InvocationTargetException itc) {
             throw itc.getCause();
         } catch(WebApplicationException ise) {
@@ -71,6 +85,17 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
 
             }
         }
-
     }
+
+
+    protected void dealWithHeaders(Method method, Object[] args) {
+        MultivaluedMap<String, String> headers = HeaderInterceptor.getHeaders();
+        for (Map.Entry<String, List<String>> e : headers.entrySet()) {
+            if (e.getKey().startsWith(Headers.X_NPO)) {
+                Level level = clients.getHeaderLevel().apply(method, args, e.getKey());
+                Slf4jHelper.log(log, level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
+            }
+        }
+    }
+
 }

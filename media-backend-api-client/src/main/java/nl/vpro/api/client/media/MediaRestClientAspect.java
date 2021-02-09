@@ -20,6 +20,7 @@ import nl.vpro.domain.Roles;
 import nl.vpro.domain.media.EntityType;
 import nl.vpro.logging.Slf4jHelper;
 import nl.vpro.poms.shared.Headers;
+import nl.vpro.rs.client.HeaderInterceptor;
 import nl.vpro.rs.media.MediaBackendRestService;
 
 /**
@@ -171,7 +172,7 @@ your request.</p>
     }
 
     protected void dealWithHeaders(Method method, Object[] args) {
-        MultivaluedMap<String, String> headers = HeaderInterceptor.HEADERS.get();
+        MultivaluedMap<String, String> headers = HeaderInterceptor.getHeaders();
         List<String> warnings = headers.get(Headers.NPO_VALIDATION_WARNING_HEADER);
         if (warnings != null) {
             String methodString =  Utils.methodCall(method, args);

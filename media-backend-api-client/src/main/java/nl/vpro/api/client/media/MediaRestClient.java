@@ -37,6 +37,7 @@ import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.VersionRestService;
+import nl.vpro.rs.client.HeaderInterceptor;
 import nl.vpro.rs.client.VersionResult;
 import nl.vpro.rs.media.FrameCreatorRestService;
 import nl.vpro.rs.media.MediaBackendRestService;
@@ -436,8 +437,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             .register(VTTWriter.class)
             .register(VTTSubtitlesWriter.class)
             .register(ContentTypeInterceptor.class)
-            .register(new HeaderInterceptor(this))
-
+            .register(new HeaderInterceptor())
         ;
     }
 
