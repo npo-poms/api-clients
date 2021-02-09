@@ -95,12 +95,13 @@ public class PageUpdateApiUtil {
         try {
             return handleResponse(
                 pageUpdateApiClient.getPageUpdateRestService()
-                    .delete(id, false, 1, false, null), id, STRING, DeleteResult.class
+                    .delete(id, false, 1, false, PageIdMatch.BOTH), id, STRING, DeleteResult.class
             );
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
     }
+
 
     public Result<DeleteResult> deleteWhereStartsWith(@NotNull String prefix) {
         limiter.acquire();
