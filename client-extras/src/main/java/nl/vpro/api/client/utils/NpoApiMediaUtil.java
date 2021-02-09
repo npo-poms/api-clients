@@ -368,8 +368,10 @@ public class NpoApiMediaUtil implements MediaProvider {
                             start = change.getPublishDate();
                             mid = change.getMid();
                         }
+                    } catch (NullPointerException npe) {
+                        log.error(npe.getClass().getSimpleName(), npe);
                     } catch (Exception e) {
-                        log.info(e.getMessage());
+                        log.info(e.getClass() + ":" +  e.getMessage());
                     }
                     try {
                         synchronized (listener) {

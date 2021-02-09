@@ -90,10 +90,12 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
 
     protected void dealWithHeaders(Method method, Object[] args) {
         MultivaluedMap<String, String> headers = HeaderInterceptor.getHeaders();
-        for (Map.Entry<String, List<String>> e : headers.entrySet()) {
-            if (e.getKey().startsWith(Headers.X_NPO)) {
-                Level level = clients.getHeaderLevel().apply(method, args, e.getKey());
-                Slf4jHelper.log(log, level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
+        if (headers != null) {
+            for (Map.Entry<String, List<String>> e : headers.entrySet()) {
+                if (e.getKey().startsWith(Headers.X_NPO)) {
+                    Level level = clients.getHeaderLevel().apply(method, args, e.getKey());
+                    Slf4jHelper.log(log, level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
+                }
             }
         }
     }

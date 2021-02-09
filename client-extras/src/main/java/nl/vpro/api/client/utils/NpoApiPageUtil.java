@@ -11,11 +11,11 @@ import javax.inject.Named;
 import com.google.common.collect.Lists;
 
 import nl.vpro.api.client.frontend.NpoApiClients;
-import nl.vpro.domain.api.IdList;
-import nl.vpro.domain.api.MultiplePageResult;
+import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.page.*;
 import nl.vpro.domain.page.Embed;
 import nl.vpro.domain.page.Page;
+import nl.vpro.util.BatchedReceiver;
 import nl.vpro.util.CloseableIterator;
 
 /**
@@ -39,19 +39,33 @@ public class NpoApiPageUtil  {
     }
 
     public Page[] load(String... id) {
-        Page[] result = new Page[id.length];
-        if (id.length > 0) {
-            limiter.acquire();
-            MultiplePageResult pageResult = clients.getPageService().loadMultiple(new IdList(id), null, null);
+        return load(new IdList(id));
+    }
 
-            for (int i = 0; i < id.length; i++) {
-                result[i] = pageResult.getItems().get(i).getResult();
-            }
+    public Page[] load(IdList idList) {
+        return loadMultipleEntries(idList).stream().map(MultipleEntry::getResult).toArray(Page[]::new);
+    }
 
-            limiter.upRate();
+    public List<MultipleEntry<Page>> loadMultipleEntries(IdList idList) {
+        final List<MultipleEntry<Page>> result = new ArrayList<>();
+        if (idList.size() > 0) {
+            BatchedReceiver.<MultipleEntry<Page>>builder()
+                .batchSize(240)
+                .batchGetter((offset, max) -> {
+                    limiter.acquire();
+                    MultiplePageResult pageResult = clients.getPageService().loadMultiple(idList.subList(offset.intValue(), max), null, null);
+                    limiter.upRate();
+                    return pageResult.iterator();
+                })
+                .build().forEachRemaining(result::add);
         }
         return result;
     }
+
+
+
+
+
     public Page get(String id) {
         return load(id)[0];
     }
@@ -140,7 +154,7 @@ public class NpoApiPageUtil  {
     }
 
     private class PageSupplier {
-        private List<String> mids = new ArrayList<>();
+        private final List<String> mids = new ArrayList<>();
         private Page[] results;
 
         private final SupplyKey key;
