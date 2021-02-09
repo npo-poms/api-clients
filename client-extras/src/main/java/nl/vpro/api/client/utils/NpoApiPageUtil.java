@@ -46,14 +46,18 @@ public class NpoApiPageUtil  {
         return loadMultipleEntries(idList).stream().map(MultipleEntry::getResult).toArray(Page[]::new);
     }
 
-    public List<MultipleEntry<Page>> loadMultipleEntries(IdList idList) {
+    public List<MultipleEntry<Page>> loadMultipleEntries(final IdList idList) {
         final List<MultipleEntry<Page>> result = new ArrayList<>();
         if (idList.size() > 0) {
             BatchedReceiver.<MultipleEntry<Page>>builder()
                 .batchSize(240)
                 .batchGetter((offset, max) -> {
+                    int end = Math.min(offset.intValue() + max, idList.size());
+                    if (offset >= end) {
+                        return null;
+                    }
                     limiter.acquire();
-                    MultiplePageResult pageResult = clients.getPageService().loadMultiple(idList.subList(offset.intValue(), max), null, null);
+                    MultiplePageResult pageResult = clients.getPageService().loadMultiple(idList.subList(offset.intValue(), end), null, null);
                     limiter.upRate();
                     return pageResult.iterator();
                 })
