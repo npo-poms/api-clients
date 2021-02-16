@@ -28,7 +28,7 @@
     <connection>scm:git:git://git@github.com/npo-poms/api-clients.git</connection>
     <developerConnection>scm:git:git@github.com:npo-poms/api-clients.git</developerConnection>
     <url>https://github.com/npo-poms/api-clients</url>
-    <tag>HEAD</tag>
+    <tag>REL-5.23-SNAPSHOT</tag>
   </scm>
 
   <build>
