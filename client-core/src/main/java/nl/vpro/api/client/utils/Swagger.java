@@ -1,19 +1,20 @@
 package nl.vpro.api.client.utils;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.rs.client.VersionResult;
-import nl.vpro.util.IntegerVersion;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import nl.vpro.rs.client.VersionResult;
+import nl.vpro.util.IntegerVersion;
 
 /**
  * @author Michiel Meeuwissen
@@ -25,6 +26,22 @@ public class Swagger {
     private static final Pattern BRANCH_VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
 
     private static final Pattern VERSION = Pattern.compile("(\\d+.\\d+(?:\\.\\d+)?).*");
+
+    @SneakyThrows
+    public static boolean isUp(String baseUrl) {
+        URL url = new URL(baseUrl + "/swagger.json");
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonFactory factory = new JsonFactory();
+
+            JsonParser jp = factory.createParser(url.openStream());
+            JsonNode swagger = mapper.readTree(jp);
+            return true;
+        } catch (ConnectException ce) {
+            log.info("{}: {}", url, ce.getMessage());
+            return false;
+        }
+    }
 
     public static VersionResult getVersionFromSwagger(String baseUrl, String defaultVersion) {
         try {
@@ -71,12 +88,9 @@ public class Swagger {
 
     }
 
-
     public static IntegerVersion getVersionNumber(String versionString, String defaultVersion) {
         return getVersionNumber(getVersion(versionString, defaultVersion));
     }
-
-
 
     /**
      * The version of the npo frontend api we are talking too.
