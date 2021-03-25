@@ -1,8 +1,10 @@
 package nl.vpro.api.client.utils;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -66,6 +68,8 @@ public class NpoApiMediaUtil implements MediaProvider {
     LoadingCache<String, Optional<? extends MediaObject>> cache = buildCache();
 
     private static long maxWindow = 10000;
+
+    private Instant loggedAboutConnect = Instant.EPOCH;
 
     @Inject
     public NpoApiMediaUtil(@NotNull NpoApiClients clients, @NotNull NpoApiRateLimiter limiter) {
@@ -370,6 +374,14 @@ public class NpoApiMediaUtil implements MediaProvider {
                         }
                     } catch (NullPointerException npe) {
                         log.error(npe.getClass().getSimpleName(), npe);
+                    } catch (ConnectException ce) {
+                        if (loggedAboutConnect.isBefore(Instant.now().minus(Duration.ofMinutes(5)))) {
+                            log.info(ce.getClass() + ":" + ce.getMessage());
+                            loggedAboutConnect = Instant.now();
+                        } else {
+                            log.debug(ce.getClass() + ":" + ce.getMessage());
+                        }
+
                     } catch (Exception e) {
                         log.info(e.getClass() + ":" +  e.getMessage());
                     }
@@ -400,7 +412,8 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     }
 
-    protected  JsonArrayIterator<MediaChange> changes(String profile, boolean profileCheck, Long sinceSequence, Instant since,  String mid, Order order, Integer max, Deletes deletes, Tail tail) {
+    @SneakyThrows(ConnectException.class)
+    protected  JsonArrayIterator<MediaChange> changes(String profile, boolean profileCheck, Long sinceSequence, Instant since,  String mid, Order order, Integer max, Deletes deletes, Tail tail)  {
         limiter.acquire();
         try {
 
@@ -412,6 +425,8 @@ public class NpoApiMediaUtil implements MediaProvider {
             }
             limiter.upRate();
             return result;
+        } catch (ConnectException ce) {
+            throw ce;
         } catch (IOException e) {
             limiter.downRate();
             throw new RuntimeException(clients + ":" + e.getMessage(), e);
@@ -481,5 +496,9 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     public NpoApiClients getClients() {
         return clients;
+    }
+
+    public boolean isAvailable() {
+        return Swagger.isUp(clients.getBaseUrl());
     }
 }
