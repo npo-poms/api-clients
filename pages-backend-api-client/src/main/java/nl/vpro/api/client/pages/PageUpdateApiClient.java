@@ -126,6 +126,16 @@ public class PageUpdateApiClient extends AbstractApiClient {
         @Inject
         @Named("npo-pageupdate-api.warnThreshold")
         Optional<String> warnThreshold;
+
+
+        @Inject
+        @Named("npo-pageupdate-api.connectionInPoolTTL")
+        Optional<String> connectionInPoolTTL;
+
+        @Inject
+        @Named("npo-pageupdate-api.validateAfterInactivity")
+        Optional<String> validateAfterInactivity;
+
         // should have worked, but at least I couldn't get it working in magnolia. I made a duration convertor in ProviderAndBuilder now.
         // Optional<Duration> warnThreshold;
 

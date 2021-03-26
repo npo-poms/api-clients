@@ -137,9 +137,18 @@ public class NpoApiClients extends AbstractApiClient {
         @Named("npo-api.maxConnectionsNoTimeout")
         Optional<Integer> maxConnectionsNoTimeout;
 
-         @Inject
+        @Inject
         @Named("npo-api.maxConnectionsPerRouteNoTimeout")
         Optional<Integer> maxConnectionsPerRouteNoTimeout;
+
+
+        @Inject
+        @Named("npo-api.connectionInPoolTTL")
+        Optional<String> connectionInPoolTTL;
+
+        @Inject
+        @Named("npo-api.validateAfterInactivity")
+        Optional<String> validateAfterInactivity;
 
         @Inject
         @Named("npo-api.trustAll")

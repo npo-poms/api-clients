@@ -209,6 +209,15 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         @Named("npo-mediabackend-api.trustAll")
         Optional<Boolean> trustAll;
 
+
+        @Inject
+        @Named("npo-mediabackend-api.connectionInPoolTTL")
+        Optional<String> connectionInPoolTTL;
+
+        @Inject
+        @Named("npo-mediabackend-api.validateAfterInactivity")
+        Optional<String> validateAfterInactivity;
+
         @Override
         public MediaRestClient get() {
             return ProviderAndBuilder.fillAndCatch(this, builder()).build();
