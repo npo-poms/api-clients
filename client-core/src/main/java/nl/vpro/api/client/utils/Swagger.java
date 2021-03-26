@@ -1,6 +1,5 @@
 package nl.vpro.api.client.utils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -26,22 +25,6 @@ public class Swagger {
     private static final Pattern BRANCH_VERSION = Pattern.compile(".*?/REL-(.*?)/.*");
 
     private static final Pattern VERSION = Pattern.compile("(\\d+.\\d+(?:\\.\\d+)?).*");
-
-    @SneakyThrows
-    public static boolean isUp(String baseUrl) {
-        URL url = new URL(baseUrl + "/swagger.json");
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonFactory factory = new JsonFactory();
-
-            JsonParser jp = factory.createParser(url.openStream());
-            JsonNode swagger = mapper.readTree(jp);
-            return true;
-        } catch (ConnectException ce) {
-            log.info("{}: {}", url, ce.getMessage());
-            return false;
-        }
-    }
 
     public static VersionResult getVersionFromSwagger(String baseUrl, String defaultVersion) {
         try {
