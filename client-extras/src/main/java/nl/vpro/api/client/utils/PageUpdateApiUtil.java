@@ -115,7 +115,7 @@ public class PageUpdateApiUtil {
                     pageUpdateApiClient.getPageUpdateRestService()
                         .delete(prefix, true, batchSize, true, match), prefix, STRING, DeleteResult.class
                 );
-                log.info("Batch deleted {}", r);
+                log.info("Batch deleted {}: {}", prefix, r);
                 if (result == null) {
                     result = r.getEntity();
                 } else {
