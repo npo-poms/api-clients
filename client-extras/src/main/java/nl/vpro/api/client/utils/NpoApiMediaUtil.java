@@ -499,6 +499,6 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public boolean isAvailable() {
-        return Swagger.isUp(clients.getBaseUrl());
+        return clients.isAvailable();
     }
 }
