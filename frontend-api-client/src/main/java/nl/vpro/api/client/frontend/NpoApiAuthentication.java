@@ -12,6 +12,33 @@ import nl.vpro.api.client.utils.Util;
 import static nl.vpro.poms.shared.Headers.NPO_DATE;
 
 /**
+ * Can performs authentication for NPO Frontend API.
+ * E.g. like this it can be used in restassured.
+ * <pre>
+ * {@code
+   import io.restassured.filter.Filter;
+  import nl.vpro.api.client.frontend.NpoApiAuthentication;
+
+   protected static final NpoApiAuthentication authentication = new NpoApiAuthentication(
+          CONFIG.requiredOption(npo_api, "apiKey"),
+          CONFIG.requiredOption(npo_api, "secret"),
+          CONFIG.requiredOption(npo_api, "origin"));
+
+
+   public static final Filter RESTEASSURED_AUTHENTICATION =
+          (requestSpec, responseSpec, filterContext) -> {
+          Map<String, Object> authenticate =  authentication.authenticate(URI.create(requestSpec.getURI()));
+          for(Map.Entry<String, Object> e : authenticate.entrySet()) {
+              requestSpec.header(new Header(e.getKey(), e.getValue().toString()));
+          }
+
+          return filterContext.next(requestSpec, responseSpec);
+
+      };
+  }
+ * </pre>
+ * It is also used in {@link ApiAuthenticationRequestFilter} for authentication in resteasy clients.
+ *
  * @author Michiel Meeuwissen
  * @since 1.11
  */
