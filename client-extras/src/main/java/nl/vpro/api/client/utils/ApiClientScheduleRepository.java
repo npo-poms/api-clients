@@ -69,7 +69,7 @@ public class ApiClientScheduleRepository implements ScheduleRepository {
     }
 
     @Override
-    public ScheduleSearchResult findSchedules(ProfileDefinition<MediaObject> profileDefinition, ScheduleForm scheduleForm, long l, Integer integer) {
+    public ScheduleSearchResult findSchedules(ProfileDefinition<MediaObject> profileDefinition, ScheduleForm scheduleForm, Order order, long l, Integer integer) {
         throw new UnsupportedOperationException();
 
     }
