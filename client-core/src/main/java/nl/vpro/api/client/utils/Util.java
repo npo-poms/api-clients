@@ -5,7 +5,9 @@
 package nl.vpro.api.client.utils;
 
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javax.crypto.Mac;
@@ -19,7 +21,10 @@ public class Util {
 
     private static final String RFC822 = "EEE, dd MMM yyyy HH:mm:ss z";
 
-    private static final TimeZone GMT = TimeZone.getTimeZone("GMT");
+    private static final ZoneId GMT = ZoneId.of("GMT");
+
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern(RFC822, Locale.US);
+
 
     public static String hmacSHA256(String privateKey, String data) {
         try {
@@ -32,10 +37,12 @@ public class Util {
         }
     }
 
+    public static String rfc822(Instant date) {
+        return FORMAT.format(date.atZone(GMT));
+    }
+    @Deprecated
     public static String rfc822(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(RFC822, Locale.US);
-        sdf.setTimeZone(GMT);
-        return sdf.format(date);
+        return rfc822(date.toInstant());
     }
 
 }

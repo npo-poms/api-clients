@@ -2,6 +2,7 @@ package nl.vpro.api.client.frontend;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.util.*;
 
 import org.apache.http.NameValuePair;
@@ -50,14 +51,28 @@ public class NpoApiAuthentication {
 
     private final String origin;
 
+    private final Clock clock;
+
     public NpoApiAuthentication(String apiKey, String secret, String origin) {
+        this(apiKey, secret, origin, null);
+    }
+
+    @lombok.Builder
+    private NpoApiAuthentication(String apiKey, String secret, String origin, Clock clock) {
         this.apiKey = apiKey;
         this.secret = secret;
         this.origin = origin;
+        this.clock = clock == null ? Clock.systemDefaultZone() : clock;
+
     }
 
+
+    /**
+     * Given the uri which is going to be requested at NPO api, return a map with the headers needed for npo authentication.
+     *
+     */
     public Map<String, Object> authenticate(URI uri) {
-        String now = Util.rfc822(new Date());
+        String now = Util.rfc822(clock.instant());
 
         String message = message(uri, now);
 
