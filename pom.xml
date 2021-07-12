@@ -26,9 +26,9 @@
   </properties>
 
   <scm>
-    <connection>scm:git:git://git@github.com/npo-poms/api-clients.git</connection>
-    <developerConnection>scm:git:git@github.com:npo-poms/api-clients.git</developerConnection>
-    <url>https://github.com/npo-poms/api-clients</url>
+    <connection>scm:git:${project.scm.url}</connection>
+    <developerConnection>scm:git:${project.scm.url}</developerConnection>
+    <url>https://github.com/npo-poms/api-clients.git</url>
     <tag>HEAD</tag>
   </scm>
 
