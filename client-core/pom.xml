@@ -26,6 +26,10 @@
       <groupId>nl.vpro.shared</groupId>
       <artifactId>vpro-shared-client-resteasy</artifactId>
     </dependency>
+    <dependency>
+      <groupId>nl.vpro.poms</groupId>
+      <artifactId>poms-shared</artifactId>
+    </dependency>
   </dependencies>
 
 </project>
