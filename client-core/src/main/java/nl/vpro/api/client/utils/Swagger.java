@@ -3,15 +3,23 @@ package nl.vpro.api.client.utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ConnectException;
-import java.net.URL;
+import java.net.URI;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.client.VersionResult;
 import nl.vpro.util.IntegerVersion;
 
@@ -30,11 +38,17 @@ public class Swagger {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonFactory factory = new JsonFactory();
-            URL url = new URL(baseUrl + "/swagger.json");
-            JsonParser jp = factory.createParser(url.openStream());
-            JsonNode swagger = mapper.readTree(jp);
-            String versionString = swagger.get("info").get("version").asText();
-            return VersionResult.builder().version(getVersion(versionString, defaultVersion)).available(true).build();
+            HttpClient client = HttpClientBuilder.create().build();
+
+            URI url = URI.create(baseUrl + "/swagger.json");
+            HttpUriRequest request = new HttpGet(url);
+            request.addHeader(Headers.NPO_DATE, "CacheBust-" + UUID.randomUUID());
+            try (InputStream stream = client.execute(request).getEntity().getContent()) {
+                JsonParser jp = factory.createParser(stream);
+                JsonNode swagger = mapper.readTree(jp);
+                String versionString = swagger.get("info").get("version").asText();
+                return VersionResult.builder().version(getVersion(versionString, defaultVersion)).available(true).build();
+            }
         } catch (JsonParseException jpe) {
             log.warn(jpe.getMessage());
             return VersionResult.builder().version(defaultVersion).available(true).build();
