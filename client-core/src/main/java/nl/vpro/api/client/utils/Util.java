@@ -7,11 +7,13 @@ package nl.vpro.api.client.utils;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 
 /**
  * @author Roelof Jan Koekoek
@@ -19,11 +21,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class Util {
 
-    private static final String RFC822 = "EEE, dd MMM yyyy HH:mm:ss z";
-
     private static final ZoneId GMT = ZoneId.of("GMT");
-
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern(RFC822, Locale.US);
 
 
     public static String hmacSHA256(String privateKey, String data) {
@@ -38,8 +36,9 @@ public class Util {
     }
 
     public static String rfc822(Instant date) {
-        return FORMAT.format(date.atZone(GMT));
+        return RFC_1123_DATE_TIME.format(date.atZone(GMT));
     }
+
     @Deprecated
     public static String rfc822(Date date) {
         return rfc822(date.toInstant());
