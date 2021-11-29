@@ -32,6 +32,7 @@ import nl.vpro.domain.classification.CachedURLClassificationServiceImpl;
 import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.PageIdMatch;
 import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.jmx.MBeans;
 import nl.vpro.rs.client.VersionResult;
 import nl.vpro.rs.converters.ConditionalBasicAuthentication;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
@@ -216,20 +217,13 @@ public class PageUpdateApiClient extends AbstractApiClient {
     @Override
     protected void appendTestResult(StringBuilder builder, String arg) {
         super.appendTestResult(builder, arg);
-        builder.append(getPageUpdateRestService());
-        builder.append("\n");
         try {
-            PageUpdate load = getPageUpdateRestService().load(arg, true, PageIdMatch.BOTH);
-            builder.append("load(").append(arg).append(")").append(load);
+            String url = MBeans.isBlank(arg) ? "http://www-acc.2doc.nl/documentaires/series/2doc/2016/maart/paradijs-glaswater0.html" : arg;
+            PageUpdate load = getPageUpdateRestService().load(url, true, PageIdMatch.BOTH);
+            builder.append("load(").append(url).append(") = ").append(load);
         } catch (Exception e) {
             builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
         }
-        builder.append("\n");
-        builder.append("version:").append(getVersion()).append("\n");
-        builder.append(getThesaurusUpdateRestService());
-        builder.append("\n");
-        builder.append(getClassificationService());
-        builder.append("\n");
     }
 
 
