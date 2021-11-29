@@ -81,6 +81,8 @@ public class NpoApiClients extends AbstractApiClient {
     @Getter
     private final TriFunction<Method, Object[], String, Level> headerLevel;
 
+    private final boolean eager;
+
 
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "unused", "OptionalUsedAsFieldOrParameterType"})
@@ -266,6 +268,7 @@ public class NpoApiClients extends AbstractApiClient {
         }
         this.toString = toString;
         this.headerLevel = headerLevel == null ? DEFAULT_HEADER_LEVEL : headerLevel;
+        this.eager = eager;
     }
 
     @Override
