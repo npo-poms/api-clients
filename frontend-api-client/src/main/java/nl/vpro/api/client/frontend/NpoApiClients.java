@@ -39,6 +39,7 @@ import nl.vpro.domain.api.Error;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.jackson2.Jackson2Mapper;
+import nl.vpro.jmx.Description;
 import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.client.VersionResult;
 import nl.vpro.util.*;
@@ -51,6 +52,7 @@ import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
  *
  * This is implemented by proxying the actual service interfaces used on the server. Most noticably {@link MediaRestService} and {@link PageRestService}
  */
+@Description("Api clients for services on https://rs.poms.omroep.nl")
 public class NpoApiClients extends AbstractApiClient {
 
     public static TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL = (m, a, s) -> s.equals(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG;
@@ -80,9 +82,6 @@ public class NpoApiClients extends AbstractApiClient {
 
     @Getter
     private final TriFunction<Method, Object[], String, Level> headerLevel;
-
-    private final boolean eager;
-
 
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "unused", "OptionalUsedAsFieldOrParameterType"})
@@ -175,7 +174,6 @@ public class NpoApiClients extends AbstractApiClient {
             return this;
         }
 
-
         public NpoApiClients build() {
             if (env != null) {
                 Map<String, String> defaultProperties = ConfigUtils.filtered(env, Config.Prefix.npo_api.getKey(),
@@ -183,7 +181,9 @@ public class NpoApiClients extends AbstractApiClient {
                 );
                 ReflectionUtils.configureIfNull(this, defaultProperties, Collections.emptyList(), Collections.emptyList());
             }
-            return _build();
+            NpoApiClients result =  _build();
+            result.postConstruct();
+            return result;
         }
 
     }
@@ -268,7 +268,6 @@ public class NpoApiClients extends AbstractApiClient {
         }
         this.toString = toString;
         this.headerLevel = headerLevel == null ? DEFAULT_HEADER_LEVEL : headerLevel;
-        this.eager = eager;
     }
 
     @Override
