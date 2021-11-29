@@ -45,12 +45,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  *
- * TODO. Tests are failing because https://issues.jboss.org/browse/RESTEASY-2301
  * @author Roelof Jan Koekoek
  * @since 3.0
  */
 @Slf4j
-@Disabled
 public class NpoApiClientsITest {
 
     private static Env env = Env.LOCALHOST;

@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -81,25 +82,6 @@ public class NpoApiClients extends AbstractApiClient {
     private final TriFunction<Method, Object[], String, Level> headerLevel;
 
 
-   @Override
-    protected void appendTestResult(StringBuilder builder, String arg) {
-       super.appendTestResult(builder, arg);
-       builder.append(getMediaService());
-       builder.append("\n");
-       try {
-           MediaObject load = getMediaService().load(arg, null, null);
-           builder.append("load(").append(arg).append(")").append(load);
-       } catch (Exception e) {
-           builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
-       }
-       builder.append("\n");
-       builder.append("version:").append(getVersion());
-       builder.append("\n");
-       builder.append(getPageService());
-       builder.append("\n");
-       builder.append(getProfileService());
-       builder.append("\n");
-    }
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "unused", "OptionalUsedAsFieldOrParameterType"})
     @Named
@@ -236,8 +218,8 @@ public class NpoApiClients extends AbstractApiClient {
         String userAgent,
         Boolean registerMBean,
         Function<NpoApiClients, String> toString,
-        TriFunction<Method, Object[], String, Level> headerLevel
-
+        TriFunction<Method, Object[], String, Level> headerLevel,
+        boolean eager
     ) {
         super(withApiPostFix(baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl),
             connectionRequestTimeout,
@@ -260,7 +242,8 @@ public class NpoApiClients extends AbstractApiClient {
             mbeanName,
             classLoader,
             userAgent,
-            registerMBean
+            registerMBean,
+            eager
             );
         this.apiKey = apiKey;
 
@@ -283,6 +266,32 @@ public class NpoApiClients extends AbstractApiClient {
         }
         this.toString = toString;
         this.headerLevel = headerLevel == null ? DEFAULT_HEADER_LEVEL : headerLevel;
+    }
+
+    @Override
+    protected Stream<Supplier<?>> services() {
+        return Stream.of(
+            this::getMediaService,
+            this::getPageService,
+            this::getProfileService,
+            this::getScheduleService,
+            this::getSubtitlesRestService,
+            this::getThesaurusRestService,
+            this::getTVVodService
+        );
+    }
+
+    @Override
+    protected void appendTestResult(StringBuilder builder, String arg) {
+        super.appendTestResult(builder, arg);
+        try {
+            MediaObject load = getMediaService().load(arg, null, null);
+            builder.append("load(").append(arg).append(")").append(load);
+        } catch (Exception e) {
+           builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
+        }
+        builder.append("version:").append(getVersion());
+
     }
 
     private static String withApiPostFix(String baseUrl) {

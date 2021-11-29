@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -261,7 +262,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         Boolean registerMBean,
         boolean publishImmediately,
         Boolean deletes,
-        TriFunction<Method, Object[], String, Level> headerLevel) {
+        TriFunction<Method, Object[], String, Level> headerLevel,
+        boolean eager) {
         super(
             baseUrl,
             connectionRequestTimeout,
@@ -284,7 +286,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             mbeanName,
             classLoader,
             userAgent,
-            registerMBean);
+            registerMBean,
+            eager);
         if (defaultMax != null) {
             this.defaultMax = defaultMax;
         }
@@ -322,6 +325,14 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         this.headerLevel = headerLevel == null ? DEFAULT_HEADER_LEVEL : headerLevel;
     }
 
+
+    @Override
+    protected Stream<Supplier<?>> services() {
+        return Stream.of(
+            this::getBackendRestService,
+            this::getFrameCreatorRestService
+        );
+    }
 
 
     public static Builder configured(Env env, String... configFiles) {

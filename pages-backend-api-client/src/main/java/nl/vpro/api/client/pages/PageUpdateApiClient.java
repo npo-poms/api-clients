@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import javax.crypto.SecretKey;
 import javax.inject.Inject;
@@ -64,25 +65,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     private ClassificationService classificationService;
 
-
-    @Override
-    protected void appendTestResult(StringBuilder builder, String arg) {
-        super.appendTestResult(builder, arg);
-        builder.append(getPageUpdateRestService());
-        builder.append("\n");
-        try {
-            PageUpdate load = getPageUpdateRestService().load(arg, true, PageIdMatch.BOTH);
-            builder.append("load(").append(arg).append(")").append(load);
-        } catch (Exception e) {
-            builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
-        }
-        builder.append("\n");
-        builder.append("version:").append(getVersion()).append("\n");
-        builder.append(getThesaurusUpdateRestService());
-        builder.append("\n");
-        builder.append(getClassificationService());
-        builder.append("\n");
-    }
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType"})
     @Named
@@ -178,30 +160,32 @@ public class PageUpdateApiClient extends AbstractApiClient {
         String jwsUser,
         ClassLoader classLoader,
         String userAgent,
-        Boolean registerMBean
+        Boolean registerMBean,
+        boolean eager
         ) {
         super(baseUrl == null ? "https://publish.pages.omroep.nl/api" : (baseUrl + (baseUrl.endsWith("/") ?  "" : "/") + "api"),
-                connectionRequestTimeout,
-                connectTimeout,
-                socketTimeout,
-                maxConnections,
-                maxConnectionsPerRoute,
-                null,
-                null,
-                connectionInPoolTTL,
-                validateAfterInactivity,
-                countWindow,
-                bucketCount,
-                warnThreshold,
-                acceptableLanguages,
-                accept,
-                null,
-                trustAll,
-                null,
-                mbeanName,
-                classLoader,
-                userAgent,
-                registerMBean
+            connectionRequestTimeout,
+            connectTimeout,
+            socketTimeout,
+            maxConnections,
+            maxConnectionsPerRoute,
+            null,
+            null,
+            connectionInPoolTTL,
+            validateAfterInactivity,
+            countWindow,
+            bucketCount,
+            warnThreshold,
+            acceptableLanguages,
+            accept,
+            null,
+            trustAll,
+            null,
+            mbeanName,
+            classLoader,
+            userAgent,
+            registerMBean,
+            eager
         );
         if (user == null){
             throw new IllegalArgumentException("No user given");
@@ -217,6 +201,37 @@ public class PageUpdateApiClient extends AbstractApiClient {
         this.jwsUser = jwsUser;
 
     }
+
+    @Override
+    protected Stream<Supplier<?>> services() {
+        return Stream.of(
+            this::getPageUpdateRestService,
+            this::getThesaurusUpdateRestService,
+            this::getClassificationService,
+            this::getProviderRestService
+        );
+    }
+
+
+    @Override
+    protected void appendTestResult(StringBuilder builder, String arg) {
+        super.appendTestResult(builder, arg);
+        builder.append(getPageUpdateRestService());
+        builder.append("\n");
+        try {
+            PageUpdate load = getPageUpdateRestService().load(arg, true, PageIdMatch.BOTH);
+            builder.append("load(").append(arg).append(")").append(load);
+        } catch (Exception e) {
+            builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
+        }
+        builder.append("\n");
+        builder.append("version:").append(getVersion()).append("\n");
+        builder.append(getThesaurusUpdateRestService());
+        builder.append("\n");
+        builder.append(getClassificationService());
+        builder.append("\n");
+    }
+
 
     public static Builder configured(String... configFiles) {
         Builder builder = builder();
