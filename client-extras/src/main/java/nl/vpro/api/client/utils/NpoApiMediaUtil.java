@@ -41,7 +41,7 @@ import static nl.vpro.domain.api.Result.Total.equalsTo;
  <li>un paging of calls that require paging. if the api enforces a max of at most e.g. 240, calls in this utility will accept any max, and do paging implicitely</li>
  <li></li>less arguments. Some of the Rest service interface want arguments like request and response object which should at the client side simply remain null (btw I think there are no much of that kind of methods left</li>
  <li>exception handling</li>
- <li>Parsing of input stream if that it the return value (huge results like {@link nl.vpro.api.rs.v3.media.MediaRestService#changes(String, String, Long, String, String, Integer, Boolean, Deletes)} and {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer)} have that.</li>
+ <li>Parsing of input stream if that it the return value (huge results like {@link nl.vpro.api.rs.v3.media.MediaRestService#changes(String, String, Long, String, String, Integer, Boolean, Deletes, Tail)} and {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer)} have that.</li>
  </ul>
 
  * @author Michiel Meeuwissen
@@ -358,13 +358,12 @@ public class NpoApiMediaUtil implements MediaProvider {
         return subscribeToChanges(null, since, until, listener);
     }
 
-    public Future<Instant> subscribeToChanges(String profile, Instant since, Deletes deletes, BooleanSupplier until, final Consumer<MediaChange> listener) {
-        return EXECUTOR_SERVICE.submit(new Callable<Instant>() {
-            @Override
-            public Instant call() {
+    public Future<Instant> subscribeToChanges(String profile, Instant since, Deletes deletes, BooleanSupplier doWhile, final Consumer<MediaChange> listener) {
+        if (doWhile.getAsBoolean()) {
+            return EXECUTOR_SERVICE.submit(() -> {
                 Instant start = since;
                 String mid = null;
-                while (until.getAsBoolean() && ! Thread.currentThread().isInterrupted()) {
+                while (doWhile.getAsBoolean() && !Thread.currentThread().isInterrupted()) {
                     try (CountedIterator<MediaChange> changes = changes(profile, false, start, mid, ASC, null, deletes, Tail.ALWAYS)) {
                         while (changes.hasNext()) {
                             MediaChange change = changes.next();
@@ -383,7 +382,7 @@ public class NpoApiMediaUtil implements MediaProvider {
                         }
 
                     } catch (Exception e) {
-                        log.info(e.getClass() + ":" +  e.getMessage());
+                        log.info(e.getClass() + ":" + e.getMessage());
                     }
                     try {
                         synchronized (listener) {
@@ -394,13 +393,16 @@ public class NpoApiMediaUtil implements MediaProvider {
                         Thread.currentThread().interrupt();
                     }
                 }
-                log.info("Ready listening for changes until: {}, interrupted: {}", until.getAsBoolean(), Thread.currentThread().isInterrupted());
+                log.info("Ready listening for changes until: {}, interrupted: {}", doWhile.getAsBoolean(), Thread.currentThread().isInterrupted());
                 synchronized (listener) {
                     listener.notifyAll();
                 }
                 return start;
-            }
-        });
+            });
+        } else {
+            log.info("No started changes listening, because doWhile condition is already false");
+            return CompletableFuture.completedFuture(since);
+        }
 
     }
 
