@@ -76,8 +76,14 @@ public class PageUpdateApiUtil {
                 update, STRING, String.class
             );
             // temporary, later we may do Result<SaveResult>
-            log.info(result.getEntity());
-            return Result.<Void>builder().status(result.getStatus()).build();
+            if (result.isOk()) {
+                log.info(result.getEntity());
+                return Result.<Void>builder().status(result.getStatus()).build();
+            } else {
+                log.warn(result.getErrors());
+                return Result.<Void>builder().status(result.getStatus()).errors(result.getErrors()).build();
+            }
+
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
