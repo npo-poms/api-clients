@@ -394,7 +394,7 @@ public class NpoApiMediaUtil implements MediaProvider {
                         Thread.currentThread().interrupt();
                     }
                 }
-                log.info("Ready listening for changes");
+                log.info("Ready listening for changes until: {}, interrupted: {}", until.getAsBoolean(), Thread.currentThread().isInterrupted());
                 synchronized (listener) {
                     listener.notifyAll();
                 }
