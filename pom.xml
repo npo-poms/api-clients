@@ -114,7 +114,6 @@
   </dependencies>
 
 
-
   <distributionManagement>
     <snapshotRepository>
       <id>vpro-ossrh</id>
@@ -142,17 +141,16 @@
   <profiles>
     <profile>
       <id>vpro-nexus</id>
-      <!-- used when running on jenkins.vpro.nl -->
       <distributionManagement>
         <repository>
           <id>nexus</id>
           <name>Nexus releases</name>
-          <url>http://nexus.vpro.nl/content/repositories/releases</url>
+          <url>https://nexus.vpro.nl/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
           <id>nexus</id>
           <name>Nexus snapshots</name>
-          <url>http://nexus.vpro.nl/content/repositories/snapshots</url>
+          <url>https://nexus.vpro.nl/content/repositories/snapshots</url>
         </snapshotRepository>
       </distributionManagement>
     </profile>
