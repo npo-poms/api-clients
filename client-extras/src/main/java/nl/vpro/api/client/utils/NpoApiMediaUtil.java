@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.google.common.cache.*;
@@ -122,7 +123,7 @@ public class NpoApiMediaUtil implements MediaProvider {
             .build(
                 new CacheLoader<String, Optional<? extends MediaObject>>() {
                     @Override
-                    public Optional<MediaObject> load(@NotNull String mid) {
+                    public @NonNull Optional<MediaObject> load(@NonNull String mid) {
                         limiter.acquire();
                         try {
                             MediaObject object = MediaRestClientUtils.loadOrNull(clients.getMediaService(), mid);
@@ -137,6 +138,7 @@ public class NpoApiMediaUtil implements MediaProvider {
                 });
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends MediaObject> T loadOrNull(String id) throws IOException {
         try {
             return (T) cache.get(id).orElse(null);
