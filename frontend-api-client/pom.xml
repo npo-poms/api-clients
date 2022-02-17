@@ -105,12 +105,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-core</artifactId>
+      <artifactId>jaxb-runtime</artifactId>
     </dependency>
     <dependency>
       <groupId>nl.vpro.poms</groupId>

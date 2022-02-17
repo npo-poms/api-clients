@@ -39,7 +39,7 @@
     </dependency>
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-core</artifactId>
+      <artifactId>jaxb-runtime</artifactId>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
