@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import nl.vpro.domain.api.media.*;
+import nl.vpro.domain.api.profile.exception.ProfileNotFoundException;
 import nl.vpro.jackson2.Jackson2Mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +34,7 @@ public class NpoApiClientsMediaITest {
     }
 
     @Test
-    public void testDescendants() throws JsonProcessingException {
+    public void testDescendants() throws JsonProcessingException, ProfileNotFoundException {
         MediaForm form =
             MediaFormBuilder.form().build();
 
@@ -47,7 +48,7 @@ public class NpoApiClientsMediaITest {
 
 
     @Test
-    public void testFindInProfile() throws JsonProcessingException {
+    public void testFindInProfile() throws JsonProcessingException, ProfileNotFoundException {
         MediaForm form =
             MediaFormBuilder.form().build();
 
@@ -61,7 +62,7 @@ public class NpoApiClientsMediaITest {
 
 
     @Test
-    public void testDescendantsProperties() throws JsonProcessingException {
+    public void testDescendantsProperties() throws JsonProcessingException, ProfileNotFoundException {
         MediaForm form =
             MediaFormBuilder.form().build();
 
