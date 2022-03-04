@@ -30,6 +30,7 @@ import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.page.*;
 import nl.vpro.domain.api.profile.Profile;
+import nl.vpro.domain.api.profile.exception.ProfileNotFoundException;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.Schedule;
 import nl.vpro.domain.page.Page;
@@ -125,7 +126,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testMediaServiceLists() {
+    public void testMediaServiceLists() throws ProfileNotFoundException {
         MediaRestService mediaService = clients.getMediaService();
 
         MediaResult list = mediaService.list(null, null, null, null);
@@ -145,7 +146,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testMediaServiceFinds() {
+    public void testMediaServiceFinds() throws ProfileNotFoundException {
         try {
             MediaRestService mediaService = clients.getMediaService();
             MediaForm form = MediaFormBuilder.form().broadcasters("VPRO").broadcasterFacet().build();
@@ -168,7 +169,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testChanges() throws IOException {
+    public void testChanges() throws IOException, ProfileNotFoundException {
         InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null, null).readEntity(InputStream.class);
         IOUtils.copy(response, LoggerOutputStream.info(log));
     }
@@ -176,7 +177,7 @@ public class NpoApiClientsITest {
 
     @Test
     @Disabled("Takes very long")
-    public void testIterate() throws IOException {
+    public void testIterate() throws IOException, ProfileNotFoundException {
         try (InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predictions", null, 0L, Integer.MAX_VALUE).readEntity(InputStream.class)) {
             IOUtils.copy(response, ByteStreams.nullOutputStream());
         }
@@ -231,7 +232,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testGetDescendants() {
+    public void testGetDescendants() throws ProfileNotFoundException {
         log.info("" + clients.getMediaService().findDescendants(
             new MediaForm(),
             "POMS_S_VPRO_216762",
@@ -243,7 +244,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testMultiple() {
+    public void testMultiple() throws ProfileNotFoundException {
         String[] mids = {"POMS_S_BNN_097259"};
         MultipleMediaResult mo = clients.getMediaService().loadMultiple(new IdList(mids), null, null);
         for (int i = 0; i < mids.length; i++) {
