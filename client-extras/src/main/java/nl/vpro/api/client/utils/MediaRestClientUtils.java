@@ -1,7 +1,19 @@
 package nl.vpro.api.client.utils;
 
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Supplier;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.io.IOUtils;
+
+import com.google.common.collect.Lists;
+
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.domain.api.*;
@@ -10,20 +22,7 @@ import nl.vpro.domain.media.*;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.CountedIterator;
-import nl.vpro.util.FileCachingInputStream;
-import nl.vpro.util.LazyIterator;
-import org.apache.commons.io.IOUtils;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
-import java.io.*;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Supplier;
+import nl.vpro.util.*;
 
 /**
  * @author Michiel Meeuwissen
@@ -314,8 +313,6 @@ public class MediaRestClientUtils {
                 }
             }
         }
-
-
     }
 
     /**
