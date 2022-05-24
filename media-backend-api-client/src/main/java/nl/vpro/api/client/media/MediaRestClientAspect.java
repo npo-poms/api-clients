@@ -173,30 +173,34 @@ your request.</p>
 
     protected void dealWithHeaders(Method method, Object[] args) {
         MultivaluedMap<String, String> headers = HeaderInterceptor.getHeaders();
-        List<String> warnings = headers.get(Headers.NPO_VALIDATION_WARNING_HEADER);
-        if (warnings != null) {
-            String methodString =  Utils.methodCall(method, args);
-            for (Object w : warnings) {
-                String asString = w + " (" + methodString + ")";
-                log.warn(asString);
-                client.getWarnings().add(asString);
+        if (headers == null) {
+            log.warn("No headers found");
+        } else {
+            List<String> warnings = headers.get(Headers.NPO_VALIDATION_WARNING_HEADER);
+            if (warnings != null) {
+                String methodString = Utils.methodCall(method, args);
+                for (Object w : warnings) {
+                    String asString = w + " (" + methodString + ")";
+                    log.warn(asString);
+                    client.getWarnings().add(asString);
+                }
             }
-        }
 
-        for (Map.Entry<String, List<String>> e : headers.entrySet()) {
-            if (e.getKey().startsWith(Headers.X_NPO)) {
-                Level level = headerLevel.apply(method, args, e.getKey());
-                Slf4jHelper.log(log, level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
-            }
-            if (e.getKey().equals(Headers.NPO_ROLES)) {
-                Set<String> copyOfRoles = new HashSet<>(client.roles);
-                client.roles.clear();
-                Stream.of(e.getValue().get(0)
-                    .split("\\s*,\\s"))
-                    .map(r -> r.substring(Roles.ROLE.length()))
-                    .forEach(r -> client.roles.add(r));
-                if (! Objects.equals(copyOfRoles, client.roles)) {
-                    log.info("Roles for client {}: {}", client, client.roles);
+            for (Map.Entry<String, List<String>> e : headers.entrySet()) {
+                if (e.getKey().startsWith(Headers.X_NPO)) {
+                    Level level = headerLevel.apply(method, args, e.getKey());
+                    Slf4jHelper.log(log, level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
+                }
+                if (e.getKey().equals(Headers.NPO_ROLES)) {
+                    Set<String> copyOfRoles = new HashSet<>(client.roles);
+                    client.roles.clear();
+                    Stream.of(e.getValue().get(0)
+                            .split("\\s*,\\s"))
+                        .map(r -> r.substring(Roles.ROLE.length()))
+                        .forEach(r -> client.roles.add(r));
+                    if (!Objects.equals(copyOfRoles, client.roles)) {
+                        log.info("Roles for client {}: {}", client, client.roles);
+                    }
                 }
             }
         }
