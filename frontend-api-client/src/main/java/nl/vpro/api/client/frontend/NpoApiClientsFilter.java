@@ -1,6 +1,15 @@
 package nl.vpro.api.client.frontend;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Priority;
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.HttpHeaders;
+
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.domain.api.Deletes;
@@ -8,15 +17,6 @@ import nl.vpro.domain.api.Tail;
 import nl.vpro.domain.api.media.MediaForm;
 import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.jmx.CountAspect;
-
-import javax.annotation.Priority;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientResponseContext;
-import javax.ws.rs.client.ClientResponseFilter;
-import javax.ws.rs.core.HttpHeaders;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Michiel Meeuwissen
@@ -63,7 +63,7 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
         CountAspect.Local local = CountAspect.currentThreadLocal.get();
         if (nocachingMethod.contains(local.getMethod())) {
-            log.debug("explicitely not caching call to {}", local);
+            log.debug("explicitly not caching call to {}", local);
             responseContext.getHeaders()
                 .putSingle(HttpHeaders.CACHE_CONTROL, "no-cache");
         }
