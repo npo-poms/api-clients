@@ -3,6 +3,7 @@ package nl.vpro.api.client.media;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.nio.file.Files;
 
 import javax.ws.rs.core.Response;
 
@@ -39,9 +40,9 @@ public class MediaRestClientUploadITest {
 
     @Test
     public void uploadAndTranscode() throws IOException {
-        File file = new File("/Users/michiel/mmbase/trunk/applications/streams/samples/retour_madrid.mp4");
+        File file = new File("/Users/michiel/samples/huge.mxf");
         try(InputStream is = FileCachingInputStream.builder()
-            .input(new FileInputStream(file))
+            .input(Files.newInputStream(file.toPath()))
             .batchSize(5_000_000L)
             .progressLogging(false)
             .logger(log)
@@ -50,10 +51,12 @@ public class MediaRestClientUploadITest {
                 uploadAndTranscode("POMS_VPRO_1424050",Encryption.NONE, TranscodeRequest.Priority.NORMAL,  "",
                     is,
                     "video/mp4",
-                    null,  true, true, null,
+                    null,  true,
+                    true,
+                    null,  null,
                     null)) {
             InputStream responseEntity = (InputStream) response.getEntity();
-
+            log.info("Found {}", responseEntity);
             IOUtils.copy(responseEntity, LoggerOutputStream.info(log));
 
         }
