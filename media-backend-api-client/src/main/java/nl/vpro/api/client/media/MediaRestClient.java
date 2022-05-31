@@ -19,6 +19,7 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meeuw.functional.TriFunction;
 import org.slf4j.event.Level;
 
@@ -469,10 +470,12 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     public MediaBackendRestService getBackendRestService() {
         if (proxy == null) {
             log.info("Creating proxy for {} {}@{}", MediaBackendRestService.class, userName, baseUrl);
+            ResteasyWebTarget target = getTarget(getClientHttpEngine());
+            //target.setChunked(true);
             proxy = MediaRestClientAspect.proxy(this,
                 proxyErrorsAndCount(
                     MediaBackendRestService.class,
-                    getTarget(getClientHttpEngine()).proxy(MediaBackendRestService.class),
+                    target.proxy(MediaBackendRestService.class),
                     nl.vpro.rs.Error.class
                 ),
                 MediaBackendRestService.class

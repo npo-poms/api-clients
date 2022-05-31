@@ -46,9 +46,10 @@ class MediaRestClientAspect<T> implements InvocationHandler {
         this.headerLevel = headerLevel;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T proxy(MediaRestClient client, T restController, Class<T> service) {
         return (T) Proxy.newProxyInstance(MediaRestClient.class.getClassLoader(),
-            new Class[]{service}, new MediaRestClientAspect(client, restController, client.getHeaderLevel()));
+            new Class[]{service}, new MediaRestClientAspect<>(client, restController, client.getHeaderLevel()));
     }
 
 
@@ -62,6 +63,7 @@ class MediaRestClientAspect<T> implements InvocationHandler {
                     fillParametersIfEmpty(method, args);
                     Object result = method.invoke(proxied, args);
                     dealWithHeaders(method, args);
+                    log.debug("RESULT {}", result);
                     if (result instanceof Response){
                         if (dealWithResponse((Response) result, method)) {
                             continue;
@@ -89,7 +91,7 @@ misconfiguration and was unable to complete
 your request.</p>
 */
                 client.retryAfterWaitOrException(method.getName() + ": Internal Server error: " + isee.getMessage(), isee);
-                // lets rretry retry
+                // lets retry retry
 
             } catch (javax.ws.rs.ProcessingException pe) {
                 Throwable t = pe.getCause();
@@ -115,27 +117,27 @@ your request.</p>
                     if (annotations[i][j] instanceof QueryParam && args[i] == null) {
                         QueryParam queryParam = (QueryParam) annotations[i][j];
                         if (MediaBackendRestService.ERRORS.equals(queryParam.value())) {
-                            log.debug("Implicetely set errors parameter to {}", client.errors);
+                            log.debug("Implicitly set errors parameter to {}", client.errors);
                             args[i] = client.errors;
                         } else if (MediaBackendRestService.FOLLOW.equals(queryParam.value())) {
-                            log.debug("Implicetely set followMerges to {}", client.isFollowMerges());
+                            log.debug("Implicitly set followMerges to {}", client.isFollowMerges());
                             args[i] = client.isFollowMerges();
                         } else if (MediaBackendRestService.VALIDATE_INPUT.equals(queryParam.value())) {
-                            log.debug("Implicetely set validateInput to {}", client.isValidateInput());
+                            log.debug("Implicitly set validateInput to {}", client.isValidateInput());
                             args[i] = client.isValidateInput();
                         } else if (MediaBackendRestService.OWNER.equals(queryParam.value())) {
                             if (client.getOwner() != null) {
-                                log.debug("Implicetely set owner to {}", client.getOwner());
+                                log.debug("Implicitly set owner to {}", client.getOwner());
                                 args[i] = client.getOwner().name();
                             }
                         } else if (MediaBackendRestService.PUBLISH.equals(queryParam.value())) {
                             if (client.isPublishImmediately()) {
-                                log.debug("Implicetely set publish to {}", client.isPublishImmediately());
+                                log.debug("Implicitly set publish to {}", client.isPublishImmediately());
                                 args[i] = client.isPublishImmediately();
                             }
                         } else if (MediaBackendRestService.DELETES.equals(queryParam.value())) {
                             if (client.getDeletes() != null) {
-                                log.debug("Implicetely set deletes to {}", client.getDeletes());
+                                log.debug("Implicitly set deletes to {}", client.getDeletes());
                                 args[i] = client.getDeletes();
                             }
                         }
@@ -152,7 +154,7 @@ your request.</p>
                                     log.error(e.getMessage());
                                 }
                             }
-                            log.debug("Implicetely set entity to {}", args[i]);
+                            log.debug("Implicitly set entity to {}", args[i]);
                         }
 
 
@@ -208,6 +210,7 @@ your request.</p>
 
 
     protected boolean dealWithResponse(Response response, Method method) {
+        log.info("Dealing with {}", response);
         try {
             if (response.getStatusInfo() == Response.Status.SERVICE_UNAVAILABLE) {
                 String message = response.readEntity(String.class);
@@ -229,7 +232,7 @@ your request.</p>
                 throw error;
             }
         } finally {
-
+            log.debug("dealt with response");
         }
         return false;
     }
