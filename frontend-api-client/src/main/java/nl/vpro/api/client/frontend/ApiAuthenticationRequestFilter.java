@@ -4,6 +4,8 @@
  */
 package nl.vpro.api.client.frontend;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.URI;
 import java.util.Map;
 
@@ -11,11 +13,16 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.slf4j.*;
+
 /**
  * @author Roelof Jan Koekoek
  * @since 3.0
  */
+@Slf4j
 public class ApiAuthenticationRequestFilter implements ClientRequestFilter {
+
+    private static final Logger ACCESS = LoggerFactory.getLogger("nl.vpro.api.client.frontend.ACCESS");
 
     private final NpoApiAuthentication authentication;
 
@@ -29,7 +36,8 @@ public class ApiAuthenticationRequestFilter implements ClientRequestFilter {
     }
 
     public void authenticate(URI uri, MultivaluedMap<String, Object> headers) {
-
+        ACCESS.info("{}", uri);
+        MDC.put("api.uri", uri.toString());
         for (Map.Entry<String, Object> entry : authentication.authenticate(uri).entrySet()) {
             headers.add(entry.getKey(), entry.getValue());
         }
