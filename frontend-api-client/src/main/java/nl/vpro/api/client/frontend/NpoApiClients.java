@@ -55,7 +55,8 @@ import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 @Description("Api clients for services on https://rs.poms.omroep.nl")
 public class NpoApiClients extends AbstractApiClient {
 
-    public static TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL = (m, a, s) -> s.equals(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG;
+    public static TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL = (m, a, s) ->
+        s.equalsIgnoreCase(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG;
 
     private MediaRestService mediaRestServiceProxy;
     private MediaRestService mediaRestServiceProxyNoTimeout;
