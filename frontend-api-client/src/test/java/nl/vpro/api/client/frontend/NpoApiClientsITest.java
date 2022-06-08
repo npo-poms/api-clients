@@ -31,8 +31,8 @@ import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.page.*;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.api.profile.exception.ProfileNotFoundException;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.media.Schedule;
+import nl.vpro.domain.classification.ClassificationServiceLocator;
+import nl.vpro.domain.media.*;
 import nl.vpro.domain.page.Page;
 import nl.vpro.i18n.Locales;
 import nl.vpro.logging.LoggerOutputStream;
@@ -52,11 +52,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Slf4j
 public class NpoApiClientsITest {
 
-    private static Env env = Env.LOCALHOST;
+    private static Env env = Env.TEST;
     private NpoApiClients clients;
 
     @BeforeEach
     public void setUp() {
+        ClassificationServiceLocator.setInstance(MediaClassificationService.getInstance());
+
         clients = NpoApiClients.configured(env)
             .accept(MediaType.APPLICATION_XML_TYPE)
             .clearAcceptableLanguages()

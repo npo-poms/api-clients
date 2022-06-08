@@ -11,6 +11,7 @@
       <Appender-Ref ref="stdout" />
     </Root>
 
+    <Logger name="nl.vpro.api.client.frontend.ACCESS" level="DEBUG" />
 
   </Loggers>
 </Configuration>
