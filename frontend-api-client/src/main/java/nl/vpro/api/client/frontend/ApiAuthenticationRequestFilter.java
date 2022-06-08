@@ -15,6 +15,8 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.slf4j.*;
 
+import nl.vpro.mdc.MDCConstants;
+
 /**
  * @author Roelof Jan Koekoek
  * @since 3.0
@@ -36,8 +38,10 @@ public class ApiAuthenticationRequestFilter implements ClientRequestFilter {
     }
 
     public void authenticate(URI uri, MultivaluedMap<String, Object> headers) {
-        ACCESS.info("{}", uri);
-        MDC.put("api.uri", uri.toString());
+        ACCESS.debug("\t{}", uri);
+
+        MDC.put(MDCConstants.REQUEST, uri.toString());
+        MDC.put(MDCConstants.USER_NAME, authentication.getApiKey());
         for (Map.Entry<String, Object> entry : authentication.authenticate(uri).entrySet()) {
             headers.add(entry.getKey(), entry.getValue());
         }

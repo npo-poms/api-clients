@@ -1,5 +1,7 @@
 package nl.vpro.api.client.frontend;
 
+import lombok.Getter;
+
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -13,8 +15,8 @@ import nl.vpro.api.client.utils.Util;
 import static nl.vpro.poms.shared.Headers.NPO_DATE;
 
 /**
- * Can performs authentication for NPO Frontend API.
- * E.g. like this it can be used in restassured.
+ * Can perform authentication for NPO Frontend API.
+ * E.g. like this it can be used in rest assured.
  * <pre>
  * {@code
    import io.restassured.filter.Filter;
@@ -45,12 +47,15 @@ import static nl.vpro.poms.shared.Headers.NPO_DATE;
  */
 public class NpoApiAuthentication {
 
+    @Getter
     private final String apiKey;
 
     private final String secret;
 
+    @Getter
     private final String origin;
 
+    @Getter
     private final Clock clock;
 
     public NpoApiAuthentication(String apiKey, String secret, String origin) {
@@ -72,11 +77,11 @@ public class NpoApiAuthentication {
      *
      */
     public Map<String, Object> authenticate(URI uri) {
-        String now = Util.rfc822(clock.instant());
+        final String now = Util.rfc822(clock.instant());
 
-        String message = message(uri, now);
+        final String message = message(uri, now);
 
-        Map<String, Object> headers = new TreeMap<>();
+        final Map<String, Object> headers = new TreeMap<>();
         if (secret == null) {
             throw new IllegalStateException("No npo api secret found");
         }
@@ -96,10 +101,9 @@ public class NpoApiAuthentication {
     private String message(URI uri, String now) {
 
         StringBuilder sb = new StringBuilder();
+
         sb.append("origin:").append(origin).append(',');
-
         sb.append("x-npo-date:").append(now).append(',');
-
         sb.append("uri:").append(uri.getRawPath());
 
         String q = uri.getQuery();
