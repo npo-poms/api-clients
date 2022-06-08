@@ -38,7 +38,7 @@ public class ApiAuthenticationRequestFilter implements ClientRequestFilter {
     }
 
     public void authenticate(URI uri, MultivaluedMap<String, Object> headers) {
-        ACCESS.debug("\t{}", uri);
+        ACCESS.debug("{}\t{}", authentication.getApiKey(), uri);
 
         MDC.put(MDCConstants.REQUEST, uri.toString());
         MDC.put(MDCConstants.USER_NAME, authentication.getApiKey());
