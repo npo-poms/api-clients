@@ -98,10 +98,11 @@ public class PageUpdateApiUtil {
 
     public Result<DeleteResult> delete(@NotNull String id) {
         limiter.acquire();
+        PageIdMatch match = id.startsWith("crid:") ? PageIdMatch.CRID : PageIdMatch.URL;
         try {
             return handleResponse(
                 pageUpdateApiClient.getPageUpdateRestService()
-                    .delete(id, false, 1, false, PageIdMatch.BOTH), id, STRING, DeleteResult.class
+                    .delete(id, false, 1, false, match), id, STRING, DeleteResult.class
             );
         } catch (ProcessingException e) {
             return exceptionToResult(e);
