@@ -210,7 +210,7 @@ your request.</p>
 
 
     protected boolean dealWithResponse(Response response, Method method) {
-        log.info("Dealing with {}", response);
+        log.debug("Dealing with {}", response);
         try {
             if (response.getStatusInfo() == Response.Status.SERVICE_UNAVAILABLE) {
                 String message = response.readEntity(String.class);
