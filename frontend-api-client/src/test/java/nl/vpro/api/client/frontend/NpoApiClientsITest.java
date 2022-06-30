@@ -86,7 +86,6 @@ public class NpoApiClientsITest {
     @Test
     public void testNotFound() {
         assertThatThrownBy(() -> {
-
             clients.getMediaService().load("DOES_NOT_EXIST", null, null);
         }).isInstanceOf(NotFoundException.class);
     }
