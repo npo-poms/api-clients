@@ -39,14 +39,15 @@ public class PageUpdateApiClientITest {
         PageUpdate instance = PageUpdateBuilder.article("http://www.meeuw.org/test/1234")
             .title("my title " + Instant.now())
             .broadcasters("VPRO").build();
-        Response response = client.save(instance, null);
-        if (response.getStatus() == 400) {
-            ViolationReport report = response.readEntity(ViolationReport.class);
-            JAXB.marshal(report, System.out);
-            JAXB.marshal(instance, System.out);
+        try (Response response = client.save(instance, null)) {
+            if (response.getStatus() == 400) {
+                ViolationReport report = response.readEntity(ViolationReport.class);
+                JAXB.marshal(report, System.out);
+                JAXB.marshal(instance, System.out);
 
+            }
+            assertEquals(202, response.getStatus());
         }
-        assertEquals(202, response.getStatus());
     }
 
 
@@ -60,14 +61,15 @@ public class PageUpdateApiClientITest {
             .build();
         JAXB.marshal(page, System.out);
 
-        Response response = client.save(page, null);
-        if (response.getStatus() == 400) {
-            ViolationReport report = response.readEntity(ViolationReport.class);
-            JAXB.marshal(report, System.out);
-            JAXB.marshal(page, System.out);
+        try (Response response = client.save(page, null)) {
+            if (response.getStatus() == 400) {
+                ViolationReport report = response.readEntity(ViolationReport.class);
+                JAXB.marshal(report, System.out);
+                JAXB.marshal(page, System.out);
 
+            }
+            assertEquals(202, response.getStatus());
         }
-        assertEquals(202, response.getStatus());
     }
 
 
@@ -80,15 +82,16 @@ public class PageUpdateApiClientITest {
             .title("Page with topstory (" + Instant.now() + ")")
             .links(LinkUpdate.topStory("http://www.meeuw.org/test/topstory", "heel goed artikel"))
             .build();
-        Response response = client.save(page, null);
-        JAXB.marshal(page, System.out);
+        try (Response response = client.save(page, null)) {
+            JAXB.marshal(page, System.out);
 
-        if (response.getStatus() == 400) {
-            ViolationReport report = response.readEntity(ViolationReport.class);
-            JAXB.marshal(report, System.out);
+            if (response.getStatus() == 400) {
+                ViolationReport report = response.readEntity(ViolationReport.class);
+                JAXB.marshal(report, System.out);
 
+            }
+            assertEquals(202, response.getStatus());
         }
-        assertEquals(202, response.getStatus());
 
     }
 
@@ -96,14 +99,15 @@ public class PageUpdateApiClientITest {
     @Test
     public void testDelete() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
-        Response response = client.delete("http://www.meeuw.org/test/1234", false, 1, true, PageIdMatch.URL);
+        try (Response response = client.delete("http://www.meeuw.org/test/1234", false, 1, true, PageIdMatch.URL, null)) {
 
-        if (response.getStatus() == 400) {
-            ViolationReport report = response.readEntity(ViolationReport.class);
-            JAXB.marshal(report, System.out);
+            if (response.getStatus() == 400) {
+                ViolationReport report = response.readEntity(ViolationReport.class);
+                JAXB.marshal(report, System.out);
 
+            }
+            assertEquals(202, response.getStatus());
         }
-        assertEquals(202, response.getStatus());
 
     }
 
@@ -111,13 +115,14 @@ public class PageUpdateApiClientITest {
     @Test
     public void testDeleteMultiple() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
-        Response response = client.delete("http://www.meeuw.org/", true, 100, true, PageIdMatch.URL);
-        if (response.getStatus() == 400) {
-            ViolationReport report = response.readEntity(ViolationReport.class);
-            JAXB.marshal(report, System.out);
+        try (Response response = client.delete("http://www.meeuw.org/", true, 100, true, PageIdMatch.URL, null)) {
+            if (response.getStatus() == 400) {
+                ViolationReport report = response.readEntity(ViolationReport.class);
+                JAXB.marshal(report, System.out);
 
+            }
+            assertEquals(202, response.getStatus());
         }
-        assertEquals(202, response.getStatus());
 
     }
 
