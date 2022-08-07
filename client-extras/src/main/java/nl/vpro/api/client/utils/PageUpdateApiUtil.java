@@ -102,7 +102,7 @@ public class PageUpdateApiUtil {
         try {
             return handleResponse(
                 pageUpdateApiClient.getPageUpdateRestService()
-                    .delete(id, false, 1, false, match), id, STRING, DeleteResult.class
+                    .delete(id, false, 1, false, match, null), id, STRING, DeleteResult.class
             );
         } catch (ProcessingException e) {
             return exceptionToResult(e);
@@ -120,7 +120,7 @@ public class PageUpdateApiUtil {
             while (true) {
                 Result<DeleteResult> r = handleResponse(
                     pageUpdateApiClient.getPageUpdateRestService()
-                        .delete(prefix, true, batchSize, true, match), prefix, STRING, DeleteResult.class
+                        .delete(prefix, true, batchSize, true, match, null), prefix, STRING, DeleteResult.class
                 );
                 log.info("Batch deleted {}: {}", prefix, r);
                 if (result == null) {
