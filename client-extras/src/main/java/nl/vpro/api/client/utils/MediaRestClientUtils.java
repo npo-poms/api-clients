@@ -3,6 +3,7 @@ package nl.vpro.api.client.utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
@@ -163,7 +164,11 @@ public class MediaRestClientUtils {
     public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
             final InputStream inputStream = toInputStream(restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null, Tail.ALWAYS));
-            return new JsonArrayIterator<>(inputStream, MediaChange.class, () -> IOUtils.closeQuietly(inputStream));
+            return new JsonArrayIterator<>(
+                inputStream,
+                MediaChange.class,
+                () -> IOUtils.closeQuietly(inputStream)
+            );
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
             throw new RuntimeException(t.getMessage(), t);
@@ -175,9 +180,12 @@ public class MediaRestClientUtils {
         try {
 
             final Response response = restService.changes(profile, null, null, sinceString(since, mid), order.name().toLowerCase(), max, profileCheck, deletes, tail);
-            InputStream inputStream = toInputStream(response);
-            return new JsonArrayIterator<>(inputStream, MediaChange.class,
-                () -> closeQuietly(inputStream, response));
+            final InputStream inputStream = toInputStream(response);
+            return new JsonArrayIterator<>(
+                inputStream,
+                MediaChange.class,
+                () -> closeQuietly(inputStream, response)
+            );
         } catch (ProcessingException pi) {
             Throwable t = pi.getCause();
             if (t instanceof RuntimeException) {
@@ -220,11 +228,11 @@ public class MediaRestClientUtils {
     public static CountedIterator<MediaObject> iterate(Supplier<Response> response, boolean progressLogging, String filePrefix) {
         return new LazyIterator<>(() -> {
             try {
-                Response res = response.get();
+                final Response res = response.get();
                 final InputStream inputStream = toInputStream(res);
                 // Cache the stream to a file first.
                 // If we don't do this, the stream seems to be inadvertedly truncated sometimes if the client doesn't consume the iterator fast enough.
-                FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
+                final FileCachingInputStream cacheToFile = FileCachingInputStream.builder()
                     .filePrefix(filePrefix)
                     .batchSize(1000000L)
                     .logger(log)
@@ -281,8 +289,10 @@ public class MediaRestClientUtils {
             properties = new Properties();
             try {
                 if (propertiesFile.exists()) {
-                    properties.load(new FileInputStream(propertiesFile));
-                    timeStamp = propertiesFile.lastModified();
+                    try (InputStream inputStream = Files.newInputStream(propertiesFile.toPath())) {
+                        properties.load(inputStream);
+                        timeStamp = propertiesFile.lastModified();
+                    }
                 } else {
                     properties.load(MediaRestClientUtils.class.getResourceAsStream("/id_to_mid.properties"));
                 }
