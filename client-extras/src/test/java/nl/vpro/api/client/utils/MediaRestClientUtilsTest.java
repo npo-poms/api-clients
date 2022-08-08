@@ -1,17 +1,16 @@
 package nl.vpro.api.client.utils;
 
-import nl.vpro.api.rs.v3.media.MediaRestService;
-import nl.vpro.domain.api.Deletes;
-import nl.vpro.domain.api.MediaChange;
-import nl.vpro.domain.api.Order;
-import nl.vpro.domain.api.Tail;
+import java.net.URL;
+import java.time.Instant;
+
+import javax.ws.rs.core.Response;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.core.Response;
-import java.net.URL;
-import java.time.Instant;
-import java.util.Iterator;
+import nl.vpro.api.rs.v3.media.MediaRestService;
+import nl.vpro.domain.api.*;
+import nl.vpro.util.CloseableIterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -40,15 +39,17 @@ public class MediaRestClientUtilsTest {
                 any(Tail.class)
             )
         ).thenReturn(Response.ok().entity(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream()).build());
-        Iterator<MediaChange> i = MediaRestClientUtils.changes(mediaRestService, "vpro", true, Instant.ofEpochMilli(0), null, Order.ASC, Integer.MAX_VALUE, Deletes.ID_ONLY);
         int count = 0;
-        while(i.hasNext()) {
-            MediaChange next = i.next();
-            if (! next.isDeleted()) {
-                assertThat(next.getMedia()).isNotNull();
+        try (CloseableIterator<MediaChange> i = MediaRestClientUtils.changes(mediaRestService, "vpro", true, Instant.ofEpochMilli(0), null, Order.ASC, Integer.MAX_VALUE, Deletes.ID_ONLY)) {
+
+            while (i.hasNext()) {
+                MediaChange next = i.next();
+                if (!next.isDeleted()) {
+                    assertThat(next.getMedia()).isNotNull();
+                }
+                System.out.println(i.next());
+                count++;
             }
-            System.out.println(i.next());
-            count++;
         }
         System.out.println(count);
 
@@ -56,10 +57,10 @@ public class MediaRestClientUtilsTest {
 
     @Test
     public void testLoad() {
-
     }
 
     @Test
+    @Deprecated
     public void testToMid() {
         assertThat(MediaRestClientUtils.toMid("urn:vpro:media:program:1906")).isEqualTo("POMS_VPRO_158299");
     }
