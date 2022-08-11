@@ -18,8 +18,11 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 import org.meeuw.functional.TriFunction;
 import org.slf4j.event.Level;
 
@@ -28,7 +31,6 @@ import com.google.common.util.concurrent.RateLimiter;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
-import nl.vpro.api.client.resteasy.ResteasyHelper;
 import nl.vpro.api.rs.subtitles.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.*;
@@ -430,7 +432,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return version.get().isAvailable();
     }
 
-
     /**
      * The version of the rest-service we are talking too.
      *
@@ -449,7 +450,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         }
 
         builder.httpEngine(getClientHttpEngine())
-            .register(ResteasyHelper.getBasicAuthentication(userName, password, log))
+            .register(new BasicAuthentication(userName, password))
             .register(new AddRequestHeadersFilter())
             .register(VTTSubtitlesReader.class)
             .register(EBUSubtitlesReader.class)
@@ -459,7 +460,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             .register(ContentTypeInterceptor.class)
         ;
     }
-
 
 
     /**
@@ -496,7 +496,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     @SuppressWarnings("unchecked")
     @SneakyThrows
-    protected <T extends MediaUpdate<?>> T get(final Class<T> type, final String id) {
+    protected <T extends MediaUpdate<?>> T get(final @NonNull Class<T> type, final @NonNull String id) {
         return (T) getBackendRestService()
                 .getMedia(valueOf(type), id, followMerges, owner);
     }
@@ -504,7 +504,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     @SuppressWarnings("unchecked")
     @SneakyThrows
-    protected <T extends MediaObject> T getFull(final Class<T> type, final String id) {
+    @Nullable
+    protected <T extends MediaObject> T getFull(final @NonNull Class<T> type, final @NonNull String id) {
         return (T) getBackendRestService().getFullMediaObject(valueOf(type), id, followMerges);
     }
 
@@ -514,10 +515,12 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
      *
      * @param id This can be an URN, MID, or crid.
      */
+    @Nullable
     public ProgramUpdate getProgram(String id) {
         return get(ProgramUpdate.class, id);
     }
 
+    @Nullable
     public SegmentUpdate getSegment(String id) {
         return get(SegmentUpdate.class, id);
     }
@@ -541,13 +544,13 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     }
 
     @SneakyThrows
-    public String delete(String mid) {
+    @NonNull
+    public String delete(@NonNull String mid) {
         try (Response response = getBackendRestService().deleteMedia(null, mid, followMerges, errors)) {
             String result = response.readEntity(String.class);
             return result;
         }
     }
-
 
     public String deleteIfExists(String mid) {
         try {
