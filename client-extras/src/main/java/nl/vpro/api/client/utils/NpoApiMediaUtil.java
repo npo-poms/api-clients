@@ -360,7 +360,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         return subscribeToChanges(null, since, until, listener);
     }
 
-    public Future<Instant> subscribeToChanges(String profile, Instant since, Deletes deletes, BooleanSupplier doWhile, final Consumer<MediaChange> listener) {
+    public Future<Instant> subscribeToChanges(@Nullable String profile, Instant since, Deletes deletes, BooleanSupplier doWhile, final Consumer<MediaChange> listener) {
         if (doWhile.getAsBoolean()) {
             return EXECUTOR_SERVICE.submit(() -> {
                 Instant start = since;
@@ -417,7 +417,7 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     @SneakyThrows(ConnectException.class)
-    protected  JsonArrayIterator<MediaChange> changes(String profile, boolean profileCheck, Long sinceSequence, Instant since,  String mid, Order order, Integer max, Deletes deletes, Tail tail)  {
+    protected  JsonArrayIterator<MediaChange> changes(@Nullable String profile, boolean profileCheck, Long sinceSequence, Instant since,  String mid, Order order, Integer max, Deletes deletes, Tail tail)  {
         limiter.acquire();
         try {
 

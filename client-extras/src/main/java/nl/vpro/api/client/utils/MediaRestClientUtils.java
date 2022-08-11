@@ -8,10 +8,13 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
 
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.google.common.collect.Lists;
 
@@ -176,10 +179,20 @@ public class MediaRestClientUtils {
 
     }
 
-    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) throws IOException {
+    public static JsonArrayIterator<MediaChange> changes(
+        @NotNull MediaRestService restService,
+        @Nullable String profile,
+        boolean profileCheck,
+        @NonNull Instant since,
+        @Nullable String mid, @Nullable Order order, @Nullable Integer max, Deletes deletes, Tail tail) throws IOException {
         try {
-
-            final Response response = restService.changes(profile, null, null, sinceString(since, mid), order.name().toLowerCase(), max, profileCheck, deletes, tail);
+            if (order == null)  {
+                order = Order.ASC;
+            }
+            final Response response = restService.changes(
+                profile, null, null,
+                sinceString(since, mid),
+                order.name().toLowerCase(), max, profileCheck, deletes, tail);
             final InputStream inputStream = toInputStream(response);
             return new JsonArrayIterator<>(
                 inputStream,
