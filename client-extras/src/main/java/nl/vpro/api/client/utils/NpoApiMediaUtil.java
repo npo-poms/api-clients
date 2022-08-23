@@ -360,17 +360,19 @@ public class NpoApiMediaUtil implements MediaProvider {
         return subscribeToChanges(null, since, until, listener);
     }
 
-    public Future<Instant> subscribeToChanges(@Nullable String profile, Instant since, Deletes deletes, BooleanSupplier doWhile, final Consumer<MediaChange> listener) {
+    public Future<Instant> subscribeToChanges(
+        @Nullable String profile,
+        final Instant initialSince, Deletes deletes, BooleanSupplier doWhile, final Consumer<MediaChange> listener) {
         if (doWhile.getAsBoolean()) {
             return EXECUTOR_SERVICE.submit(() -> {
-                Instant start = since;
+                Instant currentSince = initialSince;
                 String mid = null;
                 while (doWhile.getAsBoolean() && !Thread.currentThread().isInterrupted()) {
-                    try (CountedIterator<MediaChange> changes = changes(profile, false, start, mid, ASC, null, deletes, Tail.ALWAYS)) {
+                    try (CountedIterator<MediaChange> changes = changes(profile, false, currentSince, mid, ASC, null, deletes, Tail.ALWAYS)) {
                         while (changes.hasNext()) {
                             MediaChange change = changes.next();
                             listener.accept(change);
-                            start = change.getPublishDate();
+                            currentSince = change.getPublishDate();
                             mid = change.getMid();
                         }
                     } catch (NullPointerException npe) {
@@ -399,11 +401,11 @@ public class NpoApiMediaUtil implements MediaProvider {
                 synchronized (listener) {
                     listener.notifyAll();
                 }
-                return start;
+                return currentSince;
             });
         } else {
             log.info("No started changes listening, because doWhile condition is already false");
-            return CompletableFuture.completedFuture(since);
+            return CompletableFuture.completedFuture(initialSince);
         }
 
     }
