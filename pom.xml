@@ -5,13 +5,13 @@
   <parent>
     <groupId>nl.vpro.poms</groupId>
     <artifactId>poms-parent</artifactId>
-    <version>6.0.0</version>
+    <version>6.1.0</version>
   </parent>
   <groupId>nl.vpro.poms.api-clients</groupId>
   <artifactId>api-client-parent</artifactId>
   <version>6.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <description>Clients for NPO API's</description>
+  <description>Clients for NPO APIs</description>
 
   <modules>
     <module>client-core</module>
@@ -22,7 +22,7 @@
   </modules>
 
   <properties>
-
+    <vpro.shared.version>2.34-SNAPSHOT</vpro.shared.version>
   </properties>
 
   <scm>
