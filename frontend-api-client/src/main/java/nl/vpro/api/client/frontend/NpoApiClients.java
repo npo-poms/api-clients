@@ -49,7 +49,7 @@ import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 
 /**
  * Collects clients for all services on the <a href="https://rs.poms.omroep.nl/v1">NPO Frontend Rest API</a>
- *
+ * <p>
  * This is implemented by proxying the actual service interfaces used on the server. Most noticably {@link MediaRestService} and {@link PageRestService}
  */
 @Description("Api clients for services on https://rs.poms.omroep.nl")
@@ -68,8 +68,11 @@ public class NpoApiClients extends AbstractApiClient {
     private SubtitlesRestService subtitlesRestServiceProxy;
     private ThesaurusRestService thesaurusRestService;
 
+    @Getter
     private String apiKey;
+    @Getter
     private String secret;
+    @Getter
     private String origin;
 
     private final ThreadLocal<String> propertiesThreadLocal;
@@ -322,26 +325,14 @@ public class NpoApiClients extends AbstractApiClient {
         return Swagger.getVersionNumber(getVersion());
     }
 
-    public String getApiKey() {
-        return apiKey;
-    }
-
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
         this.invalidate();
     }
 
-    public String getSecret() {
-        return secret;
-    }
-
     public void setSecret(String secret) {
         this.secret = secret;
         this.invalidate();
-    }
-
-    public String getOrigin() {
-        return origin;
     }
 
     public void setOrigin(String origin) {
