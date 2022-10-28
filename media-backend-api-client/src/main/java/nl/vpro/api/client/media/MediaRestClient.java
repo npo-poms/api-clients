@@ -590,7 +590,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     /** add a location to a Program, Segment or Group */
     protected void addLocation(final EntityType.NoGroups type, final LocationUpdate location, final String id) {
         try (Response response = getBackendRestService()
-            .addLocation(type, location, id, followMerges, errors, validateInput)) {
+            .addLocation(type, location, id, followMerges, errors, validateInput, owner)) {
             log.debug("{}", response);
         }
     }
