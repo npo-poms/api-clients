@@ -36,7 +36,8 @@ public class MediaRestClientUtilsTest {
                 any(Integer.class),
                 any(Boolean.class),
                 any(Deletes.class),
-                any(Tail.class)
+                any(Tail.class),
+            anyString()
             )
         ).thenReturn(Response.ok().entity(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream()).build());
         int count = 0;

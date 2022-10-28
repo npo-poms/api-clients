@@ -166,7 +166,7 @@ public class MediaRestClientUtils {
     @Deprecated
     public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
-            final InputStream inputStream = toInputStream(restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null, Tail.ALWAYS));
+            final InputStream inputStream = toInputStream(restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null, Tail.ALWAYS, null));
             return new JsonArrayIterator<>(
                 inputStream,
                 MediaChange.class,
@@ -192,7 +192,7 @@ public class MediaRestClientUtils {
             final Response response = restService.changes(
                 profile, null, null,
                 sinceString(since, mid),
-                order.name().toLowerCase(), max, profileCheck, deletes, tail);
+                order.name().toLowerCase(), max, profileCheck, deletes, tail, null);
             final InputStream inputStream = toInputStream(response);
             return new JsonArrayIterator<>(
                 inputStream,
