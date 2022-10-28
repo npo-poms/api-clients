@@ -12,10 +12,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
-import nl.vpro.domain.api.Deletes;
-import nl.vpro.domain.api.Tail;
-import nl.vpro.domain.api.media.MediaForm;
-import nl.vpro.domain.api.page.PageForm;
 import nl.vpro.jmx.CountAspect;
 
 /**
@@ -28,35 +24,27 @@ public class NpoApiClientsFilter  implements ClientResponseFilter {
 
     private final Set<Method> nocachingMethod = new HashSet<>();
 
-    public NpoApiClientsFilter() throws NoSuchMethodException {
-        nocachingMethod.add(
-            MediaRestService.class.getMethod("changes",
-                    String.class,
-                    String.class,
-                    Long.class,
-                    String.class,
-                    String.class,
-                    Integer.class,
-                    Boolean.class,
-                    Deletes.class,
-                    Tail.class
-            ));
-        nocachingMethod.add(
-            MediaRestService.class.getMethod("iterate",
-                MediaForm.class,
-                String.class,
-                String.class,
-                Long.class,
-                Integer.class)
-        );
-        nocachingMethod.add(
-            PageRestService.class.getMethod("iterate",
-                PageForm.class,
-                String.class,
-                String.class,
-                Long.class,
-                Integer.class)
-        );
+    public NpoApiClientsFilter() {
+        nocachingMethod.add(getNonCachingMethod(MediaRestService.class, "changes"));
+        nocachingMethod.add(getNonCachingMethod(MediaRestService.class, "iterate"));
+        nocachingMethod.add(getNonCachingMethod(PageRestService.class, "iterate"));
+    }
+
+    Method getNonCachingMethod(Class<?> clazz, String name) {
+        Method found = null;
+        for (Method declaredMethod : clazz.getDeclaredMethods()) {
+            if (declaredMethod.getName().equals(name)) {
+                if (found != null) {
+                    throw new IllegalStateException();
+                }
+                found =  declaredMethod;
+            }
+        }
+        if (found == null) {
+            throw new IllegalStateException();
+        }
+        log.info("Will not cache for {}", found);
+        return found;
     }
 
     @Override
