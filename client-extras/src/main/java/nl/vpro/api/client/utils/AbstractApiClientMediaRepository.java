@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -118,7 +119,7 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
 
 
     @Override
-    public CloseableIterator<MediaChange> changes(Instant since, String mid, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive, Deletes deletes, Tail tail) {
+    public CloseableIterator<MediaChange> changes(Instant since, String mid, ProfileDefinition<MediaObject> current, ProfileDefinition<MediaObject> previous, Order order, Integer max, Long keepAlive, Deletes deletes, Tail tail, Predicate<MediaChange> filter) {
         //clients.getMediaService().changes(current.getName(), null, since)
         throw new UnsupportedOperationException();
 
