@@ -21,8 +21,6 @@ public class AbstractRateLimiter {
     @Getter
     private double minRate = 0.01;
 
-
-    @SuppressWarnings("UnstableApiUsage")
     private final RateLimiter limiter = RateLimiter.create(baseRate);
 
     public void setBaseRate(double baseRate) {
@@ -57,10 +55,10 @@ public class AbstractRateLimiter {
         }
         boolean changed = r != limiter.getRate();
         if (changed) {
-            LOG.info("Rate " + limiter.getRate() + " -> " + r);
+            LOG.info("Rate {} -> {} /s", limiter.getRate(), r);
             limiter.setRate(r);
         } else if (r == minRate) {
-            LOG.debug("Rate " + limiter.getRate());
+            LOG.debug("Rate {} / s", limiter.getRate());
         }
         return changed;
     }
