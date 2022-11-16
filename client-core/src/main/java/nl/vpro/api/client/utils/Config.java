@@ -16,7 +16,7 @@ import nl.vpro.util.Env;
 
 /**
  * Represents configuration for an api client.
- *
+ * <p>
  * Arranges reading config files from classpath and ~/conf, and have a switcher with {@link Env}.
  * @author Michiel Meeuwissen
  */
@@ -39,6 +39,7 @@ public class Config {
         npo_publisher,
         poms,
         images,
+        image_backend,
         nep
         ;
 
@@ -54,7 +55,6 @@ public class Config {
                 }
             }
             throw new IllegalArgumentException();
-
         }
     }
 
