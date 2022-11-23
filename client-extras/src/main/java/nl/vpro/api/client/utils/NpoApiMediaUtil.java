@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.meeuw.functional.Consumers;
 
 import com.google.common.cache.*;
 import com.google.common.util.concurrent.UncheckedExecutionException;
@@ -360,18 +361,31 @@ public class NpoApiMediaUtil implements MediaProvider {
         return subscribeToChanges(null, since, until, listener);
     }
 
+     public Future<Instant> subscribeToChanges(
+         @Nullable String profile,
+         final Instant initialSince,
+         Deletes deletes,
+         BooleanSupplier doWhile,
+         final Consumer<MediaChange> listener) {
+         return  subscribeToChanges(profile, initialSince, deletes, doWhile, Consumers.ignoreArg1(listener));
+     }
+
     public Future<Instant> subscribeToChanges(
         @Nullable String profile,
-        final Instant initialSince, Deletes deletes, BooleanSupplier doWhile, final Consumer<MediaChange> listener) {
+        final Instant initialSince,
+        Deletes deletes,
+        BooleanSupplier doWhile,
+        final BiConsumer<MediaSince, MediaChange> listener) {
         if (doWhile.getAsBoolean()) {
             return EXECUTOR_SERVICE.submit(() -> {
                 Instant currentSince = initialSince;
                 String mid = null;
                 while (doWhile.getAsBoolean() && !Thread.currentThread().isInterrupted()) {
+                    MediaSince mediaSince = MediaSince.builder().instant(currentSince).mid(mid).build();
                     try (CountedIterator<MediaChange> changes = changes(profile, false, currentSince, mid, ASC, null, deletes, Tail.ALWAYS)) {
                         while (changes.hasNext()) {
                             MediaChange change = changes.next();
-                            listener.accept(change);
+                            listener.accept(mediaSince, change);
                             currentSince = change.getPublishDate();
                             mid = change.getMid();
                         }
