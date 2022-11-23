@@ -180,7 +180,7 @@ public class PageUpdateApiUtil {
     }
 
     protected <T, E> Result<E> handleResponse(Response response, T input, Function<Object, String> toString, Class<E> e) {
-        try {
+        try (response) {
             switch (response.getStatus()) {
                 case 200:
                 case 202:
@@ -226,8 +226,6 @@ public class PageUpdateApiUtil {
                     }
                 }
             }
-        } finally {
-            response.close();
         }
     }
 
