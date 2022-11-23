@@ -102,7 +102,7 @@ public class PageUpdateApiUtil {
         try {
             return handleResponse(
                 pageUpdateApiClient.getPageUpdateRestService()
-                    .delete(id, false, 1, false, match, null), id, STRING, DeleteResult.class
+                    .delete(id, false, 1, false, match, null, null), id, STRING, DeleteResult.class
             );
         } catch (ProcessingException e) {
             return exceptionToResult(e);
@@ -120,7 +120,7 @@ public class PageUpdateApiUtil {
             while (true) {
                 Result<DeleteResult> r = handleResponse(
                     pageUpdateApiClient.getPageUpdateRestService()
-                        .delete(prefix, true, batchSize, true, match, null), prefix, STRING, DeleteResult.class
+                        .delete(prefix, true, batchSize, true, match, null,null), prefix, STRING, DeleteResult.class
                 );
                 log.info("Batch deleted {}: {}", prefix, r);
                 if (result == null) {
@@ -179,13 +179,23 @@ public class PageUpdateApiUtil {
         }
     }
 
-    protected <T, E> Result<E> handleResponse(Response response, T input, Function<Object, String> toString, Class<E> e) {
+    protected <T, E> Result<E> handleResponse(
+        Response response,
+        T input,
+        Function<Object, String> toString,
+        Class<E> e) {
         try (response) {
             switch (response.getStatus()) {
                 case 200:
                 case 202:
                     log.debug(pageUpdateApiClient + " " + response.getStatus());
-                    return returnResult(Result.success(response, e));
+                    try {
+                        E entity = response.readEntity(e);
+                        return returnResult(Result.success(entity));
+                    } catch (Exception ex) {
+                        log.error("For {}: {}", response.getEntity(), ex.getMessage(), ex);
+                        throw ex;
+                    }
                 case 400: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
