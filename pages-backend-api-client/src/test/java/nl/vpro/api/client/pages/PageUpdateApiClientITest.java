@@ -99,7 +99,7 @@ public class PageUpdateApiClientITest {
     @Test
     public void testDelete() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
-        try (Response response = client.delete("http://www.meeuw.org/test/1234", false, 1, true, PageIdMatch.URL, null)) {
+        try (Response response = client.delete("http://www.meeuw.org/test/1234", false, 1, true, PageIdMatch.URL, null, null)) {
 
             if (response.getStatus() == 400) {
                 ViolationReport report = response.readEntity(ViolationReport.class);
@@ -115,7 +115,7 @@ public class PageUpdateApiClientITest {
     @Test
     public void testDeleteMultiple() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
-        try (Response response = client.delete("http://www.meeuw.org/", true, 100, true, PageIdMatch.URL, null)) {
+        try (Response response = client.delete("http://www.meeuw.org/", true, 100, true, PageIdMatch.URL, null, null)) {
             if (response.getStatus() == 400) {
                 ViolationReport report = response.readEntity(ViolationReport.class);
                 JAXB.marshal(report, System.out);
