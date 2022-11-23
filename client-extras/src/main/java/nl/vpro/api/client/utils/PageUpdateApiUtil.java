@@ -185,7 +185,7 @@ public class PageUpdateApiUtil {
                 case 200:
                 case 202:
                     log.debug(pageUpdateApiClient + " " + response.getStatus());
-                    return returnResult(Result.success(response, e));
+                    return returnResult(Result.success(response.readEntity(e)));
                 case 400: {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
