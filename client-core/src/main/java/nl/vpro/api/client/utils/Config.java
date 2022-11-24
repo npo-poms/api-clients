@@ -201,7 +201,7 @@ public class Config {
             } else {
                 Key keyForPrefix = ENV.copyFor(prefix);
                 String envString  = properties.getOrDefault(keyForPrefix, env().name());
-                env = Env.valueOf(envString.toUpperCase());
+                env = Env.optionalValueOf(envString).orElse(null);
             }
             if (envs.put(prefix, env) != null) {
                 log.warn("Replaced{}", prefix);

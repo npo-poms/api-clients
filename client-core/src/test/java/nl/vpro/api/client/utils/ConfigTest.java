@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michiel Meeuwissen
- * @since ...
+
  */
 @Slf4j
 public class ConfigTest {
@@ -35,12 +35,12 @@ public class ConfigTest {
     public void setEnv() {
         Config config = new Config("apiclient-test.properties", "apiclient-test2.properties");
 
-        config.setEnv(Env.DEV);
-        assertThat(config.env()).isEqualTo(Env.DEV);
+        config.setEnv(Env.TEST);
+        assertThat(config.env()).isEqualTo(Env.TEST);
 
-        assertThat(config.requiredOption(npo_api, "baseUrl")).isEqualTo("https://rs-dev.poms.omroep.nl/v1");
+        assertThat(config.requiredOption(npo_api, "baseUrl")).isEqualTo("https://rs-test.poms.omroep.nl/v1");
         //assertThat(config.requiredOption(Config.Prefix.npoapi, "secret")).isEqualTo("bla");
-        assertThat(config.getProperties(npo_api).get("secret")).isEqualTo("devsecret2");
+        assertThat(config.getProperties(npo_api).get("secret")).isEqualTo("testsecret2");
         assertThat(config.getProperties(npo_api).get("apiKey")).isEqualTo("KEY2");
 
     }
@@ -50,12 +50,12 @@ public class ConfigTest {
     public void envPerPrefix() {
 
         Config config = new Config("apiclient-test-env-prefix.properties");
-        assertThat(config.env(npo_api)).isEqualTo(Env.DEV);
+        assertThat(config.env(npo_api)).isEqualTo(Env.TEST);
         assertThat(config.env(npo_pageupdate_api)).isEqualTo(Env.LOCALHOST);
         {
             Map<String, String> props = config.getProperties(npo_api);
             log.info("{}", props);
-            assertThat(props.get("baseUrl")).isEqualTo("https://rs-dev.poms.omroep.nl/v1");
+            assertThat(props.get("baseUrl")).isEqualTo("https://rs-test.poms.omroep.nl/v1");
         }
         {
             Map<String, String> props = config.getProperties(npo_pageupdate_api);
