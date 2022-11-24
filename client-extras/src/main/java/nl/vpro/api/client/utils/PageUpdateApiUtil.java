@@ -93,6 +93,7 @@ public class PageUpdateApiUtil {
                         return Result.<Void>builder().status(result.getStatus()).errors(result.getErrors()).build();
                     }
                 }
+                limiter.setCurrentRateToMinRate();
                 log.warn("Retrying {}", update);
             } catch (ProcessingException e) {
                 return exceptionToResult(e);

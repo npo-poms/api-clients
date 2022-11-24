@@ -2,6 +2,7 @@ package nl.vpro.api.client.utils;
 
 import lombok.Getter;
 
+import org.checkerframework.checker.index.qual.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,13 +24,13 @@ public class AbstractRateLimiter {
 
     private final RateLimiter limiter = RateLimiter.create(baseRate);
 
-    public void setBaseRate(double baseRate) {
+    public void setBaseRate(@Positive double baseRate) {
         double prevFactor = limiter.getRate() / this.baseRate;
         this.baseRate = baseRate;
         limiter.setRate(this.baseRate * prevFactor);
     }
 
-    public void setMinRate(double minRate) {
+    public void setMinRate(@Positive double minRate) {
         this.minRate = minRate;
         setRate(limiter.getRate());
     }
@@ -44,6 +45,10 @@ public class AbstractRateLimiter {
 
     protected void downRate() {
         setRate(limiter.getRate() / 2);
+    }
+
+    public void setCurrentRateToMinRate() {
+        setRate(0d);
     }
 
     private boolean setRate(double r) {
