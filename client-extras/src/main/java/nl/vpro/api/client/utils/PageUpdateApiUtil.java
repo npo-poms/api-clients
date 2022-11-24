@@ -1,5 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -51,6 +53,10 @@ public class PageUpdateApiUtil {
     private final PageUpdateApiClient pageUpdateApiClient;
     private final PageUpdateRateLimiter limiter;
 
+    @Getter
+    @Setter
+    private boolean retryErrors = true;
+
     @Inject
     @lombok.Builder
     public PageUpdateApiUtil(
@@ -69,23 +75,28 @@ public class PageUpdateApiUtil {
     }
 
     protected Result<Void> save(@NotNull @Valid PageUpdate update, boolean wait) {
-        limiter.acquire();
-        try {
-            Result<String> result = handleResponse(
-                pageUpdateApiClient.getPageUpdateRestService().save(update, wait),
-                update, STRING, String.class
-            );
-            // temporary, later we may do Result<SaveResult>
-            if (result.isOk()) {
-                log.info(result.getEntity());
-                return Result.<Void>builder().status(result.getStatus()).build();
-            } else {
-                log.warn(result.getErrors());
-                return Result.<Void>builder().status(result.getStatus()).errors(result.getErrors()).build();
-            }
+        while(true) {
+            limiter.acquire();
+            try {
 
-        } catch (ProcessingException e) {
-            return exceptionToResult(e);
+                Result<String> result = handleResponse(
+                    pageUpdateApiClient.getPageUpdateRestService().save(update, wait),
+                    update, STRING, String.class
+                );
+                // temporary, later we may do Result<SaveResult>
+                if (result.isOk()) {
+                    log.info(result.getEntity());
+                    return Result.<Void>builder().status(result.getStatus()).build();
+                } else {
+                    if ((! retryErrors) || (! result.needsRetry())) {
+                        log.warn(result.getErrors());
+                        return Result.<Void>builder().status(result.getStatus()).errors(result.getErrors()).build();
+                    }
+                }
+                log.warn("Retrying {}", update);
+            } catch (ProcessingException e) {
+                return exceptionToResult(e);
+            }
         }
     }
 
