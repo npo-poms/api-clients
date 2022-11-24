@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@Disabled("This required running server at publish-dev")
+@Disabled("This required running server at publish-test")
 public class PageUpdateApiClientITest {
 
     private static PageUpdateApiClient clients;
@@ -27,7 +27,7 @@ public class PageUpdateApiClientITest {
 
     @BeforeAll
     public static void setUp() {
-        clients = PageUpdateApiClient.configured(Env.DEV).build();
+        clients = PageUpdateApiClient.configured(Env.TEST).build();
     }
 
     @Test
