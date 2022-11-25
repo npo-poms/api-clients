@@ -11,15 +11,16 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.meeuw.functional.TriFunction;
-import org.slf4j.event.Level;
 
 import com.google.common.base.Suppliers;
 
@@ -40,11 +41,16 @@ import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.jackson2.Jackson2Mapper;
 import nl.vpro.jmx.Description;
+import nl.vpro.logging.simple.Level;
+import nl.vpro.logging.simple.SimpleLogger;
 import nl.vpro.poms.shared.Headers;
+import nl.vpro.rs.client.HeaderInterceptor;
 import nl.vpro.rs.client.VersionResult;
 import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
+import static nl.vpro.logging.simple.Slf4jSimpleLogger.slf4j;
+import static org.meeuw.functional.Functions.ignoreArg1;
 
 
 /**
@@ -55,8 +61,11 @@ import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
 @Description("Api clients for services on https://rs.poms.omroep.nl")
 public class NpoApiClients extends AbstractApiClient {
 
-    public static TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL = (m, a, s) ->
-        s.equalsIgnoreCase(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG;
+    public static TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL =
+        ignoreArg1(ignoreArg1((s) ->
+                s.equalsIgnoreCase(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG
+            )
+        );
 
     private MediaRestService mediaRestServiceProxy;
     private MediaRestService mediaRestServiceProxyNoTimeout;
@@ -530,5 +539,23 @@ public class NpoApiClients extends AbstractApiClient {
         propertiesThreadLocal.remove();
         profileThreadLocal.remove();
         maxThreadLocal.remove();
+    }
+
+
+    public void dealWithHeaders(Function<String, Level> levelSupplier) {
+       dealWithHeaders(slf4j(log), levelSupplier);
+    }
+
+
+    public static void dealWithHeaders(SimpleLogger log, Function<String, Level> levelSupplier) {
+        MultivaluedMap<String, String> headers = HeaderInterceptor.getHeaders();
+        if (headers != null) {
+            for (Map.Entry<String, List<String>> e : headers.entrySet()) {
+                if (e.getKey().toUpperCase().startsWith(Headers.X_NPO)) {
+                    Level level = levelSupplier.apply(e.getKey());
+                    log.log( level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
+                }
+            }
+        }
     }
 }

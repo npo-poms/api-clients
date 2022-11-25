@@ -4,19 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MultivaluedMap;
-
-import org.slf4j.event.Level;
-
-import nl.vpro.logging.Slf4jHelper;
-import nl.vpro.poms.shared.Headers;
-import nl.vpro.rs.client.HeaderInterceptor;
 
 import static nl.vpro.domain.api.Constants.*;
 
@@ -87,17 +77,10 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
         }
     }
 
-
     protected void dealWithHeaders(Method method, Object[] args) {
-        MultivaluedMap<String, String> headers = HeaderInterceptor.getHeaders();
-        if (headers != null) {
-            for (Map.Entry<String, List<String>> e : headers.entrySet()) {
-                if (e.getKey().toUpperCase().startsWith(Headers.X_NPO)) {
-                    Level level = clients.getHeaderLevel().apply(method, args, e.getKey());
-                    Slf4jHelper.log(log, level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
-                }
-            }
-        }
+        clients.dealWithHeaders((k) ->  clients.getHeaderLevel().apply(method, args, k));
     }
+
+
 
 }

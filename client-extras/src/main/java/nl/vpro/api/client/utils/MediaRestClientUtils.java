@@ -18,6 +18,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.google.common.collect.Lists;
 
+import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.domain.api.*;
@@ -26,9 +27,12 @@ import nl.vpro.domain.media.*;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.logging.simple.Level;
+import nl.vpro.poms.shared.Headers;
 import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.ChangesFeedParameters.changesParameters;
+import static nl.vpro.logging.simple.Slf4jSimpleLogger.slf4j;
 
 /**
  * @author Michiel Meeuwissen
@@ -376,17 +380,21 @@ public class MediaRestClientUtils {
     public static InputStream toInputStream(Response response) {
         // I would rather use some utility to map response status codes to proper exceptions, but I can't find one.
         // This seems incomplete now
-        if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-            InputStream inputStream = response.readEntity(InputStream.class);
-            return inputStream;
-        } else if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
-            throw new NotFoundException(response);
-        } else if (response.getStatusInfo().getFamily() == Response.Status.Family.CLIENT_ERROR) {
-            throw new BadRequestException(response);
-        } else if (response.getStatusInfo().getFamily() == Response.Status.Family.SERVER_ERROR) {
-            throw new ServerErrorException(response);
-        } else {
-            throw new RuntimeException(response.readEntity(String.class));
+        try {
+            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
+                InputStream inputStream = response.readEntity(InputStream.class);
+                return inputStream;
+            } else if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+                throw new NotFoundException(response);
+            } else if (response.getStatusInfo().getFamily() == Response.Status.Family.CLIENT_ERROR) {
+                throw new BadRequestException(response);
+            } else if (response.getStatusInfo().getFamily() == Response.Status.Family.SERVER_ERROR) {
+                throw new ServerErrorException(response);
+            } else {
+                throw new RuntimeException(response.readEntity(String.class));
+            }
+        } finally {
+            NpoApiClients.dealWithHeaders(slf4j(log), s -> s.equalsIgnoreCase(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG);
         }
     }
 
