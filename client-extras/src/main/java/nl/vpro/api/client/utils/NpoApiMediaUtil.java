@@ -43,10 +43,12 @@ import static nl.vpro.domain.api.Result.Total.equalsTo;
  <li>un paging of calls that require paging. if the api enforces a max of at most e.g. 240, calls in this utility will accept any max, and do paging implicitely</li>
  <li></li>less arguments. Some of the Rest service interface want arguments like request and response object which should at the client side simply remain null (btw I think there are no much of that kind of methods left</li>
  <li>exception handling</li>
- <li>Parsing of input stream if that it the return value (huge results like {@link nl.vpro.api.rs.v3.media.MediaRestService#changes(String, String, Long, String, String, Integer, Boolean, Deletes, Tail)} and {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer)} have that.</li>
+ <li>Parsing of input stream if that it the return value (huge results like {@link nl.vpro.api.rs.v3.media.MediaRestService#changes(String, String, Long, String, String, Integer, Boolean, Deletes, Tail, String)} and {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer)} have that.</li>
  </ul>
 
  * @author Michiel Meeuwissen
+ * @see NpoApiPageUtil
+ * @see NpoApiImageUtil
  */
 @Named
 @Slf4j

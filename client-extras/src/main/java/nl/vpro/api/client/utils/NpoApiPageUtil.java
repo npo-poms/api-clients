@@ -19,7 +19,12 @@ import nl.vpro.util.BatchedReceiver;
 import nl.vpro.util.CloseableIterator;
 
 /**
+ * Utility that wraps some 'pages' endpoint of the NPO frontend API. {@link NpoApiClients}
+ * It may simplifyy parameters, implement default values. It also added client side rate limiting.
+ *
  * @author Michiel Meeuwissen
+ * @see NpoApiMediaUtil
+ * @see NpoApiImageUtil
  */
 @Named
 public class NpoApiPageUtil  {

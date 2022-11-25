@@ -20,6 +20,8 @@ import nl.vpro.domain.media.support.ImageUrlService;
 import nl.vpro.domain.media.update.ImageUpdate;
 
 /**
+ * Utilities related to the 'image' servers, and the simple API that exist.
+ *
  * @author Michiel Meeuwissen
  */
 @Named
@@ -29,8 +31,6 @@ public class NpoApiImageUtil implements ImageUrlService {
     @Setter
     @Getter
     private String baseUrl;
-
-
 
     @Inject
     public NpoApiImageUtil(
