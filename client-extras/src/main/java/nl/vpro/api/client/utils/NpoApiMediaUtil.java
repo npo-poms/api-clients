@@ -1,6 +1,5 @@
 package nl.vpro.api.client.utils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -452,20 +451,21 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     }
 
-    protected  JsonArrayIterator<MediaChange> changes(ChangesFeedParameters.Builder parameters)  {
+    public JsonArrayIterator<MediaChange> changes(ChangesFeedParameters.Builder parameters)  {
         return changes(parameters.build());
     }
 
 
-    @SneakyThrows(ConnectException.class)
-    protected  JsonArrayIterator<MediaChange> changes(ChangesFeedParameters parameters)  {
+    public JsonArrayIterator<MediaChange> changes(ChangesFeedParameters parameters)  {
         limiter.acquire();
         try {
-            JsonArrayIterator<MediaChange> result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), parameters);
-            limiter.upRate();
-            return result;
-        } catch (ConnectException ce) {
-            throw ce;
+            try {
+                JsonArrayIterator<MediaChange> result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), parameters);
+                limiter.upRate();
+                return result;
+            } catch (ConnectException ce) {
+                throw ce;
+            }
         } catch (IOException e) {
             limiter.downRate();
             throw new RuntimeException(clients + ":" + e.getMessage(), e);

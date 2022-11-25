@@ -70,13 +70,13 @@ class NpoApiClientsAspect<T> implements InvocationHandler {
                         QueryParam queryParam = (QueryParam) annotations[i][j];
                         if (args[i] == null) {
                             if (PROPERTIES.equals(queryParam.value())) {
-                                log.debug("Implicitely set properties parameter to {}", clients.getProperties());
+                                log.debug("Implicitly set properties parameter to {}", clients.getProperties());
                                 args[i] = clients.getProperties();
                             } else if (PROFILE.equals(queryParam.value())) {
-                                log.debug("Implicitely set profile parameter to {}", clients.getProfile());
+                                log.debug("Implicitly set profile parameter to {}", clients.getProfile());
                                 args[i] = clients.getProfile();
                             } else if (MAX.equals(queryParam.value())) {
-                                log.debug("Implicitely set max parameter to {}", clients.getMax());
+                                log.debug("Implicitly set max parameter to {}", clients.getMax());
                                 args[i] = clients.getMax();
                             }
                         }

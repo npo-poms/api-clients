@@ -221,6 +221,7 @@ public class MediaRestClientUtils {
                 parameters.getTail(),
                 parameters.getReasonFilter());
             final InputStream inputStream = toInputStream(response);
+
             return new JsonArrayIterator<>(
                 inputStream,
                 MediaChange.class,
