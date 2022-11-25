@@ -28,6 +28,8 @@ import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.util.*;
 
+import static nl.vpro.api.client.utils.ChangesFeedParameters.changesParameters;
+
 /**
  * @author Michiel Meeuwissen
  * @since 1.1
@@ -176,7 +178,6 @@ public class MediaRestClientUtils {
             Throwable t = pi.getCause();
             throw new RuntimeException(t.getMessage(), t);
         }
-
     }
 
     public static JsonArrayIterator<MediaChange> changes(
@@ -184,15 +185,41 @@ public class MediaRestClientUtils {
         @Nullable String profile,
         boolean profileCheck,
         @NonNull Instant since,
-        @Nullable String mid, @Nullable Order order, @Nullable Integer max, Deletes deletes, Tail tail) throws IOException {
+        @Nullable String mid,
+        @Nullable Order order,
+        @Nullable Integer max,
+        @Nullable Deletes deletes,
+        @Nullable Tail tail) throws IOException {
+        return changes(restService,
+            changesParameters()
+                .profile(profile)
+                .profileCheck(profileCheck)
+                .mediaSince(MediaSince.of(since, mid))
+                .order(order)
+                .max(max)
+                .deletes(deletes)
+                .tail(tail)
+                .build()
+        );
+    }
+
+
+
+    public static JsonArrayIterator<MediaChange> changes(
+        @NotNull MediaRestService restService,
+        ChangesFeedParameters parameters
+    ) throws IOException {
         try {
-            if (order == null)  {
-                order = Order.ASC;
-            }
+
             final Response response = restService.changes(
-                profile, null, null,
-                sinceString(since, mid),
-                order.name().toLowerCase(), max, profileCheck, deletes, tail, null);
+                parameters.getProfile(), null, null,
+                MediaSince.asQueryParam(parameters.getMediaSince()),
+                parameters.getOrder().name().toLowerCase(),
+                parameters.getMax(),
+                parameters.isProfileCheck(),
+                parameters.getDeletes(),
+                parameters.getTail(),
+                parameters.getReasonFilter());
             final InputStream inputStream = toInputStream(response);
             return new JsonArrayIterator<>(
                 inputStream,
@@ -215,6 +242,10 @@ public class MediaRestClientUtils {
         return changes(restService, profile, profileCheck, since, mid, order, max, deletes, Tail.IF_EMPTY);
     }
 
+    /**
+     * @deprecated use {@code MediaSince#of(since, mid).asQueryParam()}
+     */
+    @Deprecated
     public static String sinceString(Instant since, String mid) {
         String sinceString = since == null ? null : since.toString();
         if (mid != null && sinceString != null) {

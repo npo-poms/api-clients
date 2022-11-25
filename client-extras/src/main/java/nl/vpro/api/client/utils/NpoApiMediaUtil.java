@@ -31,8 +31,8 @@ import nl.vpro.domain.media.*;
 import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.util.*;
 
+import static nl.vpro.api.client.utils.ChangesFeedParameters.changesParameters;
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
-import static nl.vpro.domain.api.Order.ASC;
 import static nl.vpro.domain.api.Result.Total.equalsTo;
 
 /**
@@ -332,7 +332,16 @@ public class NpoApiMediaUtil implements MediaProvider {
         return changes(profile, since, null, order, max);
     }
     public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max) {
-        return changes(profile, false, null, since, mid, order, max, Deletes.ID_ONLY, Tail.IF_EMPTY);
+        return changes(changesParameters()
+            .profile(profile)
+            .profileCheck(false)
+            .since(since)
+            .mid(mid)
+            .order(order)
+            .max(max)
+            .deletes(Deletes.ID_ONLY)
+            .tail(Tail.IF_EMPTY)
+            .build());
     }
 
     public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
@@ -340,17 +349,19 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public CountedIterator<MediaChange> changes(String profile, Instant since) {
-        return changes(profile, false, null, since, null, ASC, null, Deletes.ID_ONLY, Tail.IF_EMPTY);
+        return changes(changesParameters().profile(profile).since(since).build());
     }
 
     public CountedIterator<MediaChange> changes(Instant since) {
-        return changes(null, false, null, since, null, ASC, null, Deletes.ID_ONLY, Tail.IF_EMPTY);
+        return changes(MediaSince.of(since));
     }
 
-
+    public CountedIterator<MediaChange> changes(MediaSince since) {
+        return changes(changesParameters().mediaSince(since));
+    }
 
     public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) {
-        return changes(profile, profileCheck, null, since, mid, order, max, deletes, tail);
+        return changes(changesParameters().profile(profile).profileCheck(profileCheck).since(since).mid(mid).order(order).max(max).deletes(deletes).tail(tail));
     }
 
     private static final Duration  waitBetweenChangeListening = Duration.ofSeconds(2);
@@ -369,27 +380,34 @@ public class NpoApiMediaUtil implements MediaProvider {
          Deletes deletes,
          BooleanSupplier doWhile,
          final Consumer<MediaChange> listener) {
-         return  subscribeToChanges(profile, initialSince, deletes, doWhile, Consumers.ignoreArg1(listener));
+         return subscribeToChanges(
+             ChangesFeedParameters.changesParameters()
+                 .profile(profile)
+                 .since(initialSince)
+                 .deletes(deletes)
+                 .build(),
+             doWhile,
+             Consumers.ignoreArg1(listener)
+         ).thenApply(MediaSince::getInstant);
+
      }
 
-    public Future<Instant> subscribeToChanges(
-        @Nullable String profile,
-        final Instant initialSince,
-        Deletes deletes,
+    public CompletableFuture<MediaSince> subscribeToChanges(
+        final ChangesFeedParameters parameters,
         BooleanSupplier doWhile,
         final BiConsumer<MediaSince, MediaChange> listener) {
         if (doWhile.getAsBoolean()) {
-            return EXECUTOR_SERVICE.submit(() -> {
-                Instant currentSince = initialSince;
-                String mid = null;
+            return CompletableFuture.supplyAsync(() -> {
+                ChangesFeedParameters effecitiveParameters = parameters;
+                MediaSince currentSince = parameters.getMediaSince();
+
                 while (doWhile.getAsBoolean() && !Thread.currentThread().isInterrupted()) {
-                    MediaSince mediaSince = MediaSince.builder().instant(currentSince).mid(mid).build();
-                    try (CountedIterator<MediaChange> changes = changes(profile, false, currentSince, mid, ASC, null, deletes, Tail.ALWAYS)) {
+                    try (CountedIterator<MediaChange> changes = changes(effecitiveParameters)) {
                         while (changes.hasNext()) {
                             MediaChange change = changes.next();
-                            listener.accept(mediaSince, change);
-                            currentSince = change.getPublishDate();
-                            mid = change.getMid();
+                            currentSince = change.asSince();
+                            listener.accept(currentSince, change);
+                            effecitiveParameters = parameters.withMediaSince(currentSince);
                         }
                     } catch (NullPointerException npe) {
                         log.error(npe.getClass().getSimpleName(), npe);
@@ -418,10 +436,10 @@ public class NpoApiMediaUtil implements MediaProvider {
                     listener.notifyAll();
                 }
                 return currentSince;
-            });
+            }, EXECUTOR_SERVICE);
         } else {
             log.info("No started changes listening, because doWhile condition is already false");
-            return CompletableFuture.completedFuture(initialSince);
+            return CompletableFuture.completedFuture(parameters.getMediaSince());
         }
 
     }
@@ -434,17 +452,16 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     }
 
+    protected  JsonArrayIterator<MediaChange> changes(ChangesFeedParameters.Builder parameters)  {
+        return changes(parameters.build());
+    }
+
+
     @SneakyThrows(ConnectException.class)
-    protected  JsonArrayIterator<MediaChange> changes(@Nullable String profile, boolean profileCheck, Long sinceSequence, Instant since,  String mid, Order order, Integer max, Deletes deletes, Tail tail)  {
+    protected  JsonArrayIterator<MediaChange> changes(ChangesFeedParameters parameters)  {
         limiter.acquire();
         try {
-
-            JsonArrayIterator<MediaChange> result;
-            if (sinceSequence == null) {
-                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, profileCheck, since, mid, order, max, deletes, tail);
-            } else {
-                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, sinceSequence, order, max);
-            }
+            JsonArrayIterator<MediaChange> result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), parameters);
             limiter.upRate();
             return result;
         } catch (ConnectException ce) {
