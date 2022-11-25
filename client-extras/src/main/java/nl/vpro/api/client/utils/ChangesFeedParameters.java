@@ -29,7 +29,11 @@ public class ChangesFeedParameters implements Serializable {
     final String reasonFilter;
 
 
-    @lombok.Builder(builderClassName = "Builder", buildMethodName = "_build", builderMethodName = "changesParameters")
+    public static ChangesFeedParameters.Builder changesParameters() {
+        return builder();
+    }
+
+    @lombok.Builder(builderClassName = "Builder", buildMethodName = "_build")
     private ChangesFeedParameters(@Nullable String profile, boolean profileCheck, MediaSince mediaSince, Order order, Integer max, Deletes deletes, Tail tail, String reasonFilter) {
         this.profile = profile;
         this.profileCheck = profileCheck;
