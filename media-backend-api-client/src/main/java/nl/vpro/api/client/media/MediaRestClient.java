@@ -18,6 +18,7 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.NoHttpResponseException;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -49,10 +50,10 @@ import nl.vpro.util.*;
 import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
 
 /**
- * A client for RESTful calls to a running MediaBackendRestService.
- *
- * This wraps a proxy which automaticly implementing the interface {@link MediaBackendRestService} (accessible via {@link #getBackendRestService()}
- *
+ * A client for RESTfull calls to a running MediaBackendRestService.
+ * <p>
+ * This wraps a proxy which automatically implementing the interface {@link MediaBackendRestService} (accessible via {@link #getBackendRestService()})
+ * <p>
  * Several utilities are provided (like {@link #get(String)}
  * ${@link #set(MediaUpdate)}). All raw calls can be done via
  * {@link #getBackendRestService()}
@@ -62,10 +63,10 @@ import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
  * arguments <code>null</code> which are also set in the client (like 'errors'),
  * then they will be automaticly filled (the MediaBackendInterface is proxied
  * (with {@link MediaRestClientAspect}) to make this possible)
- *
- * Also this client can implicitely throttle itself. Calls like this are rated
+ * <p>
+ * Also, this client can implicitly throttle itself. Calls like this are rated
  * on the POMS side, and like this you can avoid using it up too quickly.
- *
+ * <p>
  * Use it like this:
  *
  * <pre>
@@ -85,7 +86,7 @@ import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
  **
  * </pre>
  *
- * You can also configured it implicitly: MediaRestClient client = new MediaRestClient().configured();
+ * You can also configure it implicitly: MediaRestClient client = new MediaRestClient().configured();
  *
  * @author Michiel Meeuwissen
  */
@@ -497,8 +498,15 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @SuppressWarnings("unchecked")
     @SneakyThrows
     protected <T extends MediaUpdate<?>> T get(final @NonNull Class<T> type, final @NonNull String id) {
-        return (T) getBackendRestService()
-                .getMedia(valueOf(type), id, followMerges, owner);
+        int retryCountDown = 20;
+        while(true) {
+            try {
+                return (T) getBackendRestService()
+                    .getMedia(valueOf(type), id, followMerges, owner);
+            } catch (NoHttpResponseException noHttpResponseException) {
+                retryAfterWaitOrException(noHttpResponseException.getMessage());
+            }
+        }
     }
 
 
