@@ -5,16 +5,15 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.*;
 import java.util.Optional;
+import java.util.OptionalLong;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import nl.vpro.domain.media.support.ImageUrlService;
 import nl.vpro.domain.media.update.ImageUpdate;
@@ -27,6 +26,10 @@ import nl.vpro.domain.media.update.ImageUpdate;
 @Named
 @Slf4j
 public class NpoApiImageUtil implements ImageUrlService {
+
+
+    protected HttpClient client =  HttpClient.newBuilder().build();
+
 
     @Setter
     @Getter
@@ -48,42 +51,43 @@ public class NpoApiImageUtil implements ImageUrlService {
         return iu == null ? Optional.empty() : getUrl(iu.getImageUri());
     }
 
-    public Optional<Long> getSize(String imageUri) {
+    public OptionalLong getSize(String imageUri) {
         return getSize(getUrl(imageUri));
     }
 
-    public Optional<Long> getSize(ImageUpdate iu) {
+    public OptionalLong getSize(ImageUpdate iu) {
         Optional<String> url = getUrl(iu);
         return getSize(url);
     }
 
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    Optional<Long> getSize(Optional<String> url) {
-        return url
-            .map(u -> {
-                try (CloseableHttpClient client =  getClient()) {
-                    log.info("Getting size of image via {}", u);
-                    HttpHead head = new HttpHead(u);
-                    HttpResponse response = client.execute(head);
-                    if (response.getStatusLine().getStatusCode() == 200) {
-                        return Long.valueOf(response.getFirstHeader("Content-Length").getValue());
-                    } else {
-                        log.warn("Response {}", response.getStatusLine());
-                        return -1L;
-                    }
-                } catch (IOException e) {
-                    log.error(e.getMessage(), e);
+    OptionalLong getSize(Optional<String> url) {
+        if (url.isPresent()) {
+            URI uri = URI.create(url.get());
+            try {
+
+                log.info("Getting size of image via {}", uri);
+                HttpRequest head = HttpRequest.newBuilder(uri)
+                    .method("HEAD", HttpRequest.BodyPublishers.noBody())
+                    .build();
+
+                HttpResponse<Void> response = client.send(head, HttpResponse.BodyHandlers.discarding());
+                if (response.statusCode() == 200) {
+                    return response.headers().firstValueAsLong("Content-Length");
+                } else {
+                    log.warn("Response {}", response.statusCode());
+                    return OptionalLong.empty();
                 }
-                return -1L;
-            });
+            } catch (InterruptedException | IOException e) {
+                log.error(e.getMessage(), e);
+                return OptionalLong.empty();
+            }
+        } else {
+            return OptionalLong.empty();
+        }
     }
 
-    protected CloseableHttpClient getClient() {
-        return HttpClientBuilder
-            .create()
-            .build();
-    }
 
     @Override
     public String toString() {
@@ -93,6 +97,24 @@ public class NpoApiImageUtil implements ImageUrlService {
     @Override
     public String getImageBaseUrl() {
         return baseUrl + "/image/";
+    }
 
+    public boolean isAvailable() {
+        try {
+            URI health = URI.create(baseUrl + "manage/health");
+            HttpRequest head = HttpRequest.newBuilder(health)
+                .method("HEAD", HttpRequest.BodyPublishers.noBody())
+                .build();
+            HttpResponse<Void> send = client.send(head, HttpResponse.BodyHandlers.discarding());
+            if (send.statusCode() == 200) {
+                return true;
+            } else {
+                log.warn("For {} -> {}", health, send.statusCode());
+                return false;
+            }
+        } catch (Exception e) {
+            log.warn(e.getMessage(), e);
+            return false;
+        }
     }
 }

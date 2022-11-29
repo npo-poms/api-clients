@@ -15,12 +15,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 public class NpoApiImageUtilITest {
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
     public void getGetSize() {
 
-        NpoApiImageUtil util = new NpoApiImageUtil("https://images-dev.poms.omroep.nl/");
+        NpoApiImageUtil util = new NpoApiImageUtil("https://images-test.poms.omroep.nl/");
         ConfigUtils.configuredInHome(util, "apiclient.properties");
         log.info("Testing for {}", util.getBaseUrl());
-        assertThat(util.getSize("urn:vpro:image:706133").get()).isEqualTo(213356L);
+        assertThat(util.getSize("urn:vpro:image:706133").getAsLong()).isEqualTo(213356L);
+
+        assertThat(util.isAvailable()).isTrue();
     }
 }
