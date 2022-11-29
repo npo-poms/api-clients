@@ -1,5 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -363,7 +365,9 @@ public class NpoApiMediaUtil implements MediaProvider {
         return changes(changesParameters().profile(profile).profileCheck(profileCheck).since(since).mid(mid).order(order).max(max).deletes(deletes).tail(tail));
     }
 
-    private static final Duration  waitBetweenChangeListening = Duration.ofSeconds(2);
+    @Getter
+    @Setter
+    private Duration  waitBetweenChangeListening = Duration.ofSeconds(2);
 
     public Future<Instant> subscribeToChanges(String profile, Instant since, BooleanSupplier until, final Consumer<MediaChange> listener) {
         return subscribeToChanges(profile, since, Deletes.ID_ONLY, until, listener);
@@ -397,16 +401,16 @@ public class NpoApiMediaUtil implements MediaProvider {
         final BiConsumer<MediaSince, MediaChange> listener) {
         if (doWhile.getAsBoolean()) {
             return CompletableFuture.supplyAsync(() -> {
-                ChangesFeedParameters effecitiveParameters = parameters;
+                ChangesFeedParameters effectiveParameters = parameters;
                 MediaSince currentSince = parameters.getMediaSince();
 
                 while (doWhile.getAsBoolean() && !Thread.currentThread().isInterrupted()) {
-                    try (CountedIterator<MediaChange> changes = changes(effecitiveParameters)) {
+                    try (CountedIterator<MediaChange> changes = changes(effectiveParameters)) {
                         while (changes.hasNext()) {
                             MediaChange change = changes.next();
                             currentSince = change.asSince();
                             listener.accept(currentSince, change);
-                            effecitiveParameters = parameters.withMediaSince(currentSince);
+                            effectiveParameters = parameters.withMediaSince(currentSince);
                         }
                     } catch (NullPointerException npe) {
                         log.error(npe.getClass().getSimpleName(), npe);
