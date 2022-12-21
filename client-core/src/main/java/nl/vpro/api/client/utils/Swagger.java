@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -67,7 +68,7 @@ public class Swagger {
         } catch (JsonParseException jpe) {
             log.warn(jpe.getMessage());
             return VersionResult.builder().version(defaultVersion).available(true).build();
-        } catch (ConnectException e) {
+        } catch (ConnectException | ConnectTimeoutException e) {
             log.warn(e.getMessage());
             return VersionResult.builder().version(defaultVersion).available(false).build();
         } catch (IOException e) {
