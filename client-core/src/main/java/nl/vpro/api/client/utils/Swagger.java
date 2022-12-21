@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.URI;
+import java.time.Duration;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -33,13 +35,25 @@ public class Swagger {
 
     private static final Pattern VERSION = Pattern.compile("(\\d+.\\d+(?:\\.\\d+)?).*");
 
-    public static VersionResult getVersionFromSwagger(String baseUrl, String defaultVersion) {
+    public static VersionResult getVersionFromSwagger(String baseUrl, String defaultVersion)  {
+        return getVersionFromSwagger(baseUrl, defaultVersion, Duration.ofSeconds(3));
+    }
+
+    public static VersionResult getVersionFromSwagger(String baseUrl, String defaultVersion, Duration timeout) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonFactory factory = new JsonFactory();
-            try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+            RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout((int) timeout.toMillis())
+                .setConnectionRequestTimeout((int) timeout.toMillis())
+                .setSocketTimeout((int) timeout.toMillis()).build();
+            try (CloseableHttpClient client = HttpClientBuilder
+                .create()
+                .setDefaultRequestConfig(config)
+                .build()) {
                 URI url = URI.create(baseUrl + "/swagger.json");
                 HttpUriRequest request = new HttpGet(url);
+
                 request.addHeader(Headers.NPO_DATE, "CacheBust-" + UUID.randomUUID()); // Cloudfront includes npo date as a cache key header.
                 try (CloseableHttpResponse response = client.execute(request)) {
                     try (InputStream stream = response.getEntity().getContent()) {
