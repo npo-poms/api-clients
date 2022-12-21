@@ -314,14 +314,18 @@ public class NpoApiClients extends AbstractApiClient {
     }
 
     private Supplier<VersionResult> version = null;
-    public String getVersion() {
+    public String getVersion(Duration timeout) {
         if (version == null) {
             log.info("Obtaining version from {}", baseUrl);
             version = Suppliers.memoizeWithExpiration(
-                () -> Swagger.getVersionFromSwagger(baseUrl, "5.23"), 30, TimeUnit.MINUTES);
+                () -> Swagger.getVersionFromSwagger(baseUrl, "5.23", timeout), 30, TimeUnit.MINUTES);
         }
         return version.get().getVersion();
     }
+    public String getVersion() {
+        return getVersion(null);
+    }
+
 
     public boolean isAvailable() {
         getVersion();
