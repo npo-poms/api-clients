@@ -16,6 +16,7 @@ import org.apache.http.client.methods.*;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -37,11 +38,14 @@ public class Swagger {
     private static final Pattern VERSION = Pattern.compile("(\\d+.\\d+(?:\\.\\d+)?).*");
 
     public static VersionResult getVersionFromSwagger(String baseUrl, String defaultVersion)  {
-        return getVersionFromSwagger(baseUrl, defaultVersion, Duration.ofSeconds(3));
+        return getVersionFromSwagger(baseUrl, defaultVersion, null);
     }
 
-    public static VersionResult getVersionFromSwagger(String baseUrl, String defaultVersion, Duration timeout) {
+    public static VersionResult getVersionFromSwagger(String baseUrl, String defaultVersion, @Nullable Duration timeout) {
         try {
+            if (timeout == null) {
+                timeout = Duration.ofSeconds(3);
+            }
             ObjectMapper mapper = new ObjectMapper();
             JsonFactory factory = new JsonFactory();
             RequestConfig config = RequestConfig.custom()
