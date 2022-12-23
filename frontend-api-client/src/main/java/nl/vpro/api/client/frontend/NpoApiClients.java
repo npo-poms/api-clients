@@ -332,6 +332,7 @@ public class NpoApiClients extends AbstractApiClient {
         return version.get().isAvailable();
     }
 
+
     /**
      * The version of the npo frontend api we are talking too.
      * @return a float representing the major/minor version. The patch level is added as thousands.

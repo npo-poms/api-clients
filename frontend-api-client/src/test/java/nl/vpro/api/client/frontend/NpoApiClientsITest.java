@@ -52,7 +52,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Slf4j
 public class NpoApiClientsITest {
 
-    private static Env env = Env.TEST;
+    private static Env env = Env.LOCALHOST;
     private NpoApiClients clients;
 
     @BeforeEach
@@ -334,7 +334,6 @@ public class NpoApiClientsITest {
         }
 
     }
-
 
 
 
