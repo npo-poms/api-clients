@@ -15,7 +15,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.slf4j.*;
 
-import nl.vpro.mdc.MDCConstants;
+import nl.vpro.logging.mdc.MDCConstants;
 
 /**
  * @author Roelof Jan Koekoek
