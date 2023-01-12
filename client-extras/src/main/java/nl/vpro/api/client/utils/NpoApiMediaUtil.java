@@ -1,8 +1,35 @@
 package nl.vpro.api.client.utils;
 
-import lombok.SneakyThrows;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import nl.vpro.api.client.frontend.NpoApiClients;
+import nl.vpro.domain.api.*;
+import nl.vpro.domain.api.media.MediaForm;
+import nl.vpro.domain.api.media.MediaResult;
+import nl.vpro.domain.api.media.ProgramResult;
+import nl.vpro.domain.api.media.RedirectList;
+import nl.vpro.domain.media.MediaObject;
+import nl.vpro.domain.media.MediaProvider;
+import nl.vpro.domain.media.MediaType;
+import nl.vpro.domain.media.Program;
+import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.CloseableIterator;
+import nl.vpro.util.CountedIterator;
+import nl.vpro.util.TimeUtils;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.meeuw.functional.Consumers;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.time.Duration;
@@ -11,27 +38,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Response;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import com.google.common.cache.*;
-import com.google.common.util.concurrent.UncheckedExecutionException;
-
-import nl.vpro.api.client.frontend.NpoApiClients;
-import nl.vpro.domain.api.*;
-import nl.vpro.domain.api.media.*;
-import nl.vpro.domain.media.*;
-import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.*;
-
+import static nl.vpro.api.client.utils.ChangesFeedParameters.changesParameters;
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
-import static nl.vpro.domain.api.Order.ASC;
 import static nl.vpro.domain.api.Result.Total.equalsTo;
 
 /**
@@ -42,10 +50,12 @@ import static nl.vpro.domain.api.Result.Total.equalsTo;
  <li>un paging of calls that require paging. if the api enforces a max of at most e.g. 240, calls in this utility will accept any max, and do paging implicitely</li>
  <li></li>less arguments. Some of the Rest service interface want arguments like request and response object which should at the client side simply remain null (btw I think there are no much of that kind of methods left</li>
  <li>exception handling</li>
- <li>Parsing of input stream if that it the return value (huge results like {@link nl.vpro.api.rs.v3.media.MediaRestService#changes(String, String, Long, String, String, Integer, Boolean, Deletes, Tail)} and {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer)} have that.</li>
+ <li>Parsing of input stream if that it the return value (huge results like {@link nl.vpro.api.rs.v3.media.MediaRestService#changes(String, String, Long, String, String, Integer, Boolean, Deletes, Tail, String)} and {@link nl.vpro.api.rs.v3.media.MediaRestService#iterate(MediaForm, String, String, Long, Integer)} have that.</li>
  </ul>
 
  * @author Michiel Meeuwissen
+ * @see NpoApiPageUtil
+ * @see NpoApiImageUtil
  */
 @Named
 @Slf4j
@@ -100,7 +110,7 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     public void clearCache() {
         cache.invalidateAll();
-        //clients.clearBrowserCache();
+        clients.clearBrowserCache();
 
     }
     @Named("npo-api-mediautil.cachesize")
@@ -292,6 +302,8 @@ public class NpoApiMediaUtil implements MediaProvider {
             result[i] = cache.getIfPresent(id[i]);
             if (result[i] == null) {
                 toRequest.add(id[i]);
+            } else {
+                log.debug("Using {} from cache", id[i]);
             }
         }
         if (!toRequest.isEmpty()) {
@@ -329,7 +341,16 @@ public class NpoApiMediaUtil implements MediaProvider {
         return changes(profile, since, null, order, max);
     }
     public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max) {
-        return changes(profile, false, null, since, mid, order, max, Deletes.ID_ONLY, Tail.IF_EMPTY);
+        return changes(changesParameters()
+            .profile(profile)
+            .profileCheck(false)
+            .since(since)
+            .mid(mid)
+            .order(order)
+            .max(max)
+            .deletes(Deletes.ID_ONLY)
+            .tail(Tail.IF_EMPTY)
+            .build());
     }
 
     public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
@@ -337,20 +358,24 @@ public class NpoApiMediaUtil implements MediaProvider {
     }
 
     public CountedIterator<MediaChange> changes(String profile, Instant since) {
-        return changes(profile, false, null, since, null, ASC, null, Deletes.ID_ONLY, Tail.IF_EMPTY);
+        return changes(changesParameters().profile(profile).since(since).build());
     }
 
     public CountedIterator<MediaChange> changes(Instant since) {
-        return changes(null, false, null, since, null, ASC, null, Deletes.ID_ONLY, Tail.IF_EMPTY);
+        return changes(MediaSince.of(since));
     }
 
-
+    public CountedIterator<MediaChange> changes(MediaSince since) {
+        return changes(changesParameters().mediaSince(since));
+    }
 
     public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) {
-        return changes(profile, profileCheck, null, since, mid, order, max, deletes, tail);
+        return changes(changesParameters().profile(profile).profileCheck(profileCheck).since(since).mid(mid).order(order).max(max).deletes(deletes).tail(tail));
     }
 
-    private static final Duration  waitBetweenChangeListening = Duration.ofSeconds(2);
+    @Getter
+    @Setter
+    private Duration  waitBetweenChangeListening = Duration.ofSeconds(2);
 
     public Future<Instant> subscribeToChanges(String profile, Instant since, BooleanSupplier until, final Consumer<MediaChange> listener) {
         return subscribeToChanges(profile, since, Deletes.ID_ONLY, until, listener);
@@ -360,20 +385,40 @@ public class NpoApiMediaUtil implements MediaProvider {
         return subscribeToChanges(null, since, until, listener);
     }
 
-    public Future<Instant> subscribeToChanges(
-        @Nullable String profile,
-        final Instant initialSince, Deletes deletes, BooleanSupplier doWhile, final Consumer<MediaChange> listener) {
+     public Future<Instant> subscribeToChanges(
+         @Nullable String profile,
+         final Instant initialSince,
+         Deletes deletes,
+         BooleanSupplier doWhile,
+         final Consumer<MediaChange> listener) {
+         return subscribeToChanges(
+             ChangesFeedParameters.changesParameters()
+                 .profile(profile)
+                 .since(initialSince)
+                 .deletes(deletes)
+                 .build(),
+             doWhile,
+             Consumers.ignoreArg1(listener)
+         ).thenApply(MediaSince::getInstant);
+
+     }
+
+    public CompletableFuture<MediaSince> subscribeToChanges(
+        final ChangesFeedParameters parameters,
+        BooleanSupplier doWhile,
+        final BiConsumer<MediaSince, MediaChange> listener) {
         if (doWhile.getAsBoolean()) {
-            return EXECUTOR_SERVICE.submit(() -> {
-                Instant currentSince = initialSince;
-                String mid = null;
+            return CompletableFuture.supplyAsync(() -> {
+                ChangesFeedParameters effectiveParameters = parameters;
+                MediaSince currentSince = parameters.getMediaSince();
+
                 while (doWhile.getAsBoolean() && !Thread.currentThread().isInterrupted()) {
-                    try (CountedIterator<MediaChange> changes = changes(profile, false, currentSince, mid, ASC, null, deletes, Tail.ALWAYS)) {
+                    try (CountedIterator<MediaChange> changes = changes(effectiveParameters)) {
                         while (changes.hasNext()) {
                             MediaChange change = changes.next();
-                            listener.accept(change);
-                            currentSince = change.getPublishDate();
-                            mid = change.getMid();
+                            currentSince = change.asSince();
+                            listener.accept(currentSince, change);
+                            effectiveParameters = parameters.withMediaSince(currentSince);
                         }
                     } catch (NullPointerException npe) {
                         log.error(npe.getClass().getSimpleName(), npe);
@@ -402,10 +447,10 @@ public class NpoApiMediaUtil implements MediaProvider {
                     listener.notifyAll();
                 }
                 return currentSince;
-            });
+            }, EXECUTOR_SERVICE);
         } else {
             log.info("No started changes listening, because doWhile condition is already false");
-            return CompletableFuture.completedFuture(initialSince);
+            return CompletableFuture.completedFuture(parameters.getMediaSince());
         }
 
     }
@@ -418,21 +463,21 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     }
 
-    @SneakyThrows(ConnectException.class)
-    protected  JsonArrayIterator<MediaChange> changes(@Nullable String profile, boolean profileCheck, Long sinceSequence, Instant since,  String mid, Order order, Integer max, Deletes deletes, Tail tail)  {
+    public JsonArrayIterator<MediaChange> changes(ChangesFeedParameters.Builder parameters)  {
+        return changes(parameters.build());
+    }
+
+
+    public JsonArrayIterator<MediaChange> changes(ChangesFeedParameters parameters)  {
         limiter.acquire();
         try {
-
-            JsonArrayIterator<MediaChange> result;
-            if (sinceSequence == null) {
-                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, profileCheck, since, mid, order, max, deletes, tail);
-            } else {
-                result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), profile, sinceSequence, order, max);
+            try {
+                JsonArrayIterator<MediaChange> result = MediaRestClientUtils.changes(clients.getMediaServiceNoTimeout(), parameters);
+                limiter.upRate();
+                return result;
+            } catch (ConnectException ce) {
+                throw ce;
             }
-            limiter.upRate();
-            return result;
-        } catch (ConnectException ce) {
-            throw ce;
         } catch (IOException e) {
             limiter.downRate();
             throw new RuntimeException(clients + ":" + e.getMessage(), e);
