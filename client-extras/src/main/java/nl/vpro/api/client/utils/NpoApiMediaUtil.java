@@ -343,7 +343,6 @@ public class NpoApiMediaUtil implements MediaProvider {
     public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max) {
         return changes(changesParameters()
             .profile(profile)
-            .profileCheck(false)
             .since(since)
             .mid(mid)
             .order(order)
@@ -353,9 +352,15 @@ public class NpoApiMediaUtil implements MediaProvider {
             .build());
     }
 
-    public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
+    @Deprecated
+    public CountedIterator<MediaChange> changes(String profile, Boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) {
         return changes(profile, profileCheck, since, mid, order, max, deletes, Tail.IF_EMPTY);
     }
+
+    public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max, Deletes deletes) {
+        return changes(profile, null, since, mid, order, max, deletes, Tail.IF_EMPTY);
+    }
+
 
     public CountedIterator<MediaChange> changes(String profile, Instant since) {
         return changes(changesParameters().profile(profile).since(since).build());
@@ -369,8 +374,30 @@ public class NpoApiMediaUtil implements MediaProvider {
         return changes(changesParameters().mediaSince(since));
     }
 
-    public CountedIterator<MediaChange> changes(String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) {
-        return changes(changesParameters().profile(profile).profileCheck(profileCheck).since(since).mid(mid).order(order).max(max).deletes(deletes).tail(tail));
+    @Deprecated
+    public CountedIterator<MediaChange> changes(String profile, Boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) {
+        return changes(changesParameters()
+                .profile(profile)
+                .profileCheck(profileCheck)
+                .since(since)
+                .mid(mid)
+                .order(order)
+                .max(max)
+                .deletes(deletes)
+                .tail(tail)
+        );
+    }
+
+    public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) {
+        return changes(changesParameters()
+                .profile(profile)
+                .since(since)
+                .mid(mid)
+                .order(order)
+                .max(max)
+                .deletes(deletes)
+                .tail(tail)
+        );
     }
 
     @Getter

@@ -1,23 +1,7 @@
 package nl.vpro.api.client.utils;
 
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Supplier;
-
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.io.IOUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import com.google.common.collect.Lists;
-
+import lombok.extern.slf4j.Slf4j;
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
@@ -29,7 +13,26 @@ import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.logging.simple.Level;
 import nl.vpro.poms.shared.Headers;
-import nl.vpro.util.*;
+import nl.vpro.util.CountedIterator;
+import nl.vpro.util.FileCachingInputStream;
+import nl.vpro.util.LazyIterator;
+import org.apache.commons.io.IOUtils;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Supplier;
 
 import static nl.vpro.api.client.utils.ChangesFeedParameters.changesParameters;
 import static nl.vpro.logging.simple.Slf4jSimpleLogger.slf4j;
@@ -220,7 +223,7 @@ public class MediaRestClientUtils {
                 MediaSince.asQueryParam(parameters.getMediaSince()),
                 parameters.getOrder().name().toLowerCase(),
                 parameters.getMax(),
-                parameters.isProfileCheck(),
+                parameters.getProfileCheck(),
                 parameters.getDeletes(),
                 parameters.getTail(),
                 parameters.getReasonFilter());
