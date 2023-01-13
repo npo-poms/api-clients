@@ -1,8 +1,23 @@
 package nl.vpro.api.client.utils;
 
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.api.client.frontend.NpoApiClients;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Supplier;
+
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.io.IOUtils;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import com.google.common.collect.Lists;
+
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.domain.api.*;
@@ -11,31 +26,7 @@ import nl.vpro.domain.media.*;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.logging.simple.Level;
-import nl.vpro.poms.shared.Headers;
-import nl.vpro.util.CountedIterator;
-import nl.vpro.util.FileCachingInputStream;
-import nl.vpro.util.LazyIterator;
-import org.apache.commons.io.IOUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Supplier;
-
-import static nl.vpro.api.client.utils.ChangesFeedParameters.changesParameters;
-import static nl.vpro.logging.simple.Slf4jSimpleLogger.slf4j;
+import nl.vpro.util.*;
 
 /**
  * @author Michiel Meeuwissen
@@ -185,50 +176,35 @@ public class MediaRestClientUtils {
             Throwable t = pi.getCause();
             throw new RuntimeException(t.getMessage(), t);
         }
+
     }
+
+
 
     public static JsonArrayIterator<MediaChange> changes(
         @NotNull MediaRestService restService,
         @Nullable String profile,
-        boolean profileCheck,
         @NonNull Instant since,
-        @Nullable String mid,
-        @Nullable Order order,
-        @Nullable Integer max,
-        @Nullable Deletes deletes,
-        @Nullable Tail tail) throws IOException {
-        return changes(restService,
-            changesParameters()
-                .profile(profile)
-                .profileCheck(profileCheck)
-                .mediaSince(MediaSince.of(since, mid))
-                .order(order)
-                .max(max)
-                .deletes(deletes)
-                .tail(tail)
-                .build()
-        );
-    }
+        @Nullable String mid, @Nullable Order order, @Nullable Integer max, Deletes deletes, Tail tail) throws IOException {
 
-
-
+        return changes(restService, profile, null, since, mid, order, max, deletes, tail);
+     }
+    @Deprecated
     public static JsonArrayIterator<MediaChange> changes(
         @NotNull MediaRestService restService,
-        ChangesFeedParameters parameters
-    ) throws IOException {
+        @Nullable String profile,
+        Boolean profileCheck,
+        @NonNull Instant since,
+        @Nullable String mid, @Nullable Order order, @Nullable Integer max, Deletes deletes, Tail tail) throws IOException {
         try {
-
+            if (order == null)  {
+                order = Order.ASC;
+            }
             final Response response = restService.changes(
-                parameters.getProfile(), null, null,
-                MediaSince.asQueryParam(parameters.getMediaSince()),
-                parameters.getOrder().name().toLowerCase(),
-                parameters.getMax(),
-                parameters.isProfileCheck(),
-                parameters.getDeletes(),
-                parameters.getTail(),
-                parameters.getReasonFilter());
+                profile, null, null,
+                sinceString(since, mid),
+                order.name().toLowerCase(), max, profileCheck, deletes, tail, null);
             final InputStream inputStream = toInputStream(response);
-
             return new JsonArrayIterator<>(
                 inputStream,
                 MediaChange.class,
@@ -246,14 +222,15 @@ public class MediaRestClientUtils {
         }
 
     }
-    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
+    @Deprecated
+    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, Boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
         return changes(restService, profile, profileCheck, since, mid, order, max, deletes, Tail.IF_EMPTY);
     }
 
-    /**
-     * @deprecated use {@code MediaSince#of(since, mid).asQueryParam()}
-     */
-    @Deprecated
+    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
+        return changes(restService, profile, null, since, mid, order, max, deletes, Tail.IF_EMPTY);
+    }
+
     public static String sinceString(Instant since, String mid) {
         String sinceString = since == null ? null : since.toString();
         if (mid != null && sinceString != null) {
@@ -383,21 +360,17 @@ public class MediaRestClientUtils {
     public static InputStream toInputStream(Response response) {
         // I would rather use some utility to map response status codes to proper exceptions, but I can't find one.
         // This seems incomplete now
-        try {
-            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-                InputStream inputStream = response.readEntity(InputStream.class);
-                return inputStream;
-            } else if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
-                throw new NotFoundException(response);
-            } else if (response.getStatusInfo().getFamily() == Response.Status.Family.CLIENT_ERROR) {
-                throw new BadRequestException(response);
-            } else if (response.getStatusInfo().getFamily() == Response.Status.Family.SERVER_ERROR) {
-                throw new ServerErrorException(response);
-            } else {
-                throw new RuntimeException(response.readEntity(String.class));
-            }
-        } finally {
-            NpoApiClients.dealWithHeaders(slf4j(log), s -> s.equalsIgnoreCase(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG);
+        if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
+            InputStream inputStream = response.readEntity(InputStream.class);
+            return inputStream;
+        } else if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+            throw new NotFoundException(response);
+        } else if (response.getStatusInfo().getFamily() == Response.Status.Family.CLIENT_ERROR) {
+            throw new BadRequestException(response);
+        } else if (response.getStatusInfo().getFamily() == Response.Status.Family.SERVER_ERROR) {
+            throw new ServerErrorException(response);
+        } else {
+            throw new RuntimeException(response.readEntity(String.class));
         }
     }
 
