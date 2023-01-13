@@ -337,6 +337,13 @@ public class NpoApiMediaUtil implements MediaProvider {
         return changes(profile, profileCheck, since, mid, order, max, deletes, Tail.IF_EMPTY);
     }
 
+
+
+
+    public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max, Deletes deletes) {
+        return changes(profile, null, null, since, mid, order, max, deletes, Tail.IF_EMPTY);
+    }
+
     public CountedIterator<MediaChange> changes(String profile, Instant since) {
         return changes(profile, false, null, since, null, ASC, null, Deletes.ID_ONLY, Tail.IF_EMPTY);
     }
@@ -349,6 +356,10 @@ public class NpoApiMediaUtil implements MediaProvider {
     @Deprecated
     public CountedIterator<MediaChange> changes(String profile, Boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) {
         return changes(profile, profileCheck, null, since, mid, order, max, deletes, tail);
+    }
+
+    public CountedIterator<MediaChange> changes(String profile, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) {
+        return changes(profile, null, null, since, mid, order, max, deletes, tail);
     }
 
     private static final Duration  waitBetweenChangeListening = Duration.ofSeconds(2);
@@ -369,7 +380,7 @@ public class NpoApiMediaUtil implements MediaProvider {
                 Instant currentSince = initialSince;
                 String mid = null;
                 while (doWhile.getAsBoolean() && !Thread.currentThread().isInterrupted()) {
-                    try (CountedIterator<MediaChange> changes = changes(profile, false, currentSince, mid, ASC, null, deletes, Tail.ALWAYS)) {
+                    try (CountedIterator<MediaChange> changes = changes(profile, currentSince, mid, ASC, null, deletes, Tail.ALWAYS)) {
                         while (changes.hasNext()) {
                             MediaChange change = changes.next();
                             listener.accept(change);
