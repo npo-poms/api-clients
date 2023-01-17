@@ -125,8 +125,7 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
     public CloseableIterator<MediaChange> changes(
         @Nullable final Instant since,
         @Nullable final String mid,
-        @Nullable final ProfileDefinition<MediaObject> currentProfile,
-        @Nullable final ProfileDefinition<MediaObject> previousProfile,
+        @Nullable final ProfileDefinition<MediaObject> profile,
         @NonNull final Order order,
         @Nullable final Integer max,
         @Nullable Deletes deletes,
