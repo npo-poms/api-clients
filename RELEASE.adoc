@@ -1,0 +1,17 @@
+= releasing
+
+[source,bash]
+----
+mvn release:branch -B
+git checkout REL-5.13-SNAPSHOT
+mvn -Pdeploy,ossrh release:prepare release:perform -B
+----
+
+If sonatype down, we can also deploy to vpro-nexus (the artifacts aren't publically available then)
+
+
+[source, bash]
+----
+mvn -Pdeploy,vpro-nexus release:prepare release:perform -B
+
+----
