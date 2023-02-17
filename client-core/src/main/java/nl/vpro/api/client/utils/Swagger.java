@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.URI;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,18 +57,25 @@ public class Swagger {
                 .create()
                 .setDefaultRequestConfig(config)
                 .build()) {
-                URI url = URI.create(baseUrl + "/swagger.json");
-                HttpUriRequest request = new HttpGet(url);
 
-                request.addHeader(Headers.NPO_DATE, "CacheBust-" + UUID.randomUUID()); // Cloudfront includes npo date as a cache key header.
-                try (CloseableHttpResponse response = client.execute(request)) {
-                    try (InputStream stream = response.getEntity().getContent()) {
-                        JsonParser jp = factory.createParser(stream);
-                        JsonNode swagger = mapper.readTree(jp);
-                        String versionString = swagger.get("info").get("version").asText();
-                        return VersionResult.builder().version(getVersion(versionString, defaultVersion)).available(true).build();
+                for (String json : Arrays.asList("/swagger.json", "/openapi.json")) {
+                    URI url = URI.create(baseUrl + json);
+                    HttpUriRequest request = new HttpGet(url);
+
+                    request.addHeader(Headers.NPO_DATE, "CacheBust-" + UUID.randomUUID()); // Cloudfront includes npo date as a cache key header.
+                    try (CloseableHttpResponse response = client.execute(request)) {
+                        if (response.getStatusLine().getStatusCode() == 404) {
+                            continue;
+                        }
+                        try (InputStream stream = response.getEntity().getContent()) {
+                            JsonParser jp = factory.createParser(stream);
+                            JsonNode swagger = mapper.readTree(jp);
+                            String versionString = swagger.get("info").get("version").asText();
+                            return VersionResult.builder().version(getVersion(versionString, defaultVersion)).available(true).build();
+                        }
                     }
                 }
+                return VersionResult.builder().version(defaultVersion).available(false).build();
             }
         } catch (JsonParseException jpe) {
             log.warn(jpe.getMessage());
