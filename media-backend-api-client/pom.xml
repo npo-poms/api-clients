@@ -51,12 +51,16 @@
       <artifactId>jakarta.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <!-- optional? re3/re4?
     <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-client-api</artifactId>
+      <groupId>nl.vpro.shared</groupId>
+      <artifactId>vpro-shared-rs</artifactId>
     </dependency>
-    -->
+      <!-- optional? re3/re4?
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-client-api</artifactId>
+      </dependency>
+      -->
 
   </dependencies>
 
