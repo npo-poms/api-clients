@@ -171,7 +171,7 @@ public class NpoApiClientsITest {
 
     @Test
     public void testChanges() throws IOException, ProfileNotFoundException {
-        try (InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null, null, null).readEntity(InputStream.class)) {
+        try (InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null , null).readEntity(InputStream.class)) {
             IOUtils.copy(response, LoggerOutputStream.info(log));
         }
     }
