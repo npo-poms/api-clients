@@ -1,7 +1,23 @@
 package nl.vpro.api.client.utils;
 
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Supplier;
+
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.io.IOUtils;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import com.google.common.collect.Lists;
+
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
@@ -13,26 +29,7 @@ import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.logging.simple.Level;
 import nl.vpro.poms.shared.Headers;
-import nl.vpro.util.CountedIterator;
-import nl.vpro.util.FileCachingInputStream;
-import nl.vpro.util.LazyIterator;
-import org.apache.commons.io.IOUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.time.Instant;
-import java.util.*;
-import java.util.function.Supplier;
+import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.ChangesFeedParameters.changesParameters;
 import static nl.vpro.logging.simple.Slf4jSimpleLogger.slf4j;
@@ -175,7 +172,7 @@ public class MediaRestClientUtils {
     @Deprecated
     public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, long since, Order order, Integer max) throws IOException {
         try {
-            final InputStream inputStream = toInputStream(restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, null, Tail.ALWAYS, null));
+            final InputStream inputStream = toInputStream(restService.changes(profile, null, since, null, order.name().toLowerCase(), max, null, Tail.ALWAYS, null));
             return new JsonArrayIterator<>(
                 inputStream,
                 MediaChange.class,
@@ -190,7 +187,6 @@ public class MediaRestClientUtils {
     public static JsonArrayIterator<MediaChange> changes(
         @NotNull MediaRestService restService,
         @Nullable String profile,
-        boolean profileCheck,
         @NonNull Instant since,
         @Nullable String mid,
         @Nullable Order order,
@@ -200,7 +196,6 @@ public class MediaRestClientUtils {
         return changes(restService,
             changesParameters()
                 .profile(profile)
-                .profileCheck(profileCheck)
                 .mediaSince(MediaSince.of(since, mid))
                 .order(order)
                 .max(max)
@@ -223,7 +218,6 @@ public class MediaRestClientUtils {
                 MediaSince.asQueryParam(parameters.getMediaSince()),
                 parameters.getOrder().name().toLowerCase(),
                 parameters.getMax(),
-                parameters.getProfileCheck(),
                 parameters.getDeletes(),
                 parameters.getTail(),
                 parameters.getReasonFilter());
@@ -246,8 +240,8 @@ public class MediaRestClientUtils {
         }
 
     }
-    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
-        return changes(restService, profile, profileCheck, since, mid, order, max, deletes, Tail.IF_EMPTY);
+    public static JsonArrayIterator<MediaChange> changes(MediaRestService restService, String profile, Instant since, String mid, Order order, Integer max, Deletes deletes) throws IOException {
+        return changes(restService, profile, since, mid, order, max, deletes, Tail.IF_EMPTY);
     }
 
     /**

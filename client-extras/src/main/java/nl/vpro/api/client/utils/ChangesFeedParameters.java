@@ -2,14 +2,13 @@ package nl.vpro.api.client.utils;
 
 import lombok.Getter;
 import lombok.With;
-import nl.vpro.domain.api.Deletes;
-import nl.vpro.domain.api.MediaSince;
-import nl.vpro.domain.api.Order;
-import nl.vpro.domain.api.Tail;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.Serializable;
 import java.time.Instant;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import nl.vpro.domain.api.*;
 
 /**
  * @since 7.2
@@ -18,8 +17,6 @@ import java.time.Instant;
 public class ChangesFeedParameters implements Serializable {
 
     final @Nullable String profile;
-    @Deprecated
-    final Boolean profileCheck;
 
     @With
     final MediaSince mediaSince;
@@ -38,9 +35,8 @@ public class ChangesFeedParameters implements Serializable {
     @lombok.Builder(builderClassName = "Builder", buildMethodName = "_build")
     private ChangesFeedParameters(
             @Nullable String profile,
-            Boolean profileCheck, MediaSince mediaSince, Order order, Integer max, Deletes deletes, Tail tail, String reasonFilter) {
+            MediaSince mediaSince, Order order, Integer max, Deletes deletes, Tail tail, String reasonFilter) {
         this.profile = profile;
-        this.profileCheck = profileCheck;
         this.mediaSince = mediaSince;
         this.order = order == null ? Order.ASC : order;
         this.max = max;

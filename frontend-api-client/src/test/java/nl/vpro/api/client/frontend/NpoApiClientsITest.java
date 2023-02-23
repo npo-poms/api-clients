@@ -191,7 +191,7 @@ public class NpoApiClientsITest {
     public void testChangesError() throws IOException {
         assertThatThrownBy(() -> {
 
-            try (InputStream is = clients.getMediaService().changes("no profile", null, -1L, null, "ASC", 100, null, null, null, null).readEntity(InputStream.class)) {
+            try (InputStream is = clients.getMediaService().changes("no profile", null, -1L, null, "ASC", 100, null, null, null).readEntity(InputStream.class)) {
                 log.info("{}", is);
             }
         }).isInstanceOf(NotFoundException.class);

@@ -1,35 +1,9 @@
 package nl.vpro.api.client.utils;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.UncheckedExecutionException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import nl.vpro.api.client.frontend.NpoApiClients;
-import nl.vpro.domain.api.*;
-import nl.vpro.domain.api.media.MediaForm;
-import nl.vpro.domain.api.media.MediaResult;
-import nl.vpro.domain.api.media.ProgramResult;
-import nl.vpro.domain.api.media.RedirectList;
-import nl.vpro.domain.media.MediaObject;
-import nl.vpro.domain.media.MediaProvider;
-import nl.vpro.domain.media.MediaType;
-import nl.vpro.domain.media.Program;
-import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.CloseableIterator;
-import nl.vpro.util.CountedIterator;
-import nl.vpro.util.TimeUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.meeuw.functional.Consumers;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.time.Duration;
@@ -37,6 +11,26 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.Response;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.meeuw.functional.Consumers;
+
+import com.google.common.cache.*;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+
+import nl.vpro.api.client.frontend.NpoApiClients;
+import nl.vpro.domain.api.*;
+import nl.vpro.domain.api.media.*;
+import nl.vpro.domain.media.*;
+import nl.vpro.jackson2.JsonArrayIterator;
+import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.ChangesFeedParameters.changesParameters;
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
@@ -378,7 +372,6 @@ public class NpoApiMediaUtil implements MediaProvider {
     public CountedIterator<MediaChange> changes(String profile, Boolean profileCheck, Instant since, String mid, Order order, Integer max, Deletes deletes, Tail tail) {
         return changes(changesParameters()
                 .profile(profile)
-                .profileCheck(profileCheck)
                 .since(since)
                 .mid(mid)
                 .order(order)
