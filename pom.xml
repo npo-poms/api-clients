@@ -9,7 +9,7 @@
   </parent>
   <groupId>nl.vpro.poms.api-clients</groupId>
   <artifactId>api-client-parent</artifactId>
-  <version>7.4.0</version>
+  <version>7.4.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Clients for NPO APIs</description>
 
@@ -29,7 +29,7 @@
     <connection>scm:git:${project.scm.url}</connection>
     <developerConnection>scm:git:${project.scm.url}</developerConnection>
     <url>https://github.com/npo-poms/api-clients.git</url>
-    <tag>REL-7.4.0</tag>
+    <tag>REL-7.4-SNAPSHOT</tag>
   </scm>
 
   <build>
