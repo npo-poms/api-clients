@@ -180,7 +180,7 @@ public class Config {
     public Env env() {
         Env env = envs.get(null);
         if (env == null) {
-            String pref = System.getProperty("env");
+            String pref = getEnvProperty("env");
             if (pref == null) {
                 env =  Env.valueOf(properties.getOrDefault(ENV, "test").toUpperCase());
             } else {
@@ -195,7 +195,7 @@ public class Config {
     public Env env(Prefix prefix) {
         Env env = envs.get(prefix);
         if (env == null) {
-            String pref = System.getProperty(prefix.name() + ".env");
+            String pref = getEnvProperty(prefix.name() + ".env");
             if (pref != null) {
                 env = Env.valueOf(pref.toUpperCase());
             } else {
@@ -204,12 +204,21 @@ public class Config {
                 env = Env.optionalValueOf(envString).orElse(null);
             }
             if (envs.put(prefix, env) != null) {
-                log.warn("Replaced{}", prefix);
+                log.warn("Replaced {}", prefix);
             }
         }
         return env;
-
     }
+
+
+    public static String getEnvProperty(String name) {
+        return getEnvProperty(name, null);
+    }
+
+    public static String getEnvProperty(String name, String def) {
+        return System.getenv().getOrDefault(name, System.getProperty(name, def));
+    }
+
     private static final Key ENV = new Key(null, "env", null, 1);
 
     @AllArgsConstructor
