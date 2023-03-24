@@ -397,12 +397,12 @@ public class NpoApiMediaUtil implements MediaProvider {
     @Setter
     private Duration  waitBetweenChangeListening = Duration.ofSeconds(2);
 
-    public Future<Instant> subscribeToChanges(String profile, Instant since, BooleanSupplier until, final Consumer<MediaChange> listener) {
-        return subscribeToChanges(profile, since, Deletes.ID_ONLY, until, listener);
+    public Future<Instant> subscribeToChanges(String profile, Instant since, BooleanSupplier doWhile, final Consumer<MediaChange> listener) {
+        return subscribeToChanges(profile, since, Deletes.ID_ONLY, doWhile, listener);
     }
 
-    public Future<Instant> subscribeToChanges(Instant since, BooleanSupplier until, final Consumer<MediaChange> listener) {
-        return subscribeToChanges(null, since, until, listener);
+    public Future<Instant> subscribeToChanges(Instant since, BooleanSupplier doWhile, final Consumer<MediaChange> listener) {
+        return subscribeToChanges(null, since, doWhile, listener);
     }
 
      public Future<Instant> subscribeToChanges(
