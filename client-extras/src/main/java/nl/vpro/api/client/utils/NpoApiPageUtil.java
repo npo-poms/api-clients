@@ -27,11 +27,11 @@ import nl.vpro.util.CloseableIterator;
  * @see NpoApiImageUtil
  */
 @Named
-public class NpoApiPageUtil  {
+public class NpoApiPageUtil {
 
     final NpoApiClients clients;
     final NpoApiRateLimiter limiter;
-
+    private final Map<SupplyKey, PageSupplier> pageSupplier = new HashMap<>();
 
     @Inject
     public NpoApiPageUtil(NpoApiClients clients, NpoApiRateLimiter limiter) {
@@ -71,26 +71,9 @@ public class NpoApiPageUtil  {
         return result;
     }
 
-
-
-
-
     public Page get(String id) {
         return load(id)[0];
     }
-
-    @EqualsAndHashCode
-    private static class SupplyKey {
-        private final List<String> profiles;
-        private final String props;
-
-        private SupplyKey(List<String> profiles, String props) {
-            this.profiles = profiles;
-            this.props = props;
-        }
-
-    }
-    private final Map<SupplyKey, PageSupplier> pageSupplier = new HashMap<>();
 
     public Supplier<Optional<Page>> supplyByMid(List<String> profiles, String props, String mid) {
         SupplyKey key = new SupplyKey(profiles, props);
@@ -109,7 +92,6 @@ public class NpoApiPageUtil  {
         return result;
     }
 
-
     public Page[] loadByMid(List<String> profiles, String props, String... mids) {
 
         Map<String, Page> map = new HashMap<>();
@@ -125,7 +107,7 @@ public class NpoApiPageUtil  {
                 for (Page page : pages.asList()) {
                     for (Embed embed : page.getEmbeds()) {
                         String mid = embed.getMedia().getMid();
-                        if (! map.containsKey(mid)) {
+                        if (!map.containsKey(mid)) {
                             map.put(mid, page);
                         }
                     }
@@ -140,7 +122,6 @@ public class NpoApiPageUtil  {
         return result;
     }
 
-
     public CloseableIterator<Page> iterate(PageForm form, String profile) {
         limiter.acquire();
         try {
@@ -152,21 +133,32 @@ public class NpoApiPageUtil  {
             throw new RuntimeException(clients + ":" + e.getMessage(), e);
         }
     }
+
     @Override
     public String toString() {
         return String.valueOf(clients);
     }
 
-
     public NpoApiClients getClients() {
         return clients;
     }
 
+    @EqualsAndHashCode
+    private static class SupplyKey {
+        private final List<String> profiles;
+        private final String props;
+
+        private SupplyKey(List<String> profiles, String props) {
+            this.profiles = profiles;
+            this.props = props;
+        }
+
+    }
+
     private class PageSupplier {
         private final List<String> mids = new ArrayList<>();
-        private Page[] results;
-
         private final SupplyKey key;
+        private Page[] results;
 
         private PageSupplier(SupplyKey key) {
             this.key = key;
@@ -188,7 +180,8 @@ public class NpoApiPageUtil  {
                 results = NpoApiPageUtil.this.loadByMid(key.profiles, key.props, mids
                     .toArray(new String[0]));
             }
-            return Optional.ofNullable(results[mids.indexOf(mid)]);
+            int idx = mid != null ? mids.indexOf(mid) : -1;
+            return Optional.ofNullable((idx >= 0 && idx < results.length) ? results[idx] : null);
         }
 
     }
