@@ -26,6 +26,7 @@ import nl.vpro.api.client.resteasy.ResteasyHelper;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
+import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.page.*;
@@ -188,10 +189,11 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testChangesError() throws IOException {
+    public void testChangesError() {
         assertThatThrownBy(() -> {
 
-            try (InputStream is = clients.getMediaService().changes("no profile", null, -1L, null, "ASC", 100, null, null, null).readEntity(InputStream.class)) {
+            try (Response rest = clients.getMediaService().changes("no profile", null, -1L, null, Order.ASC, 100, null, null, null);
+                 InputStream is = rest.readEntity(InputStream.class)) {
                 log.info("{}", is);
             }
         }).isInstanceOf(NotFoundException.class);
