@@ -28,19 +28,19 @@ public class MediaRestClientUtilsTest {
 
         // michiel@baleno:~/github/npo-poms/api/bash/media$ ENV=prod ./changes.sh  1000000 vpro > /tmp/changes.json
         when(mediaRestService.changes(
-                anyString(),
-                anyString(),
-                any(Long.class),
-                anyString(),
-                eq("asc"),
-                any(Integer.class),
-                any(Deletes.class),
-                any(Tail.class),
+            anyString(),
+            anyString(),
+            any(Long.class),
+            anyString(),
+            isNull(),
+            any(Integer.class),
+            any(Deletes.class),
+            any(Tail.class),
             anyString()
             )
         ).thenReturn(Response.ok().entity(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream()).build());
         int count = 0;
-        try (CloseableIterator<MediaChange> i = MediaRestClientUtils.changes(mediaRestService, "vpro", Instant.ofEpochMilli(0), null, Order.ASC, Integer.MAX_VALUE, Deletes.ID_ONLY)) {
+        try (CloseableIterator<MediaChange> i = MediaRestClientUtils.changes(mediaRestService, "vpro", Instant.ofEpochMilli(0), null, null, Integer.MAX_VALUE, Deletes.ID_ONLY)) {
 
             while (i.hasNext()) {
                 MediaChange next = i.next();
