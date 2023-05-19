@@ -18,7 +18,6 @@ import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Response;
 
-import org.apache.http.NoHttpResponseException;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -503,8 +502,8 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             try {
                 return (T) getBackendRestService()
                     .getMedia(valueOf(type), id, followMerges, owner);
-            } catch (NoHttpResponseException noHttpResponseException) {
-                retryAfterWaitOrException(noHttpResponseException.getMessage());
+            } catch (Exception noHttpResponseException) {
+                retryAfterWaitOrException(noHttpResponseException.getMessage(), retryCountDown--);
             }
         }
     }
@@ -860,11 +859,11 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         if (!waitForRetry) {
             throw e;
         }
-        retryAfterWaitOrException(action + ":" + e.getMessage());
+        retryAfterWaitOrException(action + ":" + e.getMessage(), 1);
     }
 
-    void retryAfterWaitOrException(String cause) {
-        if (!waitForRetry) {
+    void retryAfterWaitOrException(String cause, int retryCount) {
+        if (!waitForRetry || retryCount <= 0) {
             throw new RuntimeException(cause);
         }
         try {
