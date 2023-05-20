@@ -104,6 +104,8 @@ your request.</p>
                 throw re;
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            } finally {
+                cleanAfter();
             }
             // exception not rethrown, next iteration will try again
         }
@@ -170,7 +172,9 @@ your request.</p>
 
             }
         }
-
+    }
+    protected static void cleanAfter() {
+         ContentTypeInterceptor.CONTENT_TYPE.remove();
     }
 
     protected void dealWithHeaders(Method method, Object[] args) {
