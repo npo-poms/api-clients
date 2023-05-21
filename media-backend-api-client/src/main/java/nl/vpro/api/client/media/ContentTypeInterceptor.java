@@ -20,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 @Slf4j
 public class ContentTypeInterceptor implements WriterInterceptor {
     public static final ThreadLocal<String> CONTENT_TYPE = ThreadLocal.withInitial(() -> null);
+
     @Override
     public void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
         if (CONTENT_TYPE.get() != null) {

@@ -158,9 +158,13 @@ your request.</p>
                             }
                             log.debug("Implicitly set entity to {}", args[i]);
                         }
-
-
                     }
+
+                    // This puts the actual value of a header param into thread local of interceptor
+                    // This is because this interceptor is used to have a default value
+                    // for the content type request header (normally application/xml)
+                    // Some call do have an explicit Content type parameter though.
+                    // By putting their value in the thread local, the interceptor will effectively disabled.
                     if (annotations[i][j] instanceof HeaderParam) {
                         HeaderParam headerParam = (HeaderParam) annotations[i][j];
                         if (HttpHeaders.CONTENT_TYPE.equals(headerParam.value())) {
@@ -173,6 +177,7 @@ your request.</p>
             }
         }
     }
+
     protected static void cleanAfter() {
          ContentTypeInterceptor.CONTENT_TYPE.remove();
     }
