@@ -23,6 +23,7 @@ import nl.vpro.util.Env;
 @Slf4j
 public class Config {
 
+    public static final String URLS_FILE = "poms-urls.properties";
     public static final String CONFIG_FILE = "apiclient.properties";
 
     private final Map<Key, String> properties;
