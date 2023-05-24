@@ -59,11 +59,6 @@ public class MediaRestClientUtilsTest {
     public void testLoad() {
     }
 
-    @Test
-    @Deprecated
-    public void testToMid() {
-        assertThat(MediaRestClientUtils.toMid("urn:vpro:media:program:1906")).isEqualTo("POMS_VPRO_158299");
-    }
 
     @Test
     public void testLoadSubitltes() {
