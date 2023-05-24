@@ -3,7 +3,6 @@ package nl.vpro.api.client.utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
@@ -297,67 +296,6 @@ public class MediaRestClientUtils {
         });
     }
 
-
-
-    static Properties properties = null;
-    static File propertiesFile = null;
-    static long timeStamp = -1;
-
-    public static void setIdToMidFile(File file) {
-        propertiesFile = file;
-        timeStamp = -1;
-        properties = null;
-    }
-
-
-    /**
-     * Only call this during the migration to NPO API while not everything is converted to MID yet.
-     *
-     * Refresh id_to_mid.properties like so:
-     * ssh vpro05ap@upload-sites.omroep.nl "psql -A -q -t -h poms2madb -U vpro mediadb -c 'select id,mid from mediaobject;'" | sed 's/|/=/' > /tmp/id_to_mid.properties ; scp /tmp/id_to_mid.properties uploadvpro:/e/ap/v3.rs.vpro.nl/data/
-     *
-     * @deprecated Migrate code and data from URN to MID.
-     */
-    @Deprecated
-    public static String toMid(final String urn) {
-        if (propertiesFile == null) {
-            if (System.getProperty("id_to_mid.file") != null) {
-                propertiesFile = new File(System.getProperty("id_to_mid.file"));
-            } else {
-                propertiesFile = new File("/e/ap/v3.rs.vpro.nl/data/id_to_mid.properties");
-            }
-        }
-        if (propertiesFile.exists() && propertiesFile.lastModified() > timeStamp) {
-            log.info("Will reload {}", propertiesFile);
-            properties = null;
-        }
-        if (properties == null) {
-            properties = new Properties();
-            try {
-                if (propertiesFile.exists()) {
-                    try (InputStream inputStream = Files.newInputStream(propertiesFile.toPath())) {
-                        properties.load(inputStream);
-                        timeStamp = propertiesFile.lastModified();
-                    }
-                } else {
-                    properties.load(MediaRestClientUtils.class.getResourceAsStream("/id_to_mid.properties"));
-                }
-
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-                properties = null;
-                return null;
-            }
-        }
-        String id;
-        int index = urn.lastIndexOf(":");
-        if (index > 0) {
-            id = urn.substring(index + 1);
-        } else {
-            id = urn;
-        }
-        return properties.getProperty(id);
-    }
 
     public static void closeQuietly(AutoCloseable... closeables) {
         for (AutoCloseable c : closeables) {
