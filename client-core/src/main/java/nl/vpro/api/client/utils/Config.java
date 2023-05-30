@@ -23,6 +23,10 @@ import nl.vpro.util.Env;
 @Slf4j
 public class Config {
 
+    /**
+     * The resource with properties of all known environments
+     * TODO: Move to {@link nl.vpro.poms.shared.NpoPomsEnvironment}
+     */
     public static final String URLS_FILE = "poms-urls.properties";
     public static final String CONFIG_FILE = "apiclient.properties";
 

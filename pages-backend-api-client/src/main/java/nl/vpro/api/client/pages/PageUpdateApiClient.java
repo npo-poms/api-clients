@@ -41,6 +41,7 @@ import nl.vpro.rs.thesaurus.update.ThesaurusUpdateRestService;
 import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
+import static nl.vpro.api.client.utils.Config.URLS_FILE;
 
 @Slf4j
 public class PageUpdateApiClient extends AbstractApiClient {
@@ -249,7 +250,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     public static Builder configured(Env env) {
         Builder builder = builder();
-        Config config = new Config(CONFIG_FILE);
+        Config config = new Config(URLS_FILE, CONFIG_FILE);
         config.setEnv(env);
         ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.npo_pageupdate_api));
         return builder;

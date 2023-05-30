@@ -8,6 +8,7 @@
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="locations">
       <list>
+        <value>classpath:poms-urls.properties</value>
         <value>classpath:apiclient.properties</value>
         <value>classpath:apiclient-test.properties</value>
       </list>

@@ -49,6 +49,7 @@ import nl.vpro.rs.client.VersionResult;
 import nl.vpro.util.*;
 
 import static nl.vpro.api.client.utils.Config.CONFIG_FILE;
+import static nl.vpro.api.client.utils.Config.URLS_FILE;
 import static nl.vpro.logging.simple.Slf4jSimpleLogger.slf4j;
 import static org.meeuw.functional.Functions.ignoreArg1;
 
@@ -190,7 +191,7 @@ public class NpoApiClients extends AbstractApiClient {
         public NpoApiClients build() {
             if (env != null) {
                 Map<String, String> defaultProperties = ConfigUtils.filtered(env, Config.Prefix.npo_api.getKey(),
-                    ConfigUtils.getPropertiesInHome(CONFIG_FILE)
+                    ConfigUtils.getPropertiesInHome(URLS_FILE, CONFIG_FILE)
                 );
                 ReflectionUtils.configureIfNull(this, defaultProperties, Collections.emptyList(), Collections.emptyList());
             }
@@ -388,7 +389,7 @@ public class NpoApiClients extends AbstractApiClient {
     }
 
     /**
-     * Creates a builder (see {@link #builder()}, and configures it the the given config file (using {@link ConfigUtils#configured(Object, String...)}
+     * Creates a builder (see {@link #builder()}, and configures it the given config file (using {@link ConfigUtils#configured(Object, String...)}
      */
     public static NpoApiClients.Builder configured(String... configFiles)  {
         NpoApiClients.Builder builder = builder();
@@ -397,7 +398,7 @@ public class NpoApiClients extends AbstractApiClient {
     }
 
     /**
-     * Creates a builder (see {@link #builder()}, and configures it the the given config file (using {@link ConfigUtils#configured(Object, String...)}
+     * Creates a builder (see {@link #builder()}, and configures it the given config file (using {@link ConfigUtils#configured(Object, String...)}
      */
     public static NpoApiClients.Builder configured(Env env, String... configFiles) {
         NpoApiClients.Builder builder = builder();
@@ -429,7 +430,7 @@ public class NpoApiClients extends AbstractApiClient {
     */
    public static NpoApiClients.Builder configured(Env env) {
        NpoApiClients.Builder builder = builder();
-       Config config = new Config(CONFIG_FILE);
+       Config config = new Config(URLS_FILE, CONFIG_FILE);
        config.setEnv(env);
        ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.npo_api));
        return builder;
