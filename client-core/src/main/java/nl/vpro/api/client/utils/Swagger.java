@@ -58,7 +58,7 @@ public class Swagger {
                 .setDefaultRequestConfig(config)
                 .build()) {
 
-                for (String json : Arrays.asList("/swagger.json", "/openapi.json")) {
+                for (String json : Arrays.asList("/openapi.json")) {
                     URI url = URI.create(baseUrl + json);
                     HttpUriRequest request = new HttpGet(url);
 
