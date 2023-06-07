@@ -62,15 +62,15 @@ public class Swagger {
 
                 request.addHeader(Headers.NPO_DATE, "CacheBust-" + UUID.randomUUID()); // Cloudfront includes npo date as a cache key header.
                 try (CloseableHttpResponse response = client.execute(request)) {
-                    if (response.getStatusLine().getStatusCode() != 404) {
+                    if (response.getStatusLine().getStatusCode() == 200) {
                         try (InputStream stream = response.getEntity().getContent()) {
                             JsonParser jp = factory.createParser(stream);
-                            JsonNode swagger = mapper.readTree(jp);
-                            String versionString = swagger.get("info").get("version").asText();
+                            JsonNode openapi = mapper.readTree(jp);
+                            String versionString = openapi.get("info").get("version").asText();
                             return VersionResult.builder().version(getVersion(versionString, defaultVersion)).available(true).build();
                         }
                     } else {
-                        log.warn("No swagger found at {}", url);
+                        log.warn("No swagger found at {} -> {}", url, response.getStatusLine());
                     }
                 }
                 return VersionResult.builder().version(defaultVersion).available(false).build();
