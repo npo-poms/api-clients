@@ -29,7 +29,6 @@ import nl.vpro.domain.page.Page;
 @Named
 public class ApiProfileServiceImpl implements ProfileService {
 
-
     final NpoApiClients clients;
 
     // TODO arrange caching via ehcache (ehcache4guice or something)
@@ -38,9 +37,9 @@ public class ApiProfileServiceImpl implements ProfileService {
         .maximumSize(1000)
         .expireAfterWrite(5, TimeUnit.MINUTES)
         .build(
-            new CacheLoader<String, Profile>() {
+            new CacheLoader<>() {
                 @Override
-                public Profile load(@NotNull String profile)  {
+                public Profile load(@NotNull String profile) {
                     return getClient().load(profile, null);
                 }
             });

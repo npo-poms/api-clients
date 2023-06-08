@@ -116,8 +116,7 @@ your request.</p>
         if (args != null) {
             for (int i = 0; i < args.length; i++) {
                 for (int j = 0; j < annotations[i].length; j++) {
-                    if (annotations[i][j] instanceof QueryParam && args[i] == null) {
-                        QueryParam queryParam = (QueryParam) annotations[i][j];
+                    if (annotations[i][j] instanceof QueryParam queryParam && args[i] == null) {
                         if (MediaBackendRestService.ERRORS.equals(queryParam.value())) {
                             log.debug("Implicitly set errors parameter to {}", client.errors);
                             args[i] = client.errors;
@@ -144,8 +143,7 @@ your request.</p>
                             }
                         }
                     }
-                    if (annotations[i][j] instanceof PathParam && args[i] == null) {
-                        PathParam pathParam = (PathParam) annotations[i][j];
+                    if (annotations[i][j] instanceof PathParam pathParam && args[i] == null) {
                         if ("entity".equals(pathParam.value())) {
                             if (CharSequence.class.isAssignableFrom(method.getParameterTypes()[i])) {
                                 args[i] = "media";
@@ -164,13 +162,11 @@ your request.</p>
                     // This is because this interceptor is used to have a default value
                     // for the content type request header (normally application/xml)
                     // Some call do have an explicit Content type parameter though.
-                    // By putting their value in the thread local, the interceptor will effectively disabled.
-                    if (annotations[i][j] instanceof HeaderParam) {
-                        HeaderParam headerParam = (HeaderParam) annotations[i][j];
+                    // By putting their value in the thread local, the interceptor will effectively be disabled.
+                    if (annotations[i][j] instanceof HeaderParam headerParam) {
                         if (HttpHeaders.CONTENT_TYPE.equals(headerParam.value())) {
                             ContentTypeInterceptor.CONTENT_TYPE.set((String) args[i]);
                         }
-
                     }
                 }
 

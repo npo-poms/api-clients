@@ -65,13 +65,12 @@ public class MediaRestClientUtils {
     }
 
     public static List<MediaObject> adapt(final MediaSearchResult result) {
-        return new AbstractList<MediaObject>() {
+        return new AbstractList<>() {
 
             @Override
             public MediaObject get(int index) {
                 SearchResultItem<? extends MediaObject> object = result.getItems().get(index);
                 return object.getResult();
-
             }
 
             @Override

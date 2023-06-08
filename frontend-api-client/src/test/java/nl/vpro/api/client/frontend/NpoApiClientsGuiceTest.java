@@ -36,8 +36,8 @@ public class NpoApiClientsGuiceTest {
                 protected void configure() {
                     Config configFile = new Config("apiclient-test.properties");
                     Map<String, String> config = new HashMap<>();
-                    config.putAll(configFile.getPrefixedProperties(Config.Prefix.npo_api));
-                    config.putAll(configFile.getPrefixedProperties(Config.Prefix.npo_pageupdate_api));
+                    config.putAll(configFile.getPrefixedProperties(Config.Prefix.api));
+                    config.putAll(configFile.getPrefixedProperties(Config.Prefix.pages_publisher));
                     Names.bindProperties(binder(), config);
 
                     binder().bind(NpoApiClients.class).toProvider(NpoApiClients.Provider.class);

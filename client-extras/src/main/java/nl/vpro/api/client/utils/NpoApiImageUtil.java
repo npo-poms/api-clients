@@ -27,8 +27,7 @@ import nl.vpro.domain.media.update.ImageUpdate;
 @Slf4j
 public class NpoApiImageUtil implements ImageUrlService {
 
-
-    protected HttpClient client =  HttpClient.newBuilder().build();
+    protected final HttpClient client =  HttpClient.newBuilder().build();
 
 
     @Setter

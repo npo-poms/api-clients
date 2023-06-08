@@ -47,7 +47,6 @@ public class XmlProfileServiceImpl implements ProfileService {
         this(new String[] {resources});
     }
 
-
     @Override
     public List<Profile> getProfiles() {
         return new ArrayList<>(profiles.values());
@@ -56,27 +55,23 @@ public class XmlProfileServiceImpl implements ProfileService {
     @Override
     public Profile getProfile(String name) {
         return profiles.get(name);
-
     }
 
     @Override
     public Profile getProfile(String name, Instant on) {
         return getProfile(name);
-
     }
 
     @Override
     public ProfileDefinition<Page> getPageProfileDefinition(String name) {
         Profile profile = getProfile(name);
         return profile == null ? null : profile.getPageProfile();
-
     }
 
     @Override
     public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name) {
         Profile profile = getProfile(name);
         return profile == null ? null : profile.getMediaProfile();
-
     }
 
     @Override

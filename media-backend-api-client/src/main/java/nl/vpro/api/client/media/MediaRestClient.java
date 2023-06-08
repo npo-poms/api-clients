@@ -198,28 +198,28 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     public static class Provider implements javax.inject.Provider<MediaRestClient> {
 
         @Inject
-        @Named("npo-mediabackend-api.baseUrl")
+        @Named("npo-media_api_backend.baseUrl")
         String baseUrl;
         @Inject
-        @Named("npo-mediabackend-api.user")
+        @Named("npo-media_api_backend.user")
         String user;
         @Inject
-        @Named("npo-mediabackend-api.password")
+        @Named("npo_media_api_backend.password")
         String password;
         @Inject
-        @Named("npo-mediabackend-api.errors")
+        @Named("npo_media_api_backend.errors")
         Optional<String> errors;
         @Inject
-        @Named("npo-mediabackend-api.trustAll")
+        @Named("npo_media_api_backend.trustAll")
         Optional<Boolean> trustAll;
 
 
         @Inject
-        @Named("npo-mediabackend-api.connectionInPoolTTL")
+        @Named("npo_media_api_backend.connectionInPoolTTL")
         Optional<String> connectionInPoolTTL;
 
         @Inject
-        @Named("npo-mediabackend-api.validateAfterInactivity")
+        @Named("npo_media_api_backend.validateAfterInactivity")
         Optional<String> validateAfterInactivity;
 
         @Override

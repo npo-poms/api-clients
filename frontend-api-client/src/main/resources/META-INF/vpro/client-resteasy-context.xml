@@ -27,25 +27,24 @@
     <constructor-arg value="${npo-api.connectTimeout}"/>
   </bean>
 
-  <bean class="java.lang.String" id="npo-pageupdate-api.baseUrl">
-    <constructor-arg value="${npo-pageupdate-api.baseUrl}"/>
+  <bean class="java.lang.String" id="npo-pages_publisher.baseUrl">
+    <constructor-arg value="${npo-pages_publisher.baseUrl}"/>
   </bean>
-  <bean class="java.lang.String" id="npo-pageupdate-api.user">
-    <constructor-arg value="${npo-pageupdate-api.user}"/>
+  <bean class="java.lang.String" id="npo-pages_publisher.user">
+    <constructor-arg value="${npo-pages_publisher.user}"/>
   </bean>
-  <bean class="java.lang.String" id="npo-pageupdate-api.password">
-    <constructor-arg value="${npo-pageupdate-api.password}"/>
+  <bean class="java.lang.String" id="npo-pages_publisher.password">
+    <constructor-arg value="${npo-pages_publisher.password}"/>
   </bean>
-  <bean class="java.lang.String" id="npo-pageupdate-api.jwsIssuer">
-    <constructor-arg value="${npo-pageupdate-api.jwsIssuer}"/>
+  <bean class="java.lang.String" id="npo-pages_publisher.jwsIssuer">
+    <constructor-arg value="${npo-pages_publisher.jwsIssuer}"/>
   </bean>
-  <bean class="java.lang.String" id="npo-pageupdate-api.jwsKey">
-    <constructor-arg value="${npo-pageupdate-api.jwsKey}"/>
+  <bean class="java.lang.String" id="npo-pages_publisher.jwsKey">
+    <constructor-arg value="${npo-pages_publisher.jwsKey}"/>
   </bean>
-  <bean class="java.lang.String" id="npo-pageupdate-api.jwsUser">
-    <constructor-arg value="${npo-pageupdate-api.jwsUser}"/>
+  <bean class="java.lang.String" id="npo-pages_publisher.jwsUser">
+    <constructor-arg value="${npo-pages_publisher.jwsUser}"/>
   </bean>
-
 
   <bean class="org.apache.commons.lang3.math.NumberUtils" factory-method="createInteger" id="npo-api.maxConnections">
     <constructor-arg value="${npo-api.maxConnections}"/>

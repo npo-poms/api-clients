@@ -34,7 +34,7 @@ public class NpoApiClientsTest {
 
         log.info("{}", CONFIG.getProperties());*/
         NpoApiClients clients =
-            NpoApiClients.configured(CONFIG.getProperties(Config.Prefix.npo_api))
+            NpoApiClients.configured(CONFIG.getProperties(Config.Prefix.api))
                 .build();
 
         assertThat(clients.getBaseUrl()).isEqualTo("https://rs-test.poms.omroep.nl/v1/api");

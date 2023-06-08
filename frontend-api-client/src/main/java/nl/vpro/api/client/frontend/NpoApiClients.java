@@ -190,7 +190,7 @@ public class NpoApiClients extends AbstractApiClient {
 
         public NpoApiClients build() {
             if (env != null) {
-                Map<String, String> defaultProperties = ConfigUtils.filtered(env, Config.Prefix.npo_api.getKey(),
+                Map<String, String> defaultProperties = ConfigUtils.filtered(env, Config.Prefix.api.getKey(),
                     ConfigUtils.getPropertiesInHome(URLS_FILE, CONFIG_FILE)
                 );
                 ReflectionUtils.configureIfNull(this, defaultProperties, Collections.emptyList(), Collections.emptyList());
@@ -237,7 +237,7 @@ public class NpoApiClients extends AbstractApiClient {
         TriFunction<Method, Object[], String, Level> headerLevel,
         boolean eager
     ) {
-        super(withApiPostFix(baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl),
+        super(withApiPostFix(baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl),
             connectionRequestTimeout,
             connectTimeout,
             socketTimeout,
@@ -311,7 +311,7 @@ public class NpoApiClients extends AbstractApiClient {
     }
 
     private static String withApiPostFix(String baseUrl) {
-       return baseUrl.endsWith("/api") ? baseUrl : baseUrl + "/api";
+       return baseUrl.endsWith("/api") ? baseUrl : baseUrl + "api";
     }
 
     private Supplier<VersionResult> version = null;
@@ -432,7 +432,7 @@ public class NpoApiClients extends AbstractApiClient {
        NpoApiClients.Builder builder = builder();
        Config config = new Config(URLS_FILE, CONFIG_FILE);
        config.setEnv(env);
-       ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.npo_api));
+       ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.api));
        return builder;
    }
 

@@ -198,8 +198,7 @@ public class PageUpdateApiUtil {
         Class<E> e) {
         try (response) {
             switch (response.getStatus()) {
-                case 200:
-                case 202:
+                case 200, 202 -> {
                     log.debug(pageUpdateApiClient + " " + response.getStatus());
                     try {
                         E entity = response.readEntity(e);
@@ -208,26 +207,27 @@ public class PageUpdateApiUtil {
                         log.error("For {}: {}", response.getEntity(), ex.getMessage(), ex);
                         throw ex;
                     }
-                case 400: {
+                }
+                case 400 -> {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
                     return returnResult(Result.invalid(s));
                 }
-                case 404: {
+                case 404 -> {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
                     return returnResult(Result.notfound(s));
                 }
-                case 403: {
+                case 403 -> {
                     String error = response.readEntity(String.class);
                     String s = pageUpdateApiClient + " " + response.getStatus() + " " + error;
                     return returnResult(Result.denied(s));
                 }
-                case 503: {
+                case 503 -> {
                     String string = pageUpdateApiClient + " " + response.getStatus() + " " + input.toString();
                     return returnResult(Result.error(string));
                 }
-                default: {
+                default -> {
                     MultivaluedMap<String, Object> headers = response.getHeaders();
                     if ("true".equals(headers.getFirst("validation-exception"))) {
                         if ("text/plain".equals(headers.getFirst("Content-Type"))) {

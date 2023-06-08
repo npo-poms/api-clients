@@ -25,7 +25,6 @@ public class ApiClientScheduleRepository implements ScheduleRepository {
     @Inject
     public ApiClientScheduleRepository(NpoApiMediaUtil util) {
         this.util = util;
-
     }
 
     @Override

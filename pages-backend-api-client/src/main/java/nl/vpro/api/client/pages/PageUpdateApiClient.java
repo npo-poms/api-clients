@@ -46,13 +46,11 @@ import static nl.vpro.api.client.utils.Config.URLS_FILE;
 @Slf4j
 public class PageUpdateApiClient extends AbstractApiClient {
 
-
     private PageUpdateRestService pageUpdateRestService;
 
     private ApiProviderRestService apiProvider;
 
     private ThesaurusUpdateRestService thesaurusUpdateRestService;
-
 
     @Getter
     private final String description;
@@ -61,12 +59,10 @@ public class PageUpdateApiClient extends AbstractApiClient {
     private final byte[] jwsKey;
     private final String jwsUser;
 
-
     private final ConditionalBasicAuthentication authentication;
 
 
     private ClassificationService classificationService;
-
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType"})
     @Named
@@ -125,7 +121,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
         @Inject
         private Optional<ClassificationService> classificationService;
-
 
         @Override
         public PageUpdateApiClient get() {
@@ -214,7 +209,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
         );
     }
 
-
     @Override
     protected void appendTestResult(StringBuilder builder, String arg) {
         super.appendTestResult(builder, arg);
@@ -226,7 +220,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
             builder.append("Could not load ").append(arg).append(": ").append(e.getMessage());
         }
     }
-
 
     public static Builder configured(String... configFiles) {
         Builder builder = builder();
@@ -252,7 +245,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         Builder builder = builder();
         Config config = new Config(URLS_FILE, CONFIG_FILE);
         config.setEnv(env);
-        ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.npo_pageupdate_api));
+        ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.pages_publisher));
         return builder;
     }
 
@@ -396,8 +389,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
                 Annotation[][] annotations = method.getParameterAnnotations();
                 for (int i = 0; i < annotations.length; i++) {
                     for (Annotation o : annotations[i]) {
-                        if (o instanceof HeaderParam) {
-                            HeaderParam headerParam = (HeaderParam) o;
+                        if (o instanceof HeaderParam headerParam) {
                             if (headerParam.value().equals(HttpHeaders.AUTHORIZATION)) {
                                 args[i] = ThesaurusUpdateRestService.AUTHENTICATION_SCHEME + " " + jws(method.getName());
                             }
@@ -407,9 +399,6 @@ public class PageUpdateApiClient extends AbstractApiClient {
             }
             return method.invoke(proxied, args);
         }
-
-
     }
-
 
 }

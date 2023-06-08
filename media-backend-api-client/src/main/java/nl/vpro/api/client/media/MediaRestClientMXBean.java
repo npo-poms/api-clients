@@ -1,8 +1,8 @@
 package nl.vpro.api.client.media;
 
-import nl.vpro.rs.client.AbstractApiClientMXBean;
-
 import javax.management.MXBean;
+
+import nl.vpro.rs.client.AbstractApiClientMXBean;
 
 /**
  * @author Michiel Meeuwissen
@@ -12,11 +12,9 @@ import javax.management.MXBean;
 public interface MediaRestClientMXBean extends AbstractApiClientMXBean {
 
     String getErrors();
-
     void setErrors(String errors);
 
     String getUserName();
-
     void setUserName(String user);
 
     String getPassword();
