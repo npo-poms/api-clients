@@ -237,7 +237,7 @@ public class NpoApiClients extends AbstractApiClient {
         TriFunction<Method, Object[], String, Level> headerLevel,
         boolean eager
     ) {
-        super(withApiPostFix(baseUrl == null ? "https://rs.poms.omroep.nl/v1/" : baseUrl),
+        super(withApiPostFix(baseUrl == null ? "https://rs.poms.omroep.nl/v1" : baseUrl),
             connectionRequestTimeout,
             connectTimeout,
             socketTimeout,
@@ -311,7 +311,7 @@ public class NpoApiClients extends AbstractApiClient {
     }
 
     private static String withApiPostFix(String baseUrl) {
-       return baseUrl.endsWith("/api") ? baseUrl : baseUrl + "api";
+       return baseUrl.endsWith("/api") ? baseUrl : baseUrl + "/api";
     }
 
     private Supplier<VersionResult> version = null;
