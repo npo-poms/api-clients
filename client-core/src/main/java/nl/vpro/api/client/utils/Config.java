@@ -10,7 +10,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
+import nl.vpro.poms.shared.Deployment;
 import nl.vpro.util.ConfigUtils;
 import nl.vpro.util.Env;
 
@@ -37,25 +39,34 @@ public class Config {
 
 
     public enum Prefix {
-        npo_api,
-        npo_backend_api,
-        parkpost,
-        npo_pageupdate_api,
-        npo_publisher,
-        poms,
-        images,
-        image_backend,
-        nep
-        ;
+        api(Deployment.api),
+        media_api_backend(Deployment.media_api_backend),
+        parkpost(null),
+        pages_publisher(Deployment.pages_publisher),
+        media_publisher(Deployment.media_publisher),
+        media(Deployment.media),
+        images(Deployment.images),
+        images_backend(Deployment.images_backend),
+        nep(null);
+
+        @Nullable
+        @Getter
+        private final Deployment deployment;
+
+        Prefix(@Nullable Deployment deployment) {
+            this.deployment = deployment;
+            if (this.deployment != null) {
+                assert this.deployment.name().equals(name());
+            }
+        }
 
         public String getKey() {
-            return name().replace('_', '-');
+            return "npo-" + name();
         }
 
         public static Prefix ofKey(String value) {
-            value = value.replaceAll("[-_]", "");
             for (Prefix p : values()) {
-                if (value.equals(p.name().replaceAll("_", ""))) {
+                if (value.equals(p.getKey())) {
                     return p;
                 }
             }
@@ -96,7 +107,7 @@ public class Config {
 
     public  String requiredOption(Prefix pref, String prop) {
         return configOption(pref, prop)
-            .orElseThrow(notSet(prop));
+            .orElseThrow(notSet(pref, prop));
     }
 
 
@@ -167,6 +178,10 @@ public class Config {
 
     public  Supplier<RuntimeException> notSet(String prop) {
         return () -> new RuntimeException(prop + " is not set in " + Arrays.asList(configFiles));
+    }
+
+    public  Supplier<RuntimeException> notSet(Prefix pref, String prop) {
+        return () -> new RuntimeException(pref + "." + prop + " is not set in " + Arrays.asList(configFiles));
     }
 
     public void setEnv(Prefix prefix, Env env) {
