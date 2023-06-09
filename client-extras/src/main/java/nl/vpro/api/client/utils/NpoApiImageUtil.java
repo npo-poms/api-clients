@@ -37,7 +37,7 @@ public class NpoApiImageUtil implements ImageUrlService {
     @Inject
     public NpoApiImageUtil(
         @NotNull
-        @Named("image.baseUrl") String baseUrl) {
+        @Named("npo-images.baseUrl") String baseUrl) {
         this.baseUrl = baseUrl;
     }
 

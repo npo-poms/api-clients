@@ -69,51 +69,51 @@ public class PageUpdateApiClient extends AbstractApiClient {
     public static class Provider implements javax.inject.Provider<PageUpdateApiClient> {
 
         @Inject
-        @Named("npo-pageupdate-api.baseUrl")
+        @Named("npo-pages_publisher.baseUrl")
         String baseUrl;
         @Inject
-        @Named("npo-pageupdate-api.user")
+        @Named("npo-pages_publisher.user")
         String user;
         @Inject
-        @Named("npo-pageupdate-api.password")
+        @Named("npo-pages_publisher.password")
         String password;
 
         @Inject
-        @Named("npo-pageupdate-api.jwsIssuer")
+        @Named("npo-pages_publisher.jwsIssuer")
         Optional<String> jwsIssuer;
         @Inject
-        @Named("npo-pageupdate-api.jwsKey")
+        @Named("npo-pages_publisher.jwsKey")
         Optional<String> jwsKey;
         @Inject
-        @Named("npo-pageupdate-api.jwsUser")
+        @Named("npo-pages_publisher.jwsUser")
         Optional<String> jwsUser;
 
         @Inject
-        @Named("npo-pageupdate-api.connectionRequestTimeout")
+        @Named("npo-pages_publisher.connectionRequestTimeout")
         Optional<String> connectionRequestTimeout;
         @Inject
-        @Named("npo-pageupdate-api.connectTimeout")
+        @Named("npo-pages_publisher.connectTimeout")
         Optional<String> connectTimeout;
         @Inject
-        @Named("npo-pageupdate-api.socketTimeout")
+        @Named("npo-pages_publisher.socketTimeout")
         Optional<String> socketTimeout;
         @Inject
-        @Named("npo-pageupdate-api.maxConnections")
+        @Named("npo-pages_publisher.maxConnections")
         Optional<Integer> maxConnections;
         @Inject
-        @Named("npo-pageupdate-api.maxConnectionsPerRoute")
+        @Named("npo-pages_publisher.maxConnectionsPerRoute")
         Optional<Integer> maxConnectionsPerRoute;
         @Inject
-        @Named("npo-pageupdate-api.warnThreshold")
+        @Named("npo-pages_publisher.warnThreshold")
         Optional<String> warnThreshold;
 
 
         @Inject
-        @Named("npo-pageupdate-api.connectionInPoolTTL")
+        @Named("npo-pages_publisher.connectionInPoolTTL")
         Optional<String> connectionInPoolTTL;
 
         @Inject
-        @Named("npo-pageupdate-api.validateAfterInactivity")
+        @Named("npo-pages_publisher.validateAfterInactivity")
         Optional<String> validateAfterInactivity;
 
         // should have worked, but at least I couldn't get it working in magnolia. I made a duration convertor in ProviderAndBuilder now.

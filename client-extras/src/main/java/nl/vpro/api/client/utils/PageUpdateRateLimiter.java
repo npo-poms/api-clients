@@ -12,13 +12,13 @@ public class PageUpdateRateLimiter extends AbstractRateLimiter {
 
     @Inject
     @Override
-    public void setBaseRate(@Named("npo_pageupdate_api.baserate") double baseRate) {
+    public void setBaseRate(@Named("npo-pages_publisher.baserate") double baseRate) {
         super.setBaseRate(baseRate);
     }
 
     @Inject
     @Override
-    public void setMinRate(@Named("npo_pageupdate_api.minrate") double minRate) {
+    public void setMinRate(@Named("npo-pages_publisher.minrate") double minRate) {
         super.setMinRate(minRate);
     }
 
