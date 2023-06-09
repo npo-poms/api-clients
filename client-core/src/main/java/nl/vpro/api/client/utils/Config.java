@@ -61,7 +61,7 @@ public class Config {
         }
 
         public String getKey() {
-            return "npo-" + name();
+            return deployment == null ? name() : "npo-" + name();
         }
 
         public static Prefix ofKey(String value) {
