@@ -185,7 +185,7 @@ public class Config {
     }
 
     public  Supplier<RuntimeException> notSet(Prefix pref, String prop) {
-        return () -> new RuntimeException(pref + "." + prop + " is not set in " + Arrays.asList(configFiles));
+        return () -> new RuntimeException(pref.getKey() + "." + prop + " is not set in " + Arrays.asList(configFiles));
     }
 
     public void setEnv(Prefix prefix, Env env) {
