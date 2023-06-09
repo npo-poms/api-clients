@@ -81,10 +81,14 @@ public class Config {
         try {
             Map<Key, String> initial = new HashMap<>();
             initial.put(Key.of("localhost"), InetAddress.getLocalHost().getHostName());
+            String[] configFilesInHome = ConfigUtils.getConfigFilesInHome(configFiles);
+            if (configFilesInHome.length > 0) {
+                log.debug("Reading configuration from {}", Arrays.asList(configFilesInHome));
+            }
             ConfigUtils.getProperties(
                 initial,
                 Key::of,
-                ConfigUtils.getConfigFilesInHome(configFiles)
+                configFilesInHome
             ).forEach((key, value) -> {
                 String previous = properties.put(key, value);
                 if (previous != null) {
@@ -143,17 +147,17 @@ public class Config {
             final Env env = env(prefix);
             log.info("Env for {}: {}", prefix, env);
             properties.forEach((key, value) -> {
-                if (key.getPrefix() == null || prefix.equals(key.getPrefix())) {
-                    Env.Match matches = env.matches(key.getEnv());
+                if (key.prefix() == null || prefix.equals(key.prefix())) {
+                    Env.Match matches = env.matches(key.env());
                     if (matches.getAsBoolean()) {
-                        Integer existingStrength = strengths.get(key.getKey());
-                        int strength = key.getStrength() + matches.getStrength();
+                        Integer existingStrength = strengths.get(key.key());
+                        int strength = key.strength() + matches.getStrength();
                         if (existingStrength != null && existingStrength == strength) {
                             log.warn("Found the same property twice {} {}", existingStrength, key);
                         }
                         if (existingStrength == null || existingStrength <= strength) {
-                            r.put(key.getKey(), value);
-                            strengths.put(key.getKey(), key.getStrength());
+                            r.put(key.key(), value);
+                            strengths.put(key.key(), key.strength());
                             log.debug("Put {} -> {}", key, value);
                         } else {
                             log.debug("ignored {}", key);
@@ -241,15 +245,8 @@ public class Config {
 
     private static final Key ENV = new Key(null, "env", null, 1);
 
-    @AllArgsConstructor
-    @Data
-    @EqualsAndHashCode
-    public static class Key {
-        private final Prefix prefix;
-        private final String key;
-        private final Env env;
-        private final int strength;
 
+    public record Key(Prefix prefix, String key, Env env, int strength) {
         public static Key of(String joinedKey) {
             try {
                 String[] split = joinedKey.split("\\.", 3);
@@ -276,7 +273,7 @@ public class Config {
                     key = split[1];
                     try {
                         env = Env.valueOf(split[2].toUpperCase());
-                    } catch(IllegalArgumentException ia) {
+                    } catch (IllegalArgumentException ia) {
                         key += "." + split[2];
                         env = null;
 
@@ -301,11 +298,9 @@ public class Config {
             return builder.toString();
         }
 
-        public  Key copyFor(Prefix prefix) {
+        public Key copyFor(Prefix prefix) {
             return new Key(prefix, key, env, 2);
         }
     }
-
-
 
 }

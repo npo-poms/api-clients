@@ -11,12 +11,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michiel Meeuwissen
- * @since ...
  */
 @Slf4j
 public class NpoApiClientsTest {
 
     public static final Config CONFIG = new Config(
+        "poms-urls.properties",
         "apiclient.properties",
         "apiclient-test3.properties"
         );
@@ -26,13 +26,6 @@ public class NpoApiClientsTest {
     public void configured() {
         Env env = CONFIG.env();
         assertThat(env).isEqualTo(Env.TEST);
-    /*    assertThat(CONFIG.getPrefixedProperties(Config.Prefix.npo_api).get("npo-api.baseUrl")).isEqualTo("https://rs-test.poms.omroep.nl/v1");
-        assertThat(CONFIG.getProperties().get("npo-api.baseUrl.test")).isEqualTo("https://rs-test.poms.omroep.nl/v1");
-
-        assertThat(CONFIG.getProperties(Config.Prefix.npo_api).get("baseUrl")).isEqualTo("https://rs-test.poms.omroep.nl/v1");
-
-
-        log.info("{}", CONFIG.getProperties());*/
         NpoApiClients clients =
             NpoApiClients.configured(CONFIG.getProperties(Config.Prefix.api))
                 .build();
