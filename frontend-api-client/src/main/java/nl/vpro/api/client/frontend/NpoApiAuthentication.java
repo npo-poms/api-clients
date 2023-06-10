@@ -30,7 +30,7 @@ import static nl.vpro.poms.shared.Headers.NPO_DATE;
 
    public static final Filter RESTEASSURED_AUTHENTICATION =
           (requestSpec, responseSpec, filterContext) -> {
-          Map<String, Object> authenticate =  authentication.authenticate(URI.create(requestSpec.getURI()));
+          Map<String, Object> authenticate = authentication.authenticate(URI.create(requestSpec.getURI()));
           for(Map.Entry<String, Object> e : authenticate.entrySet()) {
               requestSpec.header(new Header(e.getKey(), e.getValue().toString()));
           }

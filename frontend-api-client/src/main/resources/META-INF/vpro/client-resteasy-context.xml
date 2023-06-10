@@ -27,6 +27,20 @@
     <constructor-arg value="${npo-api.connectTimeout}"/>
   </bean>
 
+  <bean class="java.lang.String" id="npo-api.warnThreshold">
+    <constructor-arg value="${npo-api.warnThreshold}"/>
+  </bean>
+
+  <bean class="java.lang.String" id="npo-api.countWindow">
+    <constructor-arg value="${npo-api.countWindow}"/>
+  </bean>
+
+  <bean class="java.lang.Integer" id="npo-api.bucketCount">
+    <constructor-arg value="${npo-api.bucketCount}"/>
+  </bean>
+
+
+
   <bean class="java.lang.String" id="npo-pages_publisher.baseUrl">
     <constructor-arg value="${npo-pages_publisher.baseUrl}"/>
   </bean>

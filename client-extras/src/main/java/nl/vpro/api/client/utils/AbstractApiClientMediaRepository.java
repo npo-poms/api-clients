@@ -56,6 +56,7 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
     }
 
     @Override
+    @NonNull
     public List<MediaObject> loadAll(boolean loadDeleted, List<String> ids) {
         if (loadDeleted) {
             throw new UnsupportedOperationException("We don't support loading deleted objects");
@@ -126,7 +127,7 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
         @Nullable final Instant since,
         @Nullable final String mid,
         @Nullable final ProfileDefinition<MediaObject> profile,
-        @NonNull final Order order,
+        @Nullable final Order order,
         @Nullable final Integer max,
         @Nullable Deletes deletes,
         @Nullable final Tail tail,
