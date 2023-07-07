@@ -1,6 +1,5 @@
 package nl.vpro.api.client.utils;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -10,15 +9,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.google.common.cache.*;
 
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
-import nl.vpro.domain.api.profile.Profile;
-import nl.vpro.domain.api.profile.ProfileDefinition;
-import nl.vpro.domain.api.profile.ProfileService;
+import nl.vpro.domain.api.profile.*;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.page.Page;
 
@@ -40,7 +35,7 @@ public class ApiProfileServiceImpl implements ProfileService {
             new CacheLoader<>() {
                 @Override
                 public Profile load(@NotNull String profile) {
-                    return getClient().load(profile, null);
+                    return getClient().load(profile);
                 }
             });
 
@@ -63,10 +58,6 @@ public class ApiProfileServiceImpl implements ProfileService {
         }
     }
 
-    @Override
-    public Profile getProfile(String name, Instant on) {
-        return getClient().load(name, on);
-    }
 
     @Override
     public ProfileDefinition<Page> getPageProfileDefinition(String name) {
@@ -87,11 +78,6 @@ public class ApiProfileServiceImpl implements ProfileService {
         return profile == null ? null : profile.getMediaProfile();
     }
 
-    @Override
-    public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name, Instant since) {
-        return getClient().load(name, since).getMediaProfile();
-
-    }
 
     protected ProfileRestService getClient() {
         return clients.getProfileService();

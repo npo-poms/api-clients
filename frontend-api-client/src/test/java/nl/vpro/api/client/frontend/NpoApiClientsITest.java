@@ -50,6 +50,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author Roelof Jan Koekoek
  * @since 3.0
  */
+@SuppressWarnings("resource")
 @Slf4j
 public class NpoApiClientsITest {
 
@@ -220,7 +221,7 @@ public class NpoApiClientsITest {
     @Test
     public void testGetProfile() {
         ProfileRestService profileService = clients.getProfileService();
-        Profile p = profileService.load("cultura", null);
+        Profile p = profileService.load("cultura");
         log.info("cultura: {}", p);
 
     }
@@ -237,13 +238,13 @@ public class NpoApiClientsITest {
 
     @Test
     public void testGetDescendants() throws ProfileNotFoundException {
-        log.info("" + clients.getMediaService().findDescendants(
+        log.info(String.valueOf(clients.getMediaService().findDescendants(
             new MediaForm(),
             "POMS_S_VPRO_216762",
             "vpro",
             "",
             0L,
-            10));
+            10)));
     }
 
 

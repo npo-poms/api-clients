@@ -373,7 +373,7 @@ public class NpoApiClients extends AbstractApiClient {
         return profileThreadLocal.get();
     }
     public Optional<Profile> getAssociatedProfile() {
-        return Optional.ofNullable(profileThreadLocal.get()).map(p -> getProfileService().load(p, null));
+        return Optional.ofNullable(profileThreadLocal.get()).map(p -> getProfileService().load(p));
     }
 
     public void setProfile(String profile) {

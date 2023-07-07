@@ -1,16 +1,13 @@
 package nl.vpro.api.client.utils;
 
 import java.io.InputStream;
-import java.time.Instant;
 import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.bind.JAXB;
 
-import nl.vpro.domain.api.profile.Profile;
-import nl.vpro.domain.api.profile.ProfileDefinition;
-import nl.vpro.domain.api.profile.ProfileService;
+import nl.vpro.domain.api.profile.*;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.page.Page;
 
@@ -58,11 +55,6 @@ public class XmlProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile getProfile(String name, Instant on) {
-        return getProfile(name);
-    }
-
-    @Override
     public ProfileDefinition<Page> getPageProfileDefinition(String name) {
         Profile profile = getProfile(name);
         return profile == null ? null : profile.getPageProfile();
@@ -72,11 +64,6 @@ public class XmlProfileServiceImpl implements ProfileService {
     public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name) {
         Profile profile = getProfile(name);
         return profile == null ? null : profile.getMediaProfile();
-    }
-
-    @Override
-    public ProfileDefinition<MediaObject> getMediaProfileDefinition(String name, Instant since) {
-        return getMediaProfileDefinition(name);
     }
 
 }

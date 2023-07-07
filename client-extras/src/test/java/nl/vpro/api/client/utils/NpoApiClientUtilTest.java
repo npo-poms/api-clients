@@ -10,8 +10,7 @@ import java.time.Instant;
 import java.util.*;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -31,6 +30,7 @@ import nl.vpro.domain.api.MediaChange;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.profile.Profile;
+import nl.vpro.domain.media.MediaType;
 import nl.vpro.domain.media.*;
 import nl.vpro.util.CloseableIterator;
 import nl.vpro.util.CountedIterator;
@@ -118,14 +118,15 @@ public class NpoApiClientUtilTest {
     @SuppressWarnings("deprecation")
     @Test
     @Disabled("Takes long!!")
-    public void testChanges() {
-        CloseableIterator<MediaChange> result = util.changes("woord", 1433329965809L, Order.ASC, Integer.MAX_VALUE);
-        long i = 0;
-        while (result.hasNext()) {
-            MediaChange next = result.next();
-            if (i++ % 10 == 0) {
-                log.info("{}", next);
-                //Thread.sleep(10000);
+    public void testChanges() throws Exception {
+        try (CloseableIterator<MediaChange> result = util.changes("woord", 1433329965809L, Order.ASC, Integer.MAX_VALUE)) {
+            long i = 0;
+            while (result.hasNext()) {
+                MediaChange next = result.next();
+                if (i++ % 10 == 0) {
+                    log.info("{}", next);
+                    //Thread.sleep(10000);
+                }
             }
         }
 
@@ -135,28 +136,30 @@ public class NpoApiClientUtilTest {
 
     @Test
     @Disabled("Takes long!!")
-    public void testChangesEpoch() {
-        CountedIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, null);
-        long i = 0;
-        while (result.hasNext()) {
-            MediaChange next = result.next();
-            if (i++ % 1000 == 0) {
+    public void testChangesEpoch() throws Exception {
+        try (CountedIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, null)) {
+            long i = 0;
+            while (result.hasNext()) {
+                MediaChange next = result.next();
+                if (i++ % 1000 == 0) {
+                    log.info("{} {}", result.getCount(), next);
+                    //Thread.sleep(10000);
+                }
+            }
+        }
+    }
+
+
+
+    @Test
+    @Disabled("Takes long!!")
+    public void testChangesVpronl() throws Exception {
+        try (CountedIterator<MediaChange> result = util.changes("vpro-predictions", Instant.now().minus(Duration.ofHours(6)), Order.ASC, null)) {
+            long i = 0;
+            while (result.hasNext()) {
+                MediaChange next = result.next();
                 log.info("{} {}", result.getCount(), next);
-                //Thread.sleep(10000);
             }
-        }
-    }
-
-
-
-    @Test
-    @Disabled("Takes long!!")
-    public void testChangesVpronl() {
-        CountedIterator<MediaChange> result = util.changes("vpro-predictions", Instant.now().minus(Duration.ofHours(6)), Order.ASC, null);
-        long i = 0;
-        while (result.hasNext()) {
-            MediaChange next = result.next();
-            log.info("{} {}", result.getCount(), next);
         }
     }
 
@@ -179,7 +182,7 @@ public class NpoApiClientUtilTest {
                     break;
                 }
             }
-            System.out.println("" + i + " " + Duration.between(start, Instant.now()));
+            System.out.println(i + " " + Duration.between(start, Instant.now()));
             // couchdb 57355 PT4M45.904S
             // es      51013 PT1M5 .879 S
         }
@@ -261,13 +264,15 @@ public class NpoApiClientUtilTest {
         //ClientInvocation invocation = new ClientInvocation(, uri, new ClientRequestHeaders(configuration), null);
 
 
-        engine.invoke(invocation);
+        try (Response response = engine.invoke(invocation)) {
+            log.debug("{}", response);
+        }
     }
 
 
     @Test
     public void testLoadProfile() {
-        Profile profile = util.getClients().getProfileService().load("human", null);
+        Profile profile = util.getClients().getProfileService().load("human");
         System.out.println(profile.getMediaProfile());
     }
 
