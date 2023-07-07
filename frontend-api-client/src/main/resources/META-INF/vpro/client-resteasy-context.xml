@@ -20,25 +20,28 @@
   </bean>
 
   <bean  class="java.lang.String" id="npo-api.connectionRequestTimeout">
-    <constructor-arg value="${npo-api.connectionRequestTimeout}"/>
+    <constructor-arg value="${npo-api.connectionRequestTimeout:1s}"/>
   </bean>
 
   <bean class="java.lang.String" id="npo-api.connectTimeout">
-    <constructor-arg value="${npo-api.connectTimeout}"/>
+    <constructor-arg value="${npo-api.connectTimeout:1s}"/>
   </bean>
 
   <bean class="java.lang.String" id="npo-api.warnThreshold">
-    <constructor-arg value="${npo-api.warnThreshold}"/>
+    <constructor-arg value="${npo-api.warnThreshold:1s}"/>
   </bean>
 
   <bean class="java.lang.String" id="npo-api.countWindow">
-    <constructor-arg value="${npo-api.countWindow}"/>
+    <constructor-arg value="${npo-api.countWindow:10m}"/>
   </bean>
 
   <bean class="java.lang.Integer" id="npo-api.bucketCount">
-    <constructor-arg value="${npo-api.bucketCount}"/>
+    <constructor-arg value="${npo-api.bucketCount:10}"/>
   </bean>
 
+  <bean class="java.lang.String" id="npo-api.socketTimeout">
+    <constructor-arg value="${npo-api.socketTimeout:1s}"/>
+  </bean>
 
 
   <bean class="java.lang.String" id="npo-pages_publisher.baseUrl">
@@ -73,9 +76,6 @@
   </bean>
 
 
-  <bean class="java.lang.String" id="npo-api.socketTimeout">
-    <constructor-arg value="${npo-api.socketTimeout}"/>
-  </bean>
 
   <bean  id="api.clients.provider" class="nl.vpro.api.client.frontend.NpoApiClients.Provider"  />
   <bean class="nl.vpro.api.client.frontend.NpoApiClients" factory-bean="api.clients.provider" factory-method="get" />
