@@ -35,7 +35,6 @@ import nl.vpro.api.rs.v3.schedule.ScheduleRestService;
 import nl.vpro.api.rs.v3.schedule.ScheduleRestServiceWithDefaults;
 import nl.vpro.api.rs.v3.subtitles.SubtitlesRestService;
 import nl.vpro.api.rs.v3.thesaurus.ThesaurusRestService;
-import nl.vpro.api.rs.v3.tvvod.TVVodRestService;
 import nl.vpro.domain.api.Error;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.MediaObject;
@@ -74,7 +73,6 @@ public class NpoApiClients extends AbstractApiClient {
     private PageRestService pageRestServiceProxyNoTimeout;
     private ScheduleRestServiceWithDefaults scheduleRestServiceProxy;
     private ProfileRestService profileRestServiceProxy;
-    private TVVodRestService tvVodRestServiceProxy;
     private SubtitlesRestService subtitlesRestServiceProxy;
     private ThesaurusRestService thesaurusRestService;
 
@@ -292,8 +290,7 @@ public class NpoApiClients extends AbstractApiClient {
             this::getProfileService,
             this::getScheduleService,
             this::getSubtitlesRestService,
-            this::getThesaurusRestService,
-            this::getTVVodService
+            this::getThesaurusRestService
         );
     }
 
@@ -484,12 +481,6 @@ public class NpoApiClients extends AbstractApiClient {
         return profileRestServiceProxy = produceIfNull(
             () -> profileRestServiceProxy,
             () -> build(getClientHttpEngine(), ProfileRestService.class));
-    }
-
-    public TVVodRestService getTVVodService() {
-        return tvVodRestServiceProxy = produceIfNull(
-            () -> tvVodRestServiceProxy,
-            () -> build(getClientHttpEngine(), TVVodRestService.class));
     }
 
     public SubtitlesRestService getSubtitlesRestService() {
