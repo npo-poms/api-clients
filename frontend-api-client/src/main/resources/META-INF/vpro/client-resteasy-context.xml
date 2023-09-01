@@ -110,4 +110,5 @@
   <bean  id="api.clients.provider" class="nl.vpro.api.client.frontend.NpoApiClients.Provider"  autowire-candidate="false"/>
   <bean  factory-bean="api.clients.provider" factory-method="get" />
 
+
 </beans>
