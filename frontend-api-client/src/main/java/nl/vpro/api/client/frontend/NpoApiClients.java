@@ -56,7 +56,7 @@ import static org.meeuw.functional.Functions.ignoreArg1;
 /**
  * Collects clients for all services on the <a href="https://rs.poms.omroep.nl/v1">NPO Frontend Rest API</a>
  * <p>
- * This is implemented by proxying the actual service interfaces used on the server. Most noticably {@link MediaRestService} and {@link PageRestService}
+ * This is implemented by proxying the actual service interfaces used on the server. Most noticeably {@link MediaRestService} and {@link PageRestService}
  */
 @Description("Api clients for services on https://rs.poms.omroep.nl")
 public class NpoApiClients extends AbstractApiClient {
@@ -173,6 +173,10 @@ public class NpoApiClients extends AbstractApiClient {
         @Override
         public NpoApiClients get() {
             return ProviderAndBuilder.fillAndCatch(this, builder).build();
+        }
+
+        public Provider() {
+
         }
     }
 
