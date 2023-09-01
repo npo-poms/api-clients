@@ -62,6 +62,8 @@
   <bean class="java.lang.String" id="npo-pages_publisher.baseUrl">
     <constructor-arg value="${npo-pages_publisher.baseUrl}"/>
   </bean>
+
+
   <bean class="java.lang.String" id="npo-pages_publisher.user">
     <constructor-arg value="${npo-pages_publisher.user}"/>
   </bean>
@@ -105,9 +107,7 @@
     <constructor-arg value="${npo-api.trustAll}"/>
   </bean>
 
-
-
   <bean  id="api.clients.provider" class="nl.vpro.api.client.frontend.NpoApiClients.Provider"  />
-  <bean class="nl.vpro.api.client.frontend.NpoApiClients" factory-bean="api.clients.provider" factory-method="get" />
+  <bean  factory-bean="api.clients.provider" factory-method="get" />
 
 </beans>
