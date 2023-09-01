@@ -3,6 +3,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
 
+
+  <!--
+     convert a bunch of properties to String beans, that can be injected with @Named
+     This avoids having spring dependency for @Value.
+
+     And this file is just an XML, which can be picked up by spring. But if you for example use guice, it can just be ignored.
+   -->
+
   <bean class="java.lang.String" id="npo-api.baseUrl">
     <constructor-arg value="${npo-api.baseUrl}" />
   </bean>
@@ -43,6 +51,13 @@
     <constructor-arg value="${npo-api.socketTimeout:1s}"/>
   </bean>
 
+  <bean class="java.lang.Double" id="npo-api.baserate" factory-method="valueOf">
+    <constructor-arg value="${npo-api.baserate:1000}"/>
+  </bean>
+
+   <bean class="java.lang.Double" id="npo-api.minrate" factory-method="valueOf">
+    <constructor-arg value="${npo-api.minrate:0.1}"/>
+  </bean>
 
   <bean class="java.lang.String" id="npo-pages_publisher.baseUrl">
     <constructor-arg value="${npo-pages_publisher.baseUrl}"/>
@@ -62,6 +77,21 @@
   <bean class="java.lang.String" id="npo-pages_publisher.jwsUser">
     <constructor-arg value="${npo-pages_publisher.jwsUser}"/>
   </bean>
+
+
+  <bean class="java.lang.Double" id="npo-pages_publisher.baserate" factory-method="valueOf">
+    <constructor-arg value="${npo-pages_publisher.baserate:1000}"/>
+  </bean>
+
+   <bean class="java.lang.Double" id="npo-pages_publisher.minrate" factory-method="valueOf">
+    <constructor-arg value="${npo-pages_publisher.minrate:0.1}"/>
+  </bean>
+
+
+  <bean class="java.lang.String" id="npo-images.baseUrl">
+    <constructor-arg value="${npo-images.baseUrl}"/>
+  </bean>
+
 
   <bean class="org.apache.commons.lang3.math.NumberUtils" factory-method="createInteger" id="npo-api.maxConnections">
     <constructor-arg value="${npo-api.maxConnections}"/>
