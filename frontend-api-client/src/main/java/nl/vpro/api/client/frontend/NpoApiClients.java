@@ -61,7 +61,7 @@ import static org.meeuw.functional.Functions.ignoreArg1;
 @Description("Api clients for services on https://rs.poms.omroep.nl")
 public class NpoApiClients extends AbstractApiClient {
 
-    public static TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL =
+    public static final TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL =
         ignoreArg1(ignoreArg1((s) ->
                 s.equalsIgnoreCase(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG
             )
