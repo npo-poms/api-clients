@@ -24,12 +24,18 @@ public class AbstractRateLimiter {
 
     private final RateLimiter limiter = RateLimiter.create(baseRate);
 
+    /**
+     * Sets the rate in requests per second. The maximal number of request which are done.
+     */
     public void setBaseRate(@Positive double baseRate) {
         double prevFactor = limiter.getRate() / this.baseRate;
         this.baseRate = baseRate;
         limiter.setRate(this.baseRate * prevFactor);
     }
 
+    /**
+     * Sets 'minimal' rate in requests per second. If errors occur, the rate will be gradually lowered to this value, until the errors stop.
+     */
     public void setMinRate(@Positive double minRate) {
         this.minRate = minRate;
         setRate(limiter.getRate());
@@ -51,6 +57,7 @@ public class AbstractRateLimiter {
         setRate(0d);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean setRate(double r) {
         if (r > baseRate) {
             r = baseRate;
