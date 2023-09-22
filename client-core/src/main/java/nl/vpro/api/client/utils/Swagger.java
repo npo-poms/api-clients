@@ -4,18 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ConnectException;
 import java.net.URI;
+import java.net.http.*;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.*;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.fasterxml.jackson.core.*;
@@ -41,50 +36,49 @@ public class Swagger {
         return getVersionFromSwagger(baseUrl, defaultVersion, null);
     }
 
+    private  static final HttpClient client = HttpClient.newBuilder()
+        .version(HttpClient.Version.HTTP_1_1)
+        .followRedirects(HttpClient.Redirect.NORMAL)
+        .connectTimeout(Duration.ofSeconds(20))
+        .build();
+
+
     public static VersionResult getVersionFromSwagger(String baseUrl, String defaultVersion, @Nullable Duration timeout) {
+        final URI url = URI.create(baseUrl + "/openapi.json");
         try {
             if (timeout == null) {
                 timeout = Duration.ofSeconds(3);
             }
-            ObjectMapper mapper = new ObjectMapper();
-            JsonFactory factory = new JsonFactory();
-            RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout((int) timeout.toMillis())
-                .setConnectionRequestTimeout((int) timeout.toMillis())
-                .setSocketTimeout((int) timeout.toMillis()).build();
-            try (CloseableHttpClient client = HttpClientBuilder
-                .create()
-                .setDefaultRequestConfig(config)
-                .build()) {
+            final ObjectMapper mapper = new ObjectMapper();
+            final JsonFactory factory = new JsonFactory();
 
-                URI url = URI.create(baseUrl + "/openapi.json");
-                HttpUriRequest request = new HttpGet(url);
-
-                request.addHeader(Headers.NPO_DATE, "CacheBust-" + UUID.randomUUID()); // Cloudfront includes npo date as a cache key header.
-                try (CloseableHttpResponse response = client.execute(request)) {
-                    if (response.getStatusLine().getStatusCode() == 200) {
-                        try (InputStream stream = response.getEntity().getContent()) {
-                            JsonParser jp = factory.createParser(stream);
-                            JsonNode openapi = mapper.readTree(jp);
-                            String versionString = openapi.get("info").get("version").asText();
-                            return VersionResult.builder().version(getVersion(versionString, defaultVersion)).available(true).build();
-                        }
-                    } else {
-                        log.warn("No swagger found at {} -> {}", url, response.getStatusLine());
-                    }
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .timeout(timeout)
+                .header("Content-Type", "application/json")
+                .header(Headers.NPO_DATE, "CacheBust-" + UUID.randomUUID()) // Cloudfront includes npo date as a cache key header.
+                .GET()
+                .build();
+            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            if (response.statusCode() == 200) {
+                try (InputStream stream = response.body()) {
+                    JsonParser jp = factory.createParser(stream);
+                    JsonNode openapi = mapper.readTree(jp);
+                    String versionString = openapi.get("info").get("version").asText();
+                    return VersionResult.builder().version(getVersion(versionString, defaultVersion)).available(true).build();
                 }
+            } else {
+                log.warn("No swagger found at {} -> {}", url, response.statusCode());
                 return VersionResult.builder().version(defaultVersion).available(false).build();
             }
-        } catch (JsonParseException jpe) {
-            log.warn(jpe.getMessage());
+        } catch (JsonParseException ex) {
+            log.warn(url + ": " + ex.getMessage(), ex);
+            return VersionResult.builder().version(defaultVersion).available(false).build();
+		} catch (IOException | InterruptedException ex) {
+            log.warn(ex.getMessage(), ex);
             return VersionResult.builder().version(defaultVersion).available(true).build();
-        } catch (ConnectException | ConnectTimeoutException e) {
-            log.warn(e.getMessage());
-            return VersionResult.builder().version(defaultVersion).available(false).build();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            return VersionResult.builder().version(defaultVersion).available(false).build();
         }
+
     }
 
     public static String getVersion(String versionString, String defaultVersion) {

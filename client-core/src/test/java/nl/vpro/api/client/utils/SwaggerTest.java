@@ -1,6 +1,5 @@
 package nl.vpro.api.client.utils;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import nl.vpro.util.Version;
@@ -16,15 +15,17 @@ public class SwaggerTest {
     @Test
     public void getVersion() {
 
-        Assertions.assertThat(Swagger.getVersion("5.6-SNAPSHOT.${builder.vcs.number}", null)).isEqualTo("5.6");
+        assertThat(Swagger.getVersion("5.6-SNAPSHOT.${builder.vcs.number}", null)).isEqualTo("5.6");
 
         assertThat(Swagger.getVersion("5.6.2.${builder.vcs.number}", null)).isEqualTo("5.6.2");
 
         assertThat(Swagger.getVersionNumber("5.6-SNAPSHOT.${builder.vcs.number}", null)).isEqualTo(Version.of(5, 6));
 
         assertThat(Swagger.getVersionNumber("5.6.2.${builder.vcs.number}", null)).isEqualTo(Version.of(5, 6, 2));
+    }
 
-
-
+    @Test
+    public void getVersionFromSwagger() {
+        assertThat(Swagger.getVersionFromSwagger("https://rs.poms.omroep.nl/v1/api", "5.6", null).getVersion()).isNotEqualTo("5.6");
     }
 }
