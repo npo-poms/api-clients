@@ -26,8 +26,8 @@ public class ContentTypeInterceptor implements WriterInterceptor {
         if (CONTENT_TYPE.get() != null) {
             try {
                 context.getHeaders().put(HttpHeaders.CONTENT_TYPE, Collections.singletonList(CONTENT_TYPE.get()));
-                if (context.getEntity() instanceof InputStream) {
-                    IOUtils.copy((InputStream) context.getEntity(), context.getOutputStream());
+                if (context.getEntity() instanceof InputStream inputStream) {
+                    IOUtils.copy(inputStream, context.getOutputStream());
                 } else {
                     context.proceed();
                 }
