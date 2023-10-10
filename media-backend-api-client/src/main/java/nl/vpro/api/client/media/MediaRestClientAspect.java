@@ -12,8 +12,9 @@ import java.util.stream.Stream;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import nl.vpro.logging.simple.Level;
+
 import org.meeuw.functional.TriFunction;
-import org.slf4j.event.Level;
 
 import nl.vpro.api.client.Utils;
 import nl.vpro.domain.Roles;
