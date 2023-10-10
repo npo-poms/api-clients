@@ -24,7 +24,6 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.client.jaxrs.internal.BasicAuthentication;
 import org.meeuw.functional.TriFunction;
-import org.slf4j.event.Level;
 
 import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.RateLimiter;
@@ -39,6 +38,7 @@ import nl.vpro.domain.media.update.*;
 import nl.vpro.domain.media.update.collections.XmlCollection;
 import nl.vpro.domain.subtitles.Subtitles;
 import nl.vpro.domain.subtitles.SubtitlesId;
+import nl.vpro.logging.simple.Level;
 import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.VersionRestService;
 import nl.vpro.rs.client.VersionResult;
