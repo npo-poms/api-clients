@@ -117,6 +117,9 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Setter
     @Getter
     protected String errors;
+
+    @Getter
+    @Setter
     @lombok.Builder.Default
     protected boolean waitForRetry = false;
 
@@ -243,6 +246,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         Duration countWindow,
         Integer bucketCount,
         Duration warnThreshold,
+        nl.vpro.logging.simple.Level warnLevel,
         List<Locale> acceptableLanguages,
         Boolean trustAll,
         Integer defaultMax,
@@ -281,6 +285,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             countWindow,
             bucketCount,
             warnThreshold,
+            warnLevel,
             acceptableLanguages,
             null,
             null,
@@ -391,14 +396,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         if (userNamePassword.length == 2) {
             setPassword(userNamePassword[1]);
         }
-    }
-
-    public boolean isWaitForRetry() {
-        return waitForRetry;
-    }
-
-    public void setWaitForRetry(boolean waitForRetry) {
-        this.waitForRetry = waitForRetry;
     }
 
     public void setHeaders(Map<String, Object> headers) {

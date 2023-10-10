@@ -33,6 +33,7 @@ import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.page.PageIdMatch;
 import nl.vpro.domain.page.update.PageUpdate;
 import nl.vpro.jmx.MBeans;
+import nl.vpro.logging.simple.Level;
 import nl.vpro.rs.client.VersionResult;
 import nl.vpro.rs.converters.ConditionalBasicAuthentication;
 import nl.vpro.rs.pages.update.PageUpdateRestService;
@@ -145,6 +146,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
         Duration countWindow,
         Integer bucketCount,
         Duration warnThreshold,
+        Level warnLevel,
         List<Locale> acceptableLanguages,
         MediaType accept,
         Boolean trustAll,
@@ -173,6 +175,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
             countWindow,
             bucketCount,
             warnThreshold,
+            warnLevel,
             acceptableLanguages,
             accept,
             null,
