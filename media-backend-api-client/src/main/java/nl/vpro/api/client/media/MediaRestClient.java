@@ -93,7 +93,7 @@ import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
 @SuppressWarnings({"WeakerAccess", "UnnecessaryLocalVariable", "UnstableApiUsage"})
 public class MediaRestClient extends AbstractApiClient implements MediaRestClientMXBean {
 
-    public static TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL = (m, a, s) -> s.equals(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG;
+    public static final TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL = (m, a, s) -> s.equals(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG;
 
     private int defaultMax = 50;
 
