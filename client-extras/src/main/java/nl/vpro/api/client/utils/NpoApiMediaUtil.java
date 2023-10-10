@@ -425,7 +425,7 @@ public class NpoApiMediaUtil implements MediaProvider {
 
     public CompletableFuture<MediaSince> subscribeToChanges(
         final ChangesFeedParameters parameters,
-        BooleanSupplier doWhile,
+        final BooleanSupplier doWhile,
         final BiConsumer<MediaSince, MediaChange> listener) {
         if (doWhile.getAsBoolean()) {
             return CompletableFuture.supplyAsync(() -> {
@@ -435,10 +435,16 @@ public class NpoApiMediaUtil implements MediaProvider {
                 while (doWhile.getAsBoolean() && !Thread.currentThread().isInterrupted()) {
                     try (CountedIterator<MediaChange> changes = changes(effectiveParameters)) {
                         while (changes.hasNext()) {
+                            if (Thread.currentThread().isInterrupted()) {
+                                log.info("Breaking with remaining changes because thread {} is marked interrupted", Thread.currentThread());
+                                break;
+                            }
                             MediaChange change = changes.next();
                             currentSince = change.asSince();
                             listener.accept(currentSince, change);
                             effectiveParameters = parameters.withMediaSince(currentSince);
+
+
                         }
                     } catch (NullPointerException npe) {
                         log.error(npe.getClass().getSimpleName(), npe);
