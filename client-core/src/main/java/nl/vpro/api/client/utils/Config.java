@@ -42,6 +42,7 @@ public class Config {
         media_api_backend(Deployment.media_api_backend),
         parkpost(null),
         media_api_backend_rcrs(null),
+        media_api_backend_prepr(null),
         pages_publisher(Deployment.pages_publisher),
         media_publisher(Deployment.media_publisher),
         media(Deployment.media),
