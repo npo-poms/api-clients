@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.*;
 import java.time.Duration;
@@ -71,7 +72,7 @@ public class Swagger {
                 log.warn("No swagger found at {} -> {}", url, response.statusCode());
                 return VersionResult.builder().version(defaultVersion).available(false).build();
             }
-        } catch (JsonParseException ex) {
+        } catch (JsonParseException | ConnectException ex) {
             log.warn(url + ": " + ex.getMessage(), ex);
             return VersionResult.builder().version(defaultVersion).available(false).build();
 		} catch (IOException | InterruptedException ex) {

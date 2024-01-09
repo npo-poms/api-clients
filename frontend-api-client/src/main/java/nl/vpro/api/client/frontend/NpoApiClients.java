@@ -331,7 +331,7 @@ public class NpoApiClients extends AbstractApiClient {
     }
 
 
-    public boolean isAvailable() {
+    public boolean  isAvailable() {
         getVersion();
         return version.get().isAvailable();
     }
