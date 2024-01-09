@@ -2,7 +2,6 @@ package nl.vpro.api.client.media;
 
 import lombok.*;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.*;
@@ -47,6 +46,7 @@ import nl.vpro.rs.media.MediaBackendRestService;
 import nl.vpro.util.*;
 
 import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
+import static nl.vpro.domain.media.search.Pager.Direction.ASC;
 
 /**
  * A client for RESTfull calls to a running MediaBackendRestService.
@@ -120,32 +120,26 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     @Getter
     @Setter
-    @lombok.Builder.Default
     protected boolean waitForRetry = false;
 
-    @lombok.Builder.Default
     @Getter
     @Setter
     protected boolean lookupCrids = true;
 
-    @lombok.Builder.Default
     @Getter
     @Setter
     private boolean validateInput = false;
 
 
-    @lombok.Builder.Default
     @Getter
     @Setter
     private AssemblageConfig.Steal stealCrids = AssemblageConfig.Steal.IF_DELETED;
 
 
-    @lombok.Builder.Default
     @Getter
     @Setter
     private boolean imageMetaData = false;
 
-    @lombok.Builder.Default
     @Getter
     @Setter
     private OwnerType owner = OwnerType.BROADCASTER;
@@ -154,17 +148,14 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Setter
     private Queue<String> warnings = new ArrayDeque<>(100);
 
-    @lombok.Builder.Default
     @Getter
     @Setter
     private boolean publishImmediately = false;
 
-    @lombok.Builder.Default
     @Getter
     @Setter
     private Boolean deletes = null;
 
-    @lombok.Builder.Default
     @Getter
     @Setter
     private TriFunction<Method, Object[], String, Level> headerLevel = DEFAULT_HEADER_LEVEL;
@@ -699,7 +690,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     @SneakyThrows
     public MediaUpdateList<MemberUpdate> getGroupMembers(final String id, final int max, final long offset) {
-        return getBackendRestService().getGroupMembers(EntityType.NoSegments.media, id, offset, max, "ASC", followMerges, owner, deletes);
+        return getBackendRestService().getGroupMembers(EntityType.NoSegments.media, id, offset, max, ASC, followMerges, owner, deletes);
     }
 
     public MediaUpdateList<MemberUpdate> getGroupMembers(String id) {
@@ -708,7 +699,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     @SneakyThrows
     public MediaUpdateList<MemberUpdate> getGroupEpisodes(final String id, final int max, final long offset) {
-        return getBackendRestService().getGroupEpisodes(id, offset, max, "ASC", followMerges, owner, deletes);
+        return getBackendRestService().getGroupEpisodes(id, offset, max, ASC, followMerges, owner, deletes);
     }
 
     public MediaUpdateList<MemberUpdate> getGroupEpisodes(String id) {
@@ -735,12 +726,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return BatchedReceiver.<MemberUpdate>builder()
             .batchSize(240)
             .batchGetter((offset, max) -> {
-                try {
-                    return getBackendRestService().getGroupMembers(EntityType.NoSegments.media, mid, offset, max, "ASC", followMerges, owner, deletes).iterator();
-                } catch (IOException e) {
-                    log.error(e.getMessage(), e);
-                    throw new RuntimeException(e);
-                }
+                return getBackendRestService().getGroupMembers(EntityType.NoSegments.media, mid, offset, max, ASC, followMerges, owner, deletes).iterator();
             })
             .build();
     }
@@ -749,12 +735,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return BatchedReceiver.<MemberUpdate>builder()
             .batchSize(defaultMax)
             .batchGetter((offset, max) -> {
-                try {
-                    return getBackendRestService().getGroupEpisodes(mid, offset, max, "ASC", followMerges, owner, deletes).iterator();
-                } catch (IOException e) {
-                    log.error(e.getMessage(), e);
-                    throw new RuntimeException(e);
-                }
+                return getBackendRestService().getGroupEpisodes(mid, offset, max, ASC, followMerges, owner, deletes).iterator();
             })
             .build();
     }
@@ -764,12 +745,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return BatchedReceiver.<Member>builder()
             .batchSize(defaultMax)
             .batchGetter((offset, max) -> {
-                try {
-                    return getBackendRestService().getFullGroupMembers(EntityType.NoSegments.media, mid, offset, max, "ASC", followMerges, deletes).iterator();
-                } catch (IOException e) {
-                    log.error(e.getMessage(), e);
-                    throw new RuntimeException(e);
-                }
+                return getBackendRestService().getFullGroupMembers(EntityType.NoSegments.media, mid, offset, max, ASC, followMerges, deletes).iterator();
             })
             .build();
     }
@@ -778,12 +754,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         return BatchedReceiver.<Member>builder()
             .batchSize(defaultMax)
             .batchGetter((offset, max) -> {
-                try {
-                    return getBackendRestService().getFullGroupEpisodes(mid, offset, max, "ASC", followMerges, deletes).iterator();
-                } catch (IOException e) {
-                    log.error(e.getMessage(), e);
-                    throw new RuntimeException(e);
-                }
+                return getBackendRestService().getFullGroupEpisodes(mid, offset, max, ASC, followMerges, deletes).iterator();
             })
             .build();
     }
