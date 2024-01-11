@@ -318,7 +318,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             this.setAsynchronousThrottleRate(asynchronousThrottleRate);
         }
         this.validateInput = validateInput;
-        this.owner = owner;
+        this.owner = owner == null ? this.owner : owner;
         this.publishImmediately = publishImmediately;
         this.deletes = deletes;
         this.headerLevel = headerLevel == null ? DEFAULT_HEADER_LEVEL : headerLevel;
