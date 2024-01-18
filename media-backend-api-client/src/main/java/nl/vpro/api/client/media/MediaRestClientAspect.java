@@ -12,14 +12,13 @@ import java.util.stream.Stream;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import nl.vpro.logging.simple.Level;
-
 import org.meeuw.functional.TriFunction;
 
 import nl.vpro.api.client.Utils;
 import nl.vpro.domain.Roles;
 import nl.vpro.domain.media.EntityType;
 import nl.vpro.logging.Slf4jHelper;
+import nl.vpro.logging.simple.Level;
 import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.client.HeaderInterceptor;
 import nl.vpro.rs.media.MediaBackendRestService;
@@ -130,7 +129,8 @@ your request.</p>
                         } else if (MediaBackendRestService.OWNER.equals(queryParam.value())) {
                             if (client.getOwner() != null) {
                                 log.debug("Implicitly set owner to {}", client.getOwner());
-                                args[i] = client.getOwner().name();
+
+                                args[i] = client.getOwner();
                             }
                         } else if (MediaBackendRestService.PUBLISH.equals(queryParam.value())) {
                             if (client.isPublishImmediately()) {
