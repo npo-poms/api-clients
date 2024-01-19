@@ -1,11 +1,11 @@
 package nl.vpro.api.client.pages;
 
+import lombok.extern.log4j.Log4j2;
+
 import java.time.Instant;
 
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXB;
 
-import org.jboss.resteasy.api.validation.ViolationReport;
 import org.junit.jupiter.api.*;
 
 import nl.vpro.domain.classification.ClassificationService;
@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @Disabled("This required running server at publish-test")
+@Log4j2
 public class PageUpdateApiClientITest {
 
     private static PageUpdateApiClient clients;
@@ -39,15 +40,8 @@ public class PageUpdateApiClientITest {
         PageUpdate instance = PageUpdateBuilder.article("http://www.meeuw.org/test/1234")
             .title("my title " + Instant.now())
             .broadcasters("VPRO").build();
-        try (Response response = client.save(instance, null)) {
-            if (response.getStatus() == 400) {
-                ViolationReport report = response.readEntity(ViolationReport.class);
-                JAXB.marshal(report, System.out);
-                JAXB.marshal(instance, System.out);
-
-            }
-            assertEquals(202, response.getStatus());
-        }
+        SaveResult saveResult = client.save(instance, null);
+        log.info("{}", saveResult);
     }
 
 
@@ -61,15 +55,8 @@ public class PageUpdateApiClientITest {
             .build();
         JAXB.marshal(page, System.out);
 
-        try (Response response = client.save(page, null)) {
-            if (response.getStatus() == 400) {
-                ViolationReport report = response.readEntity(ViolationReport.class);
-                JAXB.marshal(report, System.out);
-                JAXB.marshal(page, System.out);
-
-            }
-            assertEquals(202, response.getStatus());
-        }
+        SaveResult result  = client.save(page, null);
+        log.info("{}", result);
     }
 
 
@@ -82,32 +69,16 @@ public class PageUpdateApiClientITest {
             .title("Page with topstory (" + Instant.now() + ")")
             .links(LinkUpdate.topStory("http://www.meeuw.org/test/topstory", "heel goed artikel"))
             .build();
-        try (Response response = client.save(page, null)) {
-            JAXB.marshal(page, System.out);
-
-            if (response.getStatus() == 400) {
-                ViolationReport report = response.readEntity(ViolationReport.class);
-                JAXB.marshal(report, System.out);
-
-            }
-            assertEquals(202, response.getStatus());
-        }
-
+        SaveResult result = client.save(page, null);
+        log.info("{}", result);
     }
 
 
     @Test
     public void testDelete() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
-        try (Response response = client.delete("http://www.meeuw.org/test/1234", false, 1, true, PageIdMatch.URL, null, null)) {
-
-            if (response.getStatus() == 400) {
-                ViolationReport report = response.readEntity(ViolationReport.class);
-                JAXB.marshal(report, System.out);
-
-            }
-            assertEquals(202, response.getStatus());
-        }
+        DeleteResult deleteResult = client.delete("http://www.meeuw.org/test/1234", false, 1, true, PageIdMatch.URL);
+        log.info("{}", deleteResult);
 
     }
 
@@ -115,15 +86,8 @@ public class PageUpdateApiClientITest {
     @Test
     public void testDeleteMultiple() {
         PageUpdateRestService client = clients.getPageUpdateRestService();
-        try (Response response = client.delete("http://www.meeuw.org/", true, 100, true, PageIdMatch.URL, null, null)) {
-            if (response.getStatus() == 400) {
-                ViolationReport report = response.readEntity(ViolationReport.class);
-                JAXB.marshal(report, System.out);
-
-            }
-            assertEquals(202, response.getStatus());
-        }
-
+        DeleteResult result =  client.delete("http://www.meeuw.org/", true, 100, true, PageIdMatch.URL);
+        log.info("{}", result);
     }
 
     @Test

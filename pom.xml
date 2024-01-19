@@ -23,7 +23,7 @@
 
   <properties>
     <java.version>17</java.version>
-    <poms.shared.version>7.10.1-SNAPSHOT</poms.shared.version>
+    <poms.shared.version>7.11-SNAPSHOT</poms.shared.version>
     <!--
     <poms.shared.version>7.6-SNAPSHOT</poms.shared.version>
     -->

@@ -332,7 +332,8 @@ public class PageUpdateApiClient extends AbstractApiClient {
     @Override
     protected void buildResteasy(ResteasyClientBuilder builder) {
         builder
-            .register(authentication);
+            .register(authentication)
+        ;
     }
 
 

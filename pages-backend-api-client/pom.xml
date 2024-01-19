@@ -25,6 +25,10 @@
       <artifactId>vpro-shared-client-resteasy</artifactId>
     </dependency>
     <dependency>
+      <groupId>nl.vpro.shared</groupId>
+      <artifactId>vpro-shared-rs-client</artifactId>
+    </dependency>
+    <dependency>
       <groupId>nl.vpro.pages</groupId>
       <artifactId>pages-rs-services</artifactId>
     </dependency>
@@ -40,12 +44,6 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-    </dependency>
-     <dependency>
-      <!-- TODO: drop this too -->
-      <groupId>jakarta.servlet</groupId>
-      <artifactId>jakarta.servlet-api</artifactId>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

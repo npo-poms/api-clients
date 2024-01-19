@@ -27,8 +27,7 @@ import nl.vpro.domain.classification.ClassificationService;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.page.Page;
 import nl.vpro.domain.page.PageIdMatch;
-import nl.vpro.domain.page.update.DeleteResult;
-import nl.vpro.domain.page.update.PageUpdate;
+import nl.vpro.domain.page.update.*;
 import nl.vpro.jackson2.Jackson2Mapper;
 import nl.vpro.rs.client.Utils;
 
@@ -79,23 +78,12 @@ public class PageUpdateApiUtil {
             limiter.acquire();
             try {
 
-                Result<String> result = handleResponse(
-                    pageUpdateApiClient.getPageUpdateRestService().save(update, wait),
-                    update, STRING, String.class
-                );
-                // temporary, later we may do Result<SaveResult>
-                if (result.isOk()) {
-                    log.info(result.getEntity());
-                    return Result.<Void>builder().status(result.getStatus()).build();
-                } else {
-                    if ((! retryErrors) || (! result.needsRetry())) {
-                        log.warn(result.getErrors());
-                        return Result.<Void>builder().status(result.getStatus()).errors(result.getErrors()).build();
-                    }
-                }
-                limiter.setCurrentRateToMinRate();
-                log.warn("Retrying {}", update);
+                SaveResult result = pageUpdateApiClient.getPageUpdateRestService().save(update, wait);
+                limiter.upRate();
+                return Result.success(null);
+
             } catch (ProcessingException e) {
+                limiter.downRate();
                 return exceptionToResult(e);
             }
         }
@@ -108,50 +96,33 @@ public class PageUpdateApiUtil {
         return Utils.wrapNotFound(() -> pageUpdateApiClient.getPageUpdateRestService().load(url, false, match)).orElse(null);
     }
 
-    public Result<DeleteResult> delete(@NotNull String id) {
+    public DeleteResult delete(@NotNull String id) {
         limiter.acquire();
         PageIdMatch match = id.startsWith("crid:") ? PageIdMatch.CRID : PageIdMatch.URL;
-        try {
-            return handleResponse(
-                pageUpdateApiClient.getPageUpdateRestService()
-                    .delete(id, false, 1, false, match, null, null), id, STRING, DeleteResult.class
-            );
-        } catch (ProcessingException e) {
-            return exceptionToResult(e);
-        }
+        return pageUpdateApiClient.getPageUpdateRestService()
+            .delete(id, false, 1, false, match);
+
     }
 
 
-    public Result<DeleteResult> deleteWhereStartsWith(@NotNull String prefix) {
+    public DeleteResult deleteWhereStartsWith(@NotNull String prefix) {
         limiter.acquire();
         PageIdMatch match = prefix.startsWith("crid:") ? PageIdMatch.CRID : PageIdMatch.URL;
 
         int batchSize = 10000;
-        try {
-            DeleteResult result = null;
-            while (true) {
-                Result<DeleteResult> r = handleResponse(
-                    pageUpdateApiClient.getPageUpdateRestService()
-                        .delete(prefix, true, batchSize, true, match, null,null), prefix, STRING, DeleteResult.class
-                );
-                log.info("Batch deleted {}: {}", prefix, r);
-                if (result == null) {
-                    result = r.getEntity();
-                } else {
-                    result = result.and(r.getEntity());
-                }
-                if (r.isOk()) {
-                    if (r.getEntity().getCount() == 0) {
-                        return Result.<DeleteResult>builder()
-                            .entity(result)
-                            .status(Result.Status.SUCCESS)
-                            .build();
-                    }
-                }
+        DeleteResult result = null;
+        while (true) {
+            DeleteResult r = pageUpdateApiClient.getPageUpdateRestService()
+                .delete(prefix, true, batchSize, true, match);
+            log.info("Batch deleted {}: {}", prefix, r);
+            if (result != null) {
+                result = result.and(r);
+            } else {
+                result = r;
             }
-
-        } catch (ProcessingException e) {
-            return exceptionToResult(e);
+            if (r.getCount() == 0) {
+                return result;
+            }
         }
     }
 

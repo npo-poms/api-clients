@@ -2,8 +2,6 @@ package nl.vpro.api.client.pages;
 
 import java.io.*;
 
-import javax.ws.rs.core.Response;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -74,12 +72,8 @@ public class ReindexFromCouchdb {
                         }
                         count++;
                         System.out.println(url);
-                        Response response = restService.save(pu, false);
-                        response.close();
-                        if (response.getStatus() != 202) {
-                            System.out.println("" + response);
-                        }
-
+                        SaveResult saveResult = restService.save(pu, false);
+                        System.out.println(saveResult);
                     }
                 }
             }

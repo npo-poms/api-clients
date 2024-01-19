@@ -95,6 +95,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     public static final TriFunction<Method, Object[], String, Level> DEFAULT_HEADER_LEVEL = (m, a, s) -> s.equals(Headers.NPO_WARNING_HEADER) ? Level.WARN : Level.DEBUG;
 
+    @Setter
     private int defaultMax = 50;
 
     private final RateLimiter throttle = RateLimiter.create(1.0);
@@ -108,6 +109,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     private FrameCreatorRestService frameCreatorRestService;
 
+    @Setter
     private Map<String, Object> headers;
 
     Supplier<VersionResult> version;
@@ -129,7 +131,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     @Getter
     @Setter
     private boolean validateInput = false;
-
 
     @Getter
     @Setter
@@ -387,10 +388,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
         if (userNamePassword.length == 2) {
             setPassword(userNamePassword[1]);
         }
-    }
-
-    public void setHeaders(Map<String, Object> headers) {
-        this.headers = headers;
     }
 
     public String getVersion() {
@@ -725,18 +722,14 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     public Iterator<MemberUpdate> getAllMembers(String mid) {
         return BatchedReceiver.<MemberUpdate>builder()
             .batchSize(240)
-            .batchGetter((offset, max) -> {
-                return getBackendRestService().getGroupMembers(EntityType.NoSegments.media, mid, offset, max, ASC, followMerges, owner, deletes).iterator();
-            })
+            .batchGetter((offset, max) -> getBackendRestService().getGroupMembers(EntityType.NoSegments.media, mid, offset, max, ASC, followMerges, owner, deletes).iterator())
             .build();
     }
 
     public Iterator<MemberUpdate> getAllEpisodes(String mid) {
         return BatchedReceiver.<MemberUpdate>builder()
             .batchSize(defaultMax)
-            .batchGetter((offset, max) -> {
-                return getBackendRestService().getGroupEpisodes(mid, offset, max, ASC, followMerges, owner, deletes).iterator();
-            })
+            .batchGetter((offset, max) -> getBackendRestService().getGroupEpisodes(mid, offset, max, ASC, followMerges, owner, deletes).iterator())
             .build();
     }
 
@@ -744,18 +737,14 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
     public Iterator<Member> getAllFullMembers(String mid) {
         return BatchedReceiver.<Member>builder()
             .batchSize(defaultMax)
-            .batchGetter((offset, max) -> {
-                return getBackendRestService().getFullGroupMembers(EntityType.NoSegments.media, mid, offset, max, ASC, followMerges, deletes).iterator();
-            })
+            .batchGetter((offset, max) -> getBackendRestService().getFullGroupMembers(EntityType.NoSegments.media, mid, offset, max, ASC, followMerges, deletes).iterator())
             .build();
     }
 
     public Iterator<Member> getAllFullEpisodes(String mid) {
         return BatchedReceiver.<Member>builder()
             .batchSize(defaultMax)
-            .batchGetter((offset, max) -> {
-                return getBackendRestService().getFullGroupEpisodes(mid, offset, max, ASC, followMerges, deletes).iterator();
-            })
+            .batchGetter((offset, max) -> getBackendRestService().getFullGroupEpisodes(mid, offset, max, ASC, followMerges, deletes).iterator())
             .build();
     }
 
@@ -782,10 +771,6 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             log.debug("{}", result);
             return result;
         }
-    }
-
-    public void setDefaultMax(int max) {
-        this.defaultMax = max;
     }
 
 
