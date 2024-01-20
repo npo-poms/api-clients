@@ -367,11 +367,11 @@ public class PageUpdateApiClient extends AbstractApiClient {
         Instant expires = now.plus(Duration.ofHours(12));
         SecretKey secretKey = Keys.hmacShaKeyFor(jwsKey);
         String compactJws = Jwts.builder()
-            .setSubject(subject)
+            .subject(subject)
             .claim("usr", jwsUser)
-            .setIssuedAt(Date.from(now))
-            .setIssuer(jwsIssuer)
-            .setExpiration(Date.from(expires))
+            .issuedAt(Date.from(now))
+            .issuer(jwsIssuer)
+            .expiration(Date.from(expires))
             .signWith(secretKey)
             .compact();
         log.debug(compactJws);
