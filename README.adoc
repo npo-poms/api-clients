@@ -41,6 +41,24 @@ The clients can be configured by code and/or a configuration file in `${user.hom
 
 There are also 'providers' available to configure them easily via spring XML's or for example XML's of magnolia CMS (which uses guice)
 
+== Versions
+
+
+|===
+|Version |java
+
+
+| >= 7.5.x
+|java 17
+
+|7.4.x
+|java 11
+
+|===
+
+
+
+
 
 == TODO
 
