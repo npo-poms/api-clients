@@ -25,7 +25,6 @@ public class PageUpdateApiClientITest {
     private static PageUpdateApiClient clients;
 
 
-
     @BeforeAll
     public static void setUp() {
         clients = PageUpdateApiClient.configured(Env.TEST).build();
@@ -76,8 +75,8 @@ public class PageUpdateApiClientITest {
 
     @Test
     public void testDelete() {
-        PageUpdateRestService client = clients.getPageUpdateRestService();
-        DeleteResult deleteResult = client.delete("http://www.meeuw.org/test/1234", false, 1, true, PageIdMatch.URL);
+        final PageUpdateRestService client = clients.getPageUpdateRestService();
+        final DeleteResult deleteResult = client.delete("http://www.meeuw.org/test/1234", false, 1, true, PageIdMatch.URL);
         log.info("{}", deleteResult);
 
     }
