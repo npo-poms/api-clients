@@ -47,6 +47,9 @@ There are also 'providers' available to configure them easily via spring XML's o
 |===
 |Version |java
 
+| >= 8.x
+| jakarta.*, java 17
+
 
 | >= 7.5.x
 |java 17
