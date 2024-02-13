@@ -25,6 +25,46 @@ It is split up in several modules. These are the important ones:
 
 * link:client-extras[`client-extras`] Provides some utilities which will make interaction with some calls simpler.
 
+== bom
+[source, xml]
+----
+<dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>nl.vpro.poms</groupId>
+        <artifactId>poms-bom</artifactId>
+        <version>8.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+
+...
+<dependencies>
+  <dependency>
+    <groupId>nl.vpro.poms.api-clients</groupId>
+    <artifactId>frontend-api-client</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>nl.vpro.poms.api-clients</groupId>
+    <artifactId>media-backend-api-client</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>nl.vpro.poms.api-clients</groupId>
+    <artifactId>pages-backend-api-client</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>nl.vpro.poms.api-clients</groupId>
+    <artifactId>client-extras</artifactId>
+  </dependency>
+</dependencies>
+----
+
+
+== configuration
+
 The clients can be configured by code and/or a configuration file in `${user.home}/conf/apiclient.properties`.
 
 [source,java]
