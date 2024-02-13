@@ -8,9 +8,9 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Predicate;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXB;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXB;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;

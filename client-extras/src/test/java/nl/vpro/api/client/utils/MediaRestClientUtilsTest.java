@@ -3,7 +3,7 @@ package nl.vpro.api.client.utils;
 import java.net.URL;
 import java.time.Instant;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

@@ -2,8 +2,8 @@ package nl.vpro.api.client.frontend;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.cache.BrowserCacheFeature;

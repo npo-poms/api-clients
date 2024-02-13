@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.nio.file.Files;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;

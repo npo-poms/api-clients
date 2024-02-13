@@ -10,12 +10,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.ServiceUnavailableException;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.ws.rs.ServiceUnavailableException;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.core.Response;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -190,7 +190,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType", "unused"})
     @Named
-    public static class Provider implements javax.inject.Provider<MediaRestClient> {
+    public static class Provider implements jakarta.inject.Provider<MediaRestClient> {
 
         @Inject
         @Named("npo-media_api_backend.baseUrl")
@@ -401,7 +401,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
                     if (v != null) {
                         return VersionResult.builder().version(v).available(true).build();
                     }
-                } catch (javax.ws.rs.NotFoundException | ServiceUnavailableException nfe) {
+                } catch (jakarta.ws.rs.NotFoundException | ServiceUnavailableException nfe) {
                     return VersionResult.builder().version("5.11.6").available(true).build();
                 } catch (Exception io) {
                     log.warn(io.getClass().getName() + " " + io.getMessage());

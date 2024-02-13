@@ -9,8 +9,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 
 import org.meeuw.functional.TriFunction;
 
@@ -93,7 +93,7 @@ your request.</p>
                 client.retryAfterWaitOrException(method.getName() + ": Internal Server error: " + isee.getMessage(), isee);
                 // lets retry retry
 
-            } catch (javax.ws.rs.ProcessingException pe) {
+            } catch (jakarta.ws.rs.ProcessingException pe) {
                 Throwable t = pe.getCause();
                 if (t instanceof SocketException) {
                     client.retryAfterWaitOrException(method.getName() + ": SocketException: " + t.getMessage(), pe);// retry

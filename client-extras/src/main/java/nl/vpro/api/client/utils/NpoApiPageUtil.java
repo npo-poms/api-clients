@@ -5,8 +5,8 @@ import lombok.EqualsAndHashCode;
 import java.util.*;
 import java.util.function.Supplier;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import com.google.common.collect.Lists;
 

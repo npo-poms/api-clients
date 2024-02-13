@@ -2,7 +2,7 @@ package nl.vpro.api.client.utils;
 
 import lombok.Getter;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 /**
  * @author Michiel Meeuwissen

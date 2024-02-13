@@ -1,14 +1,13 @@
 package nl.vpro.api.client.frontend;
 
+import jakarta.annotation.Priority;
+import jakarta.ws.rs.client.*;
+import jakarta.ws.rs.core.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.annotation.Priority;
-import javax.ws.rs.client.*;
-import javax.ws.rs.core.HttpHeaders;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;

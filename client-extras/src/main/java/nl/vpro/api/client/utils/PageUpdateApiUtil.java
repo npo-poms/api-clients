@@ -11,13 +11,13 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import  jakarta.validation.Valid;
+import  jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.impl.execchain.RequestAbortedException;

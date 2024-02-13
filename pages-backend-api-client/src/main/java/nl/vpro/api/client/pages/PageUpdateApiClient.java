@@ -15,11 +15,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import javax.crypto.SecretKey;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
@@ -67,7 +67,7 @@ public class PageUpdateApiClient extends AbstractApiClient {
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType"})
     @Named
-    public static class Provider implements javax.inject.Provider<PageUpdateApiClient> {
+    public static class Provider implements jakarta.inject.Provider<PageUpdateApiClient> {
 
         @Inject
         @Named("npo-pages_publisher.baseUrl")

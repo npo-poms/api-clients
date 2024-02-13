@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.WebApplicationException;
 
 import static nl.vpro.domain.api.Constants.*;
 

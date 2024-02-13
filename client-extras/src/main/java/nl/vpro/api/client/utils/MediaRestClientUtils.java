@@ -7,9 +7,9 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
 
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+import  jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;

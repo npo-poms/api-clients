@@ -6,8 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.*;
 
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXB;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXB;
 
 import org.junit.jupiter.api.*;
 

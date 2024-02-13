@@ -12,11 +12,11 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import  jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.core.Response;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;

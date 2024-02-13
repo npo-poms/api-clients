@@ -3,8 +3,8 @@ package nl.vpro.api.client.utils;
 import java.time.Instant;
 import java.time.LocalDate;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 

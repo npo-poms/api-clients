@@ -9,8 +9,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.*;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -284,7 +284,7 @@ public class NpoApiClientUtilTest {
         /*String seriesRef = getSeriesRef(util.getClients().getMediaService().load("VPWON_1229797", null));
         System.out.println("" + seriesRef);*/
             System.out.println(util.getClients().getMediaService().findDescendants(new MediaForm(), "POMS_S_VPRO_522965", "vpro", "title,description,image", 0L, 1000).asList());
-        }).isInstanceOf(javax.ws.rs.NotFoundException.class);
+        }).isInstanceOf(jakarta.ws.rs.NotFoundException.class);
     }
 
     @Test

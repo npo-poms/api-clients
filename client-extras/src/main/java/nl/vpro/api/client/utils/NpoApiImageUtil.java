@@ -10,9 +10,9 @@ import java.net.http.*;
 import java.util.Optional;
 import java.util.OptionalLong;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import  jakarta.validation.constraints.NotNull;
 
 
 import nl.vpro.domain.media.support.ImageUrlService;

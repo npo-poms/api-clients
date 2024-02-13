@@ -4,7 +4,7 @@ import lombok.Getter;
 
 import java.lang.reflect.Method;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import com.google.common.base.MoreObjects;
 

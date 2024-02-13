@@ -14,10 +14,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.meeuw.functional.TriFunction;
@@ -98,7 +98,7 @@ public class NpoApiClients extends AbstractApiClient {
 
     @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "unused", "OptionalUsedAsFieldOrParameterType"})
     @Named
-    public static class Provider implements javax.inject.Provider<NpoApiClients> {
+    public static class Provider implements jakarta.inject.Provider<NpoApiClients> {
         @Inject
         @Named("npo-api.baseUrl")
         String baseUrl;

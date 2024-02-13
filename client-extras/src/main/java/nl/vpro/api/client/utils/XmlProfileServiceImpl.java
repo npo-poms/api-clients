@@ -3,9 +3,9 @@ package nl.vpro.api.client.utils;
 import java.io.InputStream;
 import java.util.*;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.xml.bind.JAXB;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.xml.bind.JAXB;
 
 import nl.vpro.domain.api.profile.*;
 import nl.vpro.domain.media.MediaObject;

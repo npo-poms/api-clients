@@ -11,9 +11,9 @@ import java.io.InputStream;
 import java.time.*;
 import java.util.Locale;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
@@ -310,7 +310,7 @@ public class NpoApiClientsITest {
                 .httpEngine(httpClient);
             Response response = builder.build().target(url).request().get();
             log.info("{}", response);
-        }).isInstanceOf(javax.ws.rs.ProcessingException.class);
+        }).isInstanceOf(jakarta.ws.rs.ProcessingException.class);
     }
 
 
@@ -324,7 +324,7 @@ public class NpoApiClientsITest {
             Response response = builder.build().target(url).request().get();
             assertThat(response.getStatus()).isEqualTo(200);
             log.info(response.readEntity(String.class));
-        }).isInstanceOf(javax.ws.rs.ProcessingException.class);
+        }).isInstanceOf(jakarta.ws.rs.ProcessingException.class);
 
     }
 

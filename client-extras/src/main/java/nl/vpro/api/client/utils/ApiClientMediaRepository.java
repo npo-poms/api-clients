@@ -1,7 +1,7 @@
 package nl.vpro.api.client.utils;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import nl.vpro.domain.api.media.MediaRepository;
 

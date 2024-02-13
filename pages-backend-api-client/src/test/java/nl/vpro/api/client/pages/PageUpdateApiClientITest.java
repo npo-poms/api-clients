@@ -4,7 +4,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.time.Instant;
 
-import javax.xml.bind.JAXB;
+import jakarta.xml.bind.JAXB;
 
 import org.junit.jupiter.api.*;
 

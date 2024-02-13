@@ -9,9 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
 import java.util.Map;
 
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import org.slf4j.*;
 

@@ -48,7 +48,7 @@ public class Swagger {
         final URI url = URI.create(baseUrl + "/openapi.json");
         try {
             if (timeout == null) {
-                timeout = Duration.ofSeconds(3);
+                timeout = Duration.ofSeconds(30);
             }
             final ObjectMapper mapper = new ObjectMapper();
             final JsonFactory factory = new JsonFactory();
