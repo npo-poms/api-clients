@@ -1,5 +1,12 @@
 package nl.vpro.api.client.utils;
 
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,14 +17,6 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Function;
-
-import jakarta.inject.Inject;
-import  jakarta.validation.Valid;
-import  jakarta.validation.constraints.NotNull;
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.ProcessingException;
-import jakarta.ws.rs.core.MultivaluedMap;
-import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.impl.execchain.RequestAbortedException;

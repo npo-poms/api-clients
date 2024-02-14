@@ -1,13 +1,13 @@
 package nl.vpro.api.client.utils;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import  jakarta.validation.constraints.NotNull;
 
 import com.google.common.cache.*;
 

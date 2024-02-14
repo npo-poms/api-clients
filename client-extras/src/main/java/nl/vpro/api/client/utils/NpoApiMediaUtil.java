@@ -14,7 +14,7 @@ import java.util.function.*;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import  jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.core.Response;
 

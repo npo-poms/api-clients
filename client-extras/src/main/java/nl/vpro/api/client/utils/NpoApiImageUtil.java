@@ -12,7 +12,7 @@ import java.util.OptionalLong;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import  jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 
 import nl.vpro.domain.media.support.ImageUrlService;
