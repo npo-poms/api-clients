@@ -4,16 +4,15 @@
  */
 package nl.vpro.api.client.frontend;
 
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.*;
 import java.util.Locale;
-
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
@@ -337,6 +336,26 @@ public class NpoApiClientsITest {
         }
 
     }
+
+
+    @Test
+
+
+    public void listForAncestor() {
+        ScheduleResult vpro = clients.getScheduleService().listForAncestor("some mid", null, Instant.now(), Instant.now().plus(Duration.ofDays(7)), null, null, 0, 100);
+        log.info("{}, ", vpro);
+
+
+    }
+
+    @Test
+    public void list() {
+        ScheduleResult vpro = clients.getScheduleService().list(LocalDate.now(), null, null, null, null, 0, 100);
+        log.info("{}, ", vpro);
+
+
+    }
+
 
 
 
