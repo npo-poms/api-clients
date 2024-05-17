@@ -1,5 +1,11 @@
 package nl.vpro.api.client.media;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.ws.rs.ServiceUnavailableException;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.core.Response;
 import lombok.*;
 
 import java.lang.reflect.Method;
@@ -9,13 +15,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import jakarta.ws.rs.ServiceUnavailableException;
-import jakarta.ws.rs.client.ClientRequestContext;
-import jakarta.ws.rs.client.ClientRequestFilter;
-import jakarta.ws.rs.core.Response;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -465,6 +464,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
                 ),
                 MediaBackendRestService.class
             );
+            log.debug("-> {}", proxy);
         }
         return proxy;
     }
