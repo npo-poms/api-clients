@@ -1,19 +1,18 @@
 package nl.vpro.api.client.utils;
 
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXB;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Predicate;
-
-import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
-import jakarta.xml.bind.JAXB;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.meeuw.functional.ReasonedPredicate;
 
 import nl.vpro.api.client.frontend.NpoApiClients;
 import nl.vpro.domain.api.*;
@@ -131,7 +130,7 @@ public abstract class AbstractApiClientMediaRepository implements MediaRepositor
         @Nullable final Integer max,
         @Nullable Deletes deletes,
         @Nullable final Tail tail,
-        @Nullable final Predicate<MediaChange> filter) {
+        @Nullable final ReasonedPredicate<MediaChange> filter) {
         throw new UnsupportedOperationException();
 
     }
