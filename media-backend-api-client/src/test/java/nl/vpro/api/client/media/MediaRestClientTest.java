@@ -1,13 +1,12 @@
 package nl.vpro.api.client.media;
 
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXB;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.*;
-
-import jakarta.ws.rs.core.Response;
-import jakarta.xml.bind.JAXB;
 
 import org.junit.jupiter.api.*;
 
@@ -417,7 +416,7 @@ public class MediaRestClientTest {
         }
         MediaBuilder.ProgramBuilder program = MediaBuilder.program(ProgramType.CLIP)
             .crids(crid)
-            .avType(AVType.MIXED)
+            .avType(AVType.VIDEO)
             .broadcasters(broadcasters)
             .mainTitle("Deze clip gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID).toString())
             .mainDescription(LocalDateTime.now(Schedule.ZONE_ID).toString())
@@ -446,7 +445,7 @@ public class MediaRestClientTest {
             .mid(mid)
             .broadcasters("VPRO")
             .start(Duration.ofMillis(0))
-            .avType(AVType.MIXED)
+            .avType(AVType.VIDEO)
             .mainTitle("Dit segment gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID).toString())
             .mainDescription(LocalDateTime.now(Schedule.ZONE_ID).toString())
             .persons(
