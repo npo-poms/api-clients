@@ -347,7 +347,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
      */
     public static Builder configured(Env env) {
         Builder builder = builder();
-        Config  config = new Config(URLS_FILE, "mediarestclient.properties");
+        Config  config = new Config(URLS_FILE, "mediarestclient.properties", "creds.properties");
         config.setEnv(env);
         ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.media_api_backend));
         return builder;
