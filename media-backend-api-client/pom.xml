@@ -49,7 +49,7 @@
       <!-- TODO: drop this too -->
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>nl.vpro.shared</groupId>
