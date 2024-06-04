@@ -28,6 +28,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import nl.vpro.api.client.resteasy.AbstractApiClient;
+import nl.vpro.api.client.utils.Config;
 import nl.vpro.api.rs.subtitles.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.search.*;
@@ -44,6 +45,7 @@ import nl.vpro.rs.media.FrameCreatorRestService;
 import nl.vpro.rs.media.MediaBackendRestService;
 import nl.vpro.util.*;
 
+import static nl.vpro.api.client.utils.Config.URLS_FILE;
 import static nl.vpro.domain.media.EntityType.AllMedia.valueOf;
 import static nl.vpro.domain.media.search.Pager.Direction.ASC;
 
@@ -345,7 +347,9 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
      */
     public static Builder configured(Env env) {
         Builder builder = builder();
-        ConfigUtils.configuredInHome(env, builder, "mediarestclient.properties", "creds.properties");
+        Config  config = new Config(URLS_FILE, "mediarestclient.properties");
+        config.setEnv(env);
+        ReflectionUtils.configured(builder, config.getProperties(Config.Prefix.media_api_backend));
         return builder;
     }
 
