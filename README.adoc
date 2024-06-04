@@ -84,7 +84,7 @@ The clients can be configured by code and/or a configuration file in `${user.hom
 .backend api
 ----
  try (var client = MediaRestClient.configured(Env.PROD).build()) {
-    MediaObject mediaObject = client.getMediaObject("WO_VPRO_025678");
+    MediaObject mediaObject = client.getFull("WO_VPRO_025678");
     log.info("{}", mediaObject);
  }
 ----
