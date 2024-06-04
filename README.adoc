@@ -68,6 +68,7 @@ It is split up in several modules. These are the important ones:
 The clients can be configured by code and/or a configuration file in `${user.home}/conf/apiclient.properties`.
 
 [source,java]
+.frontend api
 ----
     NpoApiClients clients = NpoApiClients.configured(nl.vpro.util.Env.TEST).build();
     NpoApiMediaUtil util = new NpoApiMediaUtil(clients);
@@ -77,6 +78,15 @@ The clients can be configured by code and/or a configuration file in `${user.hom
       });
     }
 
+----
+
+[source,java]
+.backend api
+----
+ try (var client = MediaRestClient.configured(Env.PROD).build()) {
+    MediaObject mediaObject = client.getMediaObject("WO_VPRO_025678");
+    log.info("{}", mediaObject);
+ }
 ----
 
 There are also 'providers' available to configure them easily via spring XML's or for example XML's of magnolia CMS (which uses guice)
