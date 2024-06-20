@@ -4,8 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Optional;
@@ -18,6 +17,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXB;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.impl.execchain.RequestAbortedException;
@@ -130,18 +130,19 @@ public class PageUpdateApiUtil {
         try {
             DeleteResult result = null;
             while (true) {
-                Result<DeleteResult> r = handleResponse(
+                Result<String> r = handleResponse(
                     pageUpdateApiClient.getPageUpdateRestService()
-                        .delete(prefix, true, batchSize, true, match, null,null), prefix, STRING, DeleteResult.class
+                        .delete(prefix, true, batchSize, true, match, null,null), prefix, STRING, String.class
                 );
                 log.info("Batch deleted {}: {}", prefix, r);
+                DeleteResult entity = fromString(r.getEntity());
                 if (result == null) {
-                    result = r.getEntity();
+                    result = entity;
                 } else {
-                    result = result.and(r.getEntity());
+                    result = result.and(entity);
                 }
                 if (r.isOk()) {
-                    if (r.getEntity().getCount() == 0) {
+                    if (entity.getCount() == 0) {
                         return Result.<DeleteResult>builder()
                             .entity(result)
                             .status(Result.Status.SUCCESS)
@@ -153,6 +154,13 @@ public class PageUpdateApiUtil {
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
+    }
+
+    private DeleteResult fromString(String string) {
+        if (string == null) {
+            return null;
+        }
+        return JAXB.unmarshal(new StringReader(string.replaceAll("deleteResult", "deleteresult")), DeleteResult.class);
     }
 
     public Optional<Page> getPublishedPage(String url) {
