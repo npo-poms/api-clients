@@ -17,7 +17,7 @@ import nl.vpro.util.Env;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled("This required running server at publish-dev")
+@Disabled("This required running server at publish-test")
 @Slf4j
 public class PageUpdateApiClientUtilTest {
 
@@ -26,8 +26,9 @@ public class PageUpdateApiClientUtilTest {
     @BeforeEach
     public void setUp() {
         PageUpdateApiClient clients = PageUpdateApiClient
-            .configured(Env.LOCALHOST)
-            .accept(MediaType.APPLICATION_JSON_TYPE)
+            .configured(Env.ACC)
+            //.accept(MediaType.APPLICATION_JSON_TYPE)
+            .accept(MediaType.APPLICATION_XML_TYPE)
             .build();
         util = PageUpdateApiUtil.builder().client(clients).build();
     }
@@ -37,7 +38,7 @@ public class PageUpdateApiClientUtilTest {
         PageUpdate instance = new PageUpdate(PageType.ARTICLE, "http://vpro.nl/test");
         Result<Void> result = util.saveAndWait(instance);
         assertThat(result.getStatus()).isEqualTo(Result.Status.INVALID);
-        assertThat(result.getErrors()).contains("may not be null");
+        assertThat(result.getErrors()).contains("must not be null");
     }
 
     @Test

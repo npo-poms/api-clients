@@ -1,7 +1,6 @@
 package nl.vpro.api.client.utils;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -15,8 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import javax.xml.bind.JAXB;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -111,11 +109,16 @@ public class PageUpdateApiUtil {
     public Result<DeleteResult> delete(@NotNull String id) {
         limiter.acquire();
         PageIdMatch match = id.startsWith("crid:") ? PageIdMatch.CRID : PageIdMatch.URL;
-        try {
-            return handleResponse(
-                pageUpdateApiClient.getPageUpdateRestService()
-                    .delete(id, false, 1, false, match, null, null), id, STRING, DeleteResult.class
-            );
+        try (Response delete = pageUpdateApiClient.getPageUpdateRestService()
+            .delete(id, false, 1, false, match, null, null)) {
+            Result<String> result =  handleResponse(delete, id, STRING, String.class);
+            DeleteResult entity = fromString(result.getEntity(), delete.getHeaderString("content-type"));
+            return Result.<DeleteResult>builder()
+                .status(result.getStatus())
+                .errors(result.getErrors())
+                .entity(entity)
+                .build();
+
         } catch (ProcessingException e) {
             return exceptionToResult(e);
         }
@@ -130,23 +133,23 @@ public class PageUpdateApiUtil {
         try {
             DeleteResult result = null;
             while (true) {
-                Result<String> r = handleResponse(
-                    pageUpdateApiClient.getPageUpdateRestService()
-                        .delete(prefix, true, batchSize, true, match, null,null), prefix, STRING, String.class
-                );
-                log.info("Batch deleted {}: {}", prefix, r);
-                DeleteResult entity = fromString(r.getEntity());
-                if (result == null) {
-                    result = entity;
-                } else {
-                    result = result.and(entity);
-                }
-                if (r.isOk()) {
-                    if (entity.getCount() == 0) {
-                        return Result.<DeleteResult>builder()
-                            .entity(result)
-                            .status(Result.Status.SUCCESS)
-                            .build();
+                try(Response delete = pageUpdateApiClient.getPageUpdateRestService()
+                    .delete(prefix, true, batchSize, true, match, null, null)) {
+                    Result<String> r = handleResponse(delete, prefix, STRING, String.class);
+                    log.info("Batch deleted {}: {}", prefix, r);
+                    DeleteResult entity = fromString(r.getEntity(), delete.getHeaderString("content-type"));
+                    if (result == null) {
+                        result = entity;
+                    } else {
+                        result = result.and(entity);
+                    }
+                    if (r.isOk()) {
+                        if (entity.getCount() == 0) {
+                            return Result.<DeleteResult>builder()
+                                .entity(result)
+                                .status(Result.Status.SUCCESS)
+                                .build();
+                        }
                     }
                 }
             }
@@ -156,12 +159,21 @@ public class PageUpdateApiUtil {
         }
     }
 
-    private DeleteResult fromString(String string) {
+    @SneakyThrows
+    private DeleteResult fromString(String string, String contentType)  {
         if (string == null) {
             return null;
         }
-        return JAXB.unmarshal(new StringReader(string.replaceAll("deleteResult", "deleteresult")), DeleteResult.class);
+        if (MediaType.APPLICATION_XML_TYPE.isCompatible(MediaType.valueOf(contentType))) {
+            return JAXB.unmarshal(new StringReader(
+                    string.replaceAll("deleteResult", "deleteresult")
+                ),
+                DeleteResult.class);
+        } else {
+            return Jackson2Mapper.getInstance().readerFor(DeleteResult.class).readValue(string);
+        }
     }
+
 
     public Optional<Page> getPublishedPage(String url) {
         try {
