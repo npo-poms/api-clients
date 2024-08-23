@@ -128,9 +128,8 @@ public class MediaRestClientUtils {
 
 
     public static void unwrapIO(ProcessingException pe) throws IOException {
-        Throwable t = pe.getCause();
-        if (t instanceof IOException) {
-            throw (IOException) t;
+        if (pe.getCause() instanceof IOException ioException) {
+            throw ioException;
         }
     }
 

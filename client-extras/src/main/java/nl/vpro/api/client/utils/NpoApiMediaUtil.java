@@ -5,8 +5,7 @@ import jakarta.inject.Named;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.core.Response;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -141,16 +140,17 @@ public class NpoApiMediaUtil implements MediaProvider {
                 });
     }
 
+    @SneakyThrows
     @SuppressWarnings("unchecked")
-    public <T extends MediaObject> T loadOrNull(String id) throws IOException {
+    public <T extends MediaObject> T loadOrNull(String id) {
         try {
             return (T) cache.get(id).orElse(null);
         } catch (ExecutionException | UncheckedExecutionException e) {
-            if (e.getCause() instanceof IOException) {
-                throw (IOException) e.getCause();
+            if (e.getCause() instanceof IOException ioException) {
+                throw ioException;
             }
-            if (e.getCause() instanceof  RuntimeException) {
-                throw (RuntimeException) e.getCause();
+            if (e.getCause() instanceof  RuntimeException runtimeException) {
+                throw runtimeException;
             }
             throw new RuntimeException(e);
         }
@@ -287,8 +287,9 @@ public class NpoApiMediaUtil implements MediaProvider {
         return unPageProgramResult(members, filter, max);
     }
 
+    @SneakyThrows
     @SuppressWarnings({"unchecked", "OptionalAssignedToNull"})
-    public MediaObject[] load(String... id) throws IOException {
+    public MediaObject[] load(String... id) {
         Optional<? extends MediaObject>[] result = new Optional[id.length];
         Set<String> toRequest = new LinkedHashSet<>();
         for (int i = 0; i < id.length; i++) {
@@ -527,8 +528,12 @@ public class NpoApiMediaUtil implements MediaProvider {
                 throw new UnsupportedOperationException();
             }
             return (T) load(mid)[0];
-        } catch (IOException e) {
-            return null;
+        } catch (Exception e) {
+            if (e instanceof IOException i) {
+                return null;
+            } else {
+                throw e;
+            }
         }
     }
 
