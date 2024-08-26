@@ -5,7 +5,8 @@ import jakarta.inject.Named;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.core.Response;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -140,9 +141,8 @@ public class NpoApiMediaUtil implements MediaProvider {
                 });
     }
 
-    @SneakyThrows
     @SuppressWarnings("unchecked")
-    public <T extends MediaObject> T loadOrNull(String id) {
+    public <T extends MediaObject> T loadOrNull(String id) throws IOException{
         try {
             return (T) cache.get(id).orElse(null);
         } catch (ExecutionException | UncheckedExecutionException e) {
@@ -287,9 +287,8 @@ public class NpoApiMediaUtil implements MediaProvider {
         return unPageProgramResult(members, filter, max);
     }
 
-    @SneakyThrows
     @SuppressWarnings({"unchecked", "OptionalAssignedToNull"})
-    public MediaObject[] load(String... id) {
+    public MediaObject[] load(String... id) throws IOException {
         Optional<? extends MediaObject>[] result = new Optional[id.length];
         Set<String> toRequest = new LinkedHashSet<>();
         for (int i = 0; i < id.length; i++) {
@@ -521,6 +520,16 @@ public class NpoApiMediaUtil implements MediaProvider {
         }
     }
 
+
+    /**
+     * Essentially like {@link #load(String...)}, but
+     * <ol>
+     * <li>  without the checked exception
+     * <li> Implementing {@link MediaProvider#findByMid(boolean, String)}
+     * <li> Loading only one
+     * </ol>
+     * @see {@link MediaProvider#findByMid(String)}
+     */
     @Override
     public <T extends MediaObject> T findByMid(boolean loadDeleted, String mid) {
         try {
@@ -528,12 +537,8 @@ public class NpoApiMediaUtil implements MediaProvider {
                 throw new UnsupportedOperationException();
             }
             return (T) load(mid)[0];
-        } catch (Exception e) {
-            if (e instanceof IOException i) {
-                return null;
-            } else {
-                throw e;
-            }
+        } catch (IOException ioe) {
+            return null;
         }
     }
 
