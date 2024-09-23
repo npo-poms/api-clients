@@ -3,8 +3,7 @@ package nl.vpro.api.client.media;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.ws.rs.ServiceUnavailableException;
-import jakarta.ws.rs.client.ClientRequestContext;
-import jakarta.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.client.*;
 import jakarta.ws.rs.core.Response;
 import lombok.*;
 
@@ -41,6 +40,7 @@ import nl.vpro.logging.simple.Level;
 import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.VersionRestService;
 import nl.vpro.rs.client.VersionResult;
+import nl.vpro.rs.converters.CaseInsensitiveEnumParamConverterProvider;
 import nl.vpro.rs.media.FrameCreatorRestService;
 import nl.vpro.rs.media.MediaBackendRestService;
 import nl.vpro.util.*;
@@ -437,7 +437,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
                     "User name (" + userName + ") and password (" + password + ") should both be non null");
         }
 
-        builder.httpEngine(getClientHttpEngine())
+        ClientBuilder register = builder.httpEngine(getClientHttpEngine())
             .register(new BasicAuthentication(userName, password))
             .register(new AddRequestHeadersFilter())
             .register(VTTSubtitlesReader.class)
@@ -446,6 +446,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             .register(VTTWriter.class)
             .register(VTTSubtitlesWriter.class)
             .register(ContentTypeInterceptor.class)
+            .register(CaseInsensitiveEnumParamConverterProvider.class)
         ;
     }
 
