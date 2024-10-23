@@ -1,3 +1,4 @@
+---
 name: release
 run-name: Creating release by ${{ github.actor }} on ${{ github.ref_name }}
 
@@ -26,7 +27,7 @@ jobs:
       with:
         global: true
         name: 'github $GITHUB_ACTOR'
-        email: 'digitaal-techniek@vpro.nl'
+        email: 'git@mmprogrami.nl'
         token: '${{ secrets.GITHUB_TOKEN  }}'
     - name: Release
       run: mvn -Pdeploy,ossrh --batch-mode  -Darguments=-DskipTests  release:prepare release:perform

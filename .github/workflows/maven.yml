@@ -1,3 +1,4 @@
+---
 name: build
 
 on:
@@ -34,7 +35,7 @@ jobs:
       uses: codecov/codecov-action@v4
       continue-on-error: true
     - name: Publish Test Report
-      uses: EnricoMi/publish-unit-test-result-action@v2.17.0
+      uses: EnricoMi/publish-unit-test-result-action@v2.18.0
       if: always()
       with:
-        junit_files: "**/target/surefire-reports/*.xml"
+        files: "**/target/surefire-reports/*.xml"
