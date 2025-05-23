@@ -19,10 +19,11 @@
     <module>client-extras</module>
     <module>media-backend-api-client</module>
     <module>pages-backend-api-client</module>
+    <module>client-bom</module>
   </modules>
 
   <properties>
-
+    <api.client.version>${project.version}</api.client.version>
     <!--
     <java.version>17</java.version>
 
@@ -79,18 +80,10 @@
     <dependencies>
       <dependency>
         <groupId>nl.vpro.poms.api-clients</groupId>
-        <artifactId>frontend-api-client</artifactId>
+        <artifactId>client-bom</artifactId>
+        <type>pom</type>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>nl.vpro.poms.api-clients</groupId>
-        <artifactId>pages-backend-api-client</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>nl.vpro.poms.api-clients</groupId>
-        <artifactId>client-core</artifactId>
-        <version>${project.version}</version>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>nl.vpro.poms.api-clients</groupId>
+  <artifactId>client-bom</artifactId>
+  <version>8.9-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <description>Clients for NPO APIs bom</description>
+
+
+  <scm>
+    <connection>scm:git:${project.scm.url}</connection>
+    <developerConnection>scm:git:${project.scm.url}</developerConnection>
+    <url>https://github.com/npo-poms/api-clients.git</url>
+    <tag>HEAD</tag>
+  </scm>
+
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>nl.vpro.poms.api-clients</groupId>
+        <artifactId>frontend-api-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.vpro.poms.api-clients</groupId>
+        <artifactId>media-backend-api-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.vpro.poms.api-clients</groupId>
+        <artifactId>client-extras</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.vpro.poms.api-clients</groupId>
+        <artifactId>pages-backend-api-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.vpro.poms.api-clients</groupId>
+        <artifactId>client-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>vpro-ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>vpro-ossrh-release</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  <repositories>
+     <repository>
+      <id>vpro-ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+       <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+     </repository>
+     <repository>
+       <id>sonatype</id>
+       <url>https://oss.sonatype.org/service/local/repositories/releases/content</url>
+     </repository>
+  </repositories>
+
+</project>

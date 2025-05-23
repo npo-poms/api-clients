@@ -407,7 +407,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
                 } catch (jakarta.ws.rs.NotFoundException | ServiceUnavailableException nfe) {
                     return VersionResult.builder().version("5.11.6").available(true).build();
                 } catch (Exception io) {
-                    log.warn(io.getClass().getName() + " " + io.getMessage());
+                    log.warn("{} {}", io.getClass().getName(), io.getMessage());
                 }
                 return VersionResult.builder().version("unknown").available(false).build();
             }, 30L, TimeUnit.MINUTES).get();
@@ -510,7 +510,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
      * Returns the program (as an 'update' object'), with the given id. Or
      * <code>null</code> if not found.
      *
-     * @param id This can be an URN, MID, or crid.
+     * @param id This can be a URN, MID, or crid.
      */
     @Nullable
     public ProgramUpdate getProgram(String id) {
@@ -825,7 +825,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
             throw new RuntimeException(cause);
         }
         try {
-            log.warn(userName + "@" + baseUrl + " " + cause + ", retrying after 30 s");
+            log.warn("{}@{} {}, retrying after 30 s", userName, baseUrl, cause);
             Thread.sleep(30000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
