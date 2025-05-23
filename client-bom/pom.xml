@@ -5,15 +5,39 @@
   <artifactId>client-bom</artifactId>
   <version>8.10-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <name>api-client-bom</name>
   <description>Clients for NPO APIs bom</description>
-
+  <url>https://github.com/npo-poms/api-clients</url>
 
   <scm>
     <connection>scm:git:${project.scm.url}</connection>
     <developerConnection>scm:git:${project.scm.url}</developerConnection>
     <url>https://github.com/npo-poms/api-clients.git</url>
-    <tag>HEAD</tag>
+    <tag>REL-8.9-SNAPSHOT</tag>
   </scm>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>mihxil</id>
+      <name>Michiel Meeuwissen</name>
+      <email>github@mmprogrami.nl</email>
+      <url>https://meeuw.org</url>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>Europe/Amsterdam</timezone>
+    </developer>
+  </developers>
 
 
   <dependencyManagement>
