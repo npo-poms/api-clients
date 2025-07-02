@@ -17,7 +17,7 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: 21
-        server-id: vpro-ossrh
+        server-id: central
         server-username: CENTRAL_USERNAME
         server-password: CENTRAL_PASSWORD
         gpg-private-key: ${{ secrets.GPG_SECRET_KEY }}
