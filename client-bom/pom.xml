@@ -13,7 +13,7 @@
     <connection>scm:git:${project.scm.url}</connection>
     <developerConnection>scm:git:${project.scm.url}</developerConnection>
     <url>https://github.com/npo-poms/api-clients.git</url>
-    <tag>REL-8.9-SNAPSHOT</tag>
+
   </scm>
 
   <licenses>
@@ -70,31 +70,18 @@
     </dependencies>
   </dependencyManagement>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>vpro-ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>vpro-ossrh-release</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
   <repositories>
-     <repository>
-      <id>vpro-ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-       <releases>
+    <repository>
+      <name>Central Portal Snapshots</name>
+      <id>central-portal-snapshots</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+      <releases>
         <enabled>false</enabled>
       </releases>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-     </repository>
-     <repository>
-       <id>sonatype</id>
-       <url>https://oss.sonatype.org/service/local/repositories/releases/content</url>
-     </repository>
+    </repository>
   </repositories>
   <profiles>
     <profile>
