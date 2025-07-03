@@ -29,7 +29,7 @@ jobs:
         gpg-passphrase: GPG_SECRET_KEY_PASSPHRASE
         cache: maven
     - name: Build with Maven
-      run: mvn -B -Pdeploy,ossrh -U deploy
+      run: mvn -B -Pdeploy,central -U deploy
       env:
         CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
         CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
