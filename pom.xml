@@ -11,6 +11,7 @@
   <artifactId>api-client-parent</artifactId>
   <version>8.10.1-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <name>npo-api-client-parent</name>
   <description>Clients for NPO APIs</description>
 
   <modules>
