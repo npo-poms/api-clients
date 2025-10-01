@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>nl.vpro.poms.api-clients</groupId>
   <artifactId>client-bom</artifactId>
-  <version>8.10.0</version>
+  <version>8.10.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>api-client-bom</name>
   <description>Clients for NPO APIs bom</description>
@@ -14,7 +14,7 @@
     <developerConnection>scm:git:${project.scm.url}</developerConnection>
     <url>https://github.com/npo-poms/api-clients.git</url>
 
-    <tag>REL-8.10.0</tag>
+    <tag>REL-8.10-SNAPSHOT</tag>
   </scm>
 
   <licenses>
