@@ -12,6 +12,7 @@ import org.junit.jupiter.api.*;
 
 import nl.vpro.domain.image.ImageType;
 import nl.vpro.domain.media.*;
+import nl.vpro.domain.media.MediaType;
 import nl.vpro.domain.media.search.*;
 import nl.vpro.domain.media.support.OwnerType;
 import nl.vpro.domain.media.support.TextualType;
@@ -26,25 +27,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * @author Michiel Meeuwissen
  */
+@SuppressWarnings({"DataFlowIssue", "LoggingSimilarMessage"})
 @Disabled("needs a running rest-service (TODO: make an integration test)")
 @Slf4j
-public class MediaRestClientTest {
+class MediaRestClientTest {
 
     private MediaRestClient client;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         client = MediaRestClient.configured(Env.LOCALHOST).build();
         client.setWaitForRetry(true);
 
     }
     @AfterEach
-    public void shutdown() {
+    void shutdown() {
         client.shutdown();
     }
 
     @Test
-    public void client() {
+    void client() {
         Program full = client.getFullProgram("12072131");
         System.out.println("update: " + full);
         System.out.println("update: " + full.getBroadcasters());
@@ -56,14 +58,14 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         GroupUpdate group = client.getGroup("POMS_S_VPRO_216888");
         System.out.println(group.getBroadcasters());
     }
 
 
     @Test
-    public void loadByCrid() {
+    void loadByCrid() {
         ProgramUpdate update3 = client.get("crid://tmp.fragment.mmbase.vpro.nl/43084334");
         assertThat(update3).isNotNull();
         log.info("update: {}", update3);
@@ -73,7 +75,7 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void loadFullByCrid() {
+    void loadFullByCrid() {
         Program update3 = client.getFull(Program.class, "crid://tmp.fragment.mmbase.vpro.nl/43084334");
         assertThat(update3).isNotNull();
         log.info("update: {}", update3);
@@ -83,7 +85,7 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void find()  {
+    void find()  {
         MediaForm mediaForm = new MediaForm(new MediaPager(2));
         //mediaForm.setText("dino");
         TitleForm titleForm = new TitleForm("Odd Blood", TextualType.MAIN, OwnerType.BROADCASTER, false);
@@ -100,7 +102,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void post() {
+    void post() {
         ProgramUpdate update = JAXB.unmarshal(getClass().getResourceAsStream("/POMS_VPRO_216532.xml"),
                 ProgramUpdate.class);
         client.setLookupCrids(false);
@@ -111,7 +113,7 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void postInvalid() {
+    void postInvalid() {
         assertThatThrownBy(() -> {
             ProgramUpdate update = JAXB.unmarshal(getClass().getResourceAsStream("/POMS_VPRO_216532.xml"), ProgramUpdate.class);
             update.getTitles().clear();
@@ -124,7 +126,7 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void addMemberOf() {
+    void addMemberOf() {
         WithId<GroupUpdate> group = sampleGroup("addMemberOf", "VPRO");
 
         ProgramUpdate update = sampleProgram("addMemberOf").update;
@@ -134,7 +136,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void addMemberOfOtherBroadcaster() {
+    void addMemberOfOtherBroadcaster() {
         WithId<GroupUpdate> group = sampleGroup("addMemberOfDisallowed", "VPRO");
 
         ProgramUpdate update = client.get("EO_101205912");
@@ -144,7 +146,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void addMemberOfOtherBroadcasterWorkingVersion() throws IOException {
+    void addMemberOfOtherBroadcasterWorkingVersion() throws IOException {
         WithId<GroupUpdate> group = sampleGroup("addMemberOfDisallowed", "VPRO");
         System.out.println(group.id);
         ProgramUpdate update = client.get("EO_101205912");
@@ -157,7 +159,7 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void addMemberOfOtherBroadcasterBetterVersion() {
+    void addMemberOfOtherBroadcasterBetterVersion() {
         WithId<GroupUpdate> group = sampleGroup("createMember", "VPRO");
         System.out.println(group.id);
 
@@ -167,7 +169,7 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void removeMemberOfOtherBroadcasterBetterVersion() {
+    void removeMemberOfOtherBroadcasterBetterVersion() {
         WithId<GroupUpdate> group = sampleGroup("createMember", "VPRO");
         System.out.println(group.id);
 
@@ -176,7 +178,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void removeMemberOf() throws IOException {
+    void removeMemberOf() throws IOException {
         String groupCrid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest";
 
         GroupUpdate groupUpdate = client.get(groupCrid);
@@ -191,7 +193,7 @@ public class MediaRestClientTest {
 
                     JAXB.marshal(r, LoggerOutputStream.info(log));
                     //r.setMediaRef(null);
-                    log.info("" + groupUpdate + "->" + r.getMediaRef());
+                    log.info("{}->{}", groupUpdate, r.getMediaRef());
                     try (Response response = client.getBackendRestService().removeMemberOf(null, update.getMid(), groupUpdate.getMid(), null, true, null)) {
                         log.info("{}", response);
                     }
@@ -200,13 +202,13 @@ public class MediaRestClientTest {
             }
             //update.getMemberOf().removeIf(m -> m.getMediaRef().equals(groupUpdate.getMid()));
 
-            log.info("Removed " + update.getMid() + " from group " + groupUpdate.getMid());
+            log.info("Removed {} from group {}", update.getMid(), groupUpdate.getMid());
             break;
         }
     }
 
     @Test
-    public void copyVisibleLocations() {
+    void copyVisibleLocations() {
         ProgramUpdate program = client.get("POMS_VPRO_158078");
 
         ProgramUpdate newProgram = new ProgramUpdate();
@@ -217,9 +219,7 @@ public class MediaRestClientTest {
 
 
         // TODO. Isn't this odd?
-        program.getLocations().forEach(l -> {
-            l.setUrn(null);
-        });
+        program.getLocations().forEach(l -> l.setUrn(null));
 
         newProgram.setLocations(program.getLocations());
 
@@ -227,7 +227,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void copyLocations() {
+    void copyLocations() {
 
         ProgramUpdate newProgram = new ProgramUpdate();
         newProgram.setType(ProgramType.CLIP);
@@ -241,7 +241,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void copyLocations2() {
+    void copyLocations2() {
 
         ProgramUpdate existing = client.get("POMS_VARA_256131");
 
@@ -261,7 +261,7 @@ public class MediaRestClientTest {
 
     @Test
     // Shows MSE-3224
-    public void copyLocations3() {
+    void copyLocations3() {
         ProgramUpdate newProgram = new ProgramUpdate();
         newProgram.setType(ProgramType.CLIP);
         newProgram.setAVType(AVType.VIDEO);
@@ -278,7 +278,7 @@ public class MediaRestClientTest {
 
     @Test
     // Shows MSE-3224
-    public void copyImages() {
+    void copyImages() {
         ProgramUpdate newProgram = new ProgramUpdate();
         newProgram.setType(ProgramType.CLIP);
         newProgram.setAVType(AVType.VIDEO);
@@ -294,7 +294,7 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void addRelation() {
+    void addRelation() {
         RelationDefinition artist = RelationDefinition.of("ARTIST", "VPRO");
         ProgramUpdate program = client.get("POMS_VPRO_1419533");
         // create relation with source program
@@ -309,11 +309,11 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void addImage() {
+    void addImage() {
         String program = sampleProgram("addImage").id;
 
         client.addImage(
-            new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/bril.png")),
+            new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("https://files.vpro.nl/bril/brillen/bril.png")),
             program);
         System.out.println("Added image to " + program);
 
@@ -322,12 +322,12 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void addImage404() {
+    void addImage404() {
         assertThatThrownBy(() -> {
             String program = sampleProgram("addImage").id;
 
             client.addImage(
-                new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("http://files.vpro.nl/bril/brillen/BESTAATNIET.png")),
+                new ImageUpdate(ImageType.PICTURE, "bla", null, new ImageLocation("https://files.vpro.nl/bril/brillen/BESTAATNIET.png")),
             program
             );
         }).isInstanceOf(ResponseError.class);
@@ -335,7 +335,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void testGetGroup() {
+    void testGetGroup() {
         GroupUpdate group = client.getGroup("TELEA_1051096");
 
         JAXB.marshal(group, System.out);
@@ -344,7 +344,7 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void testGet404() {
+    void testGet404() {
         GroupUpdate group = client.getGroup("bestaat niet");
 
         assertThat(group).isNull();
@@ -352,7 +352,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void testCreateWitPortal() {
+    void testCreateWitPortal() {
         WithId<ProgramUpdate> sample = sampleProgram("withPortal");
         ProgramUpdate update = sample.update;
         update.setBroadcasters("EO");
@@ -365,7 +365,7 @@ public class MediaRestClientTest {
     }
 
     @Test
-    public void testCreateSegment() {
+    void testCreateSegment() {
         WithId<SegmentUpdate> sample = sampleSegment("createSegment/" + System.currentTimeMillis(), null);
 
         System.out.println(sample.id);
@@ -373,13 +373,13 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void testUpdateSegment() {
+    void testUpdateSegment() {
         WithId<SegmentUpdate> sample = sampleSegment("createSegment/" + System.currentTimeMillis(), "POMS_VPRO_1424050");
 
         System.out.println(sample.id);
     }
     @Test
-    public void testCreateProgram() {
+    void testCreateProgram() {
         WithId<ProgramUpdate> sample = sampleProgram("createProgram/" + System.currentTimeMillis());
 
         System.out.println(sample.id);
@@ -387,20 +387,20 @@ public class MediaRestClientTest {
 
 
     @Test
-    public void testUpdateProgram() {
+    void testUpdateProgram() {
         WithId<ProgramUpdate> sample = sampleProgram("createProgram");
 
         System.out.println(sample.id);
     }
 
     @Test
-    public void version() {
+    void version() {
         log.info("{} {}", client, client.getVersionNumber());
     }
 
     @Test
     //MSE-3604
-    public void addFrame() {
+    void addFrame() {
         try (Response res = client.getFrameCreatorRestService().createFrame(
             "bla", Duration.ofMillis(1000),null, null, new ByteArrayInputStream("bla bla".getBytes()))) {
             log.info("{}", res);
@@ -409,7 +409,7 @@ public class MediaRestClientTest {
 
 
 
-    protected WithId<ProgramUpdate> sampleProgram(String test, String... broadcasters) {
+    WithId<ProgramUpdate> sampleProgram(String test, String... broadcasters) {
         String crid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest/program/" + test;
         if (broadcasters.length == 0) {
             broadcasters = new String[] {"VPRO"};
@@ -418,7 +418,7 @@ public class MediaRestClientTest {
             .crids(crid)
             .avType(AVType.VIDEO)
             .broadcasters(broadcasters)
-            .mainTitle("Deze clip gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID).toString())
+            .mainTitle("Deze clip gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID))
             .mainDescription(LocalDateTime.now(Schedule.ZONE_ID).toString())
             .persons(
                 new Person("Pietje", "Puk", RoleType.UNDEFINED),
@@ -427,18 +427,18 @@ public class MediaRestClientTest {
             )
             .locations(
                 new Location("http://vpro.nl/bla/1", OwnerType.BROADCASTER),
-                new Location("http://vpro.nl/bla/" + LocalDateTime.now(Schedule.ZONE_ID).toString(), OwnerType.BROADCASTER)
+                new Location("http://vpro.nl/bla/" + LocalDateTime.now(Schedule.ZONE_ID), OwnerType.BROADCASTER)
             )
             ;
         ProgramUpdate programUpdate = ProgramUpdate.create(program);
         String programMid = client.set(programUpdate);
-        System.out.println("" + crid + " ->  " + programMid);
+        System.out.println(crid + " ->  " + programMid);
         return new WithId<>(programUpdate, programMid);
 
     }
 
 
-    protected WithId<SegmentUpdate> sampleSegment(String test, String mid) {
+    WithId<SegmentUpdate> sampleSegment(String test, String mid) {
         String crid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest/segment/" + test;
         MediaBuilder.SegmentBuilder segment = MediaBuilder.segment()
             .crids(crid)
@@ -446,7 +446,7 @@ public class MediaRestClientTest {
             .broadcasters("VPRO")
             .start(Duration.ofMillis(0))
             .avType(AVType.VIDEO)
-            .mainTitle("Dit segment gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID).toString())
+            .mainTitle("Dit segment gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID))
             .mainDescription(LocalDateTime.now(Schedule.ZONE_ID).toString())
             .persons(
                 new Person("Pietje", "Puk", RoleType.UNDEFINED),
@@ -454,30 +454,30 @@ public class MediaRestClientTest {
                 new Person("Jan", LocalDateTime.now(Schedule.ZONE_ID).toString(), RoleType.COMPOSER)
             )
             .locations(
-                new Location("http://vpro.nl/bla/1", OwnerType.BROADCASTER),
-                new Location("http://vpro.nl/bla/" + LocalDateTime.now(Schedule.ZONE_ID).toString(), OwnerType.BROADCASTER)
+                new Location("https://vpro.nl/bla/1", OwnerType.BROADCASTER),
+                new Location("https://vpro.nl/bla/" + LocalDateTime.now(Schedule.ZONE_ID), OwnerType.BROADCASTER)
             )
             ;
         SegmentUpdate segmentUpdate = SegmentUpdate.create(segment);
         segmentUpdate.setMidRef("WO_VPRO_783763");
         String segmentMid = client.set(segmentUpdate);
-        System.out.println("" + crid + " ->  " + segmentMid);
+        System.out.println(crid + " ->  " + segmentMid);
         return new WithId<>(segmentUpdate, segmentMid);
 
     }
 
-    protected WithId<GroupUpdate> sampleGroup(String cridPostFix, String broadcaster) {
+    WithId<GroupUpdate> sampleGroup(String cridPostFix, String broadcaster) {
         String groupCrid = "crid://poms.omroep.nl/testcases/nl.vpro.rs.media.MediaRestClientTest/group/" + cridPostFix;
         MediaBuilder.GroupBuilder group = MediaBuilder.group(GroupType.COLLECTION)
             .crids(groupCrid)
             .avType(AVType.MIXED)
             .broadcasters(broadcaster)
-            .mainTitle("Deze group gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID).toString())
+            .mainTitle("Deze group gebruiken we in een junit test " + LocalDateTime.now(Schedule.ZONE_ID))
             .mainDescription(LocalDateTime.now(Schedule.ZONE_ID).toString())
             ;
         GroupUpdate groupUpdate = GroupUpdate.create(group.build());
         String groupMid = client.set(groupUpdate);
-        System.out.println("" + groupCrid + " ->  " + groupMid);
+        System.out.println(groupCrid + " ->  " + groupMid);
         return new WithId<>(groupUpdate, groupMid);
 
     }
