@@ -10,10 +10,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Michiel Meeuwissen
  * @since 5.7
  */
-public class SwaggerTest {
+class SwaggerTest {
 
     @Test
-    public void getVersion() {
+    void getVersion() {
 
         assertThat(Swagger.getVersion("5.6-SNAPSHOT.${builder.vcs.number}", null)).isEqualTo("5.6");
 
@@ -25,7 +25,7 @@ public class SwaggerTest {
     }
 
     @Test
-    public void getVersionFromSwagger() {
+    void getVersionFromSwagger() {
         assertThat(Swagger.getVersionFromSwagger("https://rs.poms.omroep.nl/v1/api", "5.6", null).getVersion()).isNotEqualTo("5.6");
     }
 }

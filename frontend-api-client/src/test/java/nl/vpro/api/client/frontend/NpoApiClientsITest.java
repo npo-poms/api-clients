@@ -49,15 +49,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author Roelof Jan Koekoek
  * @since 3.0
  */
-@SuppressWarnings("resource")
+@SuppressWarnings({"resource", "DataFlowIssue"})
 @Slf4j
-public class NpoApiClientsITest {
+class NpoApiClientsITest {
 
     private static Env env = Env.LOCALHOST;
     private NpoApiClients clients;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         ClassificationServiceLocator.setInstance(MediaClassificationService.getInstance());
 
         clients = NpoApiClients.configured(env)
@@ -72,7 +72,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testAccessForbidden() {
+    void testAccessForbidden() {
         assertThatThrownBy(() -> {
             NpoApiClients wrongPassword = NpoApiClients
                 .configured(env)
@@ -85,7 +85,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testNotFound() {
+    void testNotFound() {
         assertThatThrownBy(() -> {
             clients.getMediaService().load("DOES_NOT_EXIST", null, null);
         }).isInstanceOf(NotFoundException.class);
@@ -93,7 +93,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testYoutubeNotFound() {
+    void testYoutubeNotFound() {
         assertThatThrownBy(() -> {
 
             clients.getMediaService().load("https://www.youtube.com/watch?v=YWX2PSpy1TU", null, null);
@@ -101,12 +101,12 @@ public class NpoApiClientsITest {
 
     }
     @Test
-    public void testPOW_01105929() {
+    void testPOW_01105929() {
         clients.getMediaService().load("POW_01105929", null, null);
     }
 
     @Test
-    public void testGetVersion() {
+    void testGetVersion() {
         String version = clients.getVersion();
         log.info(version);
         assertThat(clients.getVersion()).isNotEqualTo("unknown");
@@ -114,13 +114,13 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testGetVersionNumber() {
+    void testGetVersionNumber() {
         log.info("version: {}", clients.getVersionNumber());
         assertThat(clients.getVersionNumber()).isGreaterThanOrEqualTo(Version.of(4, 7));
     }
 
     @Test
-    public void testFound() {
+    void testFound() {
         for (int i = 0; i < 100; i++) {
             MediaObject program = clients.getMediaService().load("POMS_S_VPRO_788298", null, null);
             log.info(i + ":" + program.getMainTitle() + ":" + program.getMainImage().getLicense());
@@ -128,7 +128,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testMediaServiceLists() throws ProfileNotFoundException {
+    void testMediaServiceLists() throws ProfileNotFoundException {
         MediaRestService mediaService = clients.getMediaService();
 
         MediaResult list = mediaService.list(null, null, null, null);
@@ -148,7 +148,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testMediaServiceFinds() throws ProfileNotFoundException {
+    void testMediaServiceFinds() throws ProfileNotFoundException {
         try {
             MediaRestService mediaService = clients.getMediaService();
             MediaForm form = MediaFormBuilder.form().broadcasters("VPRO").broadcasterFacet().build();
@@ -171,7 +171,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testChanges() throws IOException, ProfileNotFoundException {
+    void testChanges() throws IOException, ProfileNotFoundException {
         try (InputStream response = clients.getMediaService().changes("vpro", null, 0L, null, null, 10, null, null , null).readEntity(InputStream.class)) {
             IOUtils.copy(response, LoggerOutputStream.info(log));
         }
@@ -180,7 +180,7 @@ public class NpoApiClientsITest {
 
     @Test
     @Disabled("Takes very long")
-    public void testIterate() throws IOException, ProfileNotFoundException {
+    void testIterate() throws IOException, ProfileNotFoundException {
         try (InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predictions", null, 0L, Integer.MAX_VALUE).readEntity(InputStream.class)) {
             IOUtils.copy(response, ByteStreams.nullOutputStream());
         }
@@ -189,7 +189,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testChangesError() {
+    void testChangesError() {
         assertThatThrownBy(() -> {
 
             try (Response rest = clients.getMediaService().changes("no profile", null, -1L, null, Order.ASC, 100, null, null, null);
@@ -201,7 +201,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testGetPageService() {
+    void testGetPageService() {
         PageRestService pageService = clients.getPageService();
         PageForm form = PageFormBuilder.form().broadcasters("VPRO").broadcasterFacet().build();
 
@@ -218,7 +218,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testGetProfile() {
+    void testGetProfile() {
         ProfileRestService profileService = clients.getProfileService();
         Profile p = profileService.load("cultura");
         log.info("cultura: {}", p);
@@ -227,7 +227,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testBadRequest() {
+    void testBadRequest() {
         assertThatThrownBy(() -> {
 
             PageRestService pageService = clients.getPageService();
@@ -236,7 +236,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testGetDescendants() throws ProfileNotFoundException {
+    void testGetDescendants() throws ProfileNotFoundException {
         log.info(String.valueOf(clients.getMediaService().findDescendants(
             new MediaForm(),
             "POMS_S_VPRO_216762",
@@ -248,7 +248,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testMultiple() throws ProfileNotFoundException {
+    void testMultiple() throws ProfileNotFoundException {
         String[] mids = {"POMS_S_BNN_097259"};
         MultipleMediaResult mo = clients.getMediaService().loadMultiple(new IdList(mids), null, null);
         for (int i = 0; i < mids.length; i++) {
@@ -257,7 +257,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testSchedule() {
+    void testSchedule() {
         ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, null, ASC, 0L, 100);
         for (ApiScheduleEvent event : result.getItems()) {
             System.out.println(event);
@@ -265,7 +265,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testScheduleWithDefaults() {
+    void testScheduleWithDefaults() {
         ScheduleResult result = clients.getScheduleService().list(LocalDate.now(), null, null, null, ASC, 0L, 100);
         for (ApiScheduleEvent event : result.getItems()) {
             System.out.println(event);
@@ -273,7 +273,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testInfiniteTimeout() {
+    void testInfiniteTimeout() {
         Instant start = Instant.now();
         String url = "https://httpbin.org/delay/10";
         ClientHttpEngine httpClient = clients.getClientHttpEngineNoTimeout();
@@ -286,7 +286,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void testInfiniteTimeoutSocket() {
+    void testInfiniteTimeoutSocket() {
         Instant start = Instant.now();
         String url = "https://httpbin.org/drip?duration=5&numbytes=5&code=200";
         ClientHttpEngine httpClient = clients.getClientHttpEngineNoTimeout();
@@ -301,7 +301,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testTimeout() {
+    void testTimeout() {
         assertThatThrownBy(() -> {
             String url = "https://httpbin.org/delay/11";
             ClientHttpEngine httpClient = clients.getClientHttpEngine();
@@ -314,7 +314,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-    public void testTimeoutSocket() {
+    void testTimeoutSocket() {
         assertThatThrownBy(() -> {
             String url = "https://httpbin.org/drip?duration=12&numbytes=5&code=200";
             clients.setSocketTimeout("PT0.01S");
@@ -328,7 +328,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void thesaurus() throws IOException {
+    void thesaurus() throws IOException {
         Instant start = LocalDateTime.of(2020, 1, 1, 0, 0).atZone(Schedule.ZONE_ID).toInstant();
         try (Response response = clients.getThesaurusRestService().listConceptUpdates(start, start.plus(Duration.ofDays(30)))) {
             InputStream ia = response.readEntity(InputStream.class);
@@ -339,9 +339,7 @@ public class NpoApiClientsITest {
 
 
     @Test
-
-
-    public void listForAncestor() {
+    void listForAncestor() {
         ScheduleResult vpro = clients.getScheduleService().listForAncestor("some mid", null, Instant.now(), Instant.now().plus(Duration.ofDays(7)), null, null, 0, 100);
         log.info("{}, ", vpro);
 
@@ -349,7 +347,7 @@ public class NpoApiClientsITest {
     }
 
     @Test
-    public void list() {
+    void list() {
         ScheduleResult vpro = clients.getScheduleService().list(LocalDate.now(), null, null, null, null, 0, 100);
         log.info("{}, ", vpro);
 

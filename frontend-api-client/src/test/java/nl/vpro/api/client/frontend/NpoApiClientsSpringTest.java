@@ -16,13 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = "classpath:client-resteasy-test-context.xml")
-public class NpoApiClientsSpringTest {
+class NpoApiClientsSpringTest {
 
     @Inject
 	NpoApiClients clients;
 
     @Test
-    public void test() {
+    void test() {
         assertThat(clients.getOrigin()).isEqualTo("https://www.vpro.nl");
     }
 }

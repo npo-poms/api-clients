@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Disabled("This is an integration test")
 @Slf4j
-public class NpoApiPageUtilTest {
+class NpoApiPageUtilTest {
 
     private static final String[] TEST_MIDS = {"AVRO_1656037", "AVRO_1656037", "POMS_VPRO_487567", "BLOE_234", "WO_VPRO_4993480"};
 
@@ -30,7 +30,7 @@ public class NpoApiPageUtilTest {
         new NpoApiRateLimiter());
 
     @Test
-    public void testLoadMultiple() {
+    void testLoadMultiple() {
         Page[] result = util.loadByMid(Arrays.asList("vpro", null), null, TEST_MIDS);
         System.out.println(Arrays.asList(result));
         System.out.println(util.getClients().getCounts());
@@ -39,7 +39,7 @@ public class NpoApiPageUtilTest {
     }
 
     @Test
-    public void testSupplier() {
+    void testSupplier() {
         List<Supplier<Optional<Page>>> result = new ArrayList<>();
         for (String m : TEST_MIDS) {
             result.add(util.supplyByMid(Arrays.asList("vpro", null), null, m));
@@ -57,7 +57,7 @@ public class NpoApiPageUtilTest {
 
 
     @Test
-    public void iterate() throws IOException {
+    void iterate() throws IOException {
         String profile = "vpro-predictions";
         File out = new File("/tmp/" + profile);
         final List<String> ids = new ArrayList<>();

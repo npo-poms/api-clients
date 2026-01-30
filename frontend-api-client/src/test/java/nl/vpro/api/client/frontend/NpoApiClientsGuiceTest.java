@@ -23,13 +23,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 5.3
  */
 @Slf4j
-public class NpoApiClientsGuiceTest {
+class NpoApiClientsGuiceTest {
 
 
     private Injector injector;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         injector = Guice.createInjector(
             new AbstractModule() {
                 @Override
@@ -55,7 +55,7 @@ public class NpoApiClientsGuiceTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         NpoApiClients clients  = injector.getInstance(NpoApiClients.class);
         assertThat(clients.getOrigin()).isEqualTo("https://www.vpro.nl");
 

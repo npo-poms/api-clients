@@ -1,5 +1,7 @@
 package nl.vpro.api.client.utils;
 
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -8,9 +10,6 @@ import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
-
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.core.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -30,8 +29,8 @@ import nl.vpro.domain.api.MediaChange;
 import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.profile.Profile;
-import nl.vpro.domain.media.MediaType;
 import nl.vpro.domain.media.*;
+import nl.vpro.domain.media.MediaType;
 import nl.vpro.util.CloseableIterator;
 import nl.vpro.util.CountedIterator;
 
@@ -50,7 +49,7 @@ public class NpoApiClientUtilTest {
 
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
 
         util = new NpoApiMediaUtil(NpoApiClients.configured().warnThreshold(Duration.ofMillis(1)).build(), new NpoApiRateLimiter());
 
@@ -61,12 +60,12 @@ public class NpoApiClientUtilTest {
         log.info("Testing {}", util);
     }
     @AfterEach
-    public void after() {
+    void after() {
         log.info("Test took {}", Duration.between(start, Instant.now()));
     }
 
     @Test
-    public void testLoadMultiple() throws Exception {
+    void testLoadMultiple() throws Exception {
         MediaObject[] result = util.load("AVRO_1656037", "AVRO_1656037", "POMS_VPRO_487567");
         assertThat(result[0].getMid()).isEqualTo("AVRO_1656037");
         assertThat(result[1].getMid()).isEqualTo("AVRO_1656037");
@@ -81,7 +80,7 @@ public class NpoApiClientUtilTest {
 
 
     @Test
-    public void testLoadMultipleWithTimeout() {
+    void testLoadMultipleWithTimeout() {
         assertThatThrownBy(() -> {
             MediaObject[] result = utilShortTimeout.load("AVRO_1656037", "AVRO_1656037", "POMS_VPRO_487567");
             log.info("{}", Arrays.asList(result));
@@ -90,21 +89,21 @@ public class NpoApiClientUtilTest {
 
 
     @Test
-    public void testLoad() throws Exception {
+    void testLoad() throws Exception {
         MediaObject result = util.loadOrNull("AVRO_1656037");
         assertThat(result.getMid()).isEqualTo("AVRO_1656037");
     }
 
 
     @Test
-    public void testLoadNotFound() throws Exception {
+    void testLoadNotFound() throws Exception {
         MediaObject result = util.loadOrNull("bestaat niet");
         assertThat(result).isNull();
     }
 
 
     @Test
-    public void testLoadWithTimeout() {
+    void testLoadWithTimeout() {
         assertThatThrownBy(() -> {
 
             MediaObject result = utilShortTimeout.loadOrNull("AVRO_1656037");
@@ -118,7 +117,7 @@ public class NpoApiClientUtilTest {
     @SuppressWarnings("deprecation")
     @Test
     @Disabled("Takes long!!")
-    public void testChanges() throws Exception {
+    void testChanges() throws Exception {
         try (CloseableIterator<MediaChange> result = util.changes("woord", 1433329965809L, Order.ASC, Integer.MAX_VALUE)) {
             long i = 0;
             while (result.hasNext()) {
@@ -136,7 +135,7 @@ public class NpoApiClientUtilTest {
 
     @Test
     @Disabled("Takes long!!")
-    public void testChangesEpoch() throws Exception {
+    void testChangesEpoch() throws Exception {
         try (CountedIterator<MediaChange> result = util.changes("woord", Instant.EPOCH, Order.ASC, null)) {
             long i = 0;
             while (result.hasNext()) {
@@ -153,7 +152,7 @@ public class NpoApiClientUtilTest {
 
     @Test
     @Disabled("Takes long!!")
-    public void testChangesVpronl() throws Exception {
+    void testChangesVpronl() throws Exception {
         try (CountedIterator<MediaChange> result = util.changes("vpro-predictions", Instant.now().minus(Duration.ofHours(6)), Order.ASC, null)) {
             long i = 0;
             while (result.hasNext()) {
@@ -167,7 +166,7 @@ public class NpoApiClientUtilTest {
 
     @Test
     @Disabled("Takes long!")
-    public void testIterate() throws Exception {
+    void testIterate() throws Exception {
         Instant start = Instant.now();
         try (CloseableIterator<MediaObject> result = util.iterate(new MediaForm(), null)) {
             long i = 0;
@@ -190,7 +189,7 @@ public class NpoApiClientUtilTest {
 
 
     @Test
-    public void testListDescendants() {
+    void testListDescendants() {
         MediaResult result = util.listDescendants("RBX_S_NTR_553927", Order.DESC, input -> input.getMediaType() == MediaType.BROADCAST, 123);
         assertThat(result.getSize()).isEqualTo(123);
 
@@ -198,7 +197,7 @@ public class NpoApiClientUtilTest {
     }
 
     @Test
-    public void testListRelated() {
+    void testListRelated() {
         MediaSearchResult result = util.getClients().getMediaService().findRelated(MediaFormBuilder.emptyForm(), "VPWON_1174495", "vpro", null, 10, null);
         log.info("{}", result.asList().get(0).getDescendantOf().iterator().next().getMidRef());
     }
@@ -209,7 +208,7 @@ public class NpoApiClientUtilTest {
     //@Test
     @Disabled("This doesn't test the api, but httpclient")
     // this does indeed timeout
-    public void timeout() {
+    void timeout() {
         assertThatThrownBy(() -> {
             HttpClient client;
             {
@@ -245,7 +244,7 @@ public class NpoApiClientUtilTest {
     //@Test(expected = IOException.class)
     @Test
     @Disabled("Doesn't test api, but httpclient")
-    public void timeoutWithInvoke() throws URISyntaxException {
+    void timeoutWithInvoke() throws URISyntaxException {
         ApacheHttpClient43Engine  engine = (ApacheHttpClient43Engine ) utilShortTimeout.getClients().getClientHttpEngine();
         String host = utilShortTimeout.getClients().getBaseUrl() + "/media/AVRO_1656037";
         URI uri = new URI(host);
@@ -271,13 +270,13 @@ public class NpoApiClientUtilTest {
 
 
     @Test
-    public void testLoadProfile() {
+    void testLoadProfile() {
         Profile profile = util.getClients().getProfileService().load("human");
         System.out.println(profile.getMediaProfile());
     }
 
     @Test
-    public void badRequest() {
+    void badRequest() {
         assertThatThrownBy(() -> {
 
         //MediaForm form = Jackson2Mapper.getInstance().readValue("{\"searches\":{\"mediaIds\":[{\"value\":\"VPWON_1181924\",\"match\":\"not\"}],\"types\":[{\"value\":\"BROADCAST\",\"match\":\"should\"},{\"value\":\"CLIP\",\"match\":\"should\"},{\"value\":\"SEGMENT\",\"match\":\"should\"},{\"value\":\"TRACK\",\"match\":\"should\"}]}}", MediaForm.class);
@@ -288,7 +287,7 @@ public class NpoApiClientUtilTest {
     }
 
     @Test
-    public void loadSubtiles() {
+    void loadSubtiles() {
 
         System.out.println(util.getClients().getSubtitlesRestService().get("WO_VPRO_025700", Locale.JAPAN));
     }

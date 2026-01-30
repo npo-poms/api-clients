@@ -14,7 +14,7 @@ class NpoApiAuthenticationTest {
 
 
     @Test
-    public void test() {
+    void test() {
         NpoApiAuthentication authentication = NpoApiAuthentication.builder()
             .origin("https://www.vpro.nl")
             .apiKey("foobar")

@@ -17,11 +17,11 @@ import nl.vpro.api.client.resteasy.ResteasyHelper;
  * @author Michiel Meeuwissen
  */
 @Slf4j
-public class ResteasyTest {
+class ResteasyTest {
 
 
     @Test
-    public void testAcceptHeader() {
+    void testAcceptHeader() {
         ResteasyClientBuilder builder = ResteasyHelper.clientBuilder();
         BrowserCacheFeature browserCacheFeature = new BrowserCacheFeature();
         browserCacheFeature.setCache(new MapCache());

@@ -23,18 +23,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 4.3
  */
 @Slf4j
-public class NpoApiClientsMediaITest {
+class NpoApiClientsMediaITest {
 
     private static NpoApiClients clients;
 
     @BeforeAll
-    public static void setUp() {
+    static void setUp() {
         clients = NpoApiClients.configured().trustAll(true).build();
         System.out.println("Testing with " + clients);
     }
 
     @Test
-    public void testDescendants() throws JsonProcessingException, ProfileNotFoundException {
+    void testDescendants() throws JsonProcessingException, ProfileNotFoundException {
         MediaForm form =
             MediaFormBuilder.form().build();
 
@@ -48,7 +48,7 @@ public class NpoApiClientsMediaITest {
 
 
     @Test
-    public void testFindInProfile() throws JsonProcessingException, ProfileNotFoundException {
+    void testFindInProfile() throws JsonProcessingException, ProfileNotFoundException {
         MediaForm form =
             MediaFormBuilder.form().build();
 
@@ -62,7 +62,7 @@ public class NpoApiClientsMediaITest {
 
 
     @Test
-    public void testDescendantsProperties() throws JsonProcessingException, ProfileNotFoundException {
+    void testDescendantsProperties() throws JsonProcessingException, ProfileNotFoundException {
         MediaForm form =
             MediaFormBuilder.form().build();
 

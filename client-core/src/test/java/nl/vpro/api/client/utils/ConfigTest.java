@@ -17,11 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
  */
 @Slf4j
-public class ConfigTest {
+class ConfigTest {
 
 
     @Test
-    public void env() {
+    void env() {
         Config config = new Config("apiclient-test.properties", "apiclient-test2.properties");
         Map<String, String> props = config.getProperties(api);
         log.info("{}", props);
@@ -32,7 +32,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void setEnv() {
+    void setEnv() {
         Config config = new Config("apiclient-test.properties", "apiclient-test2.properties");
 
         config.setEnv(Env.TEST);
@@ -47,7 +47,7 @@ public class ConfigTest {
 
 
     @Test
-    public void envPerPrefix() {
+    void envPerPrefix() {
 
         Config config = new Config("apiclient-test-env-prefix.properties");
         assertThat(config.env(api)).isEqualTo(Env.TEST);
@@ -65,7 +65,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void withSubst() {
+    void withSubst() {
 
         Config config = new Config("with-subst.properties");
         assertThat(config.requiredOption(api, "es.env")).isEqualTo("prod");

@@ -1,11 +1,10 @@
 package nl.vpro.api.client.utils;
 
+import jakarta.ws.rs.core.MediaType;
+import jakarta.xml.bind.JAXB;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.StringReader;
-
-import jakarta.ws.rs.core.MediaType;
-import jakarta.xml.bind.JAXB;
 
 import org.junit.jupiter.api.*;
 
@@ -19,12 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Disabled("This required running server at publish-dev")
 @Slf4j
-public class PageUpdateApiClientUtilTest {
+class PageUpdateApiClientUtilTest {
 
     private PageUpdateApiUtil util;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         PageUpdateApiClient clients = PageUpdateApiClient
             .configured(Env.LOCALHOST)
             .accept(MediaType.APPLICATION_JSON_TYPE)
@@ -33,7 +32,7 @@ public class PageUpdateApiClientUtilTest {
     }
 
     @Test
-    public void testSaveInvalid() {
+    void testSaveInvalid() {
         PageUpdate instance = new PageUpdate(PageType.ARTICLE, "http://vpro.nl/test");
         Result<Void> result = util.saveAndWait(instance);
         assertThat(result.getStatus()).isEqualTo(Result.Status.INVALID);
@@ -41,14 +40,14 @@ public class PageUpdateApiClientUtilTest {
     }
 
     @Test
-    public void testDelete() {
+    void testDelete() {
         String id  = "http://BESTAATNIET";
         DeleteResult result = util.delete(id);
         log.info("{}", result);
     }
 
     @Test
-    public void accesDenied() {
+    void accesDenied() {
         String willCauseDeny = """
 				<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 				<pageUpdate:page xmlns:pageUpdate="urn:vpro:pages:update:2013" xmlns:pages="urn:vpro:pages:2013" type="PLAYER" url="http://cultura-sample.localhost/speel.RBX_NTR_632457.html" publishStart="2014-09-23T19:00:00+02:00">
@@ -78,7 +77,7 @@ public class PageUpdateApiClientUtilTest {
     }
 
     @Test
-    public void deleteWhereStartsWith() {
+    void deleteWhereStartsWith() {
         log.info("{}", util);
         DeleteResult result = util.deleteWhereStartsWith("http://bla/bloe");
         log.info("{}", result);

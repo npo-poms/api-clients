@@ -13,11 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Michiel Meeuwissen
  */
 @Slf4j
-public class NpoApiImageUtilITest {
+class NpoApiImageUtilITest {
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
-    public void getGetSize() {
+    void getGetSize() {
 
         NpoApiImageUtil util = new NpoApiImageUtil("https://images-test.poms.omroep.nl/");
         ConfigUtils.configuredInHome(util, "apiclient.properties");

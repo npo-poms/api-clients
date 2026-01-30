@@ -1,9 +1,9 @@
 package nl.vpro.api.client.utils;
 
+import jakarta.ws.rs.core.Response;
+
 import java.net.URL;
 import java.time.Instant;
-
-import jakarta.ws.rs.core.Response;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -19,10 +19,10 @@ import static org.mockito.Mockito.when;
 
 
 @Disabled
-public class MediaRestClientUtilsTest {
+class MediaRestClientUtilsTest {
 
     @Test
-    public void testChanges() throws Exception {
+    void testChanges() throws Exception {
 
         MediaRestService mediaRestService = mock(MediaRestService.class);
 
@@ -56,12 +56,12 @@ public class MediaRestClientUtilsTest {
     }
 
     @Test
-    public void testLoad() {
+    void testLoad() {
     }
 
 
     @Test
-    public void testLoadSubitltes() {
+    void testLoadSubitltes() {
 
     }
 }

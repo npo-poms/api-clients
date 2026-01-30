@@ -1,11 +1,10 @@
 package nl.vpro.api.client.media;
 
+import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.nio.file.Files;
-
-import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
@@ -22,24 +21,24 @@ import nl.vpro.util.FileCachingInputStream;
  */
 @Slf4j
 @Disabled
-public class MediaRestClientUploadITest {
+class MediaRestClientUploadITest {
 
     private MediaRestClient client;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         client = MediaRestClient.configured(Env.TEST).build();
 
     }
     @AfterEach
-    public void shutdown() {
+    void shutdown() {
         client.shutdown();
     }
 
 
 
     @Test
-    public void uploadAndTranscode() throws IOException {
+    void uploadAndTranscode() throws IOException {
         File file = new File("/Users/michiel/samples/huge.mxf");
         try(InputStream is = FileCachingInputStream.builder()
             .input(Files.newInputStream(file.toPath()))
