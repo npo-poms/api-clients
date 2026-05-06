@@ -9,7 +9,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     env:
-      MAVEN_ARGS: '--no-transfer-progress --color=auto'
+      MAVEN_ARGS: '--no-transfer-progress --color always'
     if: startsWith(github.ref, 'refs/heads/REL-')
     steps:
     - uses: actions/checkout@v6
