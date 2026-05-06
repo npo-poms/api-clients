@@ -11,22 +11,24 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.*;
 import java.util.Locale;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.jupiter.api.*;
-
-import com.google.common.io.ByteStreams;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import nl.vpro.api.client.resteasy.ResteasyHelper;
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.api.rs.v3.page.PageRestService;
 import nl.vpro.api.rs.v3.profile.ProfileRestService;
-import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.*;
+import nl.vpro.domain.api.Order;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.page.*;
 import nl.vpro.domain.api.profile.Profile;
@@ -36,6 +38,7 @@ import nl.vpro.domain.media.*;
 import nl.vpro.domain.page.Page;
 import nl.vpro.i18n.Locales;
 import nl.vpro.logging.LoggerOutputStream;
+import nl.vpro.test.jupiter.TimingExtension;
 import nl.vpro.util.Env;
 import nl.vpro.util.Version;
 
@@ -51,9 +54,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 @SuppressWarnings({"resource", "DataFlowIssue"})
 @Slf4j
+@ExtendWith(TimingExtension.class)
 class NpoApiClientsITest {
 
-    private static Env env = Env.LOCALHOST;
+    private static Env env = Env.TEST;
     private NpoApiClients clients;
 
     @BeforeEach
@@ -181,8 +185,12 @@ class NpoApiClientsITest {
     @Test
     @Disabled("Takes very long")
     void testIterate() throws IOException, ProfileNotFoundException {
-        try (InputStream response = clients.getMediaService().iterate(new MediaForm(), "vpro-predictions", null, 0L, Integer.MAX_VALUE).readEntity(InputStream.class)) {
-            IOUtils.copy(response, ByteStreams.nullOutputStream());
+        try (InputStream response = clients.getMediaService()
+            .iterate(new MediaForm(), null, null, 0L, Integer.MAX_VALUE)
+            .readEntity(InputStream.class)) {
+            IOUtils.copyLarge(response,
+                new GZIPOutputStream(Files.newOutputStream(Paths.get("/tmp/test.full.json.gz")))
+            );
         }
     }
 

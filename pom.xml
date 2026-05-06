@@ -5,11 +5,11 @@
   <parent>
     <groupId>nl.vpro.poms</groupId>
     <artifactId>poms-parent</artifactId>
-    <version>8.12-SNAPSHOT</version>
+    <version>8.13.2</version>
   </parent>
   <groupId>nl.vpro.poms.api-clients</groupId>
   <artifactId>api-client-parent</artifactId>
-  <version>8.12-SNAPSHOT</version>
+  <version>8.13-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>npo-api-client-parent</name>
   <description>Clients for NPO APIs</description>
@@ -92,6 +92,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.checkerframework</groupId>
+      <artifactId>checker-qual</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
@@ -102,14 +107,15 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>nl.vpro.shared</groupId>
-      <artifactId>vpro-shared-log4j2</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>nl.mmprogrami</groupId>
+      <artifactId>setup-log4j2</artifactId>
+      <scope>test</scope>
+      <classifier>test</classifier>
     </dependency>
   </dependencies>
 
