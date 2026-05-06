@@ -189,7 +189,7 @@ public class MediaRestClient extends AbstractApiClient implements MediaRestClien
 
     }
 
-    @SuppressWarnings({"SpringAutowiredFieldsWarningInspection", "OptionalUsedAsFieldOrParameterType", "unused"})
+    @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unused"})
     @Named
     public static class Provider implements jakarta.inject.Provider<MediaRestClient> {
 
