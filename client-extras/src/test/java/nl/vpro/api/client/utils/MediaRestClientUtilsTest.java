@@ -2,7 +2,7 @@ package nl.vpro.api.client.utils;
 
 import jakarta.ws.rs.core.Response;
 
-import java.net.URL;
+import java.net.URI;
 import java.time.Instant;
 
 import org.junit.jupiter.api.Disabled;
@@ -38,7 +38,7 @@ class MediaRestClientUtilsTest {
             any(Tail.class),
             anyString()
             )
-        ).thenReturn(Response.ok().entity(new URL("file:////Users/michiel/npo/api-client/changes.json").openStream()).build());
+        ).thenReturn(Response.ok().entity(URI.create("file:////Users/michiel/npo/api-client/changes.json").toURL().openStream()).build());
         int count = 0;
         try (CloseableIterator<MediaChange> i = MediaRestClientUtils.changes(mediaRestService, "vpro", Instant.ofEpochMilli(0), null, null, Integer.MAX_VALUE, Deletes.ID_ONLY)) {
 

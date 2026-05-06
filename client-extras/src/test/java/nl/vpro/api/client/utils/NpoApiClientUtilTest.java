@@ -199,7 +199,7 @@ public class NpoApiClientUtilTest {
     @Test
     void testListRelated() {
         MediaSearchResult result = util.getClients().getMediaService().findRelated(MediaFormBuilder.emptyForm(), "VPWON_1174495", "vpro", null, 10, null);
-        log.info("{}", result.asList().get(0).getDescendantOf().iterator().next().getMidRef());
+        log.info("{}", result.asList().getFirst().getDescendantOf().getFirst().getMidRef());
     }
 
 
