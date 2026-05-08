@@ -1,5 +1,7 @@
 package nl.vpro.api.client.media;
 
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
@@ -9,15 +11,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.*;
-
 import org.meeuw.functional.TriFunction;
 
 import nl.vpro.api.client.Utils;
 import nl.vpro.domain.Roles;
 import nl.vpro.domain.media.EntityType;
-import nl.vpro.logging.Slf4jHelper;
 import nl.vpro.logging.simple.Level;
 import nl.vpro.poms.shared.Headers;
 import nl.vpro.rs.client.HeaderInterceptor;
@@ -197,7 +195,7 @@ your request.</p>
             for (Map.Entry<String, List<String>> e : headers.entrySet()) {
                 if (e.getKey().startsWith(Headers.X_NPO)) {
                     Level level = headerLevel.apply(method, args, e.getKey());
-                    Slf4jHelper.log(log, level, "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
+                    log.atLevel(org.slf4j.event.Level.valueOf(level.name())).log( "{}: {}", e.getKey(), e.getValue().stream().map(String::valueOf).collect(Collectors.joining(", ")));
                 }
                 if (e.getKey().equals(Headers.NPO_ROLES)) {
                     Set<String> copyOfRoles = new HashSet<>(client.roles);
