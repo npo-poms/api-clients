@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.*;
 import java.util.Optional;
@@ -97,8 +98,9 @@ public class NpoApiImageUtil implements ImageUrlService {
     }
 
     public boolean isAvailable() {
+        URI health = URI.create(baseUrl).resolve("manage/health");
+
         try {
-            URI health = URI.create(baseUrl).resolve("manage/health");
             HttpRequest head = HttpRequest.newBuilder(health)
                 .method("HEAD", HttpRequest.BodyPublishers.noBody())
                 .build();
@@ -109,8 +111,11 @@ public class NpoApiImageUtil implements ImageUrlService {
                 log.warn("For {} -> {}", health, send.statusCode());
                 return false;
             }
-        } catch (Exception e) {
-            log.warn(e.getMessage(), e);
+        } catch(ConnectException ex) {
+            log.warn(health + ": " + ex.getClass().getName() + ":" + ex.getMessage());
+            return false;
+        } catch (Exception ex) {
+            log.warn(health + ": " + ex.getClass().getName() + ":" + ex.getMessage(), ex);
             return false;
         }
     }

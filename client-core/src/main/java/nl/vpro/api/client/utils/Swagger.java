@@ -72,7 +72,10 @@ public class Swagger {
                 log.warn("No swagger found at {} -> {}", url, response.statusCode());
                 return VersionResult.builder().version(defaultVersion).available(false).build();
             }
-        } catch (JsonParseException | ConnectException ex) {
+        } catch(ConnectException ex) {
+            log.warn(url + ": " + ex.getClass().getName() + ":" + ex.getMessage());
+            return VersionResult.builder().version(defaultVersion).available(false).build();
+        } catch (JsonParseException ex) {
             log.warn(url + ": " + ex.getMessage(), ex);
             return VersionResult.builder().version(defaultVersion).available(false).build();
 		} catch (IOException | InterruptedException ex) {
