@@ -1,5 +1,8 @@
 package nl.vpro.api.client.utils;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,11 +12,6 @@ import java.net.URI;
 import java.net.http.*;
 import java.util.Optional;
 import java.util.OptionalLong;
-
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import jakarta.validation.constraints.NotNull;
-
 
 import nl.vpro.domain.media.support.ImageUrlService;
 import nl.vpro.domain.media.update.ImageUpdate;
@@ -100,7 +98,7 @@ public class NpoApiImageUtil implements ImageUrlService {
 
     public boolean isAvailable() {
         try {
-            URI health = URI.create(baseUrl + "manage/health");
+            URI health = URI.create(baseUrl).resolve("manage/health");
             HttpRequest head = HttpRequest.newBuilder(health)
                 .method("HEAD", HttpRequest.BodyPublishers.noBody())
                 .build();
