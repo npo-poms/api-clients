@@ -22,14 +22,11 @@ jobs:
         server-password-env-var: CENTRAL_PASSWORD
         gpg-private-key: ${{ secrets.GPG_SECRET_KEY }}
         cache: maven
-    - uses: oleksiyrudenko/gha-git-credentials@v2.1.2
-      with:
-        global: true
-        name: 'github $GITHUB_ACTOR'
-        email: 'git@mmprogrami.nl'
-        token: '${{ secrets.GITHUB_TOKEN  }}'
     - name: Release
-      run: mvn -Pdeploy,central --batch-mode  -Darguments=-DskipTests  release:prepare release:perform
+      run: |
+        git config --global user.name "github $GITHUB_ACTOR"
+        git config --global user.email 'github@mmprogrami.nl'
+        mvn -Pdeploy,central --batch-mode  -Darguments=-DskipTests  release:prepare release:perform
       env:
         CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
         CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
