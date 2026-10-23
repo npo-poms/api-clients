@@ -19,6 +19,8 @@ import java.util.function.*;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.meeuw.collections.CloseableIterator;
+import org.meeuw.collections.CountedIterator;
 import org.meeuw.functional.Consumers;
 
 import com.google.common.cache.*;
@@ -29,7 +31,7 @@ import nl.vpro.domain.api.*;
 import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.media.*;
 import nl.vpro.jackson2.JsonArrayIterator;
-import nl.vpro.util.*;
+import nl.vpro.util.TimeUtils;
 
 import static nl.vpro.api.client.utils.ChangesFeedParameters.changesParameters;
 import static nl.vpro.api.client.utils.MediaRestClientUtils.unwrapIO;
@@ -122,7 +124,7 @@ public class NpoApiMediaUtil implements MediaProvider {
         return CacheBuilder.newBuilder()
             .concurrencyLevel(4)
             .maximumSize(cacheSize)
-            .expireAfterWrite(cacheTTL.toMillis(), TimeUnit.MILLISECONDS)
+            .expireAfterWrite(cacheTTL)
             .build(
                 new CacheLoader<String, Optional<? extends MediaObject>>() {
                     @Override

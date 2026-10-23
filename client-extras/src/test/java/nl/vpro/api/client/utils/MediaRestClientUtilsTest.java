@@ -7,10 +7,10 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.meeuw.collections.CloseableIterator;
 
 import nl.vpro.api.rs.v3.media.MediaRestService;
 import nl.vpro.domain.api.*;
-import nl.vpro.util.CloseableIterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;

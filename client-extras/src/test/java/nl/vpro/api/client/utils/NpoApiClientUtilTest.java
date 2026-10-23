@@ -22,6 +22,8 @@ import org.jboss.resteasy.client.jaxrs.internal.*;
 import org.jboss.resteasy.core.providerfactory.ResteasyProviderFactoryImpl;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.jupiter.api.*;
+import org.meeuw.collections.CloseableIterator;
+import org.meeuw.collections.CountedIterator;
 
 import nl.vpro.api.client.frontend.ApiAuthenticationRequestFilter;
 import nl.vpro.api.client.frontend.NpoApiClients;
@@ -31,8 +33,6 @@ import nl.vpro.domain.api.media.*;
 import nl.vpro.domain.api.profile.Profile;
 import nl.vpro.domain.media.*;
 import nl.vpro.domain.media.MediaType;
-import nl.vpro.util.CloseableIterator;
-import nl.vpro.util.CountedIterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

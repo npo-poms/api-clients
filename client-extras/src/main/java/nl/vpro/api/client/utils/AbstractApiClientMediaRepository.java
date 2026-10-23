@@ -12,6 +12,8 @@ import java.util.*;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.meeuw.collections.CloseableIterator;
+import org.meeuw.collections.FilteringIterator;
 import org.meeuw.functional.ReasonedPredicate;
 
 import nl.vpro.api.client.frontend.NpoApiClients;
@@ -21,8 +23,7 @@ import nl.vpro.domain.api.profile.ProfileDefinition;
 import nl.vpro.domain.api.profile.exception.ProfileNotFoundException;
 import nl.vpro.domain.media.MediaObject;
 import nl.vpro.domain.media.MediaRedirector;
-import nl.vpro.util.CloseableIterator;
-import nl.vpro.util.FilteringIterator;
+
 
 /**
  * @author Michiel Meeuwissen

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>nl.vpro.poms.api-clients</groupId>
   <artifactId>client-bom</artifactId>
-  <version>8.15-SNAPSHOT</version>
+  <version>8.16-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>api-client-bom</name>
   <description>Clients for NPO APIs bom</description>
@@ -70,21 +70,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <repositories>
-    <repository>
-      <name>Central Portal Snapshots</name>
-      <id>central-portal-snapshots</id>
-      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-  <profiles>
+   <profiles>
     <profile>
       <id>central</id>
       <build>
@@ -92,7 +78,7 @@
           <plugin>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
-            <version>0.10.0</version>
+            <version>0.12.0</version>
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>central</publishingServerId>

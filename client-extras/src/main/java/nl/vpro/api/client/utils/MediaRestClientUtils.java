@@ -14,6 +14,8 @@ import java.util.function.Supplier;
 import org.apache.commons.io.IOUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.meeuw.collections.CountedIterator;
+import org.meeuw.collections.LazyIterator;
 
 import com.google.common.collect.Lists;
 
@@ -28,7 +30,7 @@ import nl.vpro.domain.subtitles.SubtitlesId;
 import nl.vpro.jackson2.JsonArrayIterator;
 import nl.vpro.logging.simple.Level;
 import nl.vpro.poms.shared.Headers;
-import nl.vpro.util.*;
+import nl.vpro.util.FileCachingInputStream;
 
 import static nl.vpro.api.client.utils.ChangesFeedParameters.changesParameters;
 import static nl.vpro.logging.simple.Slf4jSimpleLogger.slf4j;
